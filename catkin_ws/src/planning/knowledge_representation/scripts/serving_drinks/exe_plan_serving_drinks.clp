@@ -148,7 +148,7 @@
 	(retract ?f ?f1 ?f3)
 	(assert (order _))
 	;(assert (deliver_order ?obj ?person ?num))
-	(assert (send-blackboard ACT-PLN get-order ?ord ?t 4))
+	(assert (send-blackboard ACT-PLN get_order ?ord ?t 4))
 )
 
 (defrule exe-plan-get-order-last-order
@@ -161,11 +161,11 @@
 	(retract ?f ?f1 ?f2 ?f3)
 	(assert (order _))
 	;(assert (deliver_order ?obj ?person ?num))
-	(assert (send-blackboard ACT-PLN get-order ?ord ?t 4))
+	(assert (send-blackboard ACT-PLN get_order ?ord ?place ?t 4))
 )
 
 (defrule exe-plan-geted-order
-	?f <- (received ?sender command get-order ?ord 1)
+	?f <- (received ?sender command get_order ?ord ?place 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions get_ordered_objects ?place)(actions_num_params ?num_obj ?orders)) 
 	=>
 	(retract ?f)

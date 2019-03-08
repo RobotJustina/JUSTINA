@@ -562,6 +562,20 @@ def offer_drink(cmd):
     pubCmdOfferDrink.publish(request)
     return cmd._id
 
+def train_person(cmd):
+    global pubCmdTrainPerson 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTrainPerson.publish(request)
+    return cmd._id
+
+def get_order(cmd):
+    global pubCmdGetOrder 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGetOrder.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -612,7 +626,9 @@ fmap = {
     'get_person_description':get_person_description,
     'cmd_update_loc_coords':update_know_location,
     'cmd_clips_signal':cmd_clips_signal,
-    'offer_drink':offer_drink
+    'offer_drink':offer_drink,
+    'train_person':train_person,
+    'get_order':get_order 
 }
 
 def quit():
@@ -627,7 +643,7 @@ def main():
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
-    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal
+    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -670,7 +686,11 @@ def main():
     pubCmdAlignWithPoint = rospy.Publisher('/planning_clips/cmd_align_point', PlanningCmdClips, queue_size=1)
     pubCmdUpdateKnowLocation = rospy.Publisher('/planning_clips/cmd_update_know_location', PlanningCmdClips, queue_size=1)
     pubCmdClipsSignal = rospy.Publisher('/planning_clips/cmd_clips_signal', PlanningCmdClips, queue_size=1)
+    
+    ##topicos de serving drinks
     pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)
+    pubCmdTrainPerson = rospy.Publisher('/planning_clips/cmd_train_person', PlanningCmdClips, queue_size=1)
+    pubCmdGetOrder = rospy.Publisher('/planning_clips/cmd_get_order_object', PlanningCmdClips, queue_size=1)
     
     ###Topicos para el open challenge
     pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)
