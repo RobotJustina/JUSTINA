@@ -59,6 +59,7 @@ int main(int argc, char **argv){
     bool success = false;
     bool findPerson = false;
     bool recogName = false;
+    bool completeTrainig = false;
     std::vector<bool> memorizingOperators;
     int findPersonCount = 0;
     int findPersonAttemps = 0;
@@ -374,7 +375,7 @@ int main(int argc, char **argv){
                             state = SM_INTRO_GUEST;
                         }
                         else{
-                            names.push_back(lastDrink);
+                            drinks.push_back(lastDrink);
                             ss2.str("");
                             ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
                             JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
@@ -469,22 +470,19 @@ int main(int argc, char **argv){
 
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
-                bool completeTrainig;
-                completeTrainig = false;
+                curr = boost::posix_time::second_clock::local_time();
                 if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
-                    if(JustinaVision::getLastTrainingResult() > 0)
-                        completeTrainig = true;
-                    curr = boost::posix_time::second_clock::local_time();
+                    if(JustinaVision::getLastTrainingResult() > 0){
+                        memorizingOperators.push_back(true);
+                        state = SM_GUIDE_TO_LOC;
+                        break;
+                    }
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
-                    break;
                 }
-                if(!completeTrainig){
+                else{
                     attemptsMemorizing++;
                     state = SM_MEMORIZING_OPERATOR; 
-                    break;
                 }
-                memorizingOperators.push_back(true);
-                state = SM_GUIDE_TO_LOC;
 
                 break;
             
