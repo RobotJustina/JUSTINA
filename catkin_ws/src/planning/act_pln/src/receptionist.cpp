@@ -15,7 +15,7 @@
 #include "string"
 
 #define MAX_FIND_PERSON_COUNT 3
-#define MAX_FIND_PERSON_RESTART 7
+#define MAX_FIND_PERSON_RESTART 3
 #define MAX_FIND_PERSON_ATTEMPTS 3
 #define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
@@ -70,6 +70,7 @@ int main(int argc, char **argv){
     int attemptsMemorizing = 0;
     int genderRecog;
     std::string param, typeOrder;
+    std::string lastName, lastDrink;
     std::vector<std::string> names;
     std::vector<std::string> drinks;
     std::string grammarAllID = "receptionistALL";
@@ -208,6 +209,8 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_INTRO_GUEST: Intro Guest." << std::endl;
                 attemptsSpeechReco = 0;
                 attemptsSpeechInt = 0;
+                lastName = "unknown";
+                lastDrink = "unknown";
                 // TODO Load grammar to recog a names
                 if(recogName)
                     JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
@@ -235,7 +238,8 @@ int main(int argc, char **argv){
                                         if(i < tokens.size() -1)
                                             ss2 << " ";
                                     }
-                                    names.push_back(ss2.str());
+                                    lastName = ss2.str();
+                                    //names.push_back(ss2.str());
                                     ss << ", please tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
                                     JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
@@ -260,7 +264,8 @@ int main(int argc, char **argv){
                                         if(i < tokens.size() -1)
                                             ss2 << " ";
                                     }
-                                    drinks.push_back(ss2.str());
+                                    lastDrink = ss2.str();
+                                    //drinks.push_back(ss2.str());
                                     ss << ", please tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
                                     JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
@@ -289,14 +294,25 @@ int main(int argc, char **argv){
                         attemptsSpeechReco = 0;
                         attemptsSpeechInt = 0;
                         if(recogName){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
-                            names.push_back("unknown");
+                            ss2.str("");
+                            if(lastName.compare("unknown"))
+                                ss2 << "Sorry I did not understand you, you are an unknown person ";
+                            else
+                                ss2 << "Ok, your name is " << lastName;
+                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            names.push_back(lastName);
                             recogName = false;
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
+                            state = SM_INTRO_GUEST;
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unnkown", 12000, MIN_DELAY_AFTER_SAY);
-                            drinks.push_back("unknown");
+                            ss2.str("");
+                            if(lastDrink.compare("unknown"))
+                                ss2 << "Sorry I did not understand you, your favorite drink is unknown";
+                            else
+                                ss2 << "Ok, your favorite drink is " << lastDrink;
+                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            drinks.push_back(lastDrink);
                             state = SM_MEMORIZING_OPERATOR;
                         }
                     }
@@ -316,14 +332,24 @@ int main(int argc, char **argv){
                         attemptsSpeechReco = 0;
                         attemptsSpeechInt = 0;
                         if(recogName){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unknown person", 12000, MIN_DELAY_AFTER_SAY);
-                            names.push_back("unknown");
+                            if(lastName.compare("unknown"))
+                                ss2 << "Sorry I did not understand you, you are an unknown person ";
+                            else
+                                ss2 << "Ok, your name is " << lastName;
+                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            names.push_back(lastName);
                             recogName = false;
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
+                            state = SM_INTRO_GUEST;
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unknown", 12000, MIN_DELAY_AFTER_SAY);
-                            names.push_back("unknown");
+                            ss2.str("");
+                            if(lastDrink.compare("unknown"))
+                                ss2 << "Sorry I did not understand you, your favorite drink is unknown";
+                            else
+                                ss2 << "Ok, your favorite drink is " << lastDrink;
+                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            drinks.push_back(lastDrink);
                             state = SM_MEMORIZING_OPERATOR;
                         }
                     }
@@ -338,6 +364,7 @@ int main(int argc, char **argv){
                     if(lastRecoSpeech.find("yes") != std::string::npos){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName){
+                            names.push_back(lastName);
                             ss2.str("");
                             ss2 << "Ok, your name is " << names[names.size() - 1];
                             JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
@@ -347,6 +374,7 @@ int main(int argc, char **argv){
                             state = SM_INTRO_GUEST;
                         }
                         else{
+                            names.push_back(lastDrink);
                             ss2.str("");
                             ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
                             JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
@@ -359,10 +387,12 @@ int main(int argc, char **argv){
                             attemptsConfirmation++;
                             JustinaHRI::enableSpeechRecognized(false);
                             if(recogName){
+                                //names.erase(names.end()- 1);
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
                                 // TODO load especific grammar
                                 // JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                             }else{
+                                //drinks.erase(names.end() - 1);
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
                                 // TODO load especific grammar
                                 // JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
@@ -373,6 +403,7 @@ int main(int argc, char **argv){
                         else{
                             JustinaHRI::enableSpeechRecognized(false);
                             if(recogName){
+                                names.push_back(lastName);
                                 ss2.str("");
                                 ss2 << "Ok, your name is " << names[names.size() - 1];
                                 JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
@@ -381,9 +412,10 @@ int main(int argc, char **argv){
                                 state = SM_INTRO_GUEST;
                             }
                             else{
+                                drinks.push_back(lastDrink);
                                 ss2.str("");
                                 ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
-                                JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+                                JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
                                 attemptsMemorizing = 0;
                                 state = SM_MEMORIZING_OPERATOR;
                             }
@@ -402,14 +434,14 @@ int main(int argc, char **argv){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName){
                             JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unknown person", 12000, MIN_DELAY_AFTER_SAY);
-                            names.push_back("unknown");
+                            names.push_back(lastName);
                             recogName = false;
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
                             state = SM_INTRO_GUEST;
                         }else{
                             JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unknown", 12000, MIN_DELAY_AFTER_SAY);
-                            drinks.push_back("unknown");
+                            drinks.push_back(lastDrink);
                             attemptsMemorizing = 0;
                             state = SM_MEMORIZING_OPERATOR;
                         }
@@ -420,6 +452,7 @@ int main(int argc, char **argv){
             case SM_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_MEMORIZING_OPERATOR: Memorizing operator." << std::endl;
                 if(attemptsMemorizing < MAX_ATTEMPTS_MEMORIZING){
+                    JustinaManip::hdGoTo(0, 0, 2000);
                     JustinaHRI::waitAfterSay("Human, please put in front of me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaHRI::waitAfterSay("please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::faceTrain(names[names.size() - 1], 4);
@@ -439,7 +472,7 @@ int main(int argc, char **argv){
                 bool completeTrainig;
                 completeTrainig = false;
                 if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
-                    if(JustinaVision::getLastTrainingResult() == 0)
+                    if(JustinaVision::getLastTrainingResult() > 0)
                         completeTrainig = true;
                     curr = boost::posix_time::second_clock::local_time();
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
@@ -467,7 +500,7 @@ int main(int argc, char **argv){
 
             case SM_FIND_TO_HOST:
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 0, 0, centroidPerson, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroidPerson, genderRecog, "living_room");
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
