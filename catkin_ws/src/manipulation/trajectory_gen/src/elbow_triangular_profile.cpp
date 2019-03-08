@@ -22,7 +22,7 @@ float total_time = OBJETIVE_ANGLE/constant_velocity;
 
 int main(int argc, char **argv){
 	cout<<"Initializing elbow_profile node..."<<endl;
-	init(argc, argv, "elbow_profile");
+	init(argc, argv, "elbow_triangular_profile");
 	NodeHandle node;
   
     Publisher pubGoalPos = node.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);

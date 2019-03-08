@@ -9,11 +9,11 @@
 #define SHOULDER_ID_VEL   7
 #define DYNAMIXEL_MAX_VEL 12.259 // 12.259 rad/s  
 
-#define ELBOW_OBJETIVE_ANGLE     1.7    // 1.7 rad
+#define ELBOW_OBJETIVE_ANGLE     2.1    // 1.7 rad
 #define ELBOW_CONSTANT_VELOCITY  0.13   // 0.613  rad/s
 
-#define FLAG_FOR_SHOULDER            0.5    //It indicates when shoulder starts to move
-#define SHOULDER_OBJETIVE_ANGLE      -0.6
+#define FLAG_FOR_SHOULDER            0.2    //It indicates when shoulder starts to move
+#define SHOULDER_OBJETIVE_ANGLE      -0.9
 #define SHOULDER_CONSTANT_VELOCITY   0.008
 
 using namespace std;
@@ -47,7 +47,7 @@ int main(int argc, char **argv){
     Publisher pubGoalPos = node.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
 
     Rate loop_rate(50);
-
+    Duration(1).sleep();
     while(ok()){
     	
     	std_msgs::Float32MultiArray msg;
@@ -55,20 +55,28 @@ int main(int argc, char **argv){
 
     	//Setting positions for dynamixels
     	for(int i=0; i<7; i++){
-	    	if(i == ELBOW_ID)
-		    	msg.data.push_back(ELBOW_OBJETIVE_ANGLE);
 		    if(i == SHOULDER_ID)
 		    	msg.data.push_back(SHOULDER_OBJETIVE_ANGLE);
+	    	else if(i == ELBOW_ID)
+		    	msg.data.push_back(ELBOW_OBJETIVE_ANGLE);
+		    else if(i == 5)
+		    	msg.data.push_back(0.5);
+		    else if(i == 6)
+		    	msg.data.push_back(0.08);
 		    else
 		    	msg.data.push_back(0);    		
     	}
     	
 		//Setting velocities for dynamixels
     	for(int i=7; i<14; i++){
-    		if(i == ELBOW_ID_VEL)
-    			msg.data.push_back(elbow_goalSpeeds);
     		if(i == SHOULDER_ID_VEL && elbow_current_pos > flag)
     			msg.data.push_back(shoulder_goalSpeeds);
+    		else if(i == ELBOW_ID_VEL)
+    			msg.data.push_back(elbow_goalSpeeds);
+    		else if(i == 12)
+    			msg.data.push_back(0.03);
+    		else if(i == 13)
+    			msg.data.push_back(0.09);
     		else
     			msg.data.push_back(0);
     	}
@@ -93,8 +101,10 @@ int main(int argc, char **argv){
 
 
     	elbow_current_pos += elbow_goalSpeeds * DYNAMIXEL_MAX_VEL * 0.02;
+    	shoulder_current_pos += shoulder_goalSpeeds *DYNAMIXEL_MAX_VEL * 0.02;
 
-	    cout<<"Time: "<<current_time<<"\tgoalSpeeds: "<<elbow_goalSpeeds<<"\tcurrent position: "<<elbow_current_pos<<endl;
+	    cout<<"Time: "<<current_time<<"\telbow goalSpeeds: "<<elbow_goalSpeeds<<"\telbow current position: "<<elbow_current_pos
+	    <<"\tshoulder goalSpeeds: "<<shoulder_goalSpeeds<<"\tshoulder current position: "<<shoulder_current_pos<<endl;
 
 
     	pubGoalPos.publish(msg);
