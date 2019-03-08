@@ -37,15 +37,15 @@
 	(assert (plan (name ?name) (number 6) (actions make_task ?name person went)(actions_num_params 7 11) (duration 6000)))
 	(assert (plan (name ?name) (number 7) (actions confirmation ?confirmation) (duration 6000)))
 	(assert (plan (name ?name) (number 8) (actions make_task ?name) (actions_num_params 9 11)))
-	(assert (plan (name ?name) (number 9) (actions offer_drink) (actions_num_params 3) (duration 6000)))
+	(assert (plan (name ?name) (number 9) (actions offer_drink) (actions_num_params 2) (duration 6000)))
 	(assert (plan (name ?name) (number 10) (actions make_task ?name offer offered)(actions_num_params 11 11)(duration 6000)))
 	(assert (plan (name ?name) (number 11) (actions train_person)(duration 6000)))
 	(assert (plan (name ?name) (number 12) (actions repeat_task ?name people last_offer) (actions_num_params 5 11 1 5) (duration 6000)))
 	(assert (plan (name ?name) (number 13)(actions set_plan_status ?name)(actions_num_params 5 11)(duration 6000)))
 	
 	(assert (plan (name ?name) (number 14)(actions set_plan_status ?name)(actions_num_params 15 17)(duration 6000)))
-	(assert (plan (name ?name) (number 15) (actions get_ordered_objects ?place1)(actions_num_params 1 3)(duration 6000)));;;falta implementarlo
-	(assert (plan (name ?name) (number 16) (actions find-person specific)(actions_num_params 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 15) (actions get_ordered_objects ?place1)(actions_num_params 1 2)(duration 6000)));;;falta implementarlo
+	(assert (plan (name ?name) (number 16) (actions find-person specific)(actions_num_params 1 2)(duration 6000)))
 	(assert (plan (name ?name) (number 17) (actions deliver_order) (duration 6000)))
 	(assert (plan (name ?name) (number 18) (actions repeat_task ?name people last_offer) (actions_num_params 15 17 1 5) (duration 6000)))
 	(assert (plan (name ?name) (number 19)(actions set_plan_status ?name)(actions_num_params 15 17)(duration 6000)))
