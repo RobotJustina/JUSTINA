@@ -166,14 +166,14 @@ int main(int argc, char ** argv){
     ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("right_arm/object_on_hand", 1);
     ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/right_arm_battery", 1);
 
-    ros::Rate rate(30);
+    ros::Rate rate(50);
 
     std::vector<int> ids;
-    for(int i = 0; i < 9; i++)
+    for(int i = 0; i < 7; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
     if(!simul){
-        // dynamixelManager.enableInfoLevelDebug();
+        dynamixelManager.enableInfoLevelDebug();
         dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
     }
 
