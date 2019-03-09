@@ -80,6 +80,9 @@ int main(int argc, char** argv)
     std::vector<std::string>delimanNotAllowed;
     delimanNotAllowed.push_back("bathroom");
     delimanNotAllowed.push_back("bedroom");
+
+    std::vector<std::string> idsUmbrella;
+    idsUmbrella.push_back("umbrella");
     
 
     Eigen::Vector3d centroidGesture;
@@ -311,7 +314,7 @@ int main(int argc, char** argv)
             case SM_SearchTaxiDriver:
                 std::cout << "Farewell Test...-> SM_SearchTaxiDriver" << std::endl;
                 JustinaHRI::waitAfterSay("I am looking for the taxi driver", 3500, minDelayAfterSay);
-                findUmbrella = JustinaTasks::findAndGuideYolo("umbrella");
+                findUmbrella = JustinaTasks::findAndGuideYolo(idsUmbrella);
                 //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
                 if(findUmbrella){
                     //JustinaVision::stopSkeletonFinding();

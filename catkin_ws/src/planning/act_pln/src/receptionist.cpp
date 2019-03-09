@@ -89,6 +89,9 @@ int main(int argc, char **argv){
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
     confirmCommands.push_back("justina no");
+
+    std::vector<std::string> idsPerson;
+    idsPerson.push_back("person");
 	
     boost::posix_time::ptime prev;
 	boost::posix_time::ptime curr;
@@ -159,7 +162,7 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.1f, -0.2f, 0.1f, 0.1f, 9.0, centroidPerson, "entrance");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.1f, -0.2f, 0.1f, 0.1f, 9.0, centroidPerson, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){

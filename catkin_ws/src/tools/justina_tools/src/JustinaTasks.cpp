@@ -1052,7 +1052,7 @@ bool JustinaTasks::waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &sk
 	return recognized;
 }
 
-bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout){
+bool JustinaTasks::waitRecognizedYolo(std::vector<std::string> ids, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout){
 	boost::posix_time::ptime curr;
     ros::Rate rate(10);
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -1065,9 +1065,11 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
         JustinaVision::detectObjectsYOLO(yoloObjectsReco);
         std::cout << "YoloObject size:" << yoloObjectsReco.size() << std::endl; 
         for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end();it++){
-            if(it->id.compare(id) == 0){
-                if(it->pose.position.x != 0 && it->pose.position.y != 0 && it->pose.position.z != 0)
-                    yoloObjects.push_back(*it);
+            for(int i = 0; i <= ids.size(); i++){
+                if(it->id.compare(ids[i]) == 0){
+                    if(it->pose.position.x != 0 && it->pose.position.y != 0 && it->pose.position.z != 0)
+                        yoloObjects.push_back(*it);
+                }
             }
         }
         std::cout << "YoloObject size:" << yoloObjects.size() << std::endl; 
@@ -1080,11 +1082,15 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
         yoloObjectsReco = yoloObjects;
         yoloObjects.clear();
 		for(int i = 0; i < yoloObjectsReco.size(); i++){
-			if(pose == STANDING && yoloObjectsReco[i].pose.position.z > 1.05)
-                yoloObjects.push_back(yoloObjectsReco[i]);
-			else if(pose == SITTING && yoloObjectsReco[i].pose.position.z > 0.65 && yoloObjectsReco[i].pose.position.z <= 1.05)
-                yoloObjects.push_back(yoloObjectsReco[i]);
-			else if(pose == LYING && yoloObjectsReco[i].pose.position.z > 0.1 && yoloObjectsReco[i].pose.position.z <= 0.65)
+            if(yoloObjectsReco[i].id.compare("person") == 0){
+                if(pose == STANDING && yoloObjectsReco[i].pose.position.z > 1.05)
+                    yoloObjects.push_back(yoloObjectsReco[i]);
+                else if(pose == SITTING && yoloObjectsReco[i].pose.position.z > 0.65 && yoloObjectsReco[i].pose.position.z <= 1.05)
+                    yoloObjects.push_back(yoloObjectsReco[i]);
+                else if(pose == LYING && yoloObjectsReco[i].pose.position.z > 0.1 && yoloObjectsReco[i].pose.position.z <= 0.65)
+                    yoloObjects.push_back(yoloObjectsReco[i]);
+            }
+            else
                 yoloObjects.push_back(yoloObjectsReco[i]);
 		}
 	}
@@ -1377,7 +1383,7 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan, float i
 	return recog;
 }
 
-bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location){
+bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location){
 	bool recog = false;
 	bool moveBase = false;
 	float initTil = initAngTil;
@@ -1399,7 +1405,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAng
 				JustinaManip::waitForHdGoalReached(3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> yoloObjects;
-				recog = waitRecognizedYolo(id, yoloObjects, pose, 2000);
+				recog = waitRecognizedYolo(ids, yoloObjects, pose, 2000);
 				if(recog)
                     recog = getNearestRecognizedYolo(yoloObjects, maxDistance, centroidPerson, location);
                 ros::spinOnce();
@@ -1638,7 +1644,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	return true;
 }
 
-bool JustinaTasks::findYolo(std::string id, POSE pose, std::string location){
+bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE pose, std::string location){
 	std::stringstream ss;
 	std::string gestureSpeech;
     ros::Time time;
@@ -1647,7 +1653,7 @@ bool JustinaTasks::findYolo(std::string id, POSE pose, std::string location){
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 
@@ -5751,7 +5757,7 @@ bool JustinaTasks::followVisitor(){
 }
 
 
-bool JustinaTasks::findAndGuideYolo(std::string id, POSE pose, std::string location){
+bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std::string location){
 	std::stringstream ss;
 	std::string gestureSpeech;
     ros::Time time;
@@ -5761,7 +5767,7 @@ bool JustinaTasks::findAndGuideYolo(std::string id, POSE pose, std::string locat
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 
