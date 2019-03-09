@@ -2577,8 +2577,8 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             ss << "(assert (set_object_arm " << tokens[i] << " false))";
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
         }
-        if(!la){
-            JustinaManip::raGoTo("navigation", 3000);
+        if(!la && tokens.size() > 3){
+            JustinaManip::laGoTo("navigation", 3000);
             JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
             la = true;
             ss << "(assert (set_object_arm " << tokens[i] << " true))";
@@ -2632,7 +2632,7 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
             ss << name << " please look at me, I try to find you";
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
             while(!success && attemps <4){
-    			success = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE, false, tokens[tokens.size()-1]);
+    			success = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE, true, tokens[tokens.size()-1]);
                 attemps++;
             }
             if(success){
