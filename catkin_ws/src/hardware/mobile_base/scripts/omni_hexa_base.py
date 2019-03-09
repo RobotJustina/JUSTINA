@@ -303,8 +303,8 @@ class MobileOmniBaseNode:
         self.newData = False
         self.no_new_data_counter = 5
         jointStates = JointState()
-        jointStates.name = ["wheel_front_left_connect", "wheel_back_right_connect", "wheel_front_right_connect", "wheel_back_left_connect"]
-        jointStates.position = [0 , 0, 0, 0]
+        jointStates.name = ["wheel_front_left_connect", "wheel_front_right_connect", "wheel_back_connect"]
+        jointStates.position = [0 , 0, 0]
         while not rospy.is_shutdown():
             if not self.simul:
                 if self.newData:
@@ -420,7 +420,6 @@ class MobileOmniBaseNode:
             jointStates.position[0] = 0
             jointStates.position[1] = 0
             jointStates.position[2] = 0
-            jointStates.position[3] = 0
             self.pubJointStates.publish(jointStates)
             rate.sleep();
 
