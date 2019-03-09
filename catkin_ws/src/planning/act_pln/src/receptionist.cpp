@@ -25,6 +25,7 @@
 #define MAX_ATTEMPTS_CONFIRMATION 2
 #define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
 #define MAX_ATTEMPTS_MEMORIZING 2
+#define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
 
 enum STATE{
@@ -41,6 +42,8 @@ enum STATE{
     SM_GUIDE_TO_LOC,
     SM_FIND_TO_HOST,
     SM_INTRODUCING,
+    SM_FIND_EMPTY_SEAT,
+    SM_OFFER_EMPTY_SEAT,
     SM_FINISH_TEST
 };
 
@@ -58,12 +61,14 @@ int main(int argc, char **argv){
     bool opened = false;
     bool success = false;
     bool findPerson = false;
+    bool findSeat = false;
     bool recogName = false;
     bool completeTrainig = false;
     std::vector<bool> memorizingOperators;
     int findPersonCount = 0;
     int findPersonAttemps = 0;
     int findPersonRestart = 0;
+    int findSeatCount = 0;
     int attemptsSpeechReco = 0;
     int attemptsSpeechInt = 0;
     int attemptsConfirmation = 0;
@@ -75,7 +80,7 @@ int main(int argc, char **argv){
     std::vector<std::string> names;
     std::vector<std::string> drinks;
     std::string grammarAllID = "receptionistALL";
-    Eigen::Vector3d centroidPerson;
+    Eigen::Vector3d centroid;
     
     std::stringstream ss;
     std::stringstream ss2;
@@ -85,6 +90,7 @@ int main(int argc, char **argv){
     float gx_w, gy_w, gz_w;    
     float goalx, goaly, goala;
     float dist_to_head;
+    float theta = 0;
     
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
@@ -92,6 +98,9 @@ int main(int argc, char **argv){
 
     std::vector<std::string> idsPerson;
     idsPerson.push_back("person");
+    std::vector<std::string> idsSeat;
+    idsSeat.push_back("chair");
+    idsSeat.push_back("sofa");
 	
     boost::posix_time::ptime prev;
 	boost::posix_time::ptime curr;
@@ -162,7 +171,7 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.1f, -0.2f, 0.1f, 0.1f, 9.0, centroidPerson, "entrance");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
@@ -171,7 +180,7 @@ int main(int argc, char **argv){
                         findPersonRestart = 0;
                     
                         //JustinaVision::enableDetectObjsYOLO(false);
-                        JustinaTools::transformPoint("/base_link", centroidPerson(0, 0), centroidPerson(1, 0) , centroidPerson(2, 0), "/map", gx_w, gy_w, gz_w);
+                        JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         goalx = gx_w;
                         goaly = gy_w;
 
@@ -179,7 +188,7 @@ int main(int argc, char **argv){
                         float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                         if (thetaToGoal < 0.0f)
                             thetaToGoal += 2 * M_PI;
-                        float theta = thetaToGoal - robot_a;
+                        theta = thetaToGoal - robot_a;
                         std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
                         JustinaNavigation::moveDistAngle(0, theta, 2000);
                         dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
@@ -501,11 +510,26 @@ int main(int argc, char **argv){
 
             case SM_FIND_TO_HOST:
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroidPerson, genderRecog, "living_room");
+                theta = 0;
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "living_room");
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
+                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    goalx = gx_w;
+                    goaly = gy_w;
+
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+                    if (thetaToGoal < 0.0f)
+                        thetaToGoal += 2 * M_PI;
+                    theta = thetaToGoal - robot_a;
+                    std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
+                    JustinaNavigation::moveDistAngle(0, theta, 2000);
+                    dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                    JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     state = SM_INTRODUCING;
                 }
                 else{
@@ -529,6 +553,44 @@ int main(int argc, char **argv){
                 ss.str("");
                 ss << names[names.size() - 1] << " he is John" << std::endl;
                 JustinaHRI::waitAfterSay(ss.str(), 5000, MIN_DELAY_AFTER_SAY);
+                JustinaNavigation::moveDistAngle(0, -theta, 2000);
+                state = SM_FIND_EMPTY_SEAT;
+                break;
+
+            case SM_FIND_EMPTY_SEAT:
+                std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
+                if(findSeatCount < MAX_FIND_SEAT_COUNT){
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "living_room");
+                    if(!findSeat){
+                        findSeatCount++;
+                        break;
+                    }
+                    state = SM_OFFER_EMPTY_SEAT;
+                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    goalx = gx_w;
+                    goaly = gy_w;
+
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+                    if (thetaToGoal < 0.0f)
+                        thetaToGoal += 2 * M_PI;
+                    theta = thetaToGoal - robot_a;
+                    std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
+                    JustinaNavigation::moveDistAngle(0, theta, 2000);
+                    dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                    JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                }
+                else
+                    state = SM_OFFER_EMPTY_SEAT;
+                break;
+
+            case SM_OFFER_EMPTY_SEAT:
+                std::cout << test << ".-> State SM_OFFER_EMPTY_SEAT: Offer empty seat" << std::endl;
+                ss.str("");
+                ss << names[names.size() - 1] << ", you can sit in this place, please" << std::endl;
+                JustinaHRI::waitAfterSay("", 7000, MIN_DELAY_AFTER_SAY);
+                // TODO PUT THE ARM POINTIN
                 state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
             
