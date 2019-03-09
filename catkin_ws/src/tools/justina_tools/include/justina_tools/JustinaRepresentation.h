@@ -43,7 +43,7 @@ class JustinaRepresentation {
         static ros::ServiceClient * cliStrQueryKDB;
         static ros::ServiceClient * cliInitKDB;
 
-        static bool strQueryKDB(std::string query, std::string &result, int timeout);
+        //static bool strQueryKDB(std::string query, std::string &result, int timeout);
 
     public:
 
@@ -80,6 +80,7 @@ class JustinaRepresentation {
         static bool getSemanticMap(std::vector<std::vector<std::string> > &semanticMap, int timeout);
         static bool isObjectInDefaultLocation(std::string name, int id, std::string location, bool &isInDefaultLocation, int timeout);
         static bool getOriginAndGoalFromObject(std::string name, int id, std::string &origin, std::string &destiny, int timeout);
+        static bool strQueryKDB(std::string query, std::string &result, int timeout);
 
 };
 
