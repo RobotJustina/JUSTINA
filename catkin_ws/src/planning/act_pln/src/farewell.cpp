@@ -140,6 +140,13 @@ int main(int argc, char** argv)
                 std::cout << "Farewell Test...->SM_WAIT_FOR_INIT_COMMAND" << std::endl;
 				if(JustinaHRI::waitForSpecificSentence("justina start", timeoutspeech)){
                     JustinaHRI::enableSpeechRecognized(false);
+                    JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
+                    ros::Duration(1.5).sleep();
+                    JustinaHRI::say("please close the umbrella and put in my gripper");
+                    ros::Duration(1.5).sleep();
+                    JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
+                    withLeftArm = true;
+                    ros::Duration(1.0).sleep();
                     JustinaVision::startSkeletonFinding();
                     nextState = SM_SEARCH_WAVING;
                 }else
@@ -240,12 +247,10 @@ int main(int argc, char** argv)
                 JustinaHRI::say(ss.str());
         		ros::Duration(1.0).sleep();
 
-                if(numberGuest==2){
-                    JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				    ros::Duration(1.0).sleep();
-                    JustinaManip::laGoTo("navigation", 3000);
-                    JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-                }
+                JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				ros::Duration(1.0).sleep();
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
 
                 nextState = SM_GoCoatRack;
                 break;
@@ -332,53 +337,41 @@ int main(int argc, char** argv)
                 break;
 
             case SM_CLOSE_TO_TAXI_DRIVER:
-                /*std::cout << "Farewell Test...-> SM_CLOSE_TAXI_DRIVER" << std::endl;
-                JustinaHRI::say("I am going to guide you to the taxi");
-                ss.str("");
-                ss << "taxi_" << numberTaxi;
-                JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
-                std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
-                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 180000);
-                reachedGoal = true;
-                
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
-
-                if(reachedGoal)
-                    JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
-
-                JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-
-                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));*/
                  
                 JustinaHRI::waitAfterSay("Hello Taxi driver, my name is Justina, I came here with a guest that want to go home", 12000);
                 ros::Duration(1.0).sleep();
-                ss.str("");
-                ss << "Good bye " << idGuest;
-                JustinaHRI::say(ss.str());
-                ros::Duration(1.0).sleep();
 
                 if(numberGuest<maxNumberGuest){
-                    JustinaHRI::say("Hey Taxi driver someone else are waiting for me inside, could you please lend me your umbrella");
+                    JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
                     ros::Duration(1.5).sleep();
-                    JustinaHRI::say("I will be back with a new guest and your umbrella");
-                    ros::Duration(1.0).sleep();
-                    JustinaHRI::say("please put the umbrella in my gripper");
-                    ros::Duration(1.3).sleep();
-                    JustinaTasks::detectObjectInGripper("bag", true, 7000);
+                    JustinaHRI::say("please close the umbrella and put in my gripper");
+                    ros::Duration(1.5).sleep();
+                    JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
                     withLeftArm = true;
                     ros::Duration(1.0).sleep();
+                    ss.str("");
+                    ss << "Good bye " << idGuest;
+                    JustinaHRI::say(ss.str());
+                    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
+                    ros::Duration(1.5).sleep();
                     nextState = SM_RETURN_INITIAL_POINT;
                 }
 
                 else{
-                    JustinaHRI::say("Hey Taxi driver, there is nobody else who wants to leave");
+                    JustinaHRI::say("Hey guest i hope you have a nice trip, could you please lend me the umbrella");
                     ros::Duration(1.5).sleep();
-                    JustinaHRI::say("thank you for your umbrella and your pattience");
+                    JustinaHRI::say("please close the umbrella and put in my gripper");
+                    ros::Duration(1.5).sleep();
+                    JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
+                    withLeftArm = true;
                     ros::Duration(1.0).sleep();
-                    JustinaHRI::say("please drive carefully, good bye");
+                    ss.str("");
+                    ss << "Good bye " << idGuest;
+                    JustinaHRI::say(ss.str());
                     ros::Duration(1.0).sleep();
+                    JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
+                    ros::Duration(1.5).sleep();
                     nextState = SM_FINAL_STATE;
                 }
                 

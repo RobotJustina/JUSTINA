@@ -14,11 +14,11 @@
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-objects-on-location ?place) (duration ?t))
 	=>
 	(bind ?command (str-cat "" ?place "" ))
-        (assert (send-blackboard ACT-PLN objects-on-location ?command ?t 4))
+        (assert (send-blackboard ACT-PLN objects_on_location ?command ?t 4))
 )
 
 (defrule exe-plan-identified-objects
-	?f <- (received ?sender command objects-on-location ?param 1)
+	?f <- (received ?sender command objects_on_location ?param 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-objects-on-location ?place))
 	=>
 	(retract ?f)
@@ -143,11 +143,11 @@
 	?f <- (object_counter ?num_obj)
 	?f1 <- (order ?ord)
 	;?f2 <- (drink_order ?obj ?person ?num)
-	?f3 <- (order_counter ?oc)
+	?f3 <- (order_counter ?oc&:(neq ?oc ?orders))
 	=>
-	(retract ?f ?f1 ?f3)
+	(retract ?f ?f1)
 	(assert (order _))
-	(assert (deliver_order ?ord))
+	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
 	;(assert (deliver_order ?obj ?person ?num))
 	(assert (send-blackboard ACT-PLN get_order ?command ?t 4))
@@ -159,11 +159,13 @@
 	?f1 <- (object_counter ?n)
 	?f2 <- (order ?ord)
 	;?f3 <- (drink_order ?obj ?person ?num)
+	?f3 <- (item (name people))
 	=>
-	(retract ?f ?f1 ?f2 ?f3)
+	(retract ?f ?f1 ?f2)
 	(assert (order _))
-	(assert (deliver_order ?ord))
+	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
+	(modify ?f3 (status deliver_order))
 	;(assert (deliver_order ?obj ?person ?num))
 	(assert (send-blackboard ACT-PLN get_order ?command ?t 4))
 )
@@ -179,7 +181,7 @@
 
 (defrule exe-plan-deliver-order
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place)(duration ?t))
-	?f1 <- (deliver_order ?ord)
+	?f1 <- (d_order ?ord)
 	=>
 	(bind ?command(str-cat "" ?ord " " ?place ""))
 	(assert (send-blackboard ACT-PLN deliver_order ?command ?t 4))
@@ -188,8 +190,9 @@
 (defrule exe-plan-delivered-order
 	?f <- (received ?sender command deliver_order ?ord ?place 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place))
+	?f2 <- (d_order ?o)
 	=>
-	(retract ?f)
+	(retract ?f ?f2)
 	(modify ?f1 (status accomplished))
 )
 
