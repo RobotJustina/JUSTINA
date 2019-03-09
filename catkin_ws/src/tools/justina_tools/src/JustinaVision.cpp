@@ -382,6 +382,19 @@ int JustinaVision::getLastTrainingResult()
     JustinaVision::lastTrainingResult = 0;
     return lastTrainingResult;
 }
+    
+bool JustinaVision::waitForTrainingFace(bool timeout){
+    boost::posix_time::ptime prev;
+	boost::posix_time::ptime curr = boost::posix_time::second_clock::local_time();
+    prev = curr;
+    bool trainFace = false;
+    while((curr - prev).total_milliseconds() < timeout && !trainFace){
+        if(JustinaVision::getLastTrainingResult() > 0)
+            trainFace = true;
+        curr = boost::posix_time::second_clock::local_time();
+    }
+    return trainFace;
+}
 
 vision_msgs::VisionFaceObjects JustinaVision::getRecogFromPano(sensor_msgs::Image image){
     vision_msgs::VisionFaceObjects faces;

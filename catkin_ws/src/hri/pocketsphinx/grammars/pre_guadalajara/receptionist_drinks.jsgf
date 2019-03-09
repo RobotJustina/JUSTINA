@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar restaurant;
+public <command> = (<recepFavoriteDrink>);
+<recepFavoriteDrink> = (MY FAVORITE DRINK IS) (TEA|BEER|COKE|WATER|MILK);

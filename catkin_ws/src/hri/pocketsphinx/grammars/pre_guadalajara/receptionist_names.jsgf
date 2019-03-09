@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar restaurant;
+public <command> = (<recepName>);
+<recepName> = (MY NAME IS|I AM| I'M) (JAMIE|MORGAN|MICHAEL|TAYLOR|TRACY|JORDAN|HAYDEN|PEYTON|ROBIN|ALEX);
