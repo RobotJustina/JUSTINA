@@ -69,12 +69,12 @@ class JustinaTasks
         static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
         static bool waitRecognizedSpecificGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, std::string typeGesture, float timeout);
         static bool waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &skeletons, POSE pose, float timeout);
-        static bool waitRecognizedYolo(std::string id, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout);
+        static bool waitRecognizedYolo(std::vector<std::string> ids, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "");
         static bool findSkeletonPerson(POSE pose = NONE, std::string location = "");
-        static bool turnAndRecognizeYolo(std::string id, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location);
-        static bool findYolo(std::string id, POSE pose = NONE, std::string location = "");
+        static bool turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location);
+        static bool findYolo(std::vector<std::string> ids, POSE pose = NONE, std::string location = "");
         static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location, bool fWaitSpecificGesture);
         static bool findGesturePerson(std::string gesture, std::string location = "");
         static bool tellGenderPerson(std::string &gender, std::string location = "");
