@@ -266,7 +266,12 @@ int main(int argc, char** argv)
 						std::cout << "Farewell...->moving to the initial point" << std::endl;
 						nextState = SM_SEARCH_WAVING;
 					}
+				}
+                else {
+					nextState = SM_SEARCH_WAVING;
 				} 
+                JustinaVision::startSkeletonFinding();
+
                 break;
             
             case SM_GoCoatRack:
@@ -306,7 +311,7 @@ int main(int argc, char** argv)
             case SM_SearchTaxiDriver:
                 std::cout << "Farewell Test...-> SM_SearchTaxiDriver" << std::endl;
                 JustinaHRI::waitAfterSay("I am looking for the taxi driver", 3500, minDelayAfterSay);
-                findUmbrella = JustinaTasks::findYolo("umbrella");
+                findUmbrella = JustinaTasks::findAndGuideYolo("umbrella");
                 //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
                 if(findUmbrella){
                     //JustinaVision::stopSkeletonFinding();
@@ -390,6 +395,7 @@ int main(int argc, char** argv)
 			    }
                 nextState= SM_SEARCH_WAVING;
                 numberGuest++;
+                JustinaVision::startSkeletonFinding();
                 break;
 
             case SM_FINAL_STATE:

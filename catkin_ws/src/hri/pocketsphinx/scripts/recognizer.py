@@ -36,19 +36,26 @@ class recognizer(object):
     def callbackSetSearchAndTime(self, data):
         print "Set SEARCH TYPE and TIME of recognition"
         global reco_time
-        self.decoder.end_utt()
+        if self.enable_mic:
+            self.decoder.end_utt()
         self.decoder.set_search(data.search_id)
         reco_time = rospy.Duration.from_sec(data.recognitionTime)
         self.decoder.start_utt()
+        self.enable_mic = True
 
 
     def callbackSetMic(self, data):
+        if self.enable_mic == data.data:
+            print "MIC NO CHANGE"
+            return
         if data.data:
             print "Enable MIC"
             self.enable_mic = True 
+            self.decoder.start_utt()
         else:
             print "Disable MIC"
             self.enable_mic = False 
+            self.decoder.end_utt()
 
     def __init__(self):
 
