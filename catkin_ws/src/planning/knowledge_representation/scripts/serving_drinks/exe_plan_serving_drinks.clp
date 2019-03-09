@@ -178,7 +178,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;deliver order
 
 (defrule exe-plan-deliver-order
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver-order ?place)(duration ?t))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place)(duration ?t))
 	?f1 <- (deliver_order ?ord)
 	=>
 	(bind ?command(str-cat "" ?ord " " ?place ""))
@@ -187,7 +187,7 @@
 
 (defrule exe-plan-delivered-order
 	?f <- (received ?sender command deliver_order ?ord ?place 1)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver-order))
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place))
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))

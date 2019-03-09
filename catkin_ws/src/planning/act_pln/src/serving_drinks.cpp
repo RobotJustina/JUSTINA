@@ -21,6 +21,7 @@
 #define TIMEOUT_MEMORIZING 3000
 
 using namespace boost::algorithm;
+std::vector<std::string> idsPerson;
 
 enum SMState {
 	SM_INIT,
@@ -62,8 +63,6 @@ ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
 std::string cat_grammar= "eegpsr_montreal.xml";
-
-std::vector<std::string> idsPerson;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -2605,9 +2604,11 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
 	responseMsg.id = msg->id;
 	
     std::vector<std::string> tokens;
+    std::vector<std::string> tokens1;
 	std::string str = responseMsg.params;
-	boost::replace_all(str, "_", " ");
-	split(tokens, str, is_any_of(" "));
+	split(tokens1, str, is_any_of(" "));
+	boost::replace_all(tokens1[0], "_", " ");
+	split(tokens, tokens1[0], is_any_of(" "));
 	std::stringstream ss;
     
     std::string name;
@@ -2618,11 +2619,11 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     bool armFlag = false;
 
     while(!success && attemps<4){
-        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[tokens.size()-1], 120000);
+        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size()-1], 120000);
         attemps++;
     }
     success = false;
-   for (int i = 1; i < tokens.size()-1; i++){
+   for (int i = 1; i < tokens.size(); i++){
        ss.str("");
        ss << "(assert (get_person " << tokens[i] << "))";
        JustinaRepresentation::strQueryKDB(ss.str(), name, 1000);
@@ -3116,7 +3117,6 @@ int main(int argc, char **argv) {
 	
 	JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
-    idsPerson.push_back("person");
 
 	/*if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
@@ -3128,6 +3128,7 @@ int main(int argc, char **argv) {
 		std::cout << "Grammar: " << cat_grammar << std::endl;}*/
     fplan = false;
     maxTime = 60.0; 
+    idsPerson.push_back("person");
 
 	while (ros::ok()) {
 
