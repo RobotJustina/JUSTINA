@@ -3,7 +3,7 @@
 #include<vector>
 
 #define OBJETIVE_ANGLE    1.7    // 1.7 rad
-#define CONSTANT_VELOCITY 0.13 // 0.613  rad/s
+#define CONSTANT_VELOCITY 0.3 // 0.613  rad/s
 #define DYNAMIXEL_MAX_VEL 12.259 // 12.259 rad/s  
 
 
@@ -57,7 +57,7 @@ int main(int argc, char **argv){
 
 
 
-		//Seting velocities for dynamixels
+		//Seting velocities for dynami xels
     	for(int i=7; i<14; i++){
     		if(i==10)
     			msg.data.push_back(goalSpeeds);
