@@ -17,8 +17,9 @@
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/dark_justina.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
 	<include file="$(find surge_et_ambula)/launch/dark_justina_hardware.launch">
-		<arg name="simul" value="false"/>
+		<arg name="simul" value="true"/>
 		<arg name="simul_pcl" value="true"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
 	</include>	
