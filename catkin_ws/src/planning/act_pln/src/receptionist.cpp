@@ -554,6 +554,7 @@ int main(int argc, char **argv){
                 ss << names[names.size() - 1] << " he is John" << std::endl;
                 JustinaHRI::waitAfterSay(ss.str(), 5000, MIN_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, -theta, 2000);
+                findSeatCount = 0;
                 state = SM_FIND_EMPTY_SEAT;
                 break;
 
