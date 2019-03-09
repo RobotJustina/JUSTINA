@@ -147,7 +147,7 @@
 	=>
 	(retract ?f ?f1)
 	(assert (order _))
-	(assert (deliver_order ?ord))
+	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
 	;(assert (deliver_order ?obj ?person ?num))
 	(assert (send-blackboard ACT-PLN get_order ?command ?t 4))
@@ -163,7 +163,7 @@
 	=>
 	(retract ?f ?f1 ?f2)
 	(assert (order _))
-	(assert (deliver_order ?ord))
+	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
 	(modify ?f3 (status deliver_order))
 	;(assert (deliver_order ?obj ?person ?num))
@@ -181,7 +181,7 @@
 
 (defrule exe-plan-deliver-order
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place)(duration ?t))
-	?f1 <- (deliver_order ?ord)
+	?f1 <- (d_order ?ord)
 	=>
 	(bind ?command(str-cat "" ?ord " " ?place ""))
 	(assert (send-blackboard ACT-PLN deliver_order ?command ?t 4))
@@ -190,8 +190,9 @@
 (defrule exe-plan-delivered-order
 	?f <- (received ?sender command deliver_order ?ord ?place 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions deliver_order ?place))
+	?f2 <- (d_order ?o)
 	=>
-	(retract ?f)
+	(retract ?f ?f2)
 	(modify ?f1 (status accomplished))
 )
 

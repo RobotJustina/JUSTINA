@@ -760,12 +760,10 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
         ss << "Ok " << name << " I will bring you a " << drink << " from the bar";
         JustinaHRI::waitAfterSay(ss.str(),5000);
 
-	JustinaNavigation::moveDistAngle(0, 1.57, 10000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
-
     ss.str("");
     ss << "(assert (give-drink-to-person " << drink << " " << name << "))";
     JustinaRepresentation::sendAndRunCLIPS(ss.str());
+    JustinaHRI::enableSpeechRecognized(false);
 
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
@@ -804,6 +802,9 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
             curr = boost::posix_time::second_clock::local_time();
         }
     }
+	
+    JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 	
     responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
