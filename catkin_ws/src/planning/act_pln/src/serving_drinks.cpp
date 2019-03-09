@@ -731,7 +731,7 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
         drink_conf = false;
         ss.str("");
 	prev_drink = drink;
-        ss << "Well a " << drink << " for you";
+        ss << "Ok a " << drink << " for you";
         JustinaHRI::waitAfterSay(ss.str(),5000);
     
     while(!drink_conf && count < 3){
@@ -789,19 +789,22 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
     
     boost::posix_time::ptime prev;
 	boost::posix_time::ptime curr;
+	
+    JustinaManip::hdGoTo(0.0, 0.0, 5000);
     
-    JustinaHRI::waitAfterSay("please not move, and look at me", 6000);
+    JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaVision::faceTrain(tokens[0], 4);
     curr = boost::posix_time::second_clock::local_time();
     prev = curr;
     
     while(!finish_train){
         if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
-            if(JustinaVision::getLastTrainingResult() == 0)
+            if(JustinaVision::getLastTrainingResult() > 0)
                 finish_train = true;
             curr = boost::posix_time::second_clock::local_time();
         }
     }
+    JustinaHRI::waitAfterSay("thank you", 6000);
 	
     JustinaNavigation::moveDistAngle(0, 1.57, 10000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
