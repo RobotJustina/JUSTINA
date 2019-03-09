@@ -778,7 +778,8 @@ void callbackCmdFindObject(
 
 		ss.str("");
 		if (tokens[0] == "person") {
-			success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
+			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
+            success = JustinaTasks::findYolo("person");
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
@@ -1847,7 +1848,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
 
         JustinaHRI::waitForSpeechRecognized(lastReco,10000);
         responseMsg.params = "conf";
-        if(lastReco == "robot yes"){
+        if(lastReco == "robot yes" || lastReco == "justina yes"){
             responseMsg.successful = true;
         }
         else{
@@ -2451,7 +2452,7 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
                 JustinaHRI::enableSpeechRecognized(true);
 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
-                if(lastReco == "robot yes")
+                if(lastReco == "robot yes" || lastReco == "justina yes")
                     drink_conf = true;
                 count++;
         }
@@ -2478,7 +2479,7 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
                 JustinaHRI::enableSpeechRecognized(true);
                 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
-                if(lastReco == "robot yes")
+                if(lastReco == "robot yes" || lastReco == "justina yes")
                     drink_conf = true;
                 count++;
         }
@@ -2562,7 +2563,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         attemps++;
     }
 
-   for (int i = 0; i < tokens.size()-1; i++){
+   for (int i = 1; i < tokens.size()-1; i++){
         ss.str("");
         ss << "Barman please put the " << tokens[i] << " in my gripper";
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
@@ -2583,6 +2584,67 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
         }
 
+   } 
+	
+    responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command deliver object ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	boost::replace_all(str, "_", " ");
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    
+    std::string name;
+    std::string arm;
+
+    int attemps = 0;
+	bool success = false;
+    bool armFlag = false;
+
+    while(!success && attemps<4){
+        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[tokens.size()-1], 120000);
+        attemps++;
+    }
+    success = false;
+   for (int i = 1; i < tokens.size()-1; i++){
+       ss.str("");
+       ss << "(assert (get_person " << tokens[i] << "))";
+       JustinaRepresentation::strQueryKDB(ss.str(), name, 1000);
+       if(name != "None"){
+            ss.str("");
+            ss << name << " please look at me, I try to find you";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            while(!success && attemps <4){
+    			success = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE, false, tokens[tokens.size()-1]);
+                attemps++;
+            }
+            if(success){
+                ss.str("");
+                ss << "(assert (get_arm " << tokens[i] << "))" ;
+                JustinaRepresentation::strQueryKDB(ss.str(), arm, 1000);
+                armFlag = (arm == "true") ? true : false;
+		        success = JustinaTasks::dropObject(tokens[i], armFlag, 30000);
+            }
+            else{
+                ss.str("");
+                ss << "I am sorry, I cant find you " << name;
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            }
+       }
    } 
 	
     responseMsg.successful = 1;
@@ -3047,6 +3109,7 @@ int main(int argc, char **argv) {
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
+    JustinaHRI::usePocketSphinx = true;
 	
 	JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
