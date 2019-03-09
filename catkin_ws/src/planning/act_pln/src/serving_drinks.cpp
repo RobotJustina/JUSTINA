@@ -63,6 +63,8 @@ bool fplan = false;
 double maxTime = 180;
 std::string cat_grammar= "eegpsr_montreal.xml";
 
+std::vector<std::string> idsPerson;
+
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
 ros::ServiceClient srvCltWaitConfirmation;
@@ -779,7 +781,7 @@ void callbackCmdFindObject(
 		ss.str("");
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
-            success = JustinaTasks::findYolo("person");
+            success = JustinaTasks::findYolo(idsPerson);
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
@@ -3113,6 +3115,7 @@ int main(int argc, char **argv) {
 	
 	JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
+    idsPerson.push_back("person");
 
 	/*if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;

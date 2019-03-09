@@ -5757,7 +5757,7 @@ bool JustinaTasks::followVisitor(){
 }
 
 
-bool JustinaTasks::findAndGuideYolo(std::string id, POSE pose, std::string location){
+bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std::string location){
 	std::stringstream ss;
 	std::string gestureSpeech;
     ros::Time time;
@@ -5767,7 +5767,7 @@ bool JustinaTasks::findAndGuideYolo(std::string id, POSE pose, std::string locat
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 
