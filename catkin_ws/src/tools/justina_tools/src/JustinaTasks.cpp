@@ -5749,3 +5749,56 @@ bool JustinaTasks::followVisitor(){
     }
     return success;
 }
+
+
+bool JustinaTasks::findAndGuideYolo(std::string id, POSE pose, std::string location){
+	std::stringstream ss;
+	std::string gestureSpeech;
+    ros::Time time;
+	float robot_x, robot_y, robot_a, goalx, goaly, goala;
+
+    JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
+    	
+	Eigen::Vector3d centroid;
+	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
+	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
+	std::cout << std::endl;
+
+	if (!recog)
+		return false;
+	
+	JustinaHRI::waitAfterSay("I have found the taxi driver", 12000);	
+
+    float cx, cy, cz;
+	cx = centroid(0, 0);
+	cy = centroid(1, 0);
+	cz = centroid(2, 0);
+	float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
+	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+
+	JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+    JustinaKnowledge::addUpdateKnownLoc("taxi", cx, cy, atan2(cy - robot_y, cx - robot_x) - robot_a);
+    JustinaKnowledge::getKnownLocation("taxi", goalx, goaly, goala);
+	std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly << "," << goala << std::endl;
+
+	tf::Vector3 wgc(cx, cy, cz);
+
+	//int waitToClose = (int) (dis * 10000);
+	//std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+	//std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+
+	//closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
+
+
+	JustinaTasks::guideAPerson("taxi", 50000000);
+
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	float currx, curry, currtheta;
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
+    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+
+	return true;
+}
