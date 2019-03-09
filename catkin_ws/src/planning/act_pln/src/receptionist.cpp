@@ -230,6 +230,8 @@ int main(int argc, char **argv){
                 else
                     JustinaHRI::waitAfterSay("Please tell me, what is your favorite drink", 10000, MAX_DELAY_AFTER_SAY);
                 JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
+                attemptsConfirmation = 0;
+                attemptsWaitConfirmation = 0;
                 state = SM_WAIT_FOR_PRESENTATION;
                 break;
 
@@ -259,8 +261,8 @@ int main(int argc, char **argv){
                                     // TODO load grammar to robot yes
                                     // JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);
                                     JustinaHRI::enableSpeechRecognized(true);
-                                    attemptsConfirmation = 0;
-                                    attemptsWaitConfirmation = 0;
+                                    //attemptsConfirmation = 0;
+                                    //attemptsWaitConfirmation = 0;
                                     state = SM_PRESENTATION_CONFIRM;
                                     break;
                                 }
@@ -285,8 +287,8 @@ int main(int argc, char **argv){
                                     // TODO load grammar to robot yes
                                     // JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);
                                     JustinaHRI::enableSpeechRecognized(true);
-                                    attemptsConfirmation = 0;
-                                    attemptsWaitConfirmation = 0;
+                                    //attemptsConfirmation = 0;
+                                    //attemptsWaitConfirmation = 0;
                                     state = SM_PRESENTATION_CONFIRM;
                                     break;
                                 }
@@ -345,6 +347,7 @@ int main(int argc, char **argv){
                         attemptsSpeechReco = 0;
                         attemptsSpeechInt = 0;
                         if(recogName){
+                            ss2.str("");
                             if(lastName.compare("unknown"))
                                 ss2 << "Sorry I did not understand you, you are an unknown person ";
                             else
@@ -561,7 +564,7 @@ int main(int argc, char **argv){
             case SM_FIND_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
-                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "living_room");
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "living_room");
                     if(!findSeat){
                         findSeatCount++;
                         break;
@@ -589,8 +592,8 @@ int main(int argc, char **argv){
             case SM_OFFER_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_OFFER_EMPTY_SEAT: Offer empty seat" << std::endl;
                 ss.str("");
-                ss << names[names.size() - 1] << ", you can sit in this place, please" << std::endl;
-                JustinaHRI::waitAfterSay("", 7000, MIN_DELAY_AFTER_SAY);
+                ss << names[names.size() - 1] << ", could you sit in this place, please" << std::endl;
+                JustinaHRI::waitAfterSay(ss.str(), 7000, MIN_DELAY_AFTER_SAY);
                 // TODO PUT THE ARM POINTIN
                 state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
