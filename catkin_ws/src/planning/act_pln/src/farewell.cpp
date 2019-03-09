@@ -247,12 +247,10 @@ int main(int argc, char** argv)
                 JustinaHRI::say(ss.str());
         		ros::Duration(1.0).sleep();
 
-                if(numberGuest==2){
-                    JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				    ros::Duration(1.0).sleep();
-                    JustinaManip::laGoTo("navigation", 3000);
-                    JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-                }
+                JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				ros::Duration(1.0).sleep();
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
 
                 nextState = SM_GoCoatRack;
                 break;
