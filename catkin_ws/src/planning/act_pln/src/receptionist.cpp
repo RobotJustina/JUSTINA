@@ -132,9 +132,6 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
-    JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);
-    JustinaHRI::loadGrammarSpeechRecognized(grammarDrinksID, GRAMMAR_POCKET_DRINKS);
 
     while(ros::ok() && !success){
 
@@ -142,6 +139,15 @@ int main(int argc, char **argv){
             case SM_INIT:
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
                 JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::loadGrammarSpeechRecognized(grammarDrinksID, GRAMMAR_POCKET_DRINKS);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
@@ -609,12 +615,12 @@ int main(int argc, char **argv){
             case SM_OFFER_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_OFFER_EMPTY_SEAT: Offer empty seat" << std::endl;
                 if(rand() % 2 == 0){
-                    JustinaManip::laMove("navigation", 4000);
-                    JustinaManip::laMove("offer_seat", 4000);
+                    JustinaManip::laGoTo("navigation", 5000);
+                    JustinaManip::laGoTo("offer_seat", 5000);
                 }
                 else{
-                    JustinaManip::raMove("navigation", 4000);
-                    JustinaManip::raMove("offer_seat", 4000);
+                    JustinaManip::raGoTo("navigation", 5000);
+                    JustinaManip::raGoTo("offer_seat", 5000);
                 }
                 ss.str("");
                 ss << names[names.size() - 1] << ", could you sit in this place, please" << std::endl;
