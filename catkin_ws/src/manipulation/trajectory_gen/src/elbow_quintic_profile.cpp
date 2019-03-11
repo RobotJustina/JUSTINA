@@ -1,4 +1,4 @@
-//Program that calculates the trajectory for dynamixels using a triangular profile
+//Program that calculates the trajectory for dynamixels using a quintic profile
 #include<ros/ros.h>
 #include<std_msgs/Float32MultiArray.h>
 #include<vector>
@@ -12,8 +12,7 @@ using namespace ros;
 
 float current_pos = 0;
 float current_time = 0;
-int record=0;
-float maximum_velocity = 0;
+int record = 0;
 
 float constant_velocity = CONSTANT_VELOCITY * DYNAMIXEL_MAX_VEL; 
 float total_time = abs(OBJETIVE_ANGLE/constant_velocity);
@@ -24,8 +23,8 @@ float speeds_record();
 
 
 int main(int argc, char **argv){
-	cout<<"Initializing elbow_triangular_profile node..."<<endl;
-	init(argc, argv, "elbow_triangular_profile");
+	cout<<"Initializing elbow_quintic_profile node..."<<endl;
+	init(argc, argv, "elbow_quintic_profile");
 	NodeHandle node;
   
 
@@ -70,7 +69,7 @@ int main(int argc, char **argv){
         record++;
     	loop_rate.sleep();
 
-		if(record > 53)
+		if(record > num_velocities)
 			return 0;
 
     }//From while ok()
@@ -80,12 +79,7 @@ int main(int argc, char **argv){
 
 
 float speeds_record(){
-    for(int i=0 ; i <= num_velocities ; i++){
-        maximum_velocity = abs(2*OBJETIVE_ANGLE/total_time);
-
-        if(0.02 * i < total_time/2)
-            goalSpeeds[i] = (2 * maximum_velocity * 0.02 * i / total_time) / DYNAMIXEL_MAX_VEL;
-        else
-            goalSpeeds[i] = (-(2 * maximum_velocity * 0.02 * i) / total_time + 2 * maximum_velocity) / DYNAMIXEL_MAX_VEL;//*/
-    }
+    for(int i=0 ; i <= num_velocities ; i++)
+            goalSpeeds[i] = (OBJETIVE_ANGLE * (30*pow(0.02*i, 2)/pow(total_time,3)  -  
+                60*pow(0.02*i,3)/pow(total_time,4)  +  30*pow(0.02*i,4)/pow(total_time,5)))/DYNAMIXEL_MAX_VEL;  
 }

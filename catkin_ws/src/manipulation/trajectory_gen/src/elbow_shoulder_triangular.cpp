@@ -10,10 +10,10 @@
 #define DYNAMIXEL_MAX_VEL 12.259 // 12.259 rad/s  
 
 #define ELBOW_OBJETIVE_ANGLE     1.7    // 1.7 rad
-#define ELBOW_CONSTANT_VELOCITY  0.13   // 0.613  rad/s
+#define ELBOW_CONSTANT_VELOCITY  0.13   // 0.13  
 
-#define SHOULDER_OBJETIVE_ANGLE      -1.0
-#define SHOULDER_CONSTANT_VELOCITY    0.06
+#define SHOULDER_OBJETIVE_ANGLE     -1.0  //1.0
+#define SHOULDER_CONSTANT_VELOCITY  0.1 //0.06 
 
 using namespace std;
 using namespace ros;
@@ -23,7 +23,7 @@ float elbow_goalSpeeds = 0;
 float elbow_maximum_velocity = 0;
 
 float elbow_constant_velocity = ELBOW_CONSTANT_VELOCITY * DYNAMIXEL_MAX_VEL; 
-float elbow_total_time = ELBOW_OBJETIVE_ANGLE/elbow_constant_velocity;
+float elbow_total_time = abs(ELBOW_OBJETIVE_ANGLE/elbow_constant_velocity);
 
 float shoulder_current_pos = 0;
 float shoulder_goalSpeeds = 0;
@@ -37,8 +37,8 @@ float current_time = 0;
 
 int main(int argc, char **argv){
 
-	cout<<"Initializing elbow_shoulder_profiles node..."<<endl;
-	init(argc, argv, "elbow_shoulder_profiles");
+	cout<<"Initializing elbow_shoulder_triangular node..."<<endl;
+	init(argc, argv, "elbow_shoulder_triangular");
 	NodeHandle node;
 
     Publisher pubGoalPos = node.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
@@ -52,7 +52,7 @@ int main(int argc, char **argv){
     while(ok()){
 		msg.data.clear();
 
-   	//Setting positions for dynamixels
+	   	//Setting positions for dynamixels
 	   	for(int i=0; i<7; i++){
 		    if(i == SHOULDER_ID)
 		    	msg.data.push_back(SHOULDER_OBJETIVE_ANGLE);
@@ -84,7 +84,7 @@ int main(int argc, char **argv){
 //    	shoulder_goalSpeeds = SHOULDER_CONSTANT_VELOCITY;
 
 		//---------------------------Triangular Profile------------------------		
-		elbow_maximum_velocity = 2 * ELBOW_OBJETIVE_ANGLE / elbow_total_time;
+		elbow_maximum_velocity = abs(2 * ELBOW_OBJETIVE_ANGLE / elbow_total_time);
 		shoulder_maximum_velocity = abs(2 * SHOULDER_OBJETIVE_ANGLE / shoulder_total_time);
 
 		if(current_time < elbow_total_time/2)
@@ -102,8 +102,8 @@ int main(int argc, char **argv){
 		if(shoulder_goalSpeeds <= 0)
 			shoulder_goalSpeeds = 0;
 
-    	elbow_current_pos += elbow_goalSpeeds * DYNAMIXEL_MAX_VEL * 0.02;
-    	shoulder_current_pos += (shoulder_goalSpeeds *DYNAMIXEL_MAX_VEL * 0.02) * (SHOULDER_OBJETIVE_ANGLE) /abs(SHOULDER_OBJETIVE_ANGLE) ;
+    	elbow_current_pos    += (elbow_goalSpeeds  *  DYNAMIXEL_MAX_VEL * 0.02) * (ELBOW_OBJETIVE_ANGLE)  /abs(ELBOW_OBJETIVE_ANGLE) ;
+    	shoulder_current_pos += (shoulder_goalSpeeds *DYNAMIXEL_MAX_VEL * 0.02) * (SHOULDER_OBJETIVE_ANGLE)/abs(SHOULDER_OBJETIVE_ANGLE);
 
 	    cout<<"Time: "<<current_time<<"\teSpeed: "<<elbow_goalSpeeds<<"\tePosition: "<<elbow_current_pos
 	    <<"\t|"<<"\tsSpeeds: "<<shoulder_goalSpeeds<<"\tsPosition: "<<shoulder_current_pos<<endl;
@@ -115,7 +115,7 @@ int main(int argc, char **argv){
 		current_time += 0.02;
     	loop_rate.sleep();
 
-		if(current_time >= 2)
+		if(current_time >= elbow_total_time && current_time >= shoulder_total_time)
 			return 0;
 
     }//From while ok()
