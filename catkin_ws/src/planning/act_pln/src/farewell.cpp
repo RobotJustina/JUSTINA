@@ -305,14 +305,9 @@ int main(int argc, char** argv)
             
                 JustinaTasks::guideAPerson("corridor", 50000000, 1.5);
                 
-                if(numberGuest<maxNumberGuest){
-                    JustinaHRI::say("wait here with me I am looking for the taxi driver");
-        		    ros::Duration(1.5).sleep();
-                    nextState = SM_SearchTaxiDriver;
-                }
-
-                else
-                    nextState = SM_CLOSE_TO_TAXI_DRIVER;
+                JustinaHRI::say("wait here with me I am looking for the taxi driver");
+        		ros::Duration(1.5).sleep();
+                nextState = SM_SearchTaxiDriver;
                 
                 break;
 
