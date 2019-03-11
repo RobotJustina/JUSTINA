@@ -383,14 +383,17 @@ int JustinaVision::getLastTrainingResult()
     return lastTrainingResult;
 }
     
-bool JustinaVision::waitForTrainingFace(bool timeout){
+bool JustinaVision::waitForTrainingFace(int timeout){
     boost::posix_time::ptime prev;
 	boost::posix_time::ptime curr = boost::posix_time::second_clock::local_time();
     prev = curr;
+    ros::Rate rate(30);
     bool trainFace = false;
     while((curr - prev).total_milliseconds() < timeout && !trainFace){
         if(JustinaVision::getLastTrainingResult() > 0)
             trainFace = true;
+        rate.sleep();
+        ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
     }
     return trainFace;

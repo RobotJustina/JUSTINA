@@ -164,7 +164,7 @@ public:
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
-    static bool waitForTrainingFace(bool timeout);
+    static bool waitForTrainingFace(int timeout);
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces();
     static vision_msgs::VisionFaceObjects getFaceRecognition(std::string id = "");
