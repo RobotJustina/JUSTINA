@@ -615,7 +615,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
 	command_response_pub.publish(responseMsg);
 }*/
 
-void callbackCmdObjectOnLocation(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command Find Objects on Location ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
@@ -647,7 +647,7 @@ void callbackCmdObjectOnLocation(const knowledge_msgs::PlanningCmdClips::ConstPt
 	}else{
 		for(int i = 0; i < recoObjForTake.size(); i++){
 			ss.str("");
-			ss << "(assert (update-object-on-location " << recoObjForTake[i].id << "1))";
+			ss << "(assert (update-object-on-location " << recoObjForTake[i].id << " 1))";
 			JustinaRepresentation::sendAndRunCLIPS(ss.str());
 		}
 	}
@@ -962,7 +962,7 @@ int main(int argc, char **argv) {
     ros::Subscriber subCmdTrainPerson = n.subscribe("/planning_clips/cmd_train_person", 1, callbackCmdTrainPerson);
     ros::Subscriber subCmdGetOrderObject = n.subscribe("/planning_clips/cmd_get_order_object", 1, callbackCmdGetOrderObject);
     ros::Subscriber subCmdDeliverOrder = n.subscribe("/planning_clips/cmd_deliver_order", 1, callbackCmdDeliverOrder);
-    ros::Subscriber subCmdObjectOnLocation = n.subscribe("/planning_clips/cmd_object_on_location", 1, callbackCmdObjectOnLocation);
+    ros::Subscriber subCmdObjectsOnLocation = n.subscribe("/planning_clips/cmd_objects_on_location", 1, callbackCmdObjectsOnLocation);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
     sendAndRunClips_pub = n.advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1);
