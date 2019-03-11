@@ -583,6 +583,13 @@ def deliver_order(cmd):
     pubCmdDeliverOrder.publish(request)
     return cmd._id
 
+def objects_on_location(cmd):
+    global pubCmdObjectsOnLocation 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdObjectsOnLocation.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -636,7 +643,8 @@ fmap = {
     'offer_drink':offer_drink,
     'train_person':train_person,
     'get_order':get_order,
-    'deliver_order':deliver_order
+    'deliver_order':deliver_order,
+    'objects_on_location':objects_on_location
 }
 
 def quit():
@@ -651,7 +659,7 @@ def main():
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
-    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder 
+    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -700,6 +708,7 @@ def main():
     pubCmdTrainPerson = rospy.Publisher('/planning_clips/cmd_train_person', PlanningCmdClips, queue_size=1)
     pubCmdGetOrder = rospy.Publisher('/planning_clips/cmd_get_order_object', PlanningCmdClips, queue_size=1)
     pubCmdDeliverOrder = rospy.Publisher('/planning_clips/cmd_deliver_order', PlanningCmdClips, queue_size=1)
+    pubCmdObjectsOnLocation = rospy.Publisher('/planning_clips/cmd_objects_on_location', PlanningCmdClips, queue_size=1)
     
     ###Topicos para el open challenge
     pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)
