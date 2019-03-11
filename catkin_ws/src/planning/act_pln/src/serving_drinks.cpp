@@ -798,10 +798,11 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
     prev = curr;
     
     while(!finish_train){
-        if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
-            if(JustinaVision::getLastTrainingResult() > 0)
+        if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
+        //if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
+            //if(JustinaVision::getLastTrainingResult() > 0)
                 finish_train = true;
-            curr = boost::posix_time::second_clock::local_time();
+            //curr = boost::posix_time::second_clock::local_time();
         }
     }
     JustinaHRI::waitAfterSay("thank you", 6000);
