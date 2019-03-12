@@ -649,6 +649,7 @@ void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstP
 			ss.str("");
 			ss << "(assert (update-object-on-location " << recoObjForTake[i].id << " 1))";
 			JustinaRepresentation::sendAndRunCLIPS(ss.str());
+	        boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 		}
 	}
 
@@ -687,9 +688,12 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 
     while(!drink_conf && count < 3){
         JustinaHRI::enableGrammarSpeechRecognized("order_drink", 2.0);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::waitAfterSay("tell me what drink do you want",5000);
         JustinaHRI::enableSpeechRecognized(true);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, drink))
                 std::cout << "last int: " << drink << std::endl;
@@ -703,15 +707,19 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		}
                 
                 JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(ss.str(),5000);
                 JustinaHRI::enableSpeechRecognized(true);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes" || lastReco == "justina yes"){
                     drink_conf = true;
 			if (alternative_drink){
-				
+			    ss.str("");
+                ss << "(assert (status-object-on-location " << drink << " 1))";    
 				JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
 				if (query != "on_the_bar"){
 					ss.str("");
@@ -736,18 +744,24 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     
     while(!drink_conf && count < 3){
         JustinaHRI::enableGrammarSpeechRecognized("people_names", 2.0);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::waitAfterSay("tell me what is your name please",5000);
         JustinaHRI::enableSpeechRecognized(true);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, name))
                 std::cout << "last int: " << name << std::endl;
                 ss.str("");
                 ss << "your name is " << name;
                 JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(ss.str(),5000);
                 JustinaHRI::enableSpeechRecognized(true);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes" || lastReco == "justina yes")
@@ -786,29 +800,23 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
     bool finish_train = false;
+    int count = 0;
     
-    boost::posix_time::ptime prev;
-	boost::posix_time::ptime curr;
-	
     JustinaManip::hdGoTo(0.0, 0.0, 5000);
     
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaVision::faceTrain(tokens[0], 4);
-    curr = boost::posix_time::second_clock::local_time();
-    prev = curr;
     
-    while(!finish_train){
+    while(!finish_train && count < 4){
         if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
-        //if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
-            //if(JustinaVision::getLastTrainingResult() > 0)
                 finish_train = true;
-            //curr = boost::posix_time::second_clock::local_time();
         }
+        count++;
     }
     JustinaHRI::waitAfterSay("thank you", 6000);
 	
-    JustinaNavigation::moveDistAngle(0, 1.57, 10000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+    //JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+	//boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 	
     responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
