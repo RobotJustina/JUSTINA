@@ -14,9 +14,9 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
-#define MAX_FIND_PERSON_COUNT 3
-#define MAX_FIND_PERSON_RESTART 3
-#define MAX_FIND_PERSON_ATTEMPTS 3
+#define MAX_FIND_PERSON_COUNT 1
+#define MAX_FIND_PERSON_RESTART 2
+#define MAX_FIND_PERSON_ATTEMPTS 2
 #define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
 #define MAX_DELAY_AFTER_SAY 300
@@ -154,16 +154,19 @@ int main(int argc, char **argv){
 
             case SM_NAVIGATE_TO_ENTRANCE_DOOR:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_ENTRANCE_DOOR: Navigate to the entrance door." << std::endl;
-                JustinaHRI::waitAfterSay("I will navigate to the entrance door", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("I will navigate to the entrance door", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("I will navigate to the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 if(!JustinaNavigation::getClose("entrance_door", 80000))
                     if(!JustinaNavigation::getClose("entrance_door", 80000))
-                JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("I have reached the entrance door", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 state = SM_SAY_OPEN_DOOR;
                 break;
 
             case SM_SAY_OPEN_DOOR:
                 std::cout << test << ".-> State SM_SAY_OPEN_DOOR: Saying open the door." << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("Human, can you open the door please", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
                 state = SM_WAIT_FOR_OPEN_DOOR;
                 break;
 
@@ -172,7 +175,8 @@ int main(int argc, char **argv){
                 opened = JustinaNavigation::doorIsOpen(0.9, 2000);
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
-                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
+                    //JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
                     //JustinaVision::enableDetectObjsYOLO(true);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
@@ -221,7 +225,8 @@ int main(int argc, char **argv){
                             findPersonCount = 0;
                             findPersonRestart = 0;
                             findPersonAttemps++;
-                            JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
+                            //JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
                         }
                         else
                             findPersonRestart++;
@@ -578,11 +583,13 @@ int main(int argc, char **argv){
             case SM_INTRODUCING:
                 std::cout << test << ".-> State SM_INTRODUCING: Introducing person to Jhon." << std::endl;
                 ss.str("");
-                ss << "John you have a visitor, your name is " << names[names.size() - 1] << " and your favorite drink is " << drinks[drinks.size() - 1];
-                JustinaHRI::waitAfterSay(ss.str(), 8000, MIN_DELAY_AFTER_SAY);
+                ss << "John you have a visitor, his name is " << names[names.size() - 1] << " and his favorite drink is " << drinks[drinks.size() - 1];
+                JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay(ss.str(), 8000, MIN_DELAY_AFTER_SAY);
                 ss.str("");
                 ss << names[names.size() - 1] << " he is John" << std::endl;
-                JustinaHRI::waitAfterSay(ss.str(), 5000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay(ss.str(), 5000, MIN_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, -theta, 3000);
                 findSeatCount = 0;
                 state = SM_FIND_EMPTY_SEAT;
