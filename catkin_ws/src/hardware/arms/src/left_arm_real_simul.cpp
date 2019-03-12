@@ -171,7 +171,7 @@ int main(int argc, char ** argv){
     ros::Rate rate(50);
 
     std::vector<int> ids;
-    for(int i = 0; i < 9; i++)
+    for(int i = 0; i < 7; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
     if(!simul){
