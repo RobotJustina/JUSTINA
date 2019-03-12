@@ -293,9 +293,9 @@ add_executable( carry_my_luggage
 #	src/visit_my_home_test.cpp
 #)
 
-#add_executable(welcoming_visitor_test
-#	src/welcoming_visitor_test.cpp
-#)
+add_executable(welcoming_visitor_test
+	src/welcoming_visitor_test.cpp
+)
 
 #add_executable(catering_comfort_test
 #	src/catering_comfort_test.cpp
@@ -341,7 +341,7 @@ add_dependencies(farewell ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_
 add_dependencies(receptionist ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(carry_my_luggage ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(visit_my_home_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(getting_to_know_my_home ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
@@ -497,9 +497,9 @@ target_link_libraries(carry_my_luggage
 # ${catkin_LIBRARIES}
 #)
 
-#target_link_libraries(welcoming_visitor_test
-# ${catkin_LIBRARIES}
-#)
+target_link_libraries(welcoming_visitor_test
+ ${catkin_LIBRARIES}
+)
 
 #target_link_libraries(catering_comfort_test
 # ${catkin_LIBRARIES}

@@ -16,6 +16,7 @@ add_service_files(
   InverseKinematicsPath.srv
   InverseKinematicsPose.srv
   DirectKinematics.srv
+  SpeedProfile.srv
 )
 
 generate_messages(

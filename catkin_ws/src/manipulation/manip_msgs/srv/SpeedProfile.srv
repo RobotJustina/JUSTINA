@@ -1,0 +1,12 @@
+float32 dt # Sampling step
+float32 t0 # Initial time
+float32 tf # Final time
+float32 p0 # Initial angle [rad]
+float32 pf # Final angle [rad]
+float32 w0 # Initial angular speed
+float32 wf # Final angular speed
+float32 a0 # Intial angular acceleration
+float32 af # Final angular acceleration
+---
+std_msgs/Float32MultiArray positions
+std_msgs/Float32MultiArray speeds
