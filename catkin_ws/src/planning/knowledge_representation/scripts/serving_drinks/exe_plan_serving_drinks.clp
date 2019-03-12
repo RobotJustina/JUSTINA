@@ -33,6 +33,14 @@
 	(modify ?f1 (status on_the_bar))
 )
 
+(defrule on-the-bar-object-state
+	?f <- (status-object-on-location ?obj 1)
+	?f1 <- (item (name ?obj) (status ?status))
+	=>
+	(retract ?f)
+	(printout t ?status)
+)
+
 ;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-offer-drink
