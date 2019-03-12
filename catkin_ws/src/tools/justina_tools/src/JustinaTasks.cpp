@@ -1696,6 +1696,8 @@ void JustinaTasks::closeToGoalWithDistanceTHR(float goalX, float goalY, float th
 	distanceToGoal = sqrt(
 			pow(goalX - currx, 2)
 			+ pow(goalY - curry, 2));
+    ros::Rate rate(30);
+    JustinaNavigation::resetStopWaitGlobalGoalReached();
 	if (distanceToGoal > thr) {
 		JustinaNavigation::startGetClose(goalX, goalY);
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -1706,10 +1708,10 @@ void JustinaTasks::closeToGoalWithDistanceTHR(float goalX, float goalY, float th
 			if ((JustinaNavigation::obstacleInFront() && distanceToGoal < thr) || distanceToGoal < thr)
 				finishReachedPerson = true;
 			else
-				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+				rate.sleep();
 			ros::spinOnce();
 			curr = boost::posix_time::second_clock::local_time();
-		} while (ros::ok() && !finishReachedPerson && ((curr - prev).total_milliseconds() < timeout || timeout == 0));
+		} while (ros::ok() && !finishReachedPerson && ((curr - prev).total_milliseconds() < timeout || timeout == 0) && !JustinaNavigation::getStopWaitGlobalGoalReached());
 		std::cout << "JustinaTasks.->I have the reached position." << std::endl;
 		JustinaHardware::stopRobot();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
