@@ -478,6 +478,10 @@ bool JustinaNavigation::getStopWaitGlobalGoalReached()
 {
 	return JustinaNavigation::_stopWaitGlobalGoalReached;
 }
+    
+void JustinaNavigation::resetStopWaitGlobalGoalReached(){
+    JustinaNavigation::_stopWaitGlobalGoalReached = false; 
+}
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
 bool JustinaNavigation::getOccupancyGrid(nav_msgs::OccupancyGrid& map)

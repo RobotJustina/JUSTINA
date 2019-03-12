@@ -141,8 +141,8 @@ int main(int argc, char **argv){
         switch(state){
             case SM_INIT:
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
-                JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
                 state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
 
@@ -235,6 +235,7 @@ int main(int argc, char **argv){
                 lastName = "unknown";
                 lastDrink = "unknown";
                 // TODO Load grammar to recog a names
+                JustinaHRI::enableSpeechRecognized(false);//Enable recognized speech
                 if(recogName){
                     JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
                     if(JustinaHRI::usePocketSphinx)
@@ -248,7 +249,8 @@ int main(int argc, char **argv){
                     else
                         JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
                 }
-                JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
+                if(!JustinaHRI::usePocketSphinx)
+                    JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
                 attemptsConfirmation = 0;
                 attemptsWaitConfirmation = 0;
                 state = SM_WAIT_FOR_PRESENTATION;
@@ -281,7 +283,8 @@ int main(int argc, char **argv){
                                         JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
                                     else
                                         JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
-                                    JustinaHRI::enableSpeechRecognized(true);
+                                    if(!JustinaHRI::usePocketSphinx)
+                                        JustinaHRI::enableSpeechRecognized(true);
                                     //attemptsConfirmation = 0;
                                     //attemptsWaitConfirmation = 0;
                                     state = SM_PRESENTATION_CONFIRM;
@@ -309,7 +312,8 @@ int main(int argc, char **argv){
                                         JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
                                     else
                                         JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
-                                    JustinaHRI::enableSpeechRecognized(true);
+                                    if(!JustinaHRI::usePocketSphinx)
+                                        JustinaHRI::enableSpeechRecognized(true);
                                     //attemptsConfirmation = 0;
                                     //attemptsWaitConfirmation = 0;
                                     state = SM_PRESENTATION_CONFIRM;
@@ -333,7 +337,7 @@ int main(int argc, char **argv){
                         attemptsSpeechInt = 0;
                         if(recogName){
                             ss2.str("");
-                            if(lastName.compare("unknown"))
+                            if(lastName.compare("unknown") == 0)
                                 ss2 << "Sorry I did not understand you, you are an unknown person ";
                             else
                                 ss2 << "Ok, your name is " << lastName;
@@ -348,7 +352,7 @@ int main(int argc, char **argv){
                             state = SM_INTRO_GUEST;
                         }else{
                             ss2.str("");
-                            if(lastDrink.compare("unknown"))
+                            if(lastDrink.compare("unknown") == 0)
                                 ss2 << "Sorry I did not understand you, your favorite drink is unknown";
                             else
                                 ss2 << "Ok, your favorite drink is " << lastDrink;
@@ -374,7 +378,7 @@ int main(int argc, char **argv){
                         attemptsSpeechInt = 0;
                         if(recogName){
                             ss2.str("");
-                            if(lastName.compare("unknown"))
+                            if(lastName.compare("unknown") == 0)
                                 ss2 << "Sorry I did not understand you, you are an unknown person ";
                             else
                                 ss2 << "Ok, your name is " << lastName;
@@ -385,7 +389,7 @@ int main(int argc, char **argv){
                             state = SM_INTRO_GUEST;
                         }else{
                             ss2.str("");
-                            if(lastDrink.compare("unknown"))
+                            if(lastDrink.compare("unknown") == 0)
                                 ss2 << "Sorry I did not understand you, your favorite drink is unknown";
                             else
                                 ss2 << "Ok, your favorite drink is " << lastDrink;
@@ -440,7 +444,8 @@ int main(int argc, char **argv){
                                 else
                                     JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
                             }
-                            JustinaHRI::enableSpeechRecognized(true);
+                            if(!JustinaHRI::usePocketSphinx)
+                                JustinaHRI::enableSpeechRecognized(true);
                             state = SM_WAIT_FOR_PRESENTATION;
                         }
                         else{
@@ -590,6 +595,7 @@ int main(int argc, char **argv){
                     goalx = gx_w;
                     goaly = gy_w;
 
+                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.6, 30000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
