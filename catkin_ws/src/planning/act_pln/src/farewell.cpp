@@ -384,6 +384,10 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
                         names.push_back(lastName);
                         JustinaHRI::enableSpeechRecognized(true);
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                         
                     }
@@ -414,6 +418,10 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
                         names.push_back(lastName);
                         JustinaHRI::enableSpeechRecognized(true);
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                     }
                         
@@ -439,6 +447,10 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
                         ros::Duration(1.0).sleep();
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                     }
                 }
