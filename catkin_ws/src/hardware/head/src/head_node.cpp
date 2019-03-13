@@ -13,7 +13,7 @@ bool simul = false;
 
 int goalPos[2] = {0, 0};
 int goalSpeeds[2] = {90, 75};
-int PID[2][3] = {{24, 0, 128}, {128, 0, 128}};
+int PID[2][3] = {{24, 0, 128}, {64, 0, 32}};
 int minLimits[2] = {1023, 0};
 int maxLimits[2] = {3069, 4095};
 
