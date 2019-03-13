@@ -59,13 +59,13 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
+    JustinaRepresentation::setNodeHandle(&n);
 
     std::string grammarCommandsID = "receptionisCommands";
     std::string grammarNamesID = "receptionistNames";
 
     JustinaHRI::usePocketSphinx = true;
-    JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
-    JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);
+    
     
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
     
@@ -138,7 +138,14 @@ int main(int argc, char** argv)
         switch(nextState)
     	{
             case SM_INIT:
-                std::cout << "Farewell Test...->start Farewell test" << std::endl;	
+                std::cout << "Farewell Test...->start Farewell test" << std::endl;
+                JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);  
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
@@ -377,6 +384,10 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
                         names.push_back(lastName);
                         JustinaHRI::enableSpeechRecognized(true);
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                         
                     }
@@ -407,6 +418,10 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
                         names.push_back(lastName);
                         JustinaHRI::enableSpeechRecognized(true);
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                     }
                         
@@ -432,6 +447,10 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
                         ros::Duration(1.0).sleep();
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
                     }
                 }
