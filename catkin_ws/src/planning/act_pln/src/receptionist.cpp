@@ -623,7 +623,8 @@ int main(int argc, char **argv){
                         thetaToGoal = 2 * M_PI + thetaToGoal;
                     theta = thetaToGoal - robot_a;
                     std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
-                    JustinaNavigation::moveDistAngle(0, theta, 2000);
+                    JustinaManip::startHdGoTo(0, -0.3);
+                    JustinaNavigation::moveDistAngle(0, theta, 4000);
                 }
                 JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                 ss.str("");
@@ -635,8 +636,12 @@ int main(int argc, char **argv){
                     thetaToGoal = 2 * M_PI + thetaToGoal;
                 theta = thetaToGoal - robot_a;
                 std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
-                JustinaNavigation::moveDistAngle(0, theta, 2000);
-                state = SM_FIND_EMPTY_SEAT;
+                JustinaManip::startHdGoTo(0, -0.3);
+                JustinaNavigation::moveDistAngle(0, theta, 4000);
+                findPersonCount = 0;
+                findPersonAttemps = 0;
+                findPersonRestart = 0;
+                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
 
             case SM_FIND_EMPTY_SEAT:
@@ -647,7 +652,6 @@ int main(int argc, char **argv){
                         findSeatCount++;
                         break;
                     }
-                    state = SM_OFFER_EMPTY_SEAT;
                     JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
@@ -655,6 +659,7 @@ int main(int argc, char **argv){
                     goaly = gy_w;
 
                     JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
                         thetaToGoal += 2 * M_PI;
@@ -666,6 +671,7 @@ int main(int argc, char **argv){
                     ros::spinOnce();
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    state = SM_OFFER_EMPTY_SEAT;
                 }
                 else
                     state = SM_OFFER_EMPTY_SEAT;
