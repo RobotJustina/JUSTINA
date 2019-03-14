@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 
     ros::Subscriber subVisitorGranted = n.subscribe("/alexa/visitor_granted", 1, getPersonCallback);
     ros::Publisher pubWhoPerson = n.advertise<std_msgs::String>("/alexa/who_person", 1);
-    ros::Publisher pubWhatAppendPerson = n.advertise<std_msgs::String>("/alexa/what_append_person", 1);
+    ros::Publisher pubWhatAppendPerson = n.advertise<std_msgs::String>("/alexa/what_happend_person", 1);
 
     //ros::Publisher pubstartExecuting = n.advertise<std_msgs::Empty>("/planning/start_executing", 1);
 
@@ -287,6 +287,10 @@ int main(int argc, char** argv)
       		break;
 
             case SM_WaitingDoorBell:
+                msg.data = "unknown";
+                pubWhoPerson.publish(msg);
+                msg.data = "default";
+                pubWhatAppendPerson.publish(msg);
                 if(contVisitor<3)
                 {
                     
@@ -412,7 +416,7 @@ int main(int argc, char** argv)
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
                     }
-                    nextState = SM_GreetingDoctor;
+                    //nextState = SM_GreetingDoctor;
                 }
                 else if(id == "postman")
                 {
@@ -445,7 +449,7 @@ int main(int argc, char** argv)
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
                     }
-                    nextState = SM_GreetingPostman;
+                    //nextState = SM_GreetingPostman;
                 }
                 else if(id == "Unknown"){
                     std::cout << "Welcoming visitor Test...->unknown recognized.." << std::endl;
@@ -773,6 +777,8 @@ int main(int argc, char** argv)
                         JustinaHRI::say("tell me justina yes or justina no");
                         ros::Duration(1.0).sleep();
                         nextState = SM_ConfirmLocation;
+                        msg.data = "The plumber will repair the pipe in the kitchen";
+                        pubWhatAppendPerson.publish(msg);
                         JustinaHRI::enableSpeechRecognized(true);
                     }
                     
@@ -782,6 +788,8 @@ int main(int argc, char** argv)
                         JustinaHRI::say("tell me justina yes or justina no");
                         ros::Duration(1.0).sleep();
                         nextState = SM_ConfirmLocation;
+                        msg.data = "The plumber will repair the pipe in the bathroom";
+                        pubWhatAppendPerson.publish(msg);
                         JustinaHRI::enableSpeechRecognized(true);
                     }
 
@@ -816,7 +824,7 @@ int main(int argc, char** argv)
                 if(grantedPerson){
                     nextState = tmpState;
                     grantedPerson = false;
-                    JustinaHRI::waitAfterSay("Ok, the grany any she has granted you permits", 3000);
+                    JustinaHRI::waitAfterSay("Ok, the grany any gave you permission to entrance in the house", 3000);
                 }
                 break;
 
