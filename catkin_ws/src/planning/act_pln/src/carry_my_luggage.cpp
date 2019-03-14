@@ -17,8 +17,8 @@ enum STATE{
     SM_FIND_PERSON,
     SM_FIND_BAG,
     SM_GET_CLOSE_BAG,
+    SM_WAIT_FOR_THE_BAG,
     SM_TAKE_BAG,
-    SM_GET_CLOSE_PERSON,
     SM_INSTRUCTIONS,
     SM_WAIT_FOR_OPERATOR,
     SM_MEMORIZING_OPERATOR,
@@ -40,6 +40,7 @@ enum STATE{
     SM_GUIDING_CAR,
     SM_OPEN_DOOR,
     SM_FINAL_STATE,
+    SM_RETURN_HOME,
     SM_HOKUYO_TEST
 };
 
@@ -146,9 +147,11 @@ int main(int argc, char** argv)
     std::vector<std::string> tokens;
     int attemptsRecogLoc = 0;
     int attemptsConfLoc = 0;
+    float robot_x, robot_y, robot_a;
 
     std::string lastRecoSpeech;
-    std::string location="center table";
+    std::string location="";
+    std::string room = "kitchen";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
@@ -157,6 +160,7 @@ int main(int argc, char** argv)
     int minDelayAfterSay = 0;
     int maxDelayAfterSay = 300;
 
+    /*
     //places
     validCommandsTake.push_back("take this bag to the bedroom");
     validCommandsTake.push_back("get this bag to the bedroom");
@@ -228,7 +232,7 @@ int main(int argc, char** argv)
     
     validCommandsTake.push_back("take this bag to the corridor");
     validCommandsTake.push_back("get this bag to the corridor");
-    location="corridor";
+    location="corridor";*/
 
     ros::Subscriber laser_subscriber;
     //laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);  
@@ -248,7 +252,6 @@ int main(int argc, char** argv)
     //JustinaHRI::setOutputDevice(JustinaHRI::USB);
     //JustinaHRI::setVolumenInputDevice(JustinaHRI::RODE, 65000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 80000);
-    JustinaTools::pdfStart("HelpMeCarry_Plans");
 
     while(ros::ok() && !fail && !success)
     {
@@ -261,13 +264,20 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("I am ready for the carry my luggage test", 2000, minDelayAfterSay);
                 JustinaHRI::loadGrammarSpeechRecognized("HelpMeCarry.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
                 nextState = SM_INSTRUCTIONS;
                 break;
 
             case SM_FIND_PERSON:
-                std::cout << "State machine: SM_FIND_PERSON" << std::endl;
-                nextState = SM_FIND_BAG;
+                std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
+                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, room)){
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    location = "person_loc";
+                    JustinaKnowledge::addUpdateKnownLoc("person_loc", robot_x, robot_y, robot_a);
+                    JustinaHRI::waitAfterSay("Hello, my name is justina, and i will help you to carry the luggage", 5000, minDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Please take the bag and say, justina continue", 5000, maxDelayAfterSay);
+                    nextState=SM_WAIT_FOR_THE_BAG;
+                }else
+                    JustinaHRI::waitAfterSay("I did not find anyone", 3000); 
                 break;
 
             case SM_FIND_BAG:
@@ -280,16 +290,20 @@ int main(int argc, char** argv)
                 nextState = SM_TAKE_BAG;
                 break;
 
-            case SM_TAKE_BAG:
-                std::cout << "State machine: SM_GET_TAKE_BAG" << std::endl;
-                nextState = SM_GET_CLOSE_PERSON;
-                break;
-            
-            case SM_GET_CLOSE_PERSON:
-                std::cout << "State machine: SM_GET_CLOSE_PRESON" << std::endl;
-                nextState = SM_INSTRUCTIONS;
+            case SM_WAIT_FOR_THE_BAG:
+                std::cout << "State machine: SM_WAIT_FOR_THE_BAG" << std::endl;
+                // TODO WAit to continue
+                nextState = SM_TAKE_BAG; 
                 break;
 
+            case SM_TAKE_BAG:
+                std::cout << "State machine: SM_GET_TAKE_BAG" << std::endl;
+                JustinaHRI::say("i can not take the bag, but i will take the bag if you put the bag in my gripper");
+                JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                JustinaHRI::say("Tank you");
+                nextState = SM_INSTRUCTIONS;
+                break;
+            
             case SM_INSTRUCTIONS:
                 std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location, please tell me, follow me, for start following you", 12000, maxDelayAfterSay);
@@ -300,10 +314,8 @@ int main(int argc, char** argv)
 
             case SM_WAIT_FOR_OPERATOR:
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-                if(JustinaHRI::waitForSpecificSentence("follow me" , 15000)){
+                if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
                     nextState = SM_MEMORIZING_OPERATOR;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Follow me command was recognized");
-                }
                 else                    
                     cont_z++;    		
 
@@ -320,12 +332,10 @@ int main(int argc, char** argv)
                 if(!follow_start){
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                     JustinaHRI::waitAfterSay("Human, please put in front of me", 3000, minDelayAfterSay);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the search of human");
                     JustinaHRI::enableLegFinder(true);
                 }
                 else
                     JustinaHRI::enableLegFinder(true);    
-
                 nextState=SM_WAIT_FOR_LEGS_FOUND;
                 break;
 
@@ -337,7 +347,6 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                         JustinaHRI::waitAfterSay("I found you, please walk", 4000, maxDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
                         ros::spinOnce();
                         loop.sleep();
@@ -349,7 +358,6 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                         JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk", 10000, maxDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
                         follow_start=true;
                         nextState = SM_FOLLOWING_PHASE;
@@ -361,8 +369,6 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Here is the car command was recognized");
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for user confirmation");
                         JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                         JustinaHRI::waitAfterSay("is it the car location, please tell me robot yes, or robot no", 10000, maxDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
@@ -374,9 +380,8 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                             JustinaHRI::waitAfterSay("I stopped", 2000, minDelayAfterSay);
                             JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
-                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
-                            nextState = SM_BRING_GROCERIES;
+                            alig_to_place=false;
+                            nextState = SM_BAG_DELIVERY_PLACE;
                             cont_z=8;
                             break;
                         }
@@ -384,7 +389,6 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                             JustinaHRI::waitAfterSay("Ok, please walk", 3000, maxDelayAfterSay);
                             JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot No command was recognized");
                         }
                     }
                 }
@@ -393,21 +397,18 @@ int main(int argc, char** argv)
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                     JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human Lost");
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the search of human");
                     JustinaHRI::stopFollowHuman();
                     JustinaHRI::enableLegFinder(false);
                     nextState=SM_MEMORIZING_OPERATOR;
                 }        
                 break;
 
-            case SM_BRING_GROCERIES:
+            /*case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
                 if(cont_z > 3){
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                     JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 7000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for command to carry the bag");
                     cont_z=0;
                 }
                 cont_z++;
@@ -611,18 +612,15 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay(ss.str(), 5000);
                 //JustinaManip::startTorsoGoTo(0.3, 0.0, 0.0);
                 nextState=SM_BAG_DELIVERY;     
-                break;
+                break;*/
 
             case SM_BAG_DELIVERY:
                 std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Command was recognized, carry the bag to: "+ location);
                 
                 if(!JustinaKnowledge::existKnownLocation(location)){
                     std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
                     location="counter";
                     alig_to_place=true;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Location not found: "+ location);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Change location to default location: counter ");
                 }
                 
                 std::cout << "Location -> " << location << std::endl;
@@ -630,7 +628,6 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose(location, 200000))
                         JustinaNavigation::getClose(location, 200000);
                 JustinaHRI::waitAfterSay("I arrived", 2000);
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Arrived to location: "+ location);
                 nextState=SM_BAG_DELIVERY_PLACE;
 
                 break;
@@ -638,7 +635,6 @@ int main(int argc, char** argv)
             case SM_BAG_DELIVERY_PLACE:
                 std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
                 JustinaHRI::waitAfterSay("I will delivery the bag", 3000);
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting delivery the bag function");
                 if(alig_to_place==true){
                     if(!JustinaTasks::alignWithTable(0.35)){
                         JustinaNavigation::moveDist(0.15, 3000);
@@ -665,7 +661,7 @@ int main(int argc, char** argv)
                                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                     JustinaManip::raGoTo("home", 4000);
                                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                    JustinaManip::startRaOpenGripper(0);
+                                      JustinaManip::startRaOpenGripper(0);
                                 }
                                 
                             }
@@ -701,24 +697,33 @@ int main(int argc, char** argv)
                 }    
 
                 JustinaNavigation::moveDistAngle(-0.2, 0.0, 10000);
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish delivery the bag");
                 nextState=SM_LOOKING_HELP;
 
                 break;
+            
+            case SM_RETURN_HOME:
+                std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
+                if(!JustinaKnowledge::existKnownLocation(location)){
+                    std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
+                    location=room;
+                }
+                
+                std::cout << "Location -> " << location << std::endl;
+                if(!JustinaNavigation::getClose(location, 200000))
+                    if(!JustinaNavigation::getClose(location, 200000))
+                        JustinaNavigation::getClose(location, 200000);
+                JustinaHRI::waitAfterSay("I arrived", 2000);
+                nextState=SM_FINAL_STATE;
+                break;
 
-            case SM_LOOKING_HELP:
+            /*case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
                 
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Searching a human for help to the carry the bags");
-                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, location)){
+                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, location))
                     nextState=SM_GUIDING_ASK;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was found");
-                }
-                else{
+                else
                     JustinaHRI::waitAfterSay("I did not find anyone", 3000); 
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was not found");
-                }
 
                 break;
 
@@ -726,19 +731,15 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
                 JustinaHRI::waitAfterSay("Human, can you help me bring some bags please, please tell me robot yes, or robot no", 12000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for human confirmation");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation){
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot yes command was recognized");
                 }
                 else {
                     nextState = SM_LOOKING_HELP;
                     JustinaNavigation::moveDistAngle(0.0, 1.5708, 2000);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot no command was recognized");
                 }	    
-
                 break;        
 
             case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
@@ -755,7 +756,6 @@ int main(int argc, char** argv)
                 }
                 cont_z=0;
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
-
                 break;
 
             case SM_GUIDING_MEMORIZING_OPERATOR_ELF:
@@ -769,8 +769,6 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(hokuyoRear){
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found");
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting guide human to car location");
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
@@ -781,7 +779,6 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                         cont_z=0;
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human lost");
                     }
                     cont_z++;
                 }
@@ -798,7 +795,6 @@ int main(int argc, char** argv)
                     nextState=SM_GUIDING_STOP;
 
                 if(JustinaNavigation::isGlobalGoalReached()){
-
                     laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
                     ros::spinOnce();
                     loop.sleep();
@@ -809,7 +805,6 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-
                 JustinaHardware::stopRobot();
                 JustinaHardware::stopRobot();
                 JustinaHardware::stopRobot();
@@ -819,8 +814,6 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
-
-
                 break;
 
             case SM_HOKUYO_TEST:    
@@ -840,7 +833,6 @@ int main(int argc, char** argv)
                     JustinaHRI::enableLegFinderRear(false);
                     if(door_isopen){
                         JustinaHRI::waitAfterSay("The door is open", 2500);
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Door status: Open");
                         std::cout << "The door is open" << std::endl;
                         location="car_location";
                         door_loc=true;
@@ -852,16 +844,12 @@ int main(int argc, char** argv)
                         std::cout << "the door is close" << std::endl;
                         cont_z=10; 
                         nextState=SM_OPEN_DOOR;
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Door status: Close");
-
                     }
 
                 }
                 else{
                     std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                     JustinaHRI::waitAfterSay("Here is the car, please help us", 2500);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Arrived to car location");
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish the HelpMeCarry test");
                     JustinaHRI::waitAfterSay("I have finished the test", 2500);
                     JustinaHRI::enableLegFinderRear(false);
                     nextState=SM_FINAL_STATE;
@@ -893,11 +881,11 @@ int main(int argc, char** argv)
                     cont_z++;        
                 }
 
-                break;    
+                break;*/
 
             case SM_FINAL_STATE:
                 std::cout << "State machine: SM_FINAL_STATE" << std::endl;
-                JustinaTools::pdfStop("HelpMeCarry_Plans");
+                JustinaHRI::say("I have finished the test");
                 success = true;
                 break;
 
