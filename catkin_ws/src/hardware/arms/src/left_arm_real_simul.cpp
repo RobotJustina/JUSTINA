@@ -48,13 +48,13 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
                 goalSpeeds[i] = 40;
             // std::cout << "left_arm_node.->goalPose[0]:" << goalPos[0] << std::endl;
             if(msg->data.size() == 14){
-                for(int i = 7; i < 14; i++){
-                    goalSpeeds[i - 7] = msg->data[i] * 1023;
-                    if(goalSpeeds[i - 7] <= 0)
-                        goalSpeeds[i - 7] = 1;
-                    if(goalSpeeds[i - 7] > 1023)
-                        goalSpeeds[i - 7] = 1023;
-                }
+	      for(int i = 7; i < 14; i++){
+		goalSpeeds[i - 7] = msg->data[i] * 1023;
+		if(goalSpeeds[i - 7] <= 0)
+		  goalSpeeds[i - 7] = 1;
+		if(goalSpeeds[i - 7] > 1023)
+		  goalSpeeds[i - 7] = 1023;
+	      }
             }
             newGoalPose = true;
         }
@@ -199,6 +199,7 @@ int main(int argc, char ** argv){
             dynamixelManager.setPGain(i, 32);
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 128);
+	    //dynamixelManager.setDGain(i, 255);
             /*dynamixelManager.setPGain(i, 32);
               dynamixelManager.setIGain(i, 0);
               dynamixelManager.setDGain(i, 0);*/
