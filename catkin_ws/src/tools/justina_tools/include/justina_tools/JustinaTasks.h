@@ -50,6 +50,7 @@ class JustinaTasks
 
         static bool _tasksStop;
         static ros::Subscriber subTasksStop;
+        static ros::Publisher pubWhatAppendPerson;
         static void callbackTasksStop(const std_msgs::Empty::ConstPtr& msg);
 
         static bool setNodeHandle(ros::NodeHandle* nh);

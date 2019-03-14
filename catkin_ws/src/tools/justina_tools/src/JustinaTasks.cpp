@@ -4,6 +4,7 @@
 bool JustinaTasks::_tasksStop = false;
 ros::Subscriber JustinaTasks::subTasksStop;
 bool JustinaTasks::is_node_set = false;
+ros::Publisher JustinaTasks::pubWhatAppendPerson;
 
 bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
 	if (JustinaTasks::is_node_set)
@@ -22,6 +23,7 @@ bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
 	//JustinaIROS::setNodeHandle(nh);
     
     subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaTasks::callbackTasksStop);
+    JustinaTasks::pubWhatAppendPerson = nh->advertise<std_msgs::String>("/alexa/what_append_person", 1);
 
 	JustinaTasks::is_node_set = true;
 	return true;
@@ -2876,6 +2878,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
 	bool hokuyoRear;
 	bool success = false;
 	ros::Rate rate(10);
+    std_msgs::String msg;
 
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::ptime curr = prev;
@@ -2926,14 +2929,20 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                         nextState=SM_GUIDING_FINISHED;
                     else if(zoneValidation){
                         bool isInRestrictedArea = false;
+                        std::stringstream ss;
                         legZ = 0;
                         JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
                         for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++){
-                            if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i]))
+                            if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
+                                ss << "The visitor was in " << zonesNotAllowed[i] << " and is an area not allowed";
                                 isInRestrictedArea = true;
+                            }
                         }
-                        if(isInRestrictedArea)
+                        if(isInRestrictedArea){
                             nextState = SM_HUMAN_MOVES_AWAY;
+                            msg.data = ss.str();
+                            pubWhatAppendPerson.publish(msg);
+                        }
                     }
                 }
                 else{
