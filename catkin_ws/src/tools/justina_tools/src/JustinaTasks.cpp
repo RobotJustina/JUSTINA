@@ -3105,6 +3105,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
                             float legWX, legWY, legWZ;
                             bool isInRestrictedArea = false;
                             std::stringstream ss;
+                            std::stringstream ss2;
                             legZ = 0;
                             JustinaHRI::getLatestLegsPoses(legX, legY);
                             JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
@@ -3112,13 +3113,14 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
                                 if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                                     JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                                     ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
+                                    ss2 << "The visitor was in " << zonesNotAllowed[i] << " and is an area not allowed";
                                     JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
                                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                                     isInRestrictedArea = true;
                                 }
                             }
                             if(isInRestrictedArea){
-                                msg.data = ss.str();
+                                msg.data = ss2.str();
                                 pubWhatAppendPerson.publish(msg);
                             }
                         }
