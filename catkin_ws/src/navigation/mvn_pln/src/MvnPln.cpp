@@ -93,6 +93,8 @@ void MvnPln::spin()
                     this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_CALCULATE_PATH;
                     collision_detected_counter = 0;
+                    std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
+                    JustinaManip::hdGoTo(0, -0.9, 2500);
                 }
                 break;
             case SM_CALCULATE_PATH:
@@ -102,12 +104,12 @@ void MvnPln::spin()
                     JustinaNavigation::moveDist(-0.2, 5000);
                 if(JustinaNavigation::obstacleInFront())
                     JustinaNavigation::moveDist(-0.2, 5000);
-                //if(JustinaNavigation::obstacleInFront())
-                //    JustinaNavigation::moveDist(-0.15, 5000);
-                //if(JustinaNavigation::obstacleInFront())
-                //    JustinaNavigation::moveDist(-0.15, 5000);
                 std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
                 JustinaManip::hdGoTo(0, -0.9, 2500);
+                //if(JustinaNavigation::obstacleInFront())
+                //    JustinaNavigation::moveDist(-0.15, 5000);
+                //if(JustinaNavigation::obstacleInFront())
+                //    JustinaNavigation::moveDist(-0.15, 5000);
                 //JustinaManip::hdGoTo(0, -0.9, 2500);
                 //JustinaManip::hdGoTo(0, -0.9, 2500);
                 JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
