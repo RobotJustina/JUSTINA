@@ -23,7 +23,7 @@ bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
 	//JustinaIROS::setNodeHandle(nh);
     
     subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaTasks::callbackTasksStop);
-    JustinaTasks::pubWhatAppendPerson = nh->advertise<std_msgs::String>("/alexa/what_append_person", 1);
+    JustinaTasks::pubWhatAppendPerson = nh->advertise<std_msgs::String>("/alexa/what_happend_person", 1);
 
 	JustinaTasks::is_node_set = true;
 	return true;
@@ -1868,6 +1868,8 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeou
                                     break;
                                 }
                             }
+                            {
+                            }
                         }
                     }
                 }
@@ -3039,6 +3041,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
 	std::vector<std::string> validCommandsStop;
 	validCommandsStop.push_back(stopRecog);
     bool follow_start = false;
+    std_msgs::String msg;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::ptime curr = prev;
 	while(ros::ok() && !success && (timeout == 0 || timeout > 0 && (curr - prev).total_milliseconds() < timeout)){
@@ -3100,18 +3103,23 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
                         if(zoneValidation){
                             float legX, legY, legZ;
                             float legWX, legWY, legWZ;
+                            bool isInRestrictedArea = false;
+                            std::stringstream ss;
                             legZ = 0;
                             JustinaHRI::getLatestLegsPoses(legX, legY);
                             JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
-                            for(int i = 0; i < zonesNotAllowed.size(); i++){
+                            for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++){
                                 if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                                     JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
-                                    std::stringstream ss;
                                     ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
                                     JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
                                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                                    break;
+                                    isInRestrictedArea = true;
                                 }
+                            }
+                            if(isInRestrictedArea){
+                                msg.data = ss.str();
+                                pubWhatAppendPerson.publish(msg);
                             }
                         }
                     }

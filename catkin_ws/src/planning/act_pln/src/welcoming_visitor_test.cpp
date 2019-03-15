@@ -299,7 +299,7 @@ int main(int argc, char** argv)
 
             case SM_WaitingDoorBell:
                 sendWhoPersonName("unknown");
-                sendWhoPersonName("default");
+                sendWhatHappend("default");
                 if(contVisitor<3)
                 {
                     

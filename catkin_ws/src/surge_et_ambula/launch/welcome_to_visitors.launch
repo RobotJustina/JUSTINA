@@ -1,0 +1,8 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
+		<arg name="initial_pose_x" value="3.405"/>
+		<arg name="initial_pose_y" value="-2.367"/>
+		<arg name="initial_pose_a" value="1.4629"/>
+	</include>
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+</launch>
