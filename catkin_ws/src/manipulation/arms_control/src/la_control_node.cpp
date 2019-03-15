@@ -86,7 +86,6 @@ int main(int argc, char** argv)
     std::vector<std::vector<float> > profile_positions;
     std::vector<std::vector<float> > profile_speeds   ;
     std_msgs::Float32MultiArray      msg_la_goal_pose ;
-    msg_la_goal_pose .data.resize(14);
 
     while(ros::ok())
     {
@@ -97,6 +96,7 @@ int main(int argc, char** argv)
             {
                 new_global_goal = false;
                 time_k = 0;
+                msg_la_goal_pose .data.resize(14);
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else
@@ -111,7 +111,13 @@ int main(int argc, char** argv)
             }
             pub_la_goal_pose.publish(msg_la_goal_pose);
             if(time_k++ >= profile_positions[0].size())
+            {
+            	msg_la_goal_pose .data.resize(7);
+            	for(int i=0; i < 7; i++)
+            		msg_la_goal_pose.data[i] = profile_positions[i][profile_positions[i].size()-1];
+            	pub_la_goal_pose.publish(msg_la_goal_pose);	
                 state = SM_WAIT_FOR_GOAL_REACHED;
+            }
             break;
         case SM_WAIT_FOR_GOAL_REACHED:
             //Publish the corresponding topic
