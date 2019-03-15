@@ -436,7 +436,7 @@ meaning_mapping_patterns_gpsr = [
 	"Location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
 				"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
-				"(task (plan user_speech) (action_type find_gesture_person) (params -Gesture-) (step ))" +
+				"(task (plan user_speech) (action_type find_pgg_person) (params -Gesture- -Location-) (step ))" +
 				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',

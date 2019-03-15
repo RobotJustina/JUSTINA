@@ -525,7 +525,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			ss << "Tomorrow is " << months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
-		}else if (param1.compare("the_day_of_the_week") == 0 || param1.compare("the_day")){
+		}else if (param1.compare("the_day_of_the_week") == 0 || param1.compare("the_day") == 0){
 			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltmnow = localtime(&now);
