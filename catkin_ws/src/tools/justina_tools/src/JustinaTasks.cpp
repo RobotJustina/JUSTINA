@@ -5823,12 +5823,12 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 
 	JustinaTasks::guideAPerson("taxi", 50000000);
 
-    float torsoSpine, torsoWaist, torsoShoulders;
+    /*float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
 	float currx, curry, currtheta;
 	JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
     JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
-
+	*/
 	return true;
 }

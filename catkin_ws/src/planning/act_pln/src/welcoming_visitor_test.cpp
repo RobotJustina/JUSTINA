@@ -988,7 +988,7 @@ int main(int argc, char** argv)
                     ros::Duration(1.0).sleep();
                     JustinaHRI::say("i can not take the mail from your hand but i will take the mail if you put the mail in my gripper");
                     ros::Duration(1.0).sleep();
-                    JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                    JustinaTasks::detectObjectInGripper("mail", true, 20000);
                     withLeftArm = true;
                     ros::Duration(1.0).sleep();
                 }
@@ -1004,16 +1004,16 @@ int main(int argc, char** argv)
                         ros::Duration(1.0).sleep();
                         JustinaHRI::say("i can not take the mail from your hand but i will take the mail if you put the mail in my gripper");
                         ros::Duration(1.0).sleep();
-                        JustinaTasks::detectObjectInGripper("bag", true, 7000);
+                        JustinaTasks::detectObjectInGripper("mail", true, 7000);
                         withLeftArm = true;
                         ros::Duration(1.0).sleep();
                     }
                 }
-                JustinaHRI::say("sorry i can not take the mail by myself, but i will take the mail if you put the mail in my gripper");
+                /*JustinaHRI::say("sorry i can not take the mail by myself, but i will take the mail if you put the mail in my gripper");
                 ros::Duration(1.3).sleep();
                 JustinaTasks::detectObjectInGripper("bag", true, 7000);
                 withLeftArm = true;
-                ros::Duration(1.0).sleep();
+                ros::Duration(1.0).sleep();*/
                 sendWhatHappend("I have the mail, and iam going to deliver you it");
                 nextState = SM_DeliverMailToAnnie;
             break;
