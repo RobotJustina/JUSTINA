@@ -865,40 +865,52 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, std::string > catList;
 	
-	catList["crackers"] = "snacks";
-	catList["potato_chips"] = "snacks";
+	catList["chips"] = "snacks";
+	catList["m_and_m_s"] = "snacks";
 	catList["pringles"] = "snacks";
+	catList["cookies"] = "snacks";
 
-	catList["knife"] = "cutlery";
+	catList["tea_spoon"] = "cutlery";
 	catList["fork"] = "cutlery";
 	catList["spoon"] = "cutlery";
+	catList["knife"] = "cutlery";
+	catList["napkin"] = "cutlery";
 
 	catList["apple"] = "fruits";
-	catList["orange"] = "fruits";
-	catList["paprika"] = "fruits";
+	catList["melon"] = "fruits";
+	catList["banana"] = "fruits";
+	catList["pear"] = "fruits";
+	catList["peach"] = "fruits";
 
+	catList["tea"] = "drinks";
+	catList["beer"] = "drinks";
 	catList["coke"] = "drinks";
-	catList["sprite"] = "drinks";
-	catList["grape_juice"] = "drinks";
-	catList["orange_juice"] = "drinks";
-	catList["chocolate_drink"] = "drinks";
+	catList["water"] = "drinks";
+	catList["milk"] = "drinks";
 
-	catList["cloth"] = "cleaning_stuff";
-	catList["scrubby"] = "cleaning_stuff";
-	catList["sponge"] = "cleaning_stuff";
-	catList["cascade_pod"] = "cleaning_stuff";
+	catList["shampoo"] = "toiletries";
+	catList["soap"] = "toiletries";
+	catList["cloth"] = "toiletries";
+	catList["sponge"] = "toiletries";
+	catList["tooth_paste"] = "toiletries";
 
-	catList["basket"] = "containers";
+	catList["box"] = "containers";
 	catList["bag"] = "containers";
 	catList["tray"] = "containers";
 	
-	catList["cereal"] = "food";
+	catList["pasta"] = "food";
 	catList["noodles"] = "food";
-	catList["sausages"] = "food";
+	catList["tuna_fish"] = "food";
+	catList["pickles"] = "food";
+	catList["choco_flakes"] = "food";
+	catList["robo_o_s"] = "food";
+	catList["muesli"] = "food";
 
-	catList["dish"] = "tableware";
+	catList["big_dish"] = "tableware";
+	catList["small_dish"] = "tableware";
 	catList["bowl"] = "tableware";
 	catList["glass"] = "tableware";
+	catList["mug"] = "tableware";
 
 	bool finishMotion = false;
 	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
@@ -921,7 +933,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countCat["fruits"] = 0;
 	countCat["food"] = 0;
 	countCat["drinks"] = 0;
-	countCat["cleaning_stuff"] = 0;
+	countCat["toiletries"] = 0;
 	countCat["containers"] = 0;
 	countCat["cutlery"] = 0;
 	countCat["tableware"] = 0;
@@ -1018,42 +1030,53 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::stringstream ss;
 
 	std::map<std::string, int > countObj;
-	
-	countObj["cloth"] = 0;
-	countObj["scrubby"] = 0;
-	countObj["sponge"] = 0;
-	countObj["cascade_pod"] = 0;
-	
-	countObj["basket"] = 0;
-	countObj["bag"] = 0;
-	countObj["tray"] = 0;
+	countObj["chips"] = 0;
+	countObj["m_and_m_s"] = 0;
+	countObj["pringles"] = 0;
+	countObj["cookies"] = 0;
 
-	countObj["chocolate_drink"] = 0;
-	countObj["coke"] = 0;
-	countObj["grape_juice"] = 0;
-	countObj["orange_juice"] = 0;
-	countObj["sprite"] = 0;
-
-	countObj["cereal"] = 0;
-	countObj["noodles"] = 0;
-	countObj["sausages"] = 0;
-	countObj["orange"] = 0;
-
-	countObj["apple"] = 0;
-	countObj["paprika"] = 0;
-	
-	countObj["bowl"] = 0;
-	countObj["cup"] = 0;
-	countObj["dish"] = 0;
-	
-	countObj["knife"] = 0;
+	countObj["tea_spoon"] = 0;
 	countObj["fork"] = 0;
 	countObj["spoon"] = 0;
+	countObj["knife"] = 0;
+	countObj["napkin"] = 0;
 
-	countObj["crackers"] = 0;
-	countObj["pringles"] = 0;
-	countObj["potato_chips"] = 0;
+	countObj["apple"] = 0;
+	countObj["melon"] = 0;
+	countObj["banana"] = 0;
+	countObj["pear"] = 0;
+	countObj["peach"] = 0;
 
+	countObj["tea"] = 0;
+	countObj["beer"] = 0;
+	countObj["coke"] = 0;
+	countObj["water"] = 0;
+	countObj["milk"] = 0;
+
+	countObj["shampoo"] = 0;
+	countObj["soap"] = 0;
+	countObj["cloth"] = 0;
+	countObj["sponge"] = 0;
+	countObj["tooth_paste"] = 0;
+
+	countObj["box"] = 0;
+	countObj["bag"] = 0;
+	countObj["tray"] = 0;
+	
+	countObj["pasta"] = 0;
+	countObj["noodles"] = 0;
+	countObj["tuna_fish"] = 0;
+	countObj["pickles"] = 0;
+	countObj["choco_flakes"] = 0;
+	countObj["robo_o_s"] = 0;
+	countObj["muesli"] = 0;
+
+	countObj["big_dish"] = 0;
+	countObj["small_dish"] = 0;
+	countObj["bowl"] = 0;
+	countObj["glass"] = 0;
+	countObj["mug"] = 0;
+	
 	/*countObj["chopstick"] = 0;
 	countObj["fork"] = 0;
 	countObj["spoon"] = 0;
@@ -1167,40 +1190,52 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::map<std::string, std::pair<std::string, int> > countObj;
 	
+    countObj["chips"] = std::make_pair(std::string("snacks"),0);
+	countObj["m_and_m_s"] = std::make_pair(std::string("snacks"),0);
 	countObj["pringles"] = std::make_pair(std::string("snacks"),0);
-	countObj["potato_chips"] = std::make_pair(std::string("snacks"),0);
-	countObj["crackers"] = std::make_pair(std::string("snacks"),0);
+	countObj["cookies"] = std::make_pair(std::string("snacks"),0);
 
-	countObj["cereal"] = std::make_pair(std::string("food"),0);
-	countObj["noodles"] = std::make_pair(std::string("food"),0);
-	countObj["sausages"] = std::make_pair(std::string("food"),0);
-
-	countObj["chocolate_drink"] = std::make_pair(std::string("drinks"),0);
-	countObj["orange_juice"] = std::make_pair(std::string("drinks"),0);
-	countObj["coke"] = std::make_pair(std::string("drinks"),0);
-	countObj["grape_juice"] = std::make_pair(std::string("drinks"),0);
-	countObj["sprite"] = std::make_pair(std::string("drinks"),0);
-
-	countObj["cloth"] = std::make_pair(std::string("cleaning_stuff"),0);
-	countObj["scrubby"] = std::make_pair(std::string("cleanning_stuff"),0);
-	countObj["sponge"] = std::make_pair(std::string("cleanning_stuff"),0);
-	countObj["cascade_pod"] = std::make_pair(std::string("cleanning_stuff"),0);
-
-	countObj["basket"] = std::make_pair(std::string("containers"),0);
-	countObj["bag"] = std::make_pair(std::string("containers"),0);
-	countObj["tray"] = std::make_pair(std::string("containers"),0);
-
-	countObj["apple"] = std::make_pair(std::string("fruits"),0);
-	countObj["orange"] = std::make_pair(std::string("fruits"),0);
-	countObj["paprika"] = std::make_pair(std::string("fruits"),0);
-
-	countObj["knife"] = std::make_pair(std::string("cutlery"),0);
+	countObj["tea_spoon"] = std::make_pair(std::string("cutlery"),0);
 	countObj["fork"] = std::make_pair(std::string("cutlery"),0);
 	countObj["spoon"] = std::make_pair(std::string("cutlery"),0);
+	countObj["knife"] = std::make_pair(std::string("cutlery"),0);
+	countObj["napkin"] = std::make_pair(std::string("cutlery"),0);
 
-	countObj["dish"] = std::make_pair(std::string("tableware"),0);
-	countObj["cup"] = std::make_pair(std::string("tableware"),0);
+	countObj["apple"] = std::make_pair(std::string("fruits"),0);
+	countObj["melon"] = std::make_pair(std::string("fruits"),0);
+	countObj["banana"] = std::make_pair(std::string("fruits"),0);
+	countObj["pear"] = std::make_pair(std::string("fruits"),0);
+	countObj["peach"] = std::make_pair(std::string("fruits"),0);
+
+	countObj["tea"] = std::make_pair(std::string("drinks"),0);
+	countObj["beer"] = std::make_pair(std::string("drinks"),0);
+	countObj["coke"] = std::make_pair(std::string("drinks"),0);
+	countObj["water"] = std::make_pair(std::string("drinks"),0);
+	countObj["milk"] = std::make_pair(std::string("drinks"),0);
+
+	countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
+	countObj["soap"] = std::make_pair(std::string("toiletries"),0);
+	countObj["cloth"] = std::make_pair(std::string("toiletries"),0);
+	countObj["sponge"] = std::make_pair(std::string("toiletries"),0);
+	countObj["tooth_paste"] = std::make_pair(std::string("toiletries"),0);
+
+	countObj["box"] = std::make_pair(std::string("containers"),0);
+	countObj["bag"] = std::make_pair(std::string("containers"),0);
+	countObj["tray"] = std::make_pair(std::string("containers"),0);
+	
+	countObj["pasta"] = std::make_pair(std::string("food"),0);
+	countObj["noodles"] = std::make_pair(std::string("food"),0);
+	countObj["tuna_fish"] = std::make_pair(std::string("food"),0);
+	countObj["pickles"] = std::make_pair(std::string("food"),0);
+	countObj["choco_flakes"] = std::make_pair(std::string("food"),0);
+	countObj["robo_o_s"] = std::make_pair(std::string("food"),0);
+	countObj["muesli"] = std::make_pair(std::string("food"),0);
+
+	countObj["big_dish"] = std::make_pair(std::string("tableware"),0);
+	countObj["small_dish"] = std::make_pair(std::string("tableware"),0);
 	countObj["bowl"] = std::make_pair(std::string("tableware"),0);
+	countObj["glass"] = std::make_pair(std::string("tableware"),0);
+	countObj["mug"] = std::make_pair(std::string("tableware"),0);
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
