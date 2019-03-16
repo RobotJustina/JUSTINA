@@ -148,6 +148,8 @@ int main(int argc, char** argv)
     int attemptsRecogLoc = 0;
     int attemptsConfLoc = 0;
     float robot_x, robot_y, robot_a;
+    std::vector<std::string> yoloIds;
+    yoloIds.push_back("person");
 
     std::string lastRecoSpeech;
     std::string location="";
@@ -246,7 +248,7 @@ int main(int argc, char** argv)
     vision_msgs::VisionFaceObjects faces;
     bool recog =false;
     int contChances=0;
-    bool withLeftArm = false;
+    bool withLeftArm = true;
 
     //JustinaHRI::setInputDevice(JustinaHRI::RODE);
     //JustinaHRI::setOutputDevice(JustinaHRI::USB);
@@ -269,7 +271,7 @@ int main(int argc, char** argv)
 
             case SM_FIND_PERSON:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
-                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, room)){
+                if(JustinaTasks::findYolo(yoloIds, JustinaTasks::STANDING, room)){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     location = "person_loc";
                     JustinaKnowledge::addUpdateKnownLoc("person_loc", robot_x, robot_y, robot_a);
@@ -299,7 +301,7 @@ int main(int argc, char** argv)
             case SM_TAKE_BAG:
                 std::cout << "State machine: SM_GET_TAKE_BAG" << std::endl;
                 JustinaHRI::say("i can not take the bag, but i will take the bag if you put the bag in my gripper");
-                JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                JustinaTasks::detectObjectInGripper("bag", false, 20000);
                 JustinaHRI::say("Tank you");
                 nextState = SM_INSTRUCTIONS;
                 break;
@@ -696,8 +698,8 @@ int main(int argc, char** argv)
                     }
                 }    
 
-                JustinaNavigation::moveDistAngle(-0.2, 0.0, 10000);
-                nextState=SM_LOOKING_HELP;
+                JustinaNavigation::moveDistAngle(-0.2, 0.0, 1000);
+                nextState=SM_RETURN_HOME;
 
                 break;
             
