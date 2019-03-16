@@ -255,7 +255,7 @@ int main(int argc, char** argv)
                 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
                     if(lastRecoSpeech.find("yes") != std::string::npos)
-                        nextState = SM_RecognizeGuest;
+                        nextState = SM_GoCoatRack;
 
                     else
                         nextState = SM_ReturnSearchWaving;
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
 
                 break;
 
-            case SM_RecognizeGuest:
+            /*case SM_RecognizeGuest:
                 std::cout << "Farewell Test...-> SM_RecognizeVisitor" << std::endl;
                 attemptsSpeechReco = 0;
                 attemptsSpeechInt = 0;
@@ -407,7 +407,7 @@ int main(int argc, char** argv)
                 else
                     JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
                 
-                JustinaHRI::enableSpeechRecognized(true);*/
+                JustinaHRI::enableSpeechRecognized(true);
 
                 ss2.str("");
                 
@@ -454,7 +454,7 @@ int main(int argc, char** argv)
                         nextState = SM_GoCoatRack;
                     }
                 }
-                break;
+                break;*/
 
             
             case SM_ReturnSearchWaving:
