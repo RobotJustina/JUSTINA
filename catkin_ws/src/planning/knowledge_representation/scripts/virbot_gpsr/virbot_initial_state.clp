@@ -154,6 +154,7 @@
 	(item (type Objects) (name hayden)(zone living_room)(image mary) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name peyton)(zone living_room)(image patricia) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name robin)(zone living_room)(image robin) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name tracy)(zone living_room)(image tracy) (attributes pick)(pose -1.87 8.64 0.0))
 
 	;;; Males
 	;(item (type Objects) (name james)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
