@@ -262,9 +262,9 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::startHdGoTo(0.0, 0.0);
                 JustinaHRI::waitAfterSay("I am ready for the carry my luggage test", 2000, minDelayAfterSay);
-                JustinaHRI::loadGrammarSpeechRecognized("HelpMeCarry.xml");//load the grammar
+                JustinaHRI::loadGrammarSpeechRecognized("CarryMyLuggage.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                nextState = SM_INSTRUCTIONS;
+                nextState = SM_FIND_PERSON;
                 break;
 
             case SM_FIND_PERSON:
