@@ -1767,7 +1767,7 @@ meaning_mapping_patterns_receptionist = [
 	"planner_not_confirmed": ''},
 	#I am
 	{"params": ["Receptionist_name", "Person_name"],
-	"Receptionist_name": [["I", "am"], [], [], []],
+	"Receptionist_name": [["i"], [], ["person"], []],
 	"Person_name": [[], [], ["person"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (params name -Person_name-) (step ))",
 	"verbal_confirmation": '',
