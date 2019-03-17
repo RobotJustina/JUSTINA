@@ -142,11 +142,15 @@ int main(int argc, char** argv)
     int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
+    bool giveToHuman = true;
     float x, y ,z;
     std::stringstream ss;
     std::vector<std::string> tokens;
     int attemptsRecogLoc = 0;
     int attemptsConfLoc = 0;
+    int attemptsWaitContinue = 0;
+    int maxAttemptsWaitContinue = 3;
+
     float robot_x, robot_y, robot_a;
     std::vector<std::string> yoloIds;
     yoloIds.push_back("person");
@@ -158,7 +162,7 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
-    
+     
     int minDelayAfterSay = 0;
     int maxDelayAfterSay = 300;
 
@@ -271,15 +275,18 @@ int main(int argc, char** argv)
 
             case SM_FIND_PERSON:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 if(JustinaTasks::findYolo(yoloIds, JustinaTasks::STANDING, room)){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     location = "person_loc";
                     JustinaKnowledge::addUpdateKnownLoc("person_loc", robot_x, robot_y, robot_a);
                     JustinaHRI::waitAfterSay("Hello, my name is justina, and i will help you to carry the luggage", 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Please take the bag and say, justina continue", 5000, maxDelayAfterSay);
+                    attemptsWaitContinue = 0;
                     nextState=SM_WAIT_FOR_THE_BAG;
                 }else
                     JustinaHRI::waitAfterSay("I did not find anyone", 3000); 
+                JustinaHRI::enableSpeechRecognized(true);
                 break;
 
             case SM_FIND_BAG:
@@ -294,14 +301,27 @@ int main(int argc, char** argv)
 
             case SM_WAIT_FOR_THE_BAG:
                 std::cout << "State machine: SM_WAIT_FOR_THE_BAG" << std::endl;
-                // TODO WAit to continue
-                nextState = SM_TAKE_BAG; 
+                if(attemptsWaitContinue < maxAttemptsWaitContinue){
+                    if(JustinaHRI::waitForSpecificSentence("justina continue", 5000))
+                        nextState = SM_TAKE_BAG; 
+                    else{
+                        JustinaHRI::enableSpeechRecognized(false);
+                        JustinaHRI::waitAfterSay("Please take the bag and say, justina continue", 5000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);
+                        nextState = SM_WAIT_FOR_THE_BAG;
+                    }
+                    attemptsWaitContinue++;
+                }
+                else{
+                    attemptsWaitContinue = 0;
+                    nextState = SM_TAKE_BAG; 
+                }
                 break;
 
             case SM_TAKE_BAG:
                 std::cout << "State machine: SM_GET_TAKE_BAG" << std::endl;
                 JustinaHRI::say("i can not take the bag, but i will take the bag if you put the bag in my gripper");
-                JustinaTasks::detectObjectInGripper("bag", false, 20000);
+                JustinaTasks::detectObjectInGripper("bag", withLeftArm, 10000);
                 JustinaHRI::say("Tank you");
                 nextState = SM_INSTRUCTIONS;
                 break;
@@ -636,70 +656,76 @@ int main(int argc, char** argv)
 
             case SM_BAG_DELIVERY_PLACE:
                 std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
-                JustinaHRI::waitAfterSay("I will delivery the bag", 3000);
-                if(alig_to_place==true){
-                    if(!JustinaTasks::alignWithTable(0.35)){
-                        JustinaNavigation::moveDist(0.15, 3000);
+                if(!giveToHuman){
+                    JustinaHRI::waitAfterSay("I will delivery the bag", 3000);
+                    if(alig_to_place){
                         if(!JustinaTasks::alignWithTable(0.35)){
                             JustinaNavigation::moveDist(0.15, 3000);
-                            JustinaTasks::alignWithTable(0.35);   
+                            if(!JustinaTasks::alignWithTable(0.35)){
+                                JustinaNavigation::moveDist(0.15, 3000);
+                                JustinaTasks::alignWithTable(0.35);   
+                            }
+                        }
+                        if(!JustinaTasks::placeObject(withLeftArm, 0.35, true)){
+                            if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
+                                if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
+                                {
+                                    if(withLeftArm){
+                                        JustinaManip::laGoTo("place_bag_floor", 4000);
+                                        JustinaManip::startLaOpenGripper(0.7);
+                                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                        JustinaManip::laGoTo("home", 4000);
+                                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                        JustinaManip::startLaOpenGripper(0);
+                                    }
+                                    else{
+                                        JustinaManip::raGoTo("place_bag_floor", 4000);
+                                        JustinaManip::startRaOpenGripper(0.7);
+                                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                        JustinaManip::raGoTo("home", 4000);
+                                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                        JustinaManip::startRaOpenGripper(0);
+                                    }
+
+                                }
+                        } 
+                        if(withLeftArm){   
+                            JustinaManip::laGoTo("home", 4000);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                            JustinaManip::startLaOpenGripper(0);
+                        }
+                        else{
+                            JustinaManip::raGoTo("home", 4000);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                            JustinaManip::startRaOpenGripper(0);
                         }
                     }
-                    if(!JustinaTasks::placeObject(withLeftArm, 0.35, true)){
-                        if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
-                            if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
-                            {
-                                if(withLeftArm){
-                                    JustinaManip::laGoTo("place_bag_floor", 4000);
-                                    JustinaManip::startLaOpenGripper(0.7);
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                    JustinaManip::laGoTo("home", 4000);
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                    JustinaManip::startLaOpenGripper(0);
-                                }
-                                else{
-                                    JustinaManip::raGoTo("place_bag_floor", 4000);
-                                    JustinaManip::startRaOpenGripper(0.7);
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                    JustinaManip::raGoTo("home", 4000);
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                      JustinaManip::startRaOpenGripper(0);
-                                }
-                                
-                            }
-                    } 
-                    if(withLeftArm){   
-                        JustinaManip::laGoTo("home", 4000);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::startLaOpenGripper(0);
-                    }
                     else{
-                        JustinaManip::raGoTo("home", 4000);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::startRaOpenGripper(0);
-                    }
+                        if(withLeftArm){
+                            JustinaManip::laGoTo("place_bag_floor", 4000);
+                            JustinaManip::startLaOpenGripper(0.7);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                            JustinaManip::laGoTo("home", 4000);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
+                            JustinaManip::startLaOpenGripper(0);
+                        }   
+                        else{
+                            JustinaManip::raGoTo("place_bag_floor", 4000);
+                            JustinaManip::startRaOpenGripper(0.7);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                            JustinaManip::raGoTo("home", 4000);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
+                            JustinaManip::startRaOpenGripper(0);
+                        }
+                    }    
+
+                    JustinaNavigation::moveDistAngle(-0.2, 0.0, 1000);
+                    nextState=SM_RETURN_HOME;
                 }
                 else{
-                    if(withLeftArm){
-                        JustinaManip::laGoTo("place_bag_floor", 4000);
-                        JustinaManip::startLaOpenGripper(0.7);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::laGoTo("home", 4000);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
-                        JustinaManip::startLaOpenGripper(0);
-                    }   
-                    else{
-                        JustinaManip::raGoTo("place_bag_floor", 4000);
-                        JustinaManip::startRaOpenGripper(0.7);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::raGoTo("home", 4000);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
-                        JustinaManip::startRaOpenGripper(0);
-                    }
-                }    
-
-                JustinaNavigation::moveDistAngle(-0.2, 0.0, 1000);
-                nextState=SM_RETURN_HOME;
+                    JustinaTasks::dropObject("lugagge", withLeftArm, 8000);
+                    nextState=SM_RETURN_HOME;
+                }
 
                 break;
             
