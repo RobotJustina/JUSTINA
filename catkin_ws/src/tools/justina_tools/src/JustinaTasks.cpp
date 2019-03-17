@@ -1752,7 +1752,7 @@ bool JustinaTasks::closeToLoclWithDistanceTHR(std::string loc, float thr, float 
 				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			ros::spinOnce();
 			curr = boost::posix_time::second_clock::local_time();
-		} while (ros::ok() && !finishReachedPerson && ((curr - prev).total_milliseconds() < timeout || timeout == 0));
+		} while (ros::ok() && !finishReachedPerson && ((curr - prev).total_milliseconds() < timeout || timeout == 0) && !JustinaNavigation::getStopWaitGlobalGoalReached());
 		std::cout << "JustinaTasks.->I have the reached position." << std::endl;
 		JustinaHardware::stopRobot();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -2915,7 +2915,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
 				break;
 			case SM_GUIDING_PHASE:
 				std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
-                if(!JustinaTasks::tasksStop()){
+                if(!JustinaTasks::tasksStop() && !JustinaNavigation::getStopWaitGlobalGoalReached()){
                     float legX, legY, legZ;
                     float legWX, legWY, legWZ;
                     JustinaHRI::getLatestLegsPosesRear(legX, legY);
