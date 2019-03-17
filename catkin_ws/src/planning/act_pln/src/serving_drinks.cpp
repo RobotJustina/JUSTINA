@@ -67,13 +67,7 @@ bool alternative_drink = true;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 
-ros::ServiceClient srvCltGetTasks;
-ros::ServiceClient srvCltInterpreter;
-ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
-ros::ServiceClient srvCltAnswer;
-ros::ServiceClient srvCltAskName;
-ros::ServiceClient srvCltAskIncomplete;
 ros::ServiceClient srvCltQueryKDB;
 
 void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
@@ -481,79 +475,6 @@ void callbackUnknown(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	//command_response_pub.publish(responseMsg);
 }
 
-
-void callbackAskPerson(
-		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
-	std::cout << testPrompt << "--------- Command ask for person ---------"
-			<< std::endl;
-	std::cout << "name:" << msg->name << std::endl;
-	std::cout << "params:" << msg->params << std::endl;
-
-	knowledge_msgs::PlanningCmdClips responseMsg;
-	responseMsg.name = msg->name;
-	responseMsg.params = msg->params;
-	responseMsg.id = msg->id;
-
-	ros::Time finishPlan = ros::Time::now();
-	ros::Duration d = finishPlan - beginPlan;
-	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
-	
-	bool success = ros::service::waitForService("spg_say", 5000);
-	success = success
-			& ros::service::waitForService("/planning_clips/confirmation",
-					5000);
-	JustinaManip::startHdGoTo(0, 0.0);
-	if (success) {
-		std::string to_spech = responseMsg.params;
-		boost::replace_all(to_spech, "_", " ");
-		std::stringstream ss;
-		ss << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, " << to_spech;
-		//JustinaHRI::waitAfterSay(ss.str(), 1500);
-		//ss << "Well, " << to_spech << " is your name";
-		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
-
-		JustinaHRI::waitAfterSay(ss.str(), 10000);
-
-		knowledge_msgs::planning_cmd srv;
-		srv.request.name = "test_confirmation";
-		srv.request.params = responseMsg.params;
-		if (srvCltWaitConfirmation.call(srv)) {
-			std::cout << "Response of confirmation:" << std::endl;
-			std::cout << "Success:" << (long int) srv.response.success
-					<< std::endl;
-			std::cout << "Args:" << srv.response.args << std::endl;
-			if (srv.response.success){
-				ss.str("");
-				ss << "Hello " << to_spech;
-				JustinaHRI::waitAfterSay(ss.str(),1500);
-				
-			}
-			else{
-				ss.str("");
-				ss << to_spech << ", I try to find you again ";
-				JustinaHRI::waitAfterSay(ss.str(), 1500);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-				JustinaNavigation::moveDistAngle(0, 1.57, 10000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
-			}
-
-			responseMsg.params = responseMsg.params;//srv.response.args;
-			responseMsg.successful = srv.response.success;
-		} else {
-			std::cout << testPrompt << "Failed to call service of confirmation"
-					<< std::endl;
-			responseMsg.successful = 0;
-			JustinaHRI::waitAfterSay("Repeate the command please", 2000);
-		}
-	} else {
-		std::cout << testPrompt << "Needed services are not available :'("
-				<< std::endl;
-		responseMsg.successful = 0;
-	}
-	validateAttempsResponse(responseMsg);
-	//command_response_pub.publish(responseMsg);
-}
-
 void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     std::cout << testPrompt << "--------- Command confirm task -------" << std::endl;
     std::cout << "name: " << msg->name << std::endl;
@@ -949,13 +870,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle n;
 	ros::Rate rate(10);
 
-	srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/get_task");
-	srvCltInterpreter = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter");
-	srvCltWaitConfirmation = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/confirmation");
 	srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/wait_command");
-	srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/answer");
-	srvCltAskName = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_name");
-	srvCltAskIncomplete = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_incomplete");
 	srvCltQueryKDB = n.serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB");
 
 	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1, callbackCmdSpeech);
@@ -964,7 +879,6 @@ int main(int argc, char **argv) {
 	ros::Subscriber subCmdFindObject = n.subscribe("/planning_clips/cmd_find_object", 1, callbackCmdFindObject);
 	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
-	ros::Subscriber subAskPerson = n.subscribe("/planning_clips/cmd_ask_person", 1, callbackAskPerson);
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
     ros::Subscriber subCmdOfferDrink = n.subscribe("/planning_clips/cmd_offer_drink", 1, callbackCmdOfferDrink);

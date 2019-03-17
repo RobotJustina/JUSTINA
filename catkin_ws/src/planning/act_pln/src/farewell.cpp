@@ -249,13 +249,18 @@ int main(int argc, char** argv)
                 else
                     JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
                 
-                JustinaHRI::enableSpeechRecognized(true);
+                //JustinaHRI::enableSpeechRecognized(true);
 
 
                 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
-                    if(lastRecoSpeech.find("yes") != std::string::npos)
+                    if(lastRecoSpeech.find("yes") != std::string::npos){
+                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				        ros::Duration(1.0).sleep();
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
                         nextState = SM_GoCoatRack;
+                    }
 
                     else
                         nextState = SM_ReturnSearchWaving;
