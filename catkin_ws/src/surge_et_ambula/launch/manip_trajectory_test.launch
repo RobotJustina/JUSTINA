@@ -38,6 +38,7 @@
 		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
 		<node name="speed_profiles" pkg="trajectory_gen" type="SpeedProfile_Server.py" output="screen"/>
                 <node name="la_control" pkg="arms_control" type="la_control_node" output="screen"/>
+                <node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen"/>
 	</group>
 
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">

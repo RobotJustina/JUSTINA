@@ -3,6 +3,7 @@
 #include "std_msgs/String.h"
 #include "geometry_msgs/Pose.h"
 #include "manip_msgs/SpeedProfile.h"
+#include "std_msgs/Bool.h"
 #include "ros/ros.h"
 
 #define SAMPLING_FREQ 50
@@ -78,14 +79,16 @@ int main(int argc, char** argv)
     ros::Subscriber    sub_go_to_angles  = n.subscribe("/manipulation/manip_pln/la_goto_angles", 1, callback_la_goto_angles);
     ros::Subscriber    sub_la_current    = n.subscribe("/hardware/left_arm/current_pose", 1, callback_la_current_pose);
     ros::Publisher     pub_la_goal_pose  = n.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
+    ros::Publisher  pub_la_goal_reached  = n.advertise<std_msgs::Bool>("/manipulation/la_goal_reached", 1000);    
     ros::ServiceClient clt_speed_profile = n.serviceClient<manip_msgs::SpeedProfile>("/manipulation/get_speed_profile");
     ros::Rate loop(SAMPLING_FREQ);
 
     int time_k = 0;
     int state  = SM_WAIT_FOR_NEW_POSE;
-    std::vector<std::vector<float> > profile_positions;
-    std::vector<std::vector<float> > profile_speeds   ;
-    std_msgs::Float32MultiArray      msg_la_goal_pose ;
+    std::vector<std::vector<float> > profile_positions  ;
+    std::vector<std::vector<float> > profile_speeds     ;
+    std_msgs::Float32MultiArray      msg_la_goal_pose   ;
+    std_msgs::Bool                   msg_la_goal_reached;
 
     while(ros::ok())
     {
@@ -96,7 +99,7 @@ int main(int argc, char** argv)
             {
                 new_global_goal = false;
                 time_k = 0;
-                msg_la_goal_pose .data.resize(14);
+                msg_la_goal_pose.data.resize(14);
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else
@@ -120,7 +123,8 @@ int main(int argc, char** argv)
             }
             break;
         case SM_WAIT_FOR_GOAL_REACHED:
-            //Publish the corresponding topic
+            msg_la_goal_reached.data = true;
+            pub_la_goal_reached.publish(msg_la_goal_reached);
             state = SM_WAIT_FOR_NEW_POSE;
             break;
         default:
