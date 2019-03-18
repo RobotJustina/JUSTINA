@@ -2,6 +2,9 @@ geometry_msgs/Pose start_pose
 geometry_msgs/Pose goal_pose
 string start_location_id
 string goal_location_id
+bool useMap
+bool useKinect
+bool useLaser
 ---
 nav_msgs/Path path
 

@@ -4,6 +4,7 @@
 	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
 	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_start_map" default="false"/>
 	<arg name="clean_unexplored_map" default="false"/>
 	<arg name="look_at_goal" default="false"/>
 	<arg name="avoidance_type_obstacle" default="false"/>
@@ -45,6 +46,7 @@
 		<arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
 		<arg name="clean_goal_map" value="$(arg clean_goal_map)"/>
+		<arg name="clean_start_map" value="$(arg clean_start_map)"/>
 		<arg name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
 		<arg name="look_at_goal" value="$(arg look_at_goal)"/>
 		<arg name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>
@@ -78,6 +80,7 @@
 			<param name="thr_to_person" value="0.3"/>
 			<param name="time_elapsed_remove" value="10.0"/>
 		</node>
+		<node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" />
 	</group>
 	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
 	<!-- This is for the roah IROS refere -->

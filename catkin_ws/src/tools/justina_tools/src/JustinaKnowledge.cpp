@@ -378,6 +378,9 @@ std::vector<std::string> JustinaKnowledge::getRoomsFromPath(float startX, float 
     srv.request.start_pose.position.y = startY;
     srv.request.goal_pose.position.x = goalX;
     srv.request.goal_pose.position.y = goalY;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     if(!cliGetPlanPath->call(srv)){
         ROS_ERROR("Failed to call service get plan path");
         return locations;
@@ -391,6 +394,9 @@ std::vector<std::string> JustinaKnowledge::getRoomsFromPath(float startX, float 
     srv.request.start_pose.position.x = startX;
     srv.request.start_pose.position.y = startY;
     srv.request.goal_location_id = goalLocation;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     if(!cliGetPlanPath->call(srv)){
         ROS_ERROR("Failed to call service get plan path");
         return locations;
@@ -403,6 +409,9 @@ std::vector<std::string> JustinaKnowledge::getRoomsFromPath(std::string startLoc
     std::vector<std::string> locations;
     srv.request.start_location_id = startLocation;
     srv.request.goal_location_id = goalLocation;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     if(!cliGetPlanPath->call(srv)){
         ROS_ERROR("Failed to call service get plan path");
         return locations;

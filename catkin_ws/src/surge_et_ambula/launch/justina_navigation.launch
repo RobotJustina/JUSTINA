@@ -4,6 +4,7 @@
 	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
 	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_start_map" default="false"/>
 	<arg name="clean_unexplored_map" default="false"/>
 	<arg name="look_at_goal" default="false"/>
 	<arg name="avoidance_type_obstacle" default="false"/>
@@ -114,6 +115,7 @@
 			<param name="move_lateral" value="false"/>
 			<param name="max_attempts" value="25"/>
 			<param name="clean_goal_map" value="$(arg clean_goal_map)"/>
+			<param name="clean_start_map" value="$(arg clean_start_map)"/>
 			<param name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
 			<param name="look_at_goal" value="$(arg look_at_goal)"/>
 			<param name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>

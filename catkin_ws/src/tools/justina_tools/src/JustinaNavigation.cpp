@@ -213,8 +213,10 @@ bool JustinaNavigation::doorIsOpen(float minConfidence, int timeout)
         rate.sleep();
     }
     JustinaNavigation::enableDoorDetector(false);
+    rate.sleep();
     ros::spinOnce();
     rate.sleep();
+    ros::spinOnce();
     float confidence = ((float) readingsDoorClose / (float) readings);
     if(confidence >= minConfidence)
         return false;
@@ -366,6 +368,9 @@ bool JustinaNavigation::planPath(float startX, float startY, float goalX, float 
     srv.request.start_pose.position.y = startY;
     srv.request.goal_pose.position.x = goalX;
     srv.request.goal_pose.position.y = goalY;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     bool success = JustinaNavigation::cltPlanPath.call(srv);
     path = srv.response.path;
     return success;
@@ -383,6 +388,9 @@ bool JustinaNavigation::planPath(std::string start_location, std::string goal_lo
     navig_msgs::PlanPath srv;
     srv.request.start_location_id = start_location;
     srv.request.goal_location_id = goal_location;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     bool success = JustinaNavigation::cltPlanPath.call(srv);
     path = srv.response.path;
     return success;
@@ -397,6 +405,9 @@ bool JustinaNavigation::planPath(std::string goal_location, nav_msgs::Path& path
     srv.request.goal_location_id = goal_location;
     srv.request.start_pose.position.x = robotX;
     srv.request.start_pose.position.y = robotY;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     bool success = JustinaNavigation::cltPlanPath.call(srv);
     path = srv.response.path;
     return success;
@@ -409,6 +420,9 @@ bool JustinaNavigation::planPath(std::string start_location, float goalX, float 
     srv.request.goal_location_id = "";
     srv.request.goal_pose.position.x = goalX;
     srv.request.goal_pose.position.y = goalY;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     bool success = JustinaNavigation::cltPlanPath.call(srv);
     path = srv.response.path;
     return success;
@@ -421,6 +435,9 @@ bool JustinaNavigation::planPath(float startX, float startY, std::string goal_lo
     srv.request.goal_location_id = goal_location;
     srv.request.start_pose.position.x = startX;
     srv.request.start_pose.position.y = startY;
+    srv.request.useMap = true;
+    srv.request.useLaser = true;
+    srv.request.useKinect = true;
     bool success = JustinaNavigation::cltPlanPath.call(srv);
     path = srv.response.path;
     return success;
