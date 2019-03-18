@@ -41,6 +41,27 @@
 #define MAX_ATTEMPTS_SPEECH_RECO 3
 
 
+void switchSpeechReco(bool pocket, std::string grammarPocket, std::string grammarMicrosoft, std::string speech){
+    if (pocket){
+        //use pocket sphinx
+        JustinaHRI::usePocketSphinx = true;
+        JustinaHRI::enableGrammarSpeechRecognized(grammarPocket, 2.0);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        JustinaHRI::enableSpeechRecognized(false);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
+    }
+
+    else{
+        //use speech recognition of microsoft
+        JustinaHRI::usePocketSphinx = false;
+        JustinaHRI::loadGrammarSpeechRecognized(grammarMicrosoft);
+        JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
+    }
+}
+
 
 
 
@@ -142,9 +163,9 @@ int main(int argc, char** argv)
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);  
-                ros::spinOnce();
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                //JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);  
+                //ros::spinOnce();
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
@@ -238,7 +259,8 @@ int main(int argc, char** argv)
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
 
                 JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
-                 
+                
+                attemptsWaitConfirmation=0;
                 nextState = SM_CONFIRMATION_TO_GO;
                 break;
             
@@ -247,13 +269,15 @@ int main(int argc, char** argv)
                 attemptsSpeechReco = 0;
                 attemptsSpeechInt = 0;
 
-                JustinaHRI::enableSpeechRecognized(false);
+
+                switchSpeechReco(true, GRAMMAR_POCKET_COMMANDS, GRAMMAR_COMMANDS, "Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no");
+                /*JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::waitAfterSay("Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no", 12000);
                 ros::Duration(1.0).sleep();
                 if(JustinaHRI::usePocketSphinx)
                     JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
                 else
-                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
+                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);*/
                 
                 //JustinaHRI::enableSpeechRecognized(true);
 
@@ -270,7 +294,7 @@ int main(int argc, char** argv)
                 }
 
                 else {
-                    if(attemptsWaitConfirmation < MAX_ATTEMPTS_WAIT_CONFIRMATION){
+                    if(attemptsWaitConfirmation < maxAttempsWaitConfirmation){
                         attemptsWaitConfirmation++;
                         nextState = SM_CONFIRMATION_TO_GO;
                     }
@@ -502,8 +526,12 @@ int main(int argc, char** argv)
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
                 JustinaTasks::guideAPerson("arena", 300000, 1.5);
+
                 
                 if(numberGuest<maxNumberGuest){
+                    ros::Duration(1.0).sleep();
+                    JustinaNavigation::moveDistAngle(0.0, -1.5708, 2000);
+                    ros::Duration(1.0).sleep();
                     JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
                     ros::Duration(1.5).sleep();
                     JustinaHRI::say("please close the umbrella and put in my gripper");
