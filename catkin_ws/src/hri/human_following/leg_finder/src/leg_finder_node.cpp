@@ -138,7 +138,7 @@ bool obst_in_front(sensor_msgs::LaserScan& laser, float xmin, float xmax, float 
         if(x >= xmin && x <= xmax && y >= ymin && y <= ymax)
             quantize += laser.ranges[i];
     }
-    std::cout << "leg_finder_node.-> quantize : " << quantize << std::endl;
+    //std::cout << "leg_finder_node.-> quantize : " << quantize << std::endl;
     if(quantize >= thr)
         return true;
 }
