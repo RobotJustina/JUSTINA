@@ -107,6 +107,8 @@ int main(int argc, char **argv){
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
     confirmCommands.push_back("justina no");
+    confirmCommands.push_back("robot yes");
+    confirmCommands.push_back("robot no");
 
     std::vector<std::string> idsPerson;
     idsPerson.push_back("person");
