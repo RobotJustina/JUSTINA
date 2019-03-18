@@ -21,8 +21,8 @@ bool use_oni = false;
 bool use_bag = false;
 int downsample_by = 1;
 
-ros::Publisher pubImageIROS;
-ros::Publisher pubDepthIROS;
+//ros::Publisher pubImageIROS;
+//ros::Publisher pubDepthIROS;
 
 void initialize_rosmsg(sensor_msgs::PointCloud2& msg, int width, int height, std::string frame_id)
 {
@@ -86,7 +86,7 @@ bool kinectRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud
     if(!use_bag)
     {
         initialize_rosmsg(resp.point_cloud, 640, 480, "kinect_link");
-        pubDepthIROS.publish(resp.point_cloud);
+        //pubDepthIROS.publish(resp.point_cloud);
         cvmat_2_rosmsg(depthMap, bgrImage, resp.point_cloud);
         resp.point_cloud.header.stamp = ros::Time::now();
         return true;
@@ -104,7 +104,7 @@ bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_
     if(!use_bag)
     {
         initialize_rosmsg(resp.point_cloud, 640, 480, "kinect_link");
-        pubDepthIROS.publish(resp.point_cloud);
+        //pubDepthIROS.publish(resp.point_cloud);
         cvmat_2_rosmsg(depthMap, bgrImage, resp.point_cloud);
         pcl_ros::transformPointCloud("base_link", resp.point_cloud, resp.point_cloud, *tf_listener);
 	resp.point_cloud.header.frame_id = "base_link";
@@ -193,8 +193,8 @@ int main(int argc, char** argv)
     ros::Publisher pubKinectFrame =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
     ros::Publisher pubRobotFrame  =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
     ros::Publisher pubDownsampled =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled",1);
-    pubImageIROS = n.advertise<sensor_msgs::Image>("/erlc/rgb_1/image", 1);
-    pubDepthIROS = n.advertise<sensor_msgs::PointCloud2>("/erlc/depth_0/pointcloud", 1);
+    //pubImageIROS = n.advertise<sensor_msgs::Image>("/erlc/rgb_1/image", 1);
+    //pubDepthIROS = n.advertise<sensor_msgs::PointCloud2>("/erlc/depth_0/pointcloud", 1);
     ros::ServiceServer srvRgbdKinect = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", kinectRgbd_callback);
     ros::ServiceServer srvRgbdRobot  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);
     ros::ServiceServer srvRgbdKinectDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect_downsampled", kinectRgbdDownsampled_callback);
