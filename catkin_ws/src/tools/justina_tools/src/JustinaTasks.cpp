@@ -1649,7 +1649,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	return true;
 }
 
-bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE pose, std::string location){
+bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE specificPos, std::string location){
 	std::stringstream ss;
 	std::string gestureSpeech;
     ros::Time time;
@@ -1658,7 +1658,7 @@ bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE pose, std::string
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(ids, specificPos, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 
@@ -1669,7 +1669,15 @@ bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE pose, std::string
 	cx = centroid(0, 0);
 	cy = centroid(1, 0);
 	cz = centroid(2, 0);
-	float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
+    
+    if(cz > 1.05)
+        poseRecog = STANDING;
+    else if(cz > 0.65 && cz <= 1.05)
+        poseRecog = SITTING;
+    else if(cz > 0.1 && cz <= 0.65)
+        poseRecog = LYING;
+	
+    float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
 	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
 	tf::Vector3 wgc(cx, cy, cz);
 

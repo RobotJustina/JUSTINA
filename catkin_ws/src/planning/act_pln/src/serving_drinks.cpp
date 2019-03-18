@@ -282,6 +282,7 @@ void callbackCmdFindObject(
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
+    JustinaTasks::POSE poseRecog;
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -297,7 +298,7 @@ void callbackCmdFindObject(
 		ss.str("");
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
-            success = JustinaTasks::findYolo(idsPerson);
+            success = JustinaTasks::findYolo(idsPerson, poseRecog);
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");

@@ -162,6 +162,7 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
+    JustinaTasks::POSE poseRecog;
      
     int minDelayAfterSay = 0;
     int maxDelayAfterSay = 300;
@@ -276,7 +277,7 @@ int main(int argc, char** argv)
             case SM_FIND_PERSON:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                if(JustinaTasks::findYolo(yoloIds, JustinaTasks::STANDING, room)){
+                if(JustinaTasks::findYolo(yoloIds, poseRecog, JustinaTasks::STANDING, room)){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     location = "person_loc";
                     JustinaKnowledge::addUpdateKnownLoc("person_loc", robot_x, robot_y, robot_a);
