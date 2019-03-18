@@ -323,6 +323,7 @@ int main(int argc, char** argv)
                 JustinaHRI::say("i can not take the bag, but i will take the bag if you put the bag in my gripper");
                 JustinaTasks::detectObjectInGripper("bag", withLeftArm, 10000);
                 JustinaHRI::say("Tank you");
+                JustinaManip::hdGoTo(0.0, 0.0, 3000);
                 nextState = SM_INSTRUCTIONS;
                 break;
             
