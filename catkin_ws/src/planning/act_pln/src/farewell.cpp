@@ -158,7 +158,8 @@ int main(int argc, char** argv)
 				}
                 //JustinaHRI::waitAfterSay("I'm ready for the farewell test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
                 //JustinaHRI::enableSpeechRecognized(true);
-                nextState = SM_WAIT_FOR_UMBRELLA;
+                JustinaVision::startSkeletonFinding();
+                nextState = SM_SEARCH_WAVING;
                 break;
 
             case SM_WAIT_FOR_UMBRELLA:
@@ -172,10 +173,15 @@ int main(int argc, char** argv)
                 JustinaTasks::detectObjectInGripper("umbrella", true, 10000);
                 withLeftArm = true;
                 ros::Duration(1.0).sleep();
-                JustinaVision::startSkeletonFinding();
+
+                JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				ros::Duration(1.0).sleep();
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
+
+                
                 nextState = SM_SEARCH_WAVING;
-                //}else
-                    //nextState = SM_WAIT_FOR_INIT_COMMAND;
+                
                 break;
             
             case SM_SEARCH_WAVING:
@@ -255,10 +261,7 @@ int main(int argc, char** argv)
                 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
                     if(lastRecoSpeech.find("yes") != std::string::npos){
-                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				        ros::Duration(1.0).sleep();
-                        JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
+                        
                         nextState = SM_GoCoatRack;
                     }
 
@@ -498,10 +501,31 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("arena", 50000000, 1.5);
+                JustinaTasks::guideAPerson("arena", 300000, 1.5);
                 
-                JustinaHRI::say("please take your coat");
+                if(numberGuest<maxNumberGuest){
+                    JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
+                    ros::Duration(1.5).sleep();
+                    JustinaHRI::say("please close the umbrella and put in my gripper");
+                    ros::Duration(1.5).sleep();
+                    JustinaTasks::detectObjectInGripper("umbrella", true, 10000);
+                    withLeftArm = true;
+                    ros::Duration(1.0).sleep();
+                }
+
+
+                JustinaHRI::say("hey guest, please take your coat");
         		ros::Duration(2.0).sleep();
+
+                
+                
+
+                JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				ros::Duration(1.0).sleep();
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
+
+
                 JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
         		ros::Duration(2.0).sleep();
 
@@ -510,7 +534,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("corridor", 50000000, 1.5);
+                JustinaTasks::guideAPerson("corridor", 300000, 1.5);
                 
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
         		ros::Duration(1.5).sleep();
