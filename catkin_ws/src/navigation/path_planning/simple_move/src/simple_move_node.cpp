@@ -350,6 +350,8 @@ int main(int argc, char** argv)
                     else
                         state = SM_GOAL_POSE_ACCEL;
 
+                    if(cruise_speed > 0.2)
+                        cruise_speed = 0.2;
                     if(move_lateral)
                         twist = calculate_speeds_lateral(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed);
                     else
@@ -440,6 +442,8 @@ int main(int argc, char** argv)
                         state = SM_GOAL_PATH_DECCEL;
                     else if(cruise_speed >= 0.35)
                         state = SM_GOAL_PATH_CRUISE;
+                    if(cruise_speed > 0.35)
+                        cruise_speed = 0.35;
 
                     twist = calculate_speeds(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed, false);
                     pub_cmd_vel.publish(twist);

@@ -133,9 +133,9 @@ int main(int argc, char** argv)
                 srv.request.start_pose.position.y = robotY;
                 srv.request.goal_pose.position.x = goalMapX;
                 srv.request.goal_pose.position.y = goalMapY;
-                srv.request.useMap = true;
-                srv.request.useLaser = false;
-                srv.request.useKinect = false;
+                srv.request.useMap = false;
+                srv.request.useLaser = true;
+                srv.request.useKinect = true;
                 if(cliGetPlanPath.call(srv))
                     pubSimpleMoveGoalPath.publish(srv.response.path);
             }

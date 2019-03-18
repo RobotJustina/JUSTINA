@@ -3,5 +3,7 @@
 		<arg name="initial_pose_x" value="3.405"/>
 		<arg name="initial_pose_y" value="-2.367"/>
 		<arg name="initial_pose_a" value="1.4629"/>
+		<arg name="clean_goal_map" value="true"/>
+		<arg name="clean_start_map" value="true"/>
 	</include>
 </launch>
