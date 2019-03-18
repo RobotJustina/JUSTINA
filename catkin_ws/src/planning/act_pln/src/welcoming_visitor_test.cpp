@@ -848,6 +848,11 @@ int main(int argc, char** argv)
             case SM_GuidingPlumber:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
                 std::cout << "Welcoming visitor Test...->guiding plumber.." << std::endl;
+                if(location=="kitchen")
+                    sendWhatHappend("I am guiding the plumber to the kitchen");
+                else
+                    sendWhatHappend("I am guiding the plumber to the bathroom");
+
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
@@ -906,6 +911,12 @@ int main(int argc, char** argv)
             case SM_WaitVisitor:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                 std::cout << "Welcoming visitor Test...->SM_Waiting doctor" << std::endl;
                 //fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitor");
+
+                if(id=="doctor")
+                    sendWhatHappend("The doctor remains in the bedroom");
+                else
+                    sendWhatHappend("The plumber keeps working");
+
                 JustinaHRI::waitAfterSay("Tell me, justina continue, in order to follow you to the exit", 12000, maxDelayAfterSay);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z=0;
@@ -931,6 +942,7 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...->SM_Follow to the door" << std::endl;
                 
                 if(id == "plumber"){
+                    sendWhatHappend("I am guiding the plumber to the exit");
                     if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door", 0, true, plumberNotAllowed))
                         if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0,  true, plumberNotAllowed))
                             if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0, true, plumberNotAllowed))
@@ -943,6 +955,7 @@ int main(int argc, char** argv)
                                 nextState = SM_FOLLOW_TO_THE_DOOR;
                 }
                 else{
+                    sendWhatHappend("I am guiding the doctor to the exit");
                     if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
                         if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
                             if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
@@ -974,6 +987,7 @@ int main(int argc, char** argv)
                 door = true;
                 JustinaHRI::say("the door is closed, Thank you");
         		ros::Duration(1.0).sleep();
+                sendWhatHappend("the door has been cloed by the visitor");
                 //JustinaIROS::loggingCommand("the door has been closed");
                 nextState = SM_NavigateToInicialPoint;
             break;
@@ -1043,7 +1057,7 @@ int main(int argc, char** argv)
                 JustinaTasks::detectObjectInGripper("bag", true, 7000);
                 withLeftArm = true;
                 ros::Duration(1.0).sleep();*/
-                sendWhatHappend("I have the mail, and iam going to deliver you it");
+                sendWhatHappend("I have the mail, and i am going to deliver it to you");
                 nextState = SM_DeliverMailToAnnie;
             break;
 
@@ -1087,6 +1101,7 @@ int main(int argc, char** argv)
 
             case SM_DeliverPost:
                 std::cout <<"Welcoming visitor Test...->delivering post" << std::endl;
+                sendWhatHappend("I am giving the mail to you");
                 JustinaTasks::findPerson("granny annie", -1, JustinaTasks::NONE, false, "bedroom");
                 JustinaHRI::say("Hi Annie, The postman brought something for you");
 				ros::Duration(1.0).sleep();
