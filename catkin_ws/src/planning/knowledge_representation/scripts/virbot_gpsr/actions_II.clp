@@ -206,7 +206,7 @@
         (printout t "Prueba Nuevo PLAN How many CAtegory task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?category ?place)(duration 6000)))
         (assert (plan (name ?name) (number 2)(actions go_to ?category)(duration 6000)))
-        (assert (plan (name ?name) (number 3)(actions how_many_cat ?category)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions how_many_cat ?category ?place)(duration 6000)))
         (assert (finish-planner ?name 3))
 )
 
@@ -624,10 +624,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-how-many-cat
-        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category ?place)(duration ?t))
         ?f1 <- (item (name ?category)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?category " find"))
+        (bind ?command (str-cat "" ?category " " ?place ""))
         (assert (send-blackboard ACT-PLN find_category ?command ?t 4))
         ;(assert (num_places (- ?num 2)))
 )
