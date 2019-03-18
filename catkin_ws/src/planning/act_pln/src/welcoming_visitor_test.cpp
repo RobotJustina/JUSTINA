@@ -196,7 +196,7 @@ int main(int argc, char** argv)
   	bool recog=false;
     bool recogMail = false;  
     bool withLeftArm=false;  
-    bool validatePlumber = false;
+    bool validatePlumber = true;
     bool isPlumber = false;
     bool userConfirmation = false;
     bool opened = false;
