@@ -5821,7 +5821,7 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 	//closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
 
 
-	JustinaTasks::guideAPerson("taxi", 50000000);
+	JustinaTasks::guideAPerson("taxi", 300000);
 
     /*float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
