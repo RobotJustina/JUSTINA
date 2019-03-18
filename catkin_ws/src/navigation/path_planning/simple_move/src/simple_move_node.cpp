@@ -301,16 +301,12 @@ int main(int argc, char** argv)
         switch(state)
         {
             case SM_INIT:
+                cruise_speed = 0;
                 if(new_pose)
                 {
                     get_goal_position_wrt_odom(goal_distance, goal_angle, tf_listener, goal_x, goal_y, goal_t, move_lateral);
                     // Correct this if cause some bugs
-                    //cruise_speed = 0;
-                    //state = SM_GOAL_POSE_ACCEL;
-                    if(cruise_speed > 0.0)
-                        state = SM_GOAL_POSE_ACCEL;
-                    else
-                        state = SM_GOAL_POSE_ACCEL;
+                    state = SM_GOAL_POSE_ACCEL;
                     new_pose = false;
                     attempts = (int)((fabs(goal_distance)+0.1)/0.2*60 + fabs(goal_angle)/0.5*60);
                     msg_goal_reached.data = false;
@@ -319,12 +315,7 @@ int main(int argc, char** argv)
                 else if(new_path)
                 {
                     // Correct this if cause some bugs
-                    //cruise_speed = 0;
-                    //state = SM_GOAL_PATH_ACCEL;
-                    if(cruise_speed > 0.0)
-                        state = SM_GOAL_PATH_ACCEL;
-                    else
-                        state = SM_GOAL_PATH_ACCEL;
+                    state = SM_GOAL_PATH_ACCEL;
                     new_path = false;
                     next_pose_idx = 0;
                     global_goal_x = goal_path.poses[goal_path.poses.size() - 1].pose.position.x;
