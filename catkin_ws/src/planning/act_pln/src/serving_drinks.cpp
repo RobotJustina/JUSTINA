@@ -66,6 +66,7 @@ std::string cat_grammar= "eegpsr_montreal.xml";
 bool alternative_drink = true;
 std::string no_drink;
 std::string prev_drink = "no_prev";
+JustinaTasks::POSE poseRecog;
 
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltQueryKDB;
@@ -282,7 +283,6 @@ void callbackCmdFindObject(
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
-    JustinaTasks::POSE poseRecog;
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -298,6 +298,7 @@ void callbackCmdFindObject(
 		ss.str("");
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
+            poseRecog = JustinaTasks::NONE;
             success = JustinaTasks::findYolo(idsPerson, poseRecog);
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
@@ -717,8 +718,11 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
     bool finish_train = false;
     int count = 0;
     
-    JustinaManip::hdGoTo(0.0, 0.0, 5000);
-    
+	if (poseRecog == JustinaTasks::SITTING || poseRecog == JustinaTasks::LYING)
+        JustinaManip::hdGoTo(0.0, -0.6, 5000);
+    else
+        JustinaManip::hdGoTo(0.0, 0.0, 5000);
+
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaVision::faceTrain(tokens[0], 4);
     
@@ -728,6 +732,7 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
         }
         count++;
     }
+    JustinaManip::hdGoTo(0.0, 0.0, 5000);
     JustinaHRI::waitAfterSay("thank you", 6000);
 	
     //JustinaNavigation::moveDistAngle(0, 1.57, 10000);
