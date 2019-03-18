@@ -920,7 +920,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 	
 	ss.str("");
-	ss << "I am looking for objects on the " << tokens[1];
+	ss << "I am looking for " << tokens[0] << " on the " << tokens[1];
 	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
