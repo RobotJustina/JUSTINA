@@ -373,7 +373,8 @@ int main(int argc, char **argv){
                                 JustinaHRI::enableGrammarSpeechRecognized(grammarDrinksID, 0);//load the grammar
                             else
                                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
-                            JustinaHRI::enableSpeechRecognized(true);
+                            if(!JustinaHRI::usePocketSphinx)
+                                JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
                             state = SM_INTRO_GUEST;
                         }else{
                             ss2.str("");
@@ -407,7 +408,7 @@ int main(int argc, char **argv){
                                 ss2 << "Sorry I did not understand you, you are an unknown person ";
                             else
                                 ss2 << "Ok, your name is " << lastName;
-                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay(ss2.str(), 7000, MIN_DELAY_AFTER_SAY);
                             names.push_back(lastName);
                             recogName = false;
                             JustinaHRI::enableSpeechRecognized(true);
@@ -418,7 +419,7 @@ int main(int argc, char **argv){
                                 ss2 << "Sorry I did not understand you, your favorite drink is unknown";
                             else
                                 ss2 << "Ok, your favorite drink is " << lastDrink;
-                            JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay(ss2.str(), 7000, MIN_DELAY_AFTER_SAY);
                             drinks.push_back(lastDrink);
                             state = SM_MEMORIZING_OPERATOR;
                         }
@@ -461,6 +462,8 @@ int main(int argc, char **argv){
                                     JustinaHRI::enableGrammarSpeechRecognized(grammarNamesID, 0);//load the grammar
                                 else
                                     JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_NAMES);
+                                if(!JustinaHRI::usePocketSphinx)
+                                    JustinaHRI::enableSpeechRecognized(true);
                             }else{
                                 //drinks.erase(names.end() - 1);
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
@@ -468,6 +471,8 @@ int main(int argc, char **argv){
                                     JustinaHRI::enableGrammarSpeechRecognized(grammarDrinksID, 0);//load the grammar
                                 else
                                     JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
+                                if(!JustinaHRI::usePocketSphinx)
+                                    JustinaHRI::enableSpeechRecognized(true);
                             }
                             if(!JustinaHRI::usePocketSphinx)
                                 JustinaHRI::enableSpeechRecognized(true);
@@ -506,13 +511,17 @@ int main(int argc, char **argv){
                     else{
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unknown person", 12000, MIN_DELAY_AFTER_SAY);
                             names.push_back(lastName);
+                            ss2.str("");
+                            ss2 << "Ok, your name is " << names[names.size() - 1];
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
                             recogName = false;
                             state = SM_INTRO_GUEST;
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unknown", 12000, MIN_DELAY_AFTER_SAY);
                             drinks.push_back(lastDrink);
+                            ss2.str("");
+                            ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
                             attemptsMemorizing = 0;
                             state = SM_MEMORIZING_OPERATOR;
                         }
@@ -613,7 +622,8 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_INTRODUCING: Introducing person to Jhon." << std::endl;
                 ss.str("");
                 ss << "John you have a visitor, his name is " << names[names.size() - 1] << " and his favorite drink is " << drinks[drinks.size() - 1];
-                JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 if(JustinaKnowledge::existKnownLocation("john")){
                     JustinaKnowledge::getKnownLocation("john", goalx, goaly, goala);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -632,7 +642,8 @@ int main(int argc, char **argv){
                 }
                 ss.str("");
                 ss << names[names.size() - 1] << " he is John" << std::endl;
-                JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
