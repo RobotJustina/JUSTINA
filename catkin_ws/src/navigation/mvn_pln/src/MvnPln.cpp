@@ -12,6 +12,7 @@ MvnPln::MvnPln()
     this->_allow_move_lateral = false;
     this->max_attempts = 0;
     this->_clean_goal_map = false;
+    this->_clean_start_map = false;
     this->_avoidance_type_obstacle = false;
     this->countObstType["person"] = 0;
     this->countObstType["vase"] = 0;
@@ -52,7 +53,9 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
 
 void MvnPln::spin()
 {
-    ros::Rate loop(10);
+    //Augmented the rate roop to 30, for more fast path calculator
+    //ros::Rate loop(10);
+    ros::Rate loop(30);
     int currentState = SM_INIT;
     float robotX, robotY, robotTheta;
     float angleError;
@@ -425,6 +428,11 @@ void MvnPln::clean_goal_map(bool _clean_goal_map)
     this->_clean_goal_map = _clean_goal_map;
 }
 
+void MvnPln::clean_start_map(bool _clean_start_map)
+{
+    this->_clean_start_map = _clean_start_map;
+}
+
 void MvnPln::look_at_goal(bool _look_at_goal){
     this->_look_at_goal = _look_at_goal;
 }
@@ -536,19 +544,27 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
                 return false;
             JustinaManip::hdGoTo(0.0, -0.9, 3000);
         }
-        if(!fillMapWithKinect(augmentedMap))
-            return false;
+        else {
+            if(!fillMapWithKinect(augmentedMap))
+                return false;
+        }
     }
 
-    if(_clean_goal_map){
-		std::cout << "MvnPln->Cleaning the cells and neighbors of the goal destination." << std::endl;
+    if(_clean_goal_map || _clean_start_map){
+		std::cout << "MvnPln->Cleaning the cells and neighbors of the start or goal destination." << std::endl;
 		int goalCellX = (int)((goalX - augmentedMap.info.origin.position.x)/augmentedMap.info.resolution);
 		int goalCellY = (int)((goalY - augmentedMap.info.origin.position.y)/augmentedMap.info.resolution);
+		int startCellX = (int)((startX - augmentedMap.info.origin.position.x)/augmentedMap.info.resolution);
+		int startCellY = (int)((startY - augmentedMap.info.origin.position.y)/augmentedMap.info.resolution);
 		int goalCell = goalCellY * augmentedMap.info.width + goalCellX;
+		int startCell = startCellY * augmentedMap.info.width + startCellX;
 
-		augmentedMap.data[goalCell] = 0;
+        if(_clean_goal_map)
+            augmentedMap.data[goalCell] = 0;
+        if(_clean_start_map)
+		    augmentedMap.data[startCell] = 0;
 
-		float growDist = 0.3; // This is the raduis of robot
+		float growDist = 0.4; // This is the raduis of robot
 		int growSteps = (int)(growDist / augmentedMap.info.resolution);
 		int boxSize = (2 * growSteps + 1) * (2 * growSteps + 1);
 		int* neighbors = new int[boxSize];
@@ -561,8 +577,12 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 				counter++;
 			}
 
-		for(int j=0; j < boxSize; j++)
-			augmentedMap.data[goalCell + neighbors[j]] = 0;
+		for(int j=0; j < boxSize; j++){
+            if(_clean_goal_map)
+			    augmentedMap.data[goalCell + neighbors[j]] = 0;
+            if(_clean_start_map)
+			    augmentedMap.data[startCell + neighbors[j]] = 0;
+        }
 	}
 	else
 		std::cout << "MvnPln->Not clean the cells and neighbors of the goal destinetion." << std::endl;
@@ -608,15 +628,12 @@ bool MvnPln::fillMapWithKinect(nav_msgs::OccupancyGrid &augmentedMap){
     pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtRobot;
     pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtMap;
     pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtRobot);
-    tf::StampedTransform transformTf;
-    tf_listener.lookupTransform("map", "base_link", ros::Time(0), transformTf);
-    Eigen::Affine3d transformEigen;
-    tf::transformTFToEigen(transformTf, transformEigen);
-    pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
+    pcl_ros::transformPointCloud("map", srvGetRgbd.response.point_cloud, srvGetRgbd.response.point_cloud, tf_listener);
+    pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtMap);
     //It augments the map using only a rectangle in front of the robot
     int counter = 0;
     int idx;
-
+    /*
     // TODO REMOVE THIS PRINTS
     std::cout << "MvnPln.->kinect_minX:" << kinect_minX << std::endl;
     std::cout << "MvnPln.->kinect_maxX:" << kinect_maxX << std::endl;
@@ -624,9 +641,9 @@ bool MvnPln::fillMapWithKinect(nav_msgs::OccupancyGrid &augmentedMap){
     std::cout << "MvnPln.->kinect_maxY:" << kinect_maxY << std::endl;
     std::cout << "MvnPln.->kinect_minZ:" << kinect_minZ << std::endl;
     std::cout << "MvnPln.->kinect_maxZ:" << kinect_maxZ << std::endl;
+    */
 
-
-    for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
+    for(size_t i=0; i< cloudWrtMap.points.size(); i++)
     {
         pcl::PointXYZRGBA pR = cloudWrtRobot.points[i];
         pcl::PointXYZRGBA pM = cloudWrtMap.points[i];
@@ -692,8 +709,10 @@ bool MvnPln::callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::Pl
         goalX = req.goal_pose.position.x;
         goalY = req.goal_pose.position.y;
     }
-
-    return this->planPath(startX, startY, goalX, goalY, resp.path);
+    if(req.useMap && req.useKinect && req.useLaser)
+        return this->planPath(startX, startY, goalX, goalY, resp.path);
+    else
+        return this->planPath(startX, startY, goalX, goalY, resp.path, req.useMap, req.useLaser, req.useKinect);
 }
 
 void MvnPln::callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg)

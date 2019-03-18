@@ -11,6 +11,7 @@ int main(int argc, char** argv)
     std::string locationsFilePath = "";
     bool allow_move_lateral = false;
     bool clean_goal_map = false;
+    bool clean_start_map = false;
     bool clean_unexplored_map = false;
     bool look_at_goal = false;
     bool avoidance_type_obstacle = false;
@@ -34,6 +35,8 @@ int main(int argc, char** argv)
         ros::param::get("~max_attempts", max_attempts);
     if(ros::param::has("~clean_goal_map"))
         ros::param::get("~clean_goal_map", clean_goal_map);
+    if(ros::param::has("~clean_start_map"))
+        ros::param::get("~clean_start_map", clean_start_map);
     if(ros::param::has("~clean_unexplored_map"))
         ros::param::get("~clean_unexplored_map", clean_unexplored_map);
     if(ros::param::has("~look_at_goal"))
@@ -62,6 +65,7 @@ int main(int argc, char** argv)
     MvnPln mvnPln;
     mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.clean_goal_map(clean_goal_map);
+    mvnPln.clean_start_map(clean_start_map);
     mvnPln.clean_unexplored_map(clean_unexplored_map);
     mvnPln.look_at_goal(look_at_goal);
     mvnPln.avoidance_type_obstacle(avoidance_type_obstacle);

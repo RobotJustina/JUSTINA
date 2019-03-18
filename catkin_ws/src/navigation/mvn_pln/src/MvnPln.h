@@ -103,6 +103,7 @@ private:
     int timeoutAvoidanceChair;
     bool _allow_move_lateral;
     bool _clean_goal_map;
+    bool _clean_start_map;
     bool _look_at_goal;
     bool _clean_unexplored_map;
     bool _avoidance_type_obstacle;
@@ -121,6 +122,7 @@ public:
     void spin();
     void allow_move_lateral(bool _allow_move_lateral);
     void clean_goal_map(bool _clean_goal_map);
+    void clean_start_map(bool _clean_start_map);
     void look_at_goal(bool _look_at_goal);
     void clean_unexplored_map(bool _clean_unexplored_map);
     void avoidance_type_obstacle(bool _avoidance_type_obstacle);
