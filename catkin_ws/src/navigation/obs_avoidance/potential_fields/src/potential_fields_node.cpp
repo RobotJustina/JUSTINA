@@ -38,7 +38,7 @@ int main(int argc, char ** argv){
 
     ros::Subscriber subLaserScan = nh.subscribe(topicScan, 1, callbackLaserScan);
     ros::Publisher pubRepulsionForce = nh.advertise<std_msgs::Float32>("potential_fields/repulsive_force", 1);
-    ros::Publisher pubPoseRepulsionForces = nh.advertise<geometry_msgs::PoseArray>("potential_fields/psoe_repulsive_forces", 1);
+    ros::Publisher pubPoseRepulsionForces = nh.advertise<geometry_msgs::PoseArray>("potential_fields/pose_repulsive_forces", 1);
     ros::Publisher pubPoseRepulsionForce = nh.advertise<geometry_msgs::PoseArray>("potential_fields/pose_repulsive_force", 1);
     
 
@@ -46,26 +46,23 @@ int main(int argc, char ** argv){
 
         if(initVectorForces){
             for(int i = 0 ; i < laserScan.ranges.size() ; i++){
-                if(laserScan.ranges[i] >= distanceMin){
-                    repulsiveForces[i] = 0;
-                    poseRepulsiveForces.poses[i].orientation.z = 0.0;
-                    poseRepulsiveForces.poses[i].orientation.w = 0.0;
-                    poseRepulsiveForces.poses[i].orientation.y = 0.0;
-                }else if(laserScan.ranges[i] > 0){
+                float angle = laserScan.angle_min + ( i * laserScan.angle_increment);
+                repulsiveForces[i] = 0;
+                poseRepulsiveForces.poses[i].orientation.z = 0.0;
+                if(laserScan.ranges[i] > 0.24 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
                     float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
-                    float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment)) / pow(laserScan.ranges[i], 3);
-                    repulsiveForces[i] = fRepY;
+                    float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    repulsiveForces[i] = Kr * fRepY;
                     //std::cout << repulsiveForces[i] << std::endl;
-                    repulsiveForces[i] *= Kr;
                     //std::cout << repulsiveForces[i] << std::endl;
+                    poseRepulsiveForces.poses[i].position.x = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    poseRepulsiveForces.poses[i].position.y = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
                     if(fRepY > 0){
                         poseRepulsiveForces.poses[i].orientation.z = 1.0;
                         poseRepulsiveForces.poses[i].orientation.w = 1.0;
-                        poseRepulsiveForces.poses[i].position.y = sin(laserScan.angle_min + ( i * laserScan.angle_increment));
                     }else{
                         poseRepulsiveForces.poses[i].orientation.z = -1.0;
                         poseRepulsiveForces.poses[i].orientation.w = 1.0;
-                        poseRepulsiveForces.poses[i].position.y = sin(laserScan.angle_min + ( i * laserScan.angle_increment));
                     }
                 }
             }
@@ -80,15 +77,18 @@ int main(int argc, char ** argv){
             if(meanRepulsionForce > 0){
                 poseRepulsiveForce.poses[0].orientation.z = 1.0;
                 poseRepulsiveForce.poses[0].orientation.w = 1.0;
-                poseRepulsiveForce.poses[0].position.y = 0.35;
+                poseRepulsiveForce.poses[0].position.x = 0.35;
+                poseRepulsiveForce.poses[0].position.y = -0.35;
             }else if(meanRepulsionForce < 0){
                 poseRepulsiveForce.poses[0].orientation.z = -1.0;
                 poseRepulsiveForce.poses[0].orientation.w = 1.0;
-                poseRepulsiveForce.poses[0].position.y = -0.35;
+                poseRepulsiveForce.poses[0].position.x = 0.35;
+                poseRepulsiveForce.poses[0].position.y = 0.35;
             }
             else{
                 poseRepulsiveForce.poses[0].orientation.z = 0.0;
                 poseRepulsiveForce.poses[0].orientation.w = 0.0;
+                poseRepulsiveForce.poses[0].position.x = 0.35;
                 poseRepulsiveForce.poses[0].position.y = 0.0;
             }
 
