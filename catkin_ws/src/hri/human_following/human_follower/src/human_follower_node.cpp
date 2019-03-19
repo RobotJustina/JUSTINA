@@ -4,6 +4,7 @@
 #include "std_msgs/Float32MultiArray.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/PointStamped.h"
+#include "std_msgs/Float32.h"
 
 #include "justina_tools/JustinaTools.h"
 #include "opencv2/imgproc.hpp"
@@ -15,6 +16,9 @@ ros::Publisher   pub_cmd_vel;
 ros::Publisher   pub_head_pose;
 ros::ServiceClient cltRgbdRobotDownsampled;
 bool move_head = false;
+float repulsiveForce = 0.0;
+float KInfRep = 0.03;
+bool usePotFields = false;
 
 bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -47,13 +51,15 @@ geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
     {
         result.linear.x  = distance * exp(-(angle_error * angle_error) / alpha);
         result.linear.y  = 0;
+        if(usePotFields)
+            result.linear.y = KInfRep * repulsiveForce;
         result.angular.z = max_angular * (2 / (1 + exp(-angle_error / beta)) - 1);
     }
     else
     {
         result.linear.x  = 0;
         result.linear.y  = 0;
-        if(fabs(angle_error) >= M_PI_4 / 4.0f)
+        if(fabs(angle_error) >= M_PI_4 / 6.0f)
             result.angular.z = max_angular * (2 / (1 + exp(-angle_error / beta)) - 1);
         else
             result.angular.z = 0;
@@ -78,6 +84,10 @@ void callback_legs_pose(const geometry_msgs::PointStamped::ConstPtr& msg)
     }
 }
 
+void callback_pot_fields(const std_msgs::Float32::ConstPtr& msg){
+    repulsiveForce = msg->data;
+}
+
 void callback_enable(const std_msgs::Bool::ConstPtr& msg)
 {
     if(msg->data)
@@ -99,6 +109,9 @@ int main(int argc, char** argv)
             move_head = true;
     }
 
+    ros::param::get("~use_pot_fields", usePotFields);
+    ros::param::get("~k_inf_rep", KInfRep);
+
     std::cout << "INITIALIZING HUMAN FOLLOWER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "human_follower");
     n = new ros::NodeHandle();
@@ -106,6 +119,7 @@ int main(int argc, char** argv)
     pub_cmd_vel   = n->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     pub_head_pose = n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     cltRgbdRobotDownsampled = n->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
+    ros::Subscriber subRepulsiveForce = n->subscribe<std_msgs::Float32>("/navigation/potential_fields/repulsive_force", 1, callback_pot_fields);
     ros::Rate loop(20);
 
     while(ros::ok() && cv::waitKey(1) != 'q')
