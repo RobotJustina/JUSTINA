@@ -16,7 +16,6 @@ void callback_hokuyo(const sensor_msgs::LaserScan::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
-    std::cout << "INITIALIZING LASER MIXER NODE BY MARCOSOFT..."  << std::endl;
     ros::init(argc, argv, "laser_mixer");
     ros::NodeHandle n;
     ros::Subscriber sub_laser_kinect = n.subscribe("/hardware/scan_from_kinect", 1, callback_kinect);
@@ -27,8 +26,8 @@ int main(int argc, char** argv)
     try{ msg_laser_hokuyo = *ros::topic::waitForMessage<sensor_msgs::LaserScan>("/hardware/scan", ros::Duration(10));}
     catch(...)
     {
-	std::cout << "LaserMixer.->Cannot get /hardware/scan topic" << std::endl;
-	return 1;
+        std::cout << "LaserMixer.->Cannot get /hardware/scan topic" << std::endl;
+        return 1;
     }
     std::cout << "LaserMixer.-> Hokuyo parameters: angle_min=" << msg_laser_hokuyo.angle_min << "\tangle_max=";
     std::cout << msg_laser_hokuyo.angle_max << "\tangle_increment" << msg_laser_hokuyo.angle_increment << std::endl;
@@ -42,27 +41,27 @@ int main(int argc, char** argv)
     try{ msg_laser_kinect = *ros::topic::waitForMessage<sensor_msgs::LaserScan>("/hardware/scan_from_kinect", ros::Duration(10));}
     catch(...)
     {
-	std::cout << "LaserMixer.->Cannot get /hardware/scan_from_kinect topic" << std::endl;
-	return 1;
+        std::cout << "LaserMixer.->Cannot get /hardware/scan_from_kinect topic" << std::endl;
+        return 1;
     }
 
     if(msg_laser_hokuyo.ranges.size() != msg_laser_kinect.ranges.size())
     {
-	std::cout << "LaserMixer.->ERROR!! scan from hokuyo and scan from kinect must have the same size!!" << std::endl;
-	std::cout << "LaserMixer.->Hokuyo size=" << msg_laser_hokuyo.ranges.size() << "\tfrom kinect size=" << msg_laser_kinect.ranges.size() << std::endl;
-	return 1;
+        std::cout << "LaserMixer.->ERROR!! scan from hokuyo and scan from kinect must have the same size!!" << std::endl;
+        std::cout << "LaserMixer.->Hokuyo size=" << msg_laser_hokuyo.ranges.size() << "\tfrom kinect size=" << msg_laser_kinect.ranges.size() << std::endl;
+        return 1;
     }
 
     sensor_msgs::LaserScan msg_augmented = msg_laser_hokuyo;
-    
+
     while(ros::ok())
     {
-	for(size_t i=0; i < msg_laser_hokuyo.ranges.size(); i++)
-	    msg_augmented.ranges[i] = fmin(msg_laser_hokuyo.ranges[i], msg_laser_kinect.ranges[i]);
+        for(size_t i=0; i < msg_laser_hokuyo.ranges.size(); i++)
+            msg_augmented.ranges[i] = fmin(msg_laser_hokuyo.ranges[i], msg_laser_kinect.ranges[i]);
 
-	msg_augmented.header.stamp = ros::Time::now();
-	pub_laser.publish(msg_augmented);
-	ros::spinOnce();
-	loop.sleep();
+        msg_augmented.header.stamp = ros::Time::now();
+        pub_laser.publish(msg_augmented);
+        ros::spinOnce();
+        loop.sleep();
     }
 }
