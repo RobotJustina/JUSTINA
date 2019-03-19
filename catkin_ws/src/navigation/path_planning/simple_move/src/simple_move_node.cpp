@@ -288,7 +288,6 @@ int main(int argc, char** argv)
         if(stop)
         {
             stop = false;
-            cruise_speed = 0;
             state = SM_INIT;
             msg_goal_reached.data = false;
             pub_cmd_vel.publish(zero_twist);
@@ -305,7 +304,6 @@ int main(int argc, char** argv)
                 if(new_pose)
                 {
                     get_goal_position_wrt_odom(goal_distance, goal_angle, tf_listener, goal_x, goal_y, goal_t, move_lateral);
-                    // Correct this if cause some bugs
                     state = SM_GOAL_POSE_ACCEL;
                     new_pose = false;
                     attempts = (int)((fabs(goal_distance)+0.1)/0.2*60 + fabs(goal_angle)/0.5*60);
@@ -314,7 +312,6 @@ int main(int argc, char** argv)
                 }
                 else if(new_path)
                 {
-                    // Correct this if cause some bugs
                     state = SM_GOAL_PATH_ACCEL;
                     new_path = false;
                     next_pose_idx = 0;
@@ -330,7 +327,7 @@ int main(int argc, char** argv)
                 cruise_speed += 0.007;
                 get_robot_position_wrt_odom(tf_listener, robot_x, robot_y, robot_t);
                 error = sqrt((goal_x - robot_x)*(goal_x - robot_x) + (goal_y - robot_y)*(goal_y - robot_y));
-                if(error < 0.001)
+                if(error < 0.035)
                     state = SM_GOAL_POSE_CORRECT_ANGLE;
                 else
                 {
@@ -341,8 +338,6 @@ int main(int argc, char** argv)
                     else
                         state = SM_GOAL_POSE_ACCEL;
 
-                    if(cruise_speed > 0.2)
-                        cruise_speed = 0.2;
                     if(move_lateral)
                         twist = calculate_speeds_lateral(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed);
                     else
@@ -374,7 +369,7 @@ int main(int argc, char** argv)
                 cruise_speed -= 0.007;
                 get_robot_position_wrt_odom(tf_listener, robot_x, robot_y, robot_t);
                 error = sqrt((goal_x - robot_x)*(goal_x - robot_x) + (goal_y - robot_y)*(goal_y - robot_y));
-                if(error < 0.001 || cruise_speed <= 0)
+                if(error < 0.035 || cruise_speed <= 0)
                     state = SM_GOAL_POSE_CORRECT_ANGLE;
 
                 if(move_lateral)
@@ -390,7 +385,7 @@ int main(int argc, char** argv)
             case SM_GOAL_POSE_CORRECT_ANGLE:
                 get_robot_position_wrt_odom(tf_listener, robot_x, robot_y, robot_t);
                 error = fabs(goal_t - robot_t);
-                if(error < 0.005)
+                if(error < 0.015)
                     state = SM_GOAL_POSE_FINISH;
                 else
                 {
@@ -405,7 +400,6 @@ int main(int argc, char** argv)
             case SM_GOAL_POSE_FINISH:
                 std::cout << "SimpleMove.->Successful move with dist=" << goal_distance << " angle=" << goal_angle << std::endl;
                 state = SM_INIT;
-                cruise_speed = 0;
                 msg_goal_reached.data = true;
                 pub_goal_reached.publish(msg_goal_reached);
                 pub_cmd_vel.publish(zero_twist);
@@ -424,7 +418,6 @@ int main(int argc, char** argv)
                     msg_goal_reached.data = false;
                     pub_cmd_vel.publish(zero_twist);
                     pub_goal_reached.publish(msg_goal_reached);
-                    cruise_speed = 0;
                     state = SM_INIT;
                 }
                 else
@@ -433,8 +426,6 @@ int main(int argc, char** argv)
                         state = SM_GOAL_PATH_DECCEL;
                     else if(cruise_speed >= 0.35)
                         state = SM_GOAL_PATH_CRUISE;
-                    if(cruise_speed > 0.35)
-                        cruise_speed = 0.35;
 
                     twist = calculate_speeds(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed, false);
                     pub_cmd_vel.publish(twist);
@@ -449,7 +440,6 @@ int main(int argc, char** argv)
                     msg_goal_reached.data = false;
                     pub_cmd_vel.publish(zero_twist);
                     pub_goal_reached.publish(msg_goal_reached);
-                    cruise_speed = 0;
                     state = SM_INIT;
                 }
                 else
@@ -476,7 +466,6 @@ int main(int argc, char** argv)
                     msg_goal_reached.data = false;
                     pub_cmd_vel.publish(zero_twist);
                     pub_goal_reached.publish(msg_goal_reached);
-                    cruise_speed = 0;
                     state = SM_INIT;
                 }
                 else
@@ -503,7 +492,6 @@ int main(int argc, char** argv)
                 msg_goal_reached.data = true;
                 pub_cmd_vel.publish(zero_twist);
                 pub_goal_reached.publish(msg_goal_reached);
-                cruise_speed = 0;
                 state = SM_INIT;
                 break;
 

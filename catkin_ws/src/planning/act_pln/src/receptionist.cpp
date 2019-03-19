@@ -102,7 +102,7 @@ int main(int argc, char **argv){
     float gx_w, gy_w, gz_w, guest_z, host_z;    
     float goalx, goaly, goala;
     float dist_to_head;
-    float theta = 0, thetaToGoal = 0;
+    float theta = 0, thetaToGoal = 0, angleHead = 0;
     
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
@@ -230,7 +230,13 @@ int main(int argc, char **argv){
                         dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
                         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                        JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                        angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                        if(angleHead < 2 * M_PI)
+                            angleHead = 2 * M_PI + angleHead;
+                        if(angleHead > 2 * M_PI)
+                            angleHead = 2 * M_PI - angleHead;
+                        JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                        //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                         recogName = true;
                         findPersonCount = 0;
                         findPersonAttemps = 0;
@@ -640,7 +646,13 @@ int main(int argc, char **argv){
                     dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
                     float torsoSpine, torsoWaist, torsoShoulders;
                     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-                    JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    float angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                    if(angleHead < 2 * M_PI)
+                        angleHead = 2 * M_PI + angleHead;
+                    if(angleHead > 2 * M_PI)
+                        angleHead = 2 * M_PI - angleHead;
+                    JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 }
                 ss.str("");
                 ss << names[names.size() - 1] << " he is John" << std::endl;
@@ -659,7 +671,13 @@ int main(int argc, char **argv){
                 dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
                 float torsoSpine, torsoWaist, torsoShoulders;
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                if(angleHead < 2 * M_PI)
+                    angleHead = 2 * M_PI + angleHead;
+                if(angleHead > 2 * M_PI)
+                    angleHead = 2 * M_PI - angleHead;
+                JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
@@ -693,7 +711,13 @@ int main(int argc, char **argv){
                     rate.sleep();
                     ros::spinOnce();
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                    JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                    if(angleHead < 2 * M_PI)
+                        angleHead = 2 * M_PI + angleHead;
+                    if(angleHead > 2 * M_PI)
+                        angleHead = 2 * M_PI - angleHead;
+                    JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     state = SM_OFFER_EMPTY_SEAT;
                 }
                 else
