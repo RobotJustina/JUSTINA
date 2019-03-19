@@ -257,8 +257,13 @@ int main(int argc, char** argv)
 
                 float torsoSpine, torsoWaist, torsoShoulders;
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-
-                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                float angleHead;
+                angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                if(angleHead < -2 * M_PI)
+                    angleHead = 2 * M_PI + angleHead;
+                if(angleHead > 2 * M_PI)
+                    angleHead = 2 * M_PI - angleHead;
+                JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 
                 attemptsWaitConfirmation=0;
                 nextState = SM_CONFIRMATION_TO_GO;

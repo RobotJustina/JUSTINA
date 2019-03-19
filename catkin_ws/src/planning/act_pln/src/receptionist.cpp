@@ -231,7 +231,7 @@ int main(int argc, char **argv){
                         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                         angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                        if(angleHead < 2 * M_PI)
+                        if(angleHead < -2 * M_PI)
                             angleHead = 2 * M_PI + angleHead;
                         if(angleHead > 2 * M_PI)
                             angleHead = 2 * M_PI - angleHead;
@@ -622,6 +622,7 @@ int main(int argc, char **argv){
                     }
                     else
                         findPersonAttemps++;
+                    ros::Duration(0.5).sleep(); 
                 }
                 
                 break;
@@ -631,7 +632,6 @@ int main(int argc, char **argv){
                 ss.str("");
                 ss << "John you have a visitor, his name is " << names[names.size() - 1] << " and his favorite drink is " << drinks[drinks.size() - 1];
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 if(JustinaKnowledge::existKnownLocation("john")){
                     JustinaKnowledge::getKnownLocation("john", goalx, goaly, goala);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -648,16 +648,16 @@ int main(int argc, char **argv){
                     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                     //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     float angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                    if(angleHead < 2 * M_PI)
+                    if(angleHead < -2 * M_PI)
                         angleHead = 2 * M_PI + angleHead;
                     if(angleHead > 2 * M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 }
                 ss.str("");
                 ss << names[names.size() - 1] << " he is John" << std::endl;
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
@@ -673,11 +673,12 @@ int main(int argc, char **argv){
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                 //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                if(angleHead < 2 * M_PI)
+                if(angleHead < -2 * M_PI)
                     angleHead = 2 * M_PI + angleHead;
                 if(angleHead > 2 * M_PI)
                     angleHead = 2 * M_PI - angleHead;
                 JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
@@ -712,7 +713,7 @@ int main(int argc, char **argv){
                     ros::spinOnce();
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                    if(angleHead < 2 * M_PI)
+                    if(angleHead < -2 * M_PI)
                         angleHead = 2 * M_PI + angleHead;
                     if(angleHead > 2 * M_PI)
                         angleHead = 2 * M_PI - angleHead;
