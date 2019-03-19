@@ -110,34 +110,6 @@ int main(int argc, char** argv)
 
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
-        
-        cv::Mat bgrImg;
-        cv::Mat xyzCloud;
-        getKinectDataFromJustina(bgrImg, xyzCloud);
-        if(bgrImg.cols < 1 || bgrImg.rows < 1)
-            return false;
-        int counter = 0;
-        float meanX = 0;
-        float meanY = 0;
-        for(int i=0; i< xyzCloud.cols; i++)
-            for(int j=0; j< xyzCloud.rows; j++)
-            {
-                cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j,i);
-                if(p[2] < 0.02)
-                {
-                    bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
-                    bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
-                    bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
-                }
-                /*if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0) 
-                {
-                    counter++;
-                    meanX += p[0];
-                    meanY += p[1];
-                }*/
-            }
-        // cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
-        
         ros::spinOnce();
         loop.sleep();
     }
