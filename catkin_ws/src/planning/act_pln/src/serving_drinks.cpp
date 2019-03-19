@@ -62,8 +62,11 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "eegpsr_montreal.xml";
+//std::string cat_grammar= "eegpsr_montreal.xml";
+std::string microsoft_grammars[3];
+std::string sphinx_grammars[3];
 bool alternative_drink = true;
+bool poket_reco = true;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
@@ -96,11 +99,11 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	command_response_pub.publish(msg);
 }
 
-void switchSpeechReco(bool pocket, std::string grammar, std::string speech){
-    if (pocket){
+void switchSpeechReco(int grammar_id, std::string speech){
+    if (poket_reco){
         //use pocket sphinx
-        JustinaHRI::usePocketSphinx = true;
-        JustinaHRI::enableGrammarSpeechRecognized(grammar, 2.0);
+        //JustinaHRI::usePocketSphinx = true;
+        JustinaHRI::enableGrammarSpeechRecognized(sphinx_grammars[grammar_id], 2.0);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -110,8 +113,8 @@ void switchSpeechReco(bool pocket, std::string grammar, std::string speech){
 
     else{
         //use speech recognition of microsoft
-        JustinaHRI::usePocketSphinx = false;
-        JustinaHRI::loadGrammarSpeechRecognized(grammar);
+        //JustinaHRI::usePocketSphinx = false;
+        JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
         JustinaHRI::waitAfterSay(speech,5000);
     }
 }
@@ -299,7 +302,7 @@ void callbackCmdFindObject(
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
             poseRecog = JustinaTasks::NONE;
-            success = JustinaTasks::findYolo(idsPerson, poseRecog);
+            success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
@@ -337,20 +340,6 @@ void callbackCmdFindObject(
 			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 			do{
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-				/*pos += advance;
-				if ( pos == maxAdvance && !success){
-					JustinaNavigation::moveLateral(advance, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					advance = -2 * advance;
-				}
-				if (pos == -1 * maxAdvance && !success){
-					JustinaNavigation::moveLateral(advance, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-				}
-				if (pos == -3 *maxAdvance && !success){
-					JustinaNavigation::moveLateral(0.3, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					finishMotion = true;}*/
 				finishMotion = true;
 			}while(!finishMotion && !success);
 
@@ -361,7 +350,7 @@ void callbackCmdFindObject(
 		}
 		responseMsg.params = ss.str();
 	}
-	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+	//JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	if (success)
 		responseMsg.successful = 1;
 	else
@@ -499,11 +488,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
         ss << to_spech;
         std::cout << "------------- to_spech: ------------------ " << ss.str()
             << std::endl;
-        /*JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
-        JustinaHRI::enableSpeechRecognized(false);
-        JustinaHRI::waitAfterSay(ss.str(),5000);
-        JustinaHRI::enableSpeechRecognized(true);*/
-        switchSpeechReco(true, "confirmation", ss.str());
+        switchSpeechReco(0, ss.str());
 
         JustinaHRI::waitForSpeechRecognized(lastReco,10000);
         responseMsg.params = "conf";
@@ -597,13 +582,7 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
 
     while(!drink_conf && count < 3){
-        /*JustinaHRI::enableGrammarSpeechRecognized("order_drink", 2.0);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaHRI::enableSpeechRecognized(false);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaHRI::waitAfterSay("tell me what drink do you want",5000);
-        JustinaHRI::enableSpeechRecognized(true);*/
-        switchSpeechReco(true, "order_drink", "tell me what drink do you want");
+        switchSpeechReco(1, "tell me what drink do you want");
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, drink))
@@ -617,13 +596,7 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 			continue;
 		}
                 
-                /*JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::enableSpeechRecognized(false);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::waitAfterSay(ss.str(),5000);
-                JustinaHRI::enableSpeechRecognized(true);*/
-                switchSpeechReco(true, "confirmation", ss.str());
+                switchSpeechReco(0, ss.str());
                 JustinaHRI::waitForSpeechRecognized(lastReco,400);
 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
@@ -655,26 +628,14 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
         JustinaHRI::waitAfterSay(ss.str(),5000);
     
     while(!drink_conf && count < 3){
-        /*JustinaHRI::enableGrammarSpeechRecognized("people_names", 2.0);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaHRI::enableSpeechRecognized(false);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaHRI::waitAfterSay("tell me what is your name please",5000);
-        JustinaHRI::enableSpeechRecognized(true);*/
-        switchSpeechReco(true, "people_names", "tell me what is your name please");
+        switchSpeechReco(2, "tell me what is your name please");
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, name))
                 std::cout << "last int: " << name << std::endl;
                 ss.str("");
-                ss << "your name is " << name;
-                /*JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::enableSpeechRecognized(false);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::waitAfterSay(ss.str(),5000);
-                JustinaHRI::enableSpeechRecognized(true);*/
-                switchSpeechReco(true, "confirmation", ss.str());
+                ss << "is " << name << " your name";
+                switchSpeechReco(0, ss.str());
                 JustinaHRI::waitForSpeechRecognized(lastReco,400);
                 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
@@ -909,21 +870,21 @@ int main(int argc, char **argv) {
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
-    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::usePocketSphinx = poket_reco;
 	
 	JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
 
-	/*if (argc > 3){
-		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
-		fplan = atoi(argv[3]);
-		maxTime = atof(argv[4]);
-		cat_grammar = argv[5];
-		std::cout << "FPLAN FLAG: " << fplan << std::endl;
-		std::cout << "MAX TIME: " << maxTime << std::endl;
-		std::cout << "Grammar: " << cat_grammar << std::endl;}*/
+    microsoft_grammars[0] = "confirmation.xml";
+    microsoft_grammars[1] = "what_drink.xml";
+    microsoft_grammars[2] = "name_response.xml";
+    
+    sphinx_grammars[0] = "confirmation";
+    sphinx_grammars[1] = "order_drink";
+    sphinx_grammars[2] = "people_names";
+
     fplan = false;
-    maxTime = 60.0; 
+    maxTime = 90.0; 
     idsPerson.push_back("person");
 
 	while (ros::ok()) {
