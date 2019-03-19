@@ -1375,11 +1375,11 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		std::cout << "Searching waving person" << std::endl;
 		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
 	}
-	else if (tokens[0] == "rising_right_arm"){
+	else if (tokens[0] == "rising_right_arm" || tokens[0] == "raising_their_right_arm"){
 		std::cout << "Searching rising_right_arm person" << std::endl;
 		if(nfp) JustinaTasks::findGesturePerson("right_hand_rised", tokens[1]);
 	}
-	else if (tokens[0] == "rising_left_arm"){
+	else if (tokens[0] == "rising_left_arm" || tokens[0] == "raising_their_left_arm"){
 		std::cout << "Searching rising_left_arm person" << std::endl;
 		if(nfp) JustinaTasks::findGesturePerson("left_hand_rised", tokens[1]);
 	}
