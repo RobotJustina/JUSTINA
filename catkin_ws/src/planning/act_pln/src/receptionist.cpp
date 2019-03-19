@@ -231,9 +231,9 @@ int main(int argc, char **argv){
                         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                         angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                        if(angleHead < -2 * M_PI)
+                        if(angleHead < -M_PI)
                             angleHead = 2 * M_PI + angleHead;
-                        if(angleHead > 2 * M_PI)
+                        if(angleHead > M_PI)
                             angleHead = 2 * M_PI - angleHead;
                         JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                         //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
@@ -648,9 +648,9 @@ int main(int argc, char **argv){
                     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                     //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     float angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                    if(angleHead < -2 * M_PI)
+                    if(angleHead < -M_PI)
                         angleHead = 2 * M_PI + angleHead;
-                    if(angleHead > 2 * M_PI)
+                    if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
@@ -673,9 +673,9 @@ int main(int argc, char **argv){
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                 //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                if(angleHead < -2 * M_PI)
+                if(angleHead < -M_PI)
                     angleHead = 2 * M_PI + angleHead;
-                if(angleHead > 2 * M_PI)
+                if(angleHead > M_PI)
                     angleHead = 2 * M_PI - angleHead;
                 JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
@@ -713,9 +713,9 @@ int main(int argc, char **argv){
                     ros::spinOnce();
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                    if(angleHead < -2 * M_PI)
+                    if(angleHead < -M_PI)
                         angleHead = 2 * M_PI + angleHead;
-                    if(angleHead > 2 * M_PI)
+                    if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));

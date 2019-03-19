@@ -1567,9 +1567,9 @@ bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
     //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
     float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
-    if(angleHead < -2 * M_PI)
+    if(angleHead < -M_PI)
         angleHead = 2 * M_PI + angleHead;
-    if(angleHead > 2 * M_PI)
+    if(angleHead > M_PI)
         angleHead = 2 * M_PI - angleHead;
     JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
@@ -1658,9 +1658,9 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
     //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
     float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
-    if(angleHead < -2 * M_PI)
+    if(angleHead < -M_PI)
         angleHead = 2 * M_PI + angleHead;
-    if(angleHead > 2 * M_PI)
+    if(angleHead > M_PI)
         angleHead = 2 * M_PI - angleHead;
     JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
@@ -1712,9 +1712,9 @@ bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE 
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
     //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
     float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
-    if(angleHead < -2 * M_PI)
+    if(angleHead < -M_PI)
         angleHead = 2 * M_PI + angleHead;
-    if(angleHead > 2 * M_PI)
+    if(angleHead > M_PI)
         angleHead = 2 * M_PI - angleHead;
     JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
