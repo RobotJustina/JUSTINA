@@ -51,11 +51,11 @@ int main(int argc, char ** argv){
                     poseRepulsiveForces.poses[i].orientation.z = 0.0;
                     poseRepulsiveForces.poses[i].orientation.w = 0.0;
                     poseRepulsiveForces.poses[i].orientation.y = 0.0;
-                }else{
+                }else if(laserScan.ranges[i] > 0){
                     float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
-                    float fRepY = sqrt(sRep) * -sin(laserScan.angle_min + ( i * laserScan.angle_increment)) / pow(laserScan.ranges[i], 3);
+                    float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment)) / pow(laserScan.ranges[i], 3);
                     repulsiveForces[i] = fRepY;
-                    std::cout << repulsiveForces[i] << std::endl;
+                    //std::cout << repulsiveForces[i] << std::endl;
                     repulsiveForces[i] *= Kr;
                     //std::cout << repulsiveForces[i] << std::endl;
                     if(fRepY > 0){
@@ -73,9 +73,9 @@ int main(int argc, char ** argv){
             for(int i = 0; i < repulsiveForces.size(); i++)
                 meanRepulsionForce += repulsiveForces[i];
             
-            std::cout << meanRepulsionForce << std::endl;
+            //std::cout << meanRepulsionForce << std::endl;
             meanRepulsionForce /= repulsiveForces.size();
-            std::cout << meanRepulsionForce << std::endl;
+            //std::cout << meanRepulsionForce << std::endl;
 
             if(meanRepulsionForce > 0){
                 poseRepulsiveForce.poses[0].orientation.z = 1.0;
