@@ -72,9 +72,9 @@
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
 		<node name="kinect2laser" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" respawn="true">
-		  <remap from="scan" to="/hardware/scan_from_kinect"/>
-		  <remap from="cloud_in" to="/hardware/point_cloud_man/rgbd_wrt_robot_downsampled"/>
-		  <param name="min_height" value="0.05"/>
+			<remap from="scan" to="/hardware/scan_from_kinect"/>
+			<remap from="cloud_in" to="/hardware/point_cloud_man/rgbd_wrt_robot_downsampled"/>
+			<param name="min_height" value="0.05"/>
 		</node>
 		<node name="laser_mixer" pkg="laser_mixer" type="laser_mixer_node" output="screen"/>
 	</group>
