@@ -50,6 +50,7 @@ int main(int argc, char ** argv){
                 repulsiveForces[i] = 0;
                 poseRepulsiveForces.poses[i].orientation.z = 0.0;
                 if(laserScan.ranges[i] > 0.24 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                //if(laserScan.ranges[i] > 0.2 && laserScan.ranges[i] < distanceMin){
                     float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
                     float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
                     repulsiveForces[i] = Kr * fRepY;

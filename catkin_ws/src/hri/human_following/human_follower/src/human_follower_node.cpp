@@ -51,8 +51,10 @@ geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
     {
         result.linear.x  = distance * exp(-(angle_error * angle_error) / alpha);
         result.linear.y  = 0;
+        //std::cout << usePotFields << std::endl;
         if(usePotFields)
             result.linear.y = KInfRep * repulsiveForce;
+        std::cout << result.linear.y << std::endl;
         result.angular.z = max_angular * (2 / (1 + exp(-angle_error / beta)) - 1);
     }
     else
@@ -79,7 +81,7 @@ void callback_legs_pose(const geometry_msgs::PointStamped::ConstPtr& msg)
     {
         std_msgs::Float32MultiArray head_poses;
         head_poses.data.push_back(atan2(msg->point.y, msg->point.x));
-        head_poses.data.push_back(-0.2);
+        head_poses.data.push_back(-0.9);
         pub_head_pose.publish(head_poses);
     }
 }
@@ -109,12 +111,11 @@ int main(int argc, char** argv)
             move_head = true;
     }
 
-    ros::param::get("~use_pot_fields", usePotFields);
-    ros::param::get("~k_inf_rep", KInfRep);
-
     std::cout << "INITIALIZING HUMAN FOLLOWER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "human_follower");
     n = new ros::NodeHandle();
+    ros::param::get("~use_pot_fields", usePotFields);
+    ros::param::get("~k_inf_rep", KInfRep);
     ros::Subscriber sub_enable = n->subscribe("/hri/human_following/start_follow", 1, callback_enable);
     pub_cmd_vel   = n->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     pub_head_pose = n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);

@@ -45,7 +45,7 @@
 		</node>
 		<node name="human_follower" pkg="human_follower" type="human_follower_node" args="--move_head" output="screen">
 			<param name="use_pot_fields" value="true"/>
-			<param name="k_inf_rep" value="0.01"/>
+			<param name="k_inf_rep" value="0.5"/>
 		</node>
 		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>

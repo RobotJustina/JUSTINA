@@ -366,8 +366,9 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 
         bool fobst_in_front = false;
 
-        if(!(legs_x_filter_output[0] >= obst_xmin && legs_x_filter_output[0] <= obst_xmax && legs_y_filter_output[0] >= obst_ymin && legs_y_filter_output[0] <= obst_ymax))
-            fobst_in_front = obst_in_front(oriLaser, obst_xmin, obst_xmax, obst_ymin, obst_ymax, 126.0 / obst_div * (obst_xmax - obst_xmin));
+        // Comment this to work with potential fields
+        //if(!(legs_x_filter_output[0] >= obst_xmin && legs_x_filter_output[0] <= obst_xmax && legs_y_filter_output[0] >= obst_ymin && legs_y_filter_output[0] <= obst_ymax))
+        //    fobst_in_front = obst_in_front(oriLaser, obst_xmin, obst_xmax, obst_ymin, obst_ymax, 126.0 / obst_div * (obst_xmax - obst_xmin));
 
         if(!fobst_in_front){
 
