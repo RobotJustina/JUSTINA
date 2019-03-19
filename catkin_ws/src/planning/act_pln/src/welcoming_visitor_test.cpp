@@ -397,6 +397,7 @@ int main(int argc, char** argv)
                 if(id == "doctor")
                 {
                     std::cout << "Welcoming visitor Test...->doctor recognized.." << std::endl;
+                    sendWhoPersonName("doctor");
                     //fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     /*JustinaHRI::say("I think you are the doctor kimble");
         	        ros::Duration(1.0).sleep();
@@ -428,6 +429,7 @@ int main(int argc, char** argv)
                 else if(id == "postman")
                 {
                     std::cout << "Welcoming visitor Test...->postman recognized.." << std::endl;
+                    sendWhoPersonName("postman");
                     //fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     /*JustinaHRI::say("I think you are the postman");
         	        ros::Duration(1.0).sleep();
