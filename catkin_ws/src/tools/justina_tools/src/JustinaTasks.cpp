@@ -1494,9 +1494,9 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     float dist_to_head = sqrt( pow( worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
     //JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
     float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
-    if(angleHead < -2 * M_PI)
+    if(angleHead < -M_PI)
         angleHead = 2 * M_PI + angleHead;
-    if(angleHead > 2 * M_PI)
+    if(angleHead > M_PI)
         angleHead = 2 * M_PI - angleHead;
     JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
