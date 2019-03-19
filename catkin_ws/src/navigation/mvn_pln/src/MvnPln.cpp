@@ -54,8 +54,8 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
 void MvnPln::spin()
 {
     //Augmented the rate roop to 30, for more fast path calculator
-    //ros::Rate loop(10);
-    ros::Rate loop(30);
+    ros::Rate loop(10);
+    //ros::Rate loop(30);
     int currentState = SM_INIT;
     float robotX, robotY, robotTheta;
     float angleError;
