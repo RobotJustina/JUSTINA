@@ -1492,20 +1492,26 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
 	float currx, curry, currtheta;
 	JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt( pow( worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
-    JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    //JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
+    if(angleHead < 2 * M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > 2 * M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
-	return true;
+    return true;
 }
 
 bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
-	std::stringstream ss;
-	std::string gestureSpeech;
+    std::stringstream ss;
+    std::string gestureSpeech;
     ros::Time time;
 
-	ss << "I am going to find you";
+    ss << "I am going to find you";
     time = ros::Time::now();
-	JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
-	//JustinaHRI::waitAfterSay(ss.str(), 2000);
+    JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
 	
     JustinaVision::startSkeletonFinding();
     boost::this_thread::sleep(boost::posix_time::milliseconds(300));
@@ -1559,7 +1565,13 @@ bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
 	float currx, curry, currtheta;
 	JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
-    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
+    if(angleHead < 2 * M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > 2 * M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
@@ -1644,7 +1656,13 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	float currx, curry, currtheta;
 	JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
-    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
+    if(angleHead < 2 * M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > 2 * M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
@@ -1692,7 +1710,13 @@ bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE 
 	float currx, curry, currtheta;
 	JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
-    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(wgc.y() - curry, wgc.x() - currx) - currtheta;
+    if(angleHead < 2 * M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > 2 * M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
