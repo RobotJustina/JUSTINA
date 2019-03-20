@@ -121,9 +121,9 @@ int main(int argc, char** argv)
     pub_head_pose = n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     cltRgbdRobotDownsampled = n->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
     ros::Subscriber subRepulsiveForce = n->subscribe<std_msgs::Float32>("/navigation/potential_fields/repulsive_force", 1, callback_pot_fields);
-    ros::Rate loop(20);
+    ros::Rate loop(30);
 
-    while(ros::ok() && cv::waitKey(1) != 'q')
+    while(ros::ok())
     {
         ros::spinOnce();
         loop.sleep();

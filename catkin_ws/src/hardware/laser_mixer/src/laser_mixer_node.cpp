@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub_laser_kinect = n.subscribe("/hardware/scan_from_kinect", 1, callback_kinect);
     ros::Subscriber sub_laser_hokuyo = n.subscribe("/hardware/scan", 1, callback_hokuyo);
     ros::Publisher  pub_laser = n.advertise<sensor_msgs::LaserScan>("/hardware/scan_augmented", 1);
-    ros::Rate loop(10);
+    ros::Rate loop(30);
 
     try{ msg_laser_hokuyo = *ros::topic::waitForMessage<sensor_msgs::LaserScan>("/hardware/scan", ros::Duration(10));}
     catch(...)

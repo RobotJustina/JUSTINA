@@ -47,9 +47,11 @@ int main(int argc, char ** argv){
         if(initVectorForces){
             for(int i = 0 ; i < laserScan.ranges.size() ; i++){
                 float angle = laserScan.angle_min + ( i * laserScan.angle_increment);
+                //std::cout << i << "," << angle << std::endl;
+                //std::cout << "distance_min" << distanceMin << std::endl;
                 repulsiveForces[i] = 0;
                 poseRepulsiveForces.poses[i].orientation.z = 0.0;
-                if(laserScan.ranges[i] > 0.24 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                if(laserScan.ranges[i] > 0.18 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
                 //if(laserScan.ranges[i] > 0.2 && laserScan.ranges[i] < distanceMin){
                     float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
                     float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
