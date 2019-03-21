@@ -60,28 +60,29 @@
 (dining_room			is_kind_of		place)
 (entrance_hall			is_kind_of		place)
 (corridor			is_kind_of		place)
+(hall			is_kind_of		place)
 
 #PLACEMENT
 (bed	 			is_kind_of 		place)
-(night_table	 		is_kind_of 		place)
+(nightstand	 		is_kind_of 		place)
 (wardrobe			is_kind_of 		place)
 (dresser 			is_kind_of 		place)
 (armchair 			is_kind_of 		place)
 (drawer				is_kind_of 		place)
 (desk	 			is_kind_of 		place)
-(sideboard			is_kind_of 		place)
+(side_table			is_kind_of 		place)
 (cutlery_drawer			is_kind_of 		place)
 (dining_table 			is_kind_of 		place)
 (chair				is_kind_of		place)
 (baby_chair 			is_kind_of 		place)
-(bookshelf			is_kind_of		place)
+(shelf				is_kind_of		place)
 (sofa				is_kind_of		place)
-(coffee_table			is_kind_of		place)
+(kitchen_table			is_kind_of		place)
 (center_table			is_kind_of		place)
 (bar				is_kind_of		place)
 (fireplace			is_kind_of		place)
 
-(tv_couch			is_kind_of		place)
+(tv_table			is_kind_of		place)
 (microwave 			is_kind_of 		place)
 (cupboard 			is_kind_of 		place)
 (counter 			is_kind_of 		place)
@@ -119,6 +120,8 @@
 (m_and_m_s 		is_kind_of 		item)
 (pringles		is_kind_of		item)
 (cookies		is_kind_of		item)
+(chocolate		is_kind_of		item)
+(cream			is_kind_of		item)
 
 #CANDIES
 #(chocolate 		is_kind_of 		item)
@@ -134,6 +137,8 @@
 (choco_flakes			is_kind_of		item)
 (robo_o_s			is_kind_of		item)
 (muesli				is_kind_of		item)
+(cereal				is_kind_of		item)
+(corn				is_kind_of		item)
 
 #DRINKS
 (tea 			is_kind_of 		item)
@@ -141,6 +146,7 @@
 (coke			is_kind_of		item)
 (water			is_kind_of		item)
 (milk			is_kind_of		item)
+(energy_drink		is_kind_of		item)
 
 #CUTLERY
 (tea_spoon		is_knd_of		item)
@@ -193,12 +199,12 @@
 
 # bebidas
 #(drink 			is_kind_of  	item)
-#(coffe 			is_kind_of 		drink)
+(coffe 			is_kind_of 		drink)
 #(water 			is_kind_of 		drink)
 #(milk 			is_kind_of 		drink)
 #(beer 			is_kind_of 		drink)
 #(coke 			is_kind_of 		drink)
-#(juice 			is_kind_of 		drink)
+(juice 			is_kind_of 		drink)
 #(grape juice 		is_kind_of 		drink)
 #(cranberry_juice	is_kind_of 		drink)
 #(nescafe latte		is_kind_of 		drink)
