@@ -430,3 +430,14 @@ target_link_libraries(is_open_door_test
 )
 
 add_dependencies(is_open_door_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(pointing_to_location
+  src/pointing_to_location.cpp
+)
+
+target_link_libraries(pointing_to_location
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(pointing_to_location ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
