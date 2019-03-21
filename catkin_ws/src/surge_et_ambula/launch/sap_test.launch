@@ -62,7 +62,7 @@
 	</group>
 	<group ns="knowledge">
 		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen" args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
-		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping gpsr" />
+		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping spr" />
 		<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />		
 	</group>
 
