@@ -1,0 +1,21 @@
+arena	2.32	2.28	-2.35
+current_loc	2.32	-2.35
+current_person	2.32	-2.35
+dining_room	5.37	1.99	1.5708
+living_room	3.49	2.12	2.35
+kitchen	3.26	-0.86	-1.5708
+bedroom	5.39	-1.07	-0.7854
+kitchen_table	2.96	-1.26	-3.1416
+fridge	3.21	-2.26	-1.5708
+nightstand	7.2	-1.42	0
+bed	6.45	-1.43	-0.7854
+shelf	5.46	2.73	1.5708
+dining_table	5.69	2.06	0
+tv_table	2.57	2.53	1.5708
+side_table	3.77	2.5	1.5708
+hall	3.69	0.281	-3.1416
+entrance	1.66	0.193	0
+entrance_door	1.36	0.113	-3.1416
+exit	6.81	0.69	-3.1416
+exitdoor	8.23	0.691
+initial_point	1.6	0	0
