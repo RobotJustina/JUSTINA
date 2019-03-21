@@ -18,24 +18,28 @@
 
 
 #FAMELE
-(jamie		is_kind_of		person)
-(morgan			is_kind_of		person)
-(michael		is_kind_of		person)
-(taylor		is_kind_of		person)
-(tracy		is_kind_of		person)
-(jordan			is_kind_of		person)
-(hayden			is_kind_of		person)
-(peyton		is_kind_of		person)
+(angie		is_kind_of		person)
+(mary		is_kind_of		person)
+(amy		is_kind_of		person)
+(kimberly	is_kind_of		person)
+(lisa		is_kind_of		person)
+(melissa	is_kind_of		person)
+(michelle	is_kind_of		person)
+(jennifer	is_kind_of		person)
+(elizabeth	is_kind_of		person)
+(julie		is_kind_of		person)
 
 #MALE
-(robin			is_kind_of		person)
-(alex			is_kind_of		person)
-(luis			is_kind_of		person)
+(brian			is_kind_of		person)
+(michael		is_kind_of		person)
+(christopher		is_kind_of		person)
+(william		is_kind_of		person)
 (john			is_kind_of		person)
+(david			is_kind_of		person)
 (james			is_kind_of		person)
-(alfred			is_kind_of		person)
-(daniel			is_kind_of		person)
-(paul			is_kind_of		person)
+(robert			is_kind_of		person)
+(scott			is_kind_of		person)
+(richard		is_kind_of		person)
  
 
 #(me  			is_kind_of			person)

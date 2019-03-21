@@ -30,21 +30,21 @@
 	;(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 3) (wide 1) (height 1)(color brown) (quantity 1) (grasp 2))
 	;(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1) (grasp 31))
 	;(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1) (grasp 6))
-	(item (type Objects) (name pringles) (zone center_table) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 5)(grasp 10)(size 9)(height 9)(wide 8)(color purple))
-	(item (type Objects) (name chocolate) (zone center_table) (image chocolate) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 1)(grasp 6)(size 4)(height 4)(wide 7)(color red)(lightest yes))
-	(item (type Objects) (name cream) (zone center_table) (image cream) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 3)(grasp 4)(size 6)(height 8)(wide 3)(color brown))
+	(item (type Objects) (name pringles) (zone tv_table) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 5)(grasp 10)(size 9)(height 9)(wide 8)(color purple))
+	(item (type Objects) (name chocolate) (zone tv_table) (image chocolate) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 1)(grasp 6)(size 4)(height 4)(wide 7)(color red)(lightest yes))
+	(item (type Objects) (name cream) (zone tv_table) (image cream) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 3)(grasp 4)(size 6)(height 8)(wide 3)(color brown))
 
 	;;; DRINKS
-	(item (type Objects) (name juice)(zone fridge)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color pink)(grasp 9)(size 1) (wide 1) (height 5) (weight 9)(smallest yes))
-	(item (type Objects) (name coke)(zone fridge)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 5) (wide 4) (height 6) (weight 8))
-	(item (type Objects) (name coffee)(zone fridge)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
-	(item (type Objects) (name energy_drink)(zone fridge)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
+	(item (type Objects) (name juice)(zone kitchen_table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color pink)(grasp 9)(size 1) (wide 1) (height 5) (weight 9)(smallest yes))
+	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 5) (wide 4) (height 6) (weight 8))
+	(item (type Objects) (name coffee)(zone kitchen_table)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
+	(item (type Objects) (name energy_drink)(zone kitchen_table)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
 
 	;;; FOOD
 	;(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name corn) (zone cabinet) (image corn) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 6)(size 2)(height 2)(wide 2)(color yewllow))
-	(item (type Objects) (name apple) (zone cabinet) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 8)(weight 2)(size 3)(height 3)(wide 6)(color red))
-	(item (type Objects) (name cereal) (zone cabinet) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 2)(weight 7)(size 10)(height 1)(wide 10)(color white)(biggest yes))
+	(item (type Objects) (name corn) (zone dining_table) (image corn) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 6)(size 2)(height 2)(wide 2)(color yewllow))
+	(item (type Objects) (name apple) (zone dining_table) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 8)(weight 2)(size 3)(height 3)(wide 6)(color red))
+	(item (type Objects) (name cereal) (zone dining_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 2)(weight 7)(size 10)(height 1)(wide 10)(color white)(biggest yes))
 
 
 	;;;; TOILETRIES
@@ -68,10 +68,10 @@
 	;(item (type Objects) (name soup) (zone sink) (image orange_juice)(attributes pick)(pose 0.0 0.0 0.0) (category food) (grasp 34))
 
         ;;;;;; Category 
-        (item (type Category) (name snacks) (zone center_table)(quantity 3)(biggest pringles)(smallest chocolate) (heaviest pringles) (lightest chocolate))
+        (item (type Category) (name snacks) (zone tv_table)(quantity 3)(biggest pringles)(smallest chocolate) (heaviest pringles) (lightest chocolate))
         ;(item (type Category) (name candies) (zone center_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
-        (item (type Category) (name drinks) (zone fridge)(quantity 4)(biggest energy_drink) (smallest juice) (heaviest energy_drink) (lightest coffee))
-        (item (type Category) (name food) (zone cabinet)(quantity 3)(biggest cereal) (smallest corn) (heaviest cereal) (lightest apple))
+        (item (type Category) (name drinks) (zone kitchen_table)(quantity 4)(biggest energy_drink) (smallest juice) (heaviest energy_drink) (lightest coffee))
+        (item (type Category) (name food) (zone dining_table)(quantity 3)(biggest cereal) (smallest corn) (heaviest cereal) (lightest apple))
         ;(item (type Category) (name toiletries) (zone bathroom_cabinet)(quantity 3)(biggest scrubby) (smallest cloth) (heaviest scrubby) (lightest cloth))
         ;(item (type Category) (name containers) (zone counter)(quantity 2)(biggest basket) (smallest tray) (heaviest basket) (lightest tray))
         ;(item (type Category) (name cutlery) (zone cutlery_drawer)(quantity 3)(biggest spoon) (smallest knife) (heaviest spoon) (lightest knife))
@@ -79,65 +79,47 @@
 	;(item (type Category) (name fruits) (zone dining_table) (quantity 3) (biggest paprika) (smallest orange) (heaviest paprika) (lightest orange))
 
         (item (type Category) (name nil) (zone bed))
-        (item (type Category) (name nil) (zone night_table))
-        (item (type Category) (name nil) (zone wardrobe))
-        (item (type Category) (name nil) (zone dresser))
-        (item (type Category) (name nil) (zone armchair))
-        (item (type Category) (name nil) (zone drawer))
-        (item (type Category) (name nil) (zone desk))
-        (item (type Category) (name nil) (zone chair))
-        (item (type Category) (name nil) (zone baby_chair))
-        (item (type Category) (name nil) (zone bookshelf))
-        (item (type Category) (name nil) (zone sofa))
-        (item (type Category) (name nil) (zone coffee_table))
-        (item (type Category) (name nil) (zone bar))
-        (item (type Category) (name nil) (zone fireplace))
-        (item (type Category) (name nil) (zone tv_couch))
-        (item (type Category) (name nil) (zone microwave))
-        (item (type Category) (name nil) (zone cupboard))
-        (item (type Category) (name nil) (zone sink))
-        (item (type Category) (name nil) (zone stove))
-        (item (type Category) (name nil) (zone freezer))
-        (item (type Category) (name nil) (zone washing_machine))
-        (item (type Category) (name nil) (zone dishwasher))
-        (item (type Category) (name nil) (zone bidet))
-        (item (type Category) (name nil) (zone shower))
-        (item (type Category) (name nil) (zone bathtub))
-        (item (type Category) (name nil) (zone toilet))
-        (item (type Category) (name nil) (zone towel_rail))
-        (item (type Category) (name nil) (zone washbasin))
-	
+        (item (type Category) (name nil) (zone nightstand))
+        (item (type Category) (name nil) (zone center_table))
+        (item (type Category) (name nil) (zone shelf))
+        (item (type Category) (name nil) (zone side_table))
+        (item (type Category) (name nil) (zone fridge))
 
         ;;;;; Property
-        (item (type Property) (name biggest) (zone end_table))
-        (item (type Property) (name smallest) (zone storage_table))
-        (item (type Property) (name heaviest) (zone counter))
-        (item (type Property) (name lightest) (zone storage_table))
-        (item (type Property) (name largest) (zone bookcase))
-        (item (type Property) (name thinnest) (zone counter))
+        (item (type Property) (name biggest) (zone dining_table))
+        (item (type Property) (name smallest) (zone kitchen_table))
+        (item (type Property) (name heaviest) (zone kitchen_table))
+        (item (type Property) (name lightest) (zone tv_table))
+        (item (type Property) (name largest) (zone kitchen_table))
+        (item (type Property) (name thinnest) (zone kitchen_table))
 
 ;;;;;;;;;;PERSONS
 
 	;;;; Fameles
 	;(item (type Objects) (name sophie)(zone living_room)(image sophie) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name jackie)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name alex)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name morgan)(zone living_room)(image charlie) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name jamie)(zone living_room)(image elizabeth) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name michael)(zone living_room)(image francis) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name taylor)(zone living_room)(image jennifer) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name jordan)(zone living_room)(image linda) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name hayden)(zone living_room)(image mary) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name peyton)(zone living_room)(image patricia) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name robin)(zone living_room)(image robin) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name tracy)(zone living_room)(image tracy) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name angie)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name mary)(zone living_room)(image charlie) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name amy)(zone living_room)(image elizabeth) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name kimberly)(zone living_room)(image francis) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name lisa)(zone living_room)(image jennifer) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name melissa)(zone living_room)(image linda) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name michelle)(zone living_room)(image mary) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name jennifer)(zone living_room)(image patricia) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name elizabeth)(zone living_room)(image robin) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name julie)(zone living_room)(image tracy) (attributes pick)(pose -1.87 8.64 0.0))
 
 	;;; Males
-	;(item (type Objects) (name james)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
-	;(item (type Objects) (name john)(zone living_room)(image john) (attributes pick)(pose -1.87 8.64 0.0))
-	;(item (type Objects) (name michael)(zone living_room)(image michael) (attributes pick)(pose -1.87 8.64 0.0))
-	;(item (type Objects) (name robert)(zone kitchen)(image robert) (attributes pick)(pose -1.87 8.64 0.0))
-	;(item (type Objects) (name william)(zone living_room)(image william) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name brian )(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name michael)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name chrostopher)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name william)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name john)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name david)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name james)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name robert)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name scott)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name richard)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
 	
 	;;; gestures
         (item (type Gesture) (name waving) (image _))
@@ -235,7 +217,7 @@
 	(item (type Furniture) (name kitchen_table)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	
-	(item (type Furniture) (name hall_1)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited)(room hall))
+	;(item (type Furniture) (name hall_1)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited)(room hall))
 	
 	;(item (type Furniture) (name bidet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
 	;(item (type Furniture) (name shower)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
@@ -265,8 +247,8 @@
 	;( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
 	;( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
 
-	( item (type Door) (name entrance)(possession corridor)(attributes no_visited)(room corridor) (pose -3.55 -3.0 0.0))
-	( item (type Door) (name exit)(possession living_room)(attributes no_visited)(room living_room)(pose -1.87 8.64 0.0))
+	( item (type Door) (name entrance)(possession hall)(attributes no_visited)(room hall) (pose -3.55 -3.0 0.0))
+	( item (type Door) (name exit)(possession hall)(attributes no_visited)(room hall)(pose -1.87 8.64 0.0))
 
 
 	
