@@ -198,7 +198,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I'm ready for storing groseries test");
                     // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     // JustinaHRI::asyncSpeech();
-                    nextState = SM_GOTO_CUPBOARD;
+                    nextState = SM_OPEN_DOOR;
                     attempsNavigation = 0;
                     findObjCupboard = false;
                 }
