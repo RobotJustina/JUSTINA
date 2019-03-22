@@ -459,10 +459,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 					objToGraspZ, 3000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-			/*JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
-					objToGraspZ, 3000);*/
-			JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.09,
+			JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
 					objToGraspZ, 3000);
+			/*JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.09,
+					objToGraspZ, 3000);*/
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 			JustinaNavigation::moveDist(0.08, 3000);
