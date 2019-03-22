@@ -42,9 +42,9 @@
 
 	;;; FOOD
 	;(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name corn) (zone dining_table) (image corn) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 6)(size 2)(height 2)(wide 2)(color yewllow))
-	(item (type Objects) (name apple) (zone dining_table) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 8)(weight 2)(size 3)(height 3)(wide 6)(color red))
-	(item (type Objects) (name cereal) (zone dining_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 2)(weight 7)(size 10)(height 1)(wide 10)(color white)(biggest yes))
+	(item (type Objects) (name corn) (zone dining_table) (image corn) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room dining_room)(grasp 1)(weight 6)(size 2)(height 2)(wide 2)(color yewllow))
+	(item (type Objects) (name apple) (zone dining_table) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room dining_room)(grasp 8)(weight 2)(size 3)(height 3)(wide 6)(color red))
+	(item (type Objects) (name cereal) (zone dining_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room dining_room)(grasp 2)(weight 7)(size 10)(height 1)(wide 10)(color white)(biggest yes))
 
 
 	;;;; TOILETRIES
@@ -110,9 +110,9 @@
 	(item (type Objects) (name julie)(zone living_room)(image tracy) (attributes pick)(pose -1.87 8.64 0.0))
 
 	;;; Males
-	(item (type Objects) (name brian )(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name brian)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name michael)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name chrostopher)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name christopher)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name william)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name john)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name david)(zone living_room)(image james) (attributes pick)(pose -1.87 8.64 0.0))
