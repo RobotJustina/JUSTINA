@@ -3604,17 +3604,18 @@ bool JustinaTasks::openDoor(bool withLeftArm)
     JustinaManip::hdGoTo(0.0, -0.9, 3000);
     JustinaTasks::alignWithTable(0.3);
 
-    JustinaManip::raGoTo("navigation", 3000);
+    JustinaManip::laGoTo("navigation", 3000);
     
     JustinaNavigation::moveDistAngle(0.2, 0.0, 3000);
-    JustinaNavigation::moveLateral(0.12, 3000);
+    JustinaNavigation::moveLateral(-0.1, 3000);
     
-    JustinaManip::raGoTo("door_1", 3000);
+    //JustinaManip::raGoTo("door_1", 3000);
+    JustinaManip::laGoTo("door_1", 3000);
 
     JustinaNavigation::moveDistAngle(0.2, 0.0, 3000); 
-    JustinaNavigation::moveDistAngle(0.0, -1.5708, 3000); 
-    JustinaManip::raGoTo("navigation", 3000);
     JustinaNavigation::moveDistAngle(0.0, 1.5708, 3000); 
+    JustinaManip::laGoTo("navigation", 3000);
+    JustinaNavigation::moveDistAngle(0.0, -1.5708, 3000); 
     JustinaNavigation::moveDistAngle(-0.4, 0.0, 3000); 
 
 	return true;
@@ -4989,7 +4990,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
 
 	JustinaNavigation::moveDistAngle(-(1.15 - face_centroid.x), 0.0, 5000);
 
-	JustinaHRI::say("Please put your hand with the bag in front of me ");
+	JustinaHRI::say("Please put your hand with the bag in front of me, in midle hight ");
     JustinaVision::startSkeletonFinding();
 	ros::Duration(2.0).sleep();
 	if(!JustinaTasks::waitRecognizedGesture(gestures, 5000)){

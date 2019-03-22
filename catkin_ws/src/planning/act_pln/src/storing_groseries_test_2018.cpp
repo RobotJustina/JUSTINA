@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-    bool openDoor = true;
+    bool openDoor = false;
     //////******************************//////
 
     bool fail =              false;
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
     /***************************************
      * This flag is to only grasp a one object
      ***************************************/
-    bool onlyOneGraspObject = true;
+    bool onlyOneGraspObject = false;
     /****************************************/
     // This is for attemps to navigation on the table
     int attempsNavigation = 0;
@@ -196,8 +196,8 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_INIT" << std::endl;
                     // JustinaHRI::say("I'm ready for storing groseries test");
-                    JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
-                    JustinaHRI::asyncSpeech();
+                    // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
+                    // JustinaHRI::asyncSpeech();
                     nextState = SM_GOTO_CUPBOARD;
                     attempsNavigation = 0;
                     findObjCupboard = false;
@@ -208,14 +208,14 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_GOTO_CUPBOARD" << std::endl;
                     // JustinaHRI::say("I am going to navigate to the cupboard");
-                    JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
-                    JustinaHRI::asyncSpeech();
+                    //JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
+                    //JustinaHRI::asyncSpeech();
                     JustinaManip::startTorsoGoTo(0.2, 0, 0);
-                    if(!JustinaNavigation::getClose("cupboard",200000))
-                        if(!JustinaNavigation::getClose("cupboard",200000))
-                            JustinaNavigation::getClose("cupboard",200000);
-                    JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
-                    JustinaHRI::asyncSpeech();
+                    if(!JustinaNavigation::getClose("shelf",200000))
+                        if(!JustinaNavigation::getClose("shelf",200000))
+                            JustinaNavigation::getClose("shelf",200000);
+                    //JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
+                    //JustinaHRI::asyncSpeech();
                     if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
                     else
@@ -252,8 +252,8 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_CUPBOARD" << std::endl;
 
                     // JustinaHRI::say("I am going to search objects on the shelf");
-                    JustinaHRI::insertAsyncSpeech("I am going to search objects on the shelf", 500);
-                    JustinaHRI::asyncSpeech();
+                    // JustinaHRI::insertAsyncSpeech("I am going to search objects on the shelf", 500);
+                    //JustinaHRI::asyncSpeech();
                     itemsOnCupboard = 0;
 
                     categories_cpbr.clear();
@@ -294,16 +294,19 @@ int main(int argc, char** argv)
                     int countObject = recoObjList.size();
                     justinaSay.str("");
                     justinaSay << "I have found " << countObject << " objects into cupboard";
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    // JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    JustinaHRI::say(justinaSay.str());
 
                     justinaSay.str("");
                     justinaSay << "The objects of the cupboard belong to categories";
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    // JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    JustinaHRI::say(justinaSay.str());
                     
                     justinaSay.str("");
                     for(int i = 0; i < categories_cpbr.size(); i++)
                        justinaSay << ", " << categories_cpbr[i];
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    // JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
+                    JustinaHRI::say(justinaSay.str());
                     nextState = SM_NAVIGATION_TO_TABLE;
 
                     nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
@@ -329,15 +332,15 @@ int main(int argc, char** argv)
             case SM_NAVIGATION_TO_TABLE:
                 {
                     std::cout << stateMachine << "SM_NAVIGATION_TO_TABLE" << std::endl;
-                    // JustinaHRI::say("I am going to navigate to the side table");
-                    JustinaHRI::insertAsyncSpeech("I am going to navigate to the table", 500);
+                    // JustinaHRI::say("I am going to navigate to the dining table");
+                    // JustinaHRI::insertAsyncSpeech("I am going to navigate to the table", 500);
                     JustinaManip::startLaGoTo("navigation");
                     JustinaManip::startRaGoTo("navigation");
                     
                     JustinaManip::startTorsoGoTo(0.25, 0, 0);
 
                     JustinaNavigation::startGetClose("table_location");
-                    JustinaHRI::asyncSpeech();
+                    //JustinaHRI::asyncSpeech();
                     
                     curr = boost::posix_time::second_clock::local_time();
                     prev = curr;
@@ -355,15 +358,15 @@ int main(int argc, char** argv)
                     else{ 
                         curr = boost::posix_time::second_clock::local_time();
                         if(JustinaNavigation::isGlobalGoalReached()){
-                            JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
-                            JustinaHRI::asyncSpeech();
+                            //JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
+                            //JustinaHRI::asyncSpeech();
                             attempsFindObjectsTable = 0; 
                             alignWithTable = true;
                             attempsNavigation = 0;
                             attempsFindObjectsTable = 0;
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
-                        else if((curr - prev).total_milliseconds() > 200000)
+                        else if((curr - prev).total_milliseconds() > 20000)
                             nextState = SM_NAVIGATION_TO_TABLE;
                     }
                 }
@@ -412,7 +415,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_TABLE" << std::endl;
                     if(attempsFindObjectsTable == 0 && alignWithTable){
-                        // JustinaHRI::say("I am going to search objects on the table");
+                        JustinaHRI::say("I am going to search objects on the table");
                         //Append acction to the plan
                         JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
 
@@ -464,7 +467,7 @@ int main(int argc, char** argv)
                             float confidence = recoObjForTake[i].confidence; 
                             confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
                             
-                            std::size_t found = recoObjForTake[i].id.find("unkown");
+                            std::size_t found = recoObjForTake[i].id.find("unknown");
                             if(found == std::string::npos){
                                 JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, i, confidence, category, 0);
                                 recoObjForTake[i].category = category;
@@ -609,7 +612,7 @@ int main(int argc, char** argv)
                                 
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                             geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
-                            if(idObjectGrasp.compare("unkown") != 0){
+                            if(idObjectGrasp.compare("unknown") != 0){
                                 if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
                                     if(!withLeftOrRightArm){
                                         objectGrasped[0] = true;
