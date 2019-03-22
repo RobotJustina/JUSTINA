@@ -92,8 +92,8 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, int attempts, bool
 	do
 	{
         // ------------------------------------------------------------------------------------------------------------------------- 
-		//lastRecognizedFaces = JustinaVision::getFaces();
-		lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition();
+		lastRecognizedFaces = JustinaVision::getFaces();
+		//lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition();
 		
 		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
 			sameValue ++;
@@ -477,8 +477,8 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 	
     JustinaTasks::getPanoramic(-0.2, -0.3, -0.5, -0.3, 0.3, 0.3, image, 30000);
     // ------------------------------------------------------------------------------------------------------------------------- 
-    // panoramicFaces = JustinaVision::getRecogFromPano(image);
-    panoramicFaces = JustinaVision::getRecogFromPanoAgeGender(image);
+    panoramicFaces = JustinaVision::getRecogFromPano(image);
+    // panoramicFaces = JustinaVision::getRecogFromPanoAgeGender(image);
     ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, 0.0);
 	ros::Duration(3.0).sleep();	
