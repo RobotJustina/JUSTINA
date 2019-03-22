@@ -1,6 +1,6 @@
 #Verify Need this delimitation area
 #door_loc	1.72232	0.109416	3.17941
-entrance	room 	1.05	0.539	1.05	-0.339	2.37	-0.299	2.36	0.652
+entrance	room 	1.05	0.539	1.05	-0.339	2.65	-0.343	2.63	0.567
 #entrance_door	1.72232	0.109416	3.17941
 #exit	0	0.022
 #exit_point	2.95444	-2.46677	-1.55145
