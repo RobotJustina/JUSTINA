@@ -26,6 +26,7 @@ enum SMState {
 	SM_SAY_WAIT_FOR_DOOR,
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
+	SM_INIT_SPEECH,
 	SM_SEND_INIT_CLIPS,
 	SM_RUN_SM_CLIPS,
     SM_RESET_CLIPS 
@@ -60,6 +61,7 @@ double maxTime = 180;
 std::string cat_grammar= "gpsr_guadalajara.xml";
 
 int num_speech_intents = 0;
+std::vector<std::string> idsPerson;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -466,11 +468,16 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	ros::Duration d = finishPlan - beginPlan;
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 
+	int count_attemps = 0;
+	std::string lastReco;
+	std::string answer;
+	bool response_question = false;
+
 	bool success = ros::service::waitForService("spg_say", 5000);
 	if (success) {
 		std::string param1 = tokens[1];
 		if (param1.compare("a_question") == 0) {
-			success = ros::service::waitForService("/planning_clips/answer",
+			/*success = ros::service::waitForService("/planning_clips/answer",
 					5000);
 			JustinaHRI::loadGrammarSpeechRecognized("questions.xml");
 			if (success) {
@@ -483,8 +490,24 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 					responseMsg.successful = 1;
 				}
 				else
+					responseMsg.successful = 0;*/
+			JustinaHRI::loadGrammarSpeechRecognized("questions.xml");
+			while(!response_question && count_attemps < 3){
+				JustinaHRI::waitAfterSay("Tell me your question please", 2000);
+				JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+				if(!JustinaKnowledge::comparePredQuestion(lastReco,answer))
+				{
+					std::cout << "no match with any question" << std::endl;
 					responseMsg.successful = 0;
+					JustinaHRI::waitAfterSay("I am sorry, I did not understand you", 2000);
+					count_attemps++;
+				}
+				else
+					response_question = true;
+	
 			}
+			responseMsg.successful = 1;
+
 		} else if (param1.compare("your_name") == 0) {
 			JustinaHRI::waitAfterSay("Hellow my name is justina", 2000);
 			responseMsg.successful = 1;
@@ -684,6 +707,12 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			    }
 
 		       }
+		    else{
+			intentos++;
+			currentName = "ask_name_no";
+			JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
+			responseMsg.successful = 1;
+		    }
 		    }
 		}
 			/*bool success = ros::service::waitForService("spg_say", 5000);
@@ -874,12 +903,11 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, std::string > catList;
 	
-	catList["chips"] = "snacks";
-	catList["m_and_m_s"] = "snacks";
+	catList["chocolate"] = "snacks";
+	catList["cream"] = "snacks";
 	catList["pringles"] = "snacks";
-	catList["cookies"] = "snacks";
 
-	catList["tea_spoon"] = "cutlery";
+	/*catList["tea_spoon"] = "cutlery";
 	catList["fork"] = "cutlery";
 	catList["spoon"] = "cutlery";
 	catList["knife"] = "cutlery";
@@ -889,15 +917,14 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["melon"] = "fruits";
 	catList["banana"] = "fruits";
 	catList["pear"] = "fruits";
-	catList["peach"] = "fruits";
+	catList["peach"] = "fruits";*/
 
-	catList["tea"] = "drinks";
-	catList["beer"] = "drinks";
+	catList["energy_drink"] = "drinks";
+	catList["coffee"] = "drinks";
 	catList["coke"] = "drinks";
-	catList["water"] = "drinks";
-	catList["milk"] = "drinks";
+	catList["juice"] = "drinks";
 
-	catList["shampoo"] = "toiletries";
+	/*catList["shampoo"] = "toiletries";
 	catList["soap"] = "toiletries";
 	catList["cloth"] = "toiletries";
 	catList["sponge"] = "toiletries";
@@ -905,21 +932,17 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	catList["box"] = "containers";
 	catList["bag"] = "containers";
-	catList["tray"] = "containers";
+	catList["tray"] = "containers";*/
 	
-	catList["pasta"] = "food";
-	catList["noodles"] = "food";
-	catList["tuna_fish"] = "food";
-	catList["pickles"] = "food";
-	catList["choco_flakes"] = "food";
-	catList["robo_o_s"] = "food";
-	catList["muesli"] = "food";
+	catList["apple"] = "food";
+	catList["corn"] = "food";
+	catList["cereal"] = "food";
 
-	catList["big_dish"] = "tableware";
+	/*catList["big_dish"] = "tableware";
 	catList["small_dish"] = "tableware";
 	catList["bowl"] = "tableware";
 	catList["glass"] = "tableware";
-	catList["mug"] = "tableware";
+	catList["mug"] = "tableware";*/
 
 	bool finishMotion = false;
 	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
@@ -939,13 +962,13 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, int> countCat;
 	countCat["snacks"] = 0;
-	countCat["fruits"] = 0;
+	//countCat["fruits"] = 0;
 	countCat["food"] = 0;
 	countCat["drinks"] = 0;
-	countCat["toiletries"] = 0;
-	countCat["containers"] = 0;
-	countCat["cutlery"] = 0;
-	countCat["tableware"] = 0;
+	//countCat["toiletries"] = 0;
+	//countCat["containers"] = 0;
+	//countCat["cutlery"] = 0;
+	//countCat["tableware"] = 0;
 
 	int arraySize = 0;
 	int numObj  = 0;
@@ -1039,12 +1062,11 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::stringstream ss;
 
 	std::map<std::string, int > countObj;
-	countObj["chips"] = 0;
-	countObj["m_and_m_s"] = 0;
+	countObj["cream"] = 0;
+	countObj["chocolate"] = 0;
 	countObj["pringles"] = 0;
-	countObj["cookies"] = 0;
 
-	countObj["tea_spoon"] = 0;
+	/*countObj["tea_spoon"] = 0;
 	countObj["fork"] = 0;
 	countObj["spoon"] = 0;
 	countObj["knife"] = 0;
@@ -1054,15 +1076,14 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countObj["melon"] = 0;
 	countObj["banana"] = 0;
 	countObj["pear"] = 0;
-	countObj["peach"] = 0;
+	countObj["peach"] = 0;*/
 
-	countObj["tea"] = 0;
-	countObj["beer"] = 0;
+	countObj["energy_drink"] = 0;
+	countObj["juice"] = 0;
 	countObj["coke"] = 0;
-	countObj["water"] = 0;
-	countObj["milk"] = 0;
+	countObj["coffee"] = 0;
 
-	countObj["shampoo"] = 0;
+	/*countObj["shampoo"] = 0;
 	countObj["soap"] = 0;
 	countObj["cloth"] = 0;
 	countObj["sponge"] = 0;
@@ -1070,21 +1091,17 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	countObj["box"] = 0;
 	countObj["bag"] = 0;
-	countObj["tray"] = 0;
+	countObj["tray"] = 0;*/
 	
-	countObj["pasta"] = 0;
-	countObj["noodles"] = 0;
-	countObj["tuna_fish"] = 0;
-	countObj["pickles"] = 0;
-	countObj["choco_flakes"] = 0;
-	countObj["robo_o_s"] = 0;
-	countObj["muesli"] = 0;
+	countObj["apple"] = 0;
+	countObj["corn"] = 0;
+	countObj["cereal"] = 0;
 
-	countObj["big_dish"] = 0;
+	/*countObj["big_dish"] = 0;
 	countObj["small_dish"] = 0;
 	countObj["bowl"] = 0;
 	countObj["glass"] = 0;
-	countObj["mug"] = 0;
+	countObj["mug"] = 0;*/
 	
 	/*countObj["chopstick"] = 0;
 	countObj["fork"] = 0;
@@ -1199,12 +1216,11 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::map<std::string, std::pair<std::string, int> > countObj;
 	
-    countObj["chips"] = std::make_pair(std::string("snacks"),0);
-	countObj["m_and_m_s"] = std::make_pair(std::string("snacks"),0);
+	countObj["chocolate"] = std::make_pair(std::string("snacks"),0);
 	countObj["pringles"] = std::make_pair(std::string("snacks"),0);
-	countObj["cookies"] = std::make_pair(std::string("snacks"),0);
+	countObj["cream"] = std::make_pair(std::string("snacks"),0);
 
-	countObj["tea_spoon"] = std::make_pair(std::string("cutlery"),0);
+	/*countObj["tea_spoon"] = std::make_pair(std::string("cutlery"),0);
 	countObj["fork"] = std::make_pair(std::string("cutlery"),0);
 	countObj["spoon"] = std::make_pair(std::string("cutlery"),0);
 	countObj["knife"] = std::make_pair(std::string("cutlery"),0);
@@ -1214,15 +1230,14 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	countObj["melon"] = std::make_pair(std::string("fruits"),0);
 	countObj["banana"] = std::make_pair(std::string("fruits"),0);
 	countObj["pear"] = std::make_pair(std::string("fruits"),0);
-	countObj["peach"] = std::make_pair(std::string("fruits"),0);
+	countObj["peach"] = std::make_pair(std::string("fruits"),0);*/
 
-	countObj["tea"] = std::make_pair(std::string("drinks"),0);
-	countObj["beer"] = std::make_pair(std::string("drinks"),0);
+	countObj["juice"] = std::make_pair(std::string("drinks"),0);
+	countObj["energy_drink"] = std::make_pair(std::string("drinks"),0);
 	countObj["coke"] = std::make_pair(std::string("drinks"),0);
-	countObj["water"] = std::make_pair(std::string("drinks"),0);
-	countObj["milk"] = std::make_pair(std::string("drinks"),0);
+	countObj["coffee"] = std::make_pair(std::string("drinks"),0);
 
-	countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
+	/*countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
 	countObj["soap"] = std::make_pair(std::string("toiletries"),0);
 	countObj["cloth"] = std::make_pair(std::string("toiletries"),0);
 	countObj["sponge"] = std::make_pair(std::string("toiletries"),0);
@@ -1230,21 +1245,17 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	countObj["box"] = std::make_pair(std::string("containers"),0);
 	countObj["bag"] = std::make_pair(std::string("containers"),0);
-	countObj["tray"] = std::make_pair(std::string("containers"),0);
+	countObj["tray"] = std::make_pair(std::string("containers"),0);*/
 	
-	countObj["pasta"] = std::make_pair(std::string("food"),0);
-	countObj["noodles"] = std::make_pair(std::string("food"),0);
-	countObj["tuna_fish"] = std::make_pair(std::string("food"),0);
-	countObj["pickles"] = std::make_pair(std::string("food"),0);
-	countObj["choco_flakes"] = std::make_pair(std::string("food"),0);
-	countObj["robo_o_s"] = std::make_pair(std::string("food"),0);
-	countObj["muesli"] = std::make_pair(std::string("food"),0);
+	countObj["corn"] = std::make_pair(std::string("food"),0);
+	countObj["apple"] = std::make_pair(std::string("food"),0);
+	countObj["cereal"] = std::make_pair(std::string("food"),0);
 
-	countObj["big_dish"] = std::make_pair(std::string("tableware"),0);
+	/*countObj["big_dish"] = std::make_pair(std::string("tableware"),0);
 	countObj["small_dish"] = std::make_pair(std::string("tableware"),0);
 	countObj["bowl"] = std::make_pair(std::string("tableware"),0);
 	countObj["glass"] = std::make_pair(std::string("tableware"),0);
-	countObj["mug"] = std::make_pair(std::string("tableware"),0);
+	countObj["mug"] = std::make_pair(std::string("tableware"),0);*/
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1462,8 +1473,16 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			currentName = "no_gender_pose";
 	}
 	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;
-			JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
-			currentName = "standing";
+			//JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
+			JustinaTasks::POSE poseRecog;
+            		poseRecog = JustinaTasks::NONE;
+            		success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
+			if(poseRecog == JustinaTasks::NONE || poseRecog == JustinaTasks::STANDING)
+				currentName = "standing";
+			else if (poseRecog == JustinaTasks::SITTING)
+				currentName = "sitting";
+			else if (poseRecog == JustinaTasks::LYING)
+				currentName = "lying";
 			ss << "you are " << currentName;
 			JustinaHRI::waitAfterSay(ss.str(), 10000);
 	}
@@ -2912,6 +2931,7 @@ int main(int argc, char **argv) {
 	JustinaRepresentation::setNodeHandle(&n);
 	
 	JustinaRepresentation::initKDB("", false, 20000);
+    	idsPerson.push_back("person");
 
 	if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
@@ -2928,7 +2948,8 @@ int main(int argc, char **argv) {
 		case SM_INIT:
 			if (startSignalSM) {
 				JustinaHRI::waitAfterSay("I am ready for the gpsr test", 4000);
-				state = SM_SAY_WAIT_FOR_DOOR;
+				//state = SM_SAY_WAIT_FOR_DOOR;
+				state =  SM_INIT_SPEECH;
 			}
 			break;
 		case SM_SAY_WAIT_FOR_DOOR:
@@ -2967,6 +2988,12 @@ int main(int argc, char **argv) {
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
+		case SM_INIT_SPEECH:
+			JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+			JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
+			JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+			state = SM_SEND_INIT_CLIPS;
+		break;
 		case SM_SEND_INIT_CLIPS:
 			JustinaVision::startQRReader();
 			initMsg.successful = false;
