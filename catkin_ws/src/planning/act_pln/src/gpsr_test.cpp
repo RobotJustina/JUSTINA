@@ -502,8 +502,10 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 					JustinaHRI::waitAfterSay("I am sorry, I did not understand you", 2000);
 					count_attemps++;
 				}
-				else
+				else{
 					response_question = true;
+					success = JustinaHRI::waitAfterSay(answer, 5000);
+				}
 	
 			}
 			responseMsg.successful = 1;
