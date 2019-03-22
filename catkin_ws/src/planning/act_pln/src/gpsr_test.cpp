@@ -57,7 +57,9 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "gpsr_pre_montreal.xml";
+std::string cat_grammar= "gpsr_guadalajara.xml";
+
+int num_speech_intents = 0;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -248,9 +250,16 @@ void callbackCmdConfirmation(
                 std_msgs::Int32 timeout;
                 timeout.data = 240000; //This is the time for restart clips
                 pubStartTime.publish(timeout);
+		num_speech_intents = 0;
 			}
-			else
-				JustinaHRI::waitAfterSay("Repeate the command please", 2000);
+			else{
+				num_speech_intents++;
+				if (num_speech_intents > 3){
+					JustinaHRI::waitAfterSay("please use a Q R code and I try to understand the command ", 2000);
+				}
+				else
+					JustinaHRI::waitAfterSay("Repeate the command please", 2000);
+			}
 
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;

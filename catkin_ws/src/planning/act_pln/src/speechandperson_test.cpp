@@ -543,7 +543,7 @@ int main(int argc, char** argv)
 	std::stringstream auxAudio;
 	std::string str1;
 
-	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
+	JustinaHRI::loadGrammarSpeechRecognized("speechandperson_guadalajara.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	JustinaRepresentation::initKDB("", true, 20000);
 
