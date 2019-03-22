@@ -5,6 +5,7 @@ current_loc	2.34018	2.28632	-2.35
 current_person	2.34018	2.28632	-2.35
 dining_room	5.40572	1.55744	1.15839
 dining_table	5.68454	1.76549	-0
+table_location	5.68454	1.76549	-0
 entrance	1.6028	0.0704192	-0
 entrance_door	1.35978	0.0906109	-3.1416
 exit	6.29946	0.477551	-3.1416
