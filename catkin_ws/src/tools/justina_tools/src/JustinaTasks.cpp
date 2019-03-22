@@ -76,6 +76,10 @@ bool JustinaTasks::alignWithTable(float distToTable) {
 	float distance = fabs(A * robotX + B * robotY + C) / sqrt(A * A + B * B)
 		- distToTable;
 	float angle = atan2(y2 - y1, x2 - x1) - M_PI / 2;
+
+    /*if(angle >= -0.7854 && angle <= 0.7854)
+        return false;*/
+
 	if (angle < 0)
 		angle += M_PI;
 	std::cout << "JustinaTasks.->Moving base: dist=" << distance << "  angle="
@@ -455,7 +459,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 					objToGraspZ, 3000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-			JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
+			/*JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
+					objToGraspZ, 3000);*/
+			JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.09,
 					objToGraspZ, 3000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
