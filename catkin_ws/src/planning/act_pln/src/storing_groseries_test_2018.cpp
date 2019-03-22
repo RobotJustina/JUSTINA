@@ -227,7 +227,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_OPEN_DOOR" << std::endl;
                     if(!openDoor){
-                        JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 3000);
+                        JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 6000);
                         findObjCupboard = true;
                         nextState = SM_NAVIGATION_TO_TABLE;
                     }

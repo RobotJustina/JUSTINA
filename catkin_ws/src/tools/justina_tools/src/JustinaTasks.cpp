@@ -77,8 +77,8 @@ bool JustinaTasks::alignWithTable(float distToTable) {
 		- distToTable;
 	float angle = atan2(y2 - y1, x2 - x1) - M_PI / 2;
 
-    /*if(angle >= -0.7854 && angle <= 0.7854)
-        return false;*/
+    if(angle >= -0.7854 && angle <= 0.7854)
+        return false;
 
 	if (angle < 0)
 		angle += M_PI;
