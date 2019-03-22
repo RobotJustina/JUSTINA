@@ -37,6 +37,7 @@ std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastTrainingResult = 0;
 //Service for face recognition
 ros::ServiceClient JustinaVision::cltDetectPanoFaces;
+ros::ServiceClient JustinaVision::cltDetectPanoFacesAgeGender;
 ros::ServiceClient JustinaVision::cltDetectFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltFaceRecognition;
@@ -127,12 +128,13 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subTrainerResult = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainerResult);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::cltDetectPanoFaces = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_pano_faces");
+    JustinaVision::cltDetectPanoFacesAgeGender = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_pano_faces_age_gender");
     JustinaVision::cltDetectFaces = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/detect_faces");
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/detect_waving");
     JustinaVision::cltFaceRecognition = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition");
     JustinaVision::cltFaceRecognition2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition_2D");
-    JustinaVision::cltFaceAgeGenderRecognition = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_age_gender");
-    JustinaVision::cltFaceAgeGenderRecognition2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_age_gender_2D");
+    JustinaVision::cltFaceAgeGenderRecognition = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_age_gender");
+    JustinaVision::cltFaceAgeGenderRecognition2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_age_gender_2D");
     static ros::ServiceClient cltFaceAgeGenderRecognition2D;
     //Members for operation of thermal camera
     JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
@@ -404,6 +406,19 @@ vision_msgs::VisionFaceObjects JustinaVision::getRecogFromPano(sensor_msgs::Imag
     vision_msgs::GetFacesFromImage srv;
     srv.request.panoramic_image = image;
     if(cltDetectPanoFaces.call(srv)){
+        faces = srv.response.faces;
+        std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service GetFacesFromImage" << std::endl;
+    return faces;
+}
+
+vision_msgs::VisionFaceObjects JustinaVision::getRecogFromPanoAgeGender(sensor_msgs::Image image){
+    vision_msgs::VisionFaceObjects faces;
+    vision_msgs::GetFacesFromImage srv;
+    srv.request.panoramic_image = image;
+    if(cltDetectPanoFacesAgeGender.call(srv)){
         faces = srv.response.faces;
         std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
     }

@@ -79,6 +79,7 @@ private:
     static int lastTrainingResult;
     //Service for face recognition
     static ros::ServiceClient cltDetectPanoFaces;
+    static ros::ServiceClient cltDetectPanoFacesAgeGender;
     static ros::ServiceClient cltDetectFaces;
     static ros::ServiceClient cltDetectWaving;
     static ros::ServiceClient cltFaceRecognition;
@@ -166,6 +167,7 @@ public:
     static int getLastTrainingResult();
     static bool waitForTrainingFace(int timeout);
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
+    static vision_msgs::VisionFaceObjects getRecogFromPanoAgeGender(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces();
     static vision_msgs::VisionFaceObjects getFaceRecognition(std::string id = "");
     static vision_msgs::VisionFaceObjects getFaceRecognition2D(std::string id = "");

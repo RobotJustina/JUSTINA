@@ -65,6 +65,7 @@ bool enableFaceAgeGender2D = false;
 
 // Services
 ros::ServiceServer srvDetectPanoFaces;
+ros::ServiceServer srvDetectPanoFacesAgeGender;
 ros::ServiceServer srvDetectFaces;
 ros::ServiceServer srvDetectWave;
 ros::ServiceServer srvFaceRecognition;
@@ -109,6 +110,10 @@ bool GetImagesFromJustina(cv::Mat& imaBGR)
 
 bool faceobjSortFunction (faceobj i,faceobj j) { 
     return (i.boundingbox.x < j.boundingbox.x); 
+}
+
+bool facesDetectSortFunction (vision_msgs::VisionFaceObject i,vision_msgs::VisionFaceObject j) { 
+    return (i.bounding_box[0].x < j.bounding_box[0].x); 
 }
 
 bool RectSortFunction (Rect i,Rect j) { 
@@ -295,6 +300,19 @@ void faceAgeGender2D(cv::Mat bgrImg, vision_msgs::VisionFaceObjects &faceObjects
         faceObjects = srv.response.faces;
         faceAddLabel(faceObjects, bgrImg);
         cv::imshow("Face recognition", bgrImg);
+    }
+    else
+        std::cout << "face_recog_node.->Error in face recognition service." << std::endl;
+}
+
+void faceAgeGender2D(sensor_msgs::Image image, vision_msgs::VisionFaceObjects &faceObjects)
+{
+    vision_msgs::FaceRecognition srv;
+    srv.request.imageBGR = image;
+    srv.request.faces = faceObjects;
+    if(cltFacesAgeGender.call(srv))
+    {
+        faceObjects = srv.response.faces;
     }
     else
         std::cout << "face_recog_node.->Error in face recognition service." << std::endl;
@@ -638,6 +656,48 @@ bool callback_srvDetectPanoFaces(vision_msgs::GetFacesFromImage::Request &req, v
     return true;
 }
 
+bool callback_srvDetectPanoFacesAgeGender(vision_msgs::GetFacesFromImage::Request &req, vision_msgs::GetFacesFromImage::Response &resp)
+{
+    std::cout << "FaceRecognizer.->Starting face detection..." << std::endl;
+    sensor_msgs::Image panoramic = req.panoramic_image;
+    
+    vision_msgs::VisionFaceObjects faces_detected;
+    // std::vector<faceobj> facesdetected
+    faceAgeGender2D(panoramic, faces_detected);
+    Mat img = Mat(req.panoramic_image.height, req.panoramic_image.width, CV_8UC3);
+    img.data = &req.panoramic_image.data[0];
+    faceAddLabel(faces_detected, img);
+    cv::imshow("Face recognition", img);
+    if(faces_detected.recog_faces.size() > 0){
+        std::sort (faces_detected.recog_faces.begin(), faces_detected.recog_faces.end(), facesDetectSortFunction);
+    }
+    resp.faces = faces_detected;
+    /*if(facesdetected.size() > 0) {
+        //Sort vector
+        std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+        for (int x = 0; x < facesdetected.size(); x++) {
+            vision_msgs::VisionFaceObject face;
+            geometry_msgs::Point p; 
+            face.id = facesdetected[x].id;
+            face.confidence = facesdetected[x].confidence;
+            face.face_centroid.x = 0;
+            face.face_centroid.y = 0;
+            face.face_centroid.z = 0;
+            p.x = facesdetected[x].boundingbox.x;
+            p.y = facesdetected[x].boundingbox.y;
+            face.bounding_box.push_back(p);
+            p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+            p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+            face.bounding_box.push_back(p);
+            face.smile = facesdetected[x].smile;
+            face.gender = facesdetected[x].gender;
+            resp.faces.recog_faces.push_back(face);
+        }
+    }*/
+
+    return true;
+}
+
 bool callback_srvDetectWaving(vision_msgs::FindWaving::Request &req, vision_msgs::FindWaving::Response &resp)
 {
     std::cout << "FaceRecognizer.-> Starting wave detection..." << std::endl;
@@ -754,6 +814,7 @@ int main(int argc, char** argv)
 
     // Detect pano faces Service
     srvDetectPanoFaces = n.advertiseService("/vision/face_recognizer/detect_pano_faces", callback_srvDetectPanoFaces);
+    srvDetectPanoFacesAgeGender = n.advertiseService("/vision/face_recognizer/detect_pano_faces_age_gender", callback_srvDetectPanoFacesAgeGender);
     // Waving service
     srvDetectWave = n.advertiseService("/vision/face_recognizer/detect_waving", callback_srvDetectWaving);
     // Face detection service
