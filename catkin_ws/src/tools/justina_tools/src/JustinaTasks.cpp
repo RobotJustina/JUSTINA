@@ -61,6 +61,12 @@ bool JustinaTasks::alignWithTable(float distToTable) {
 			<< std::endl;
 		return false;
 	}
+	
+    if (x1 > 0.6 || x2 > 0.6) {
+		std::cout << "JustinaTasks.->Found line is not confident. "
+			<< std::endl;
+		return false;
+	}
 
 	if(x1 == x2 && y1 == y2 && z1 == z2)
 		return false;
@@ -382,15 +388,17 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 		else{
-			JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.25,
+			JustinaManip::laGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
+					objToGraspZ - 0.04, 3000);
+			JustinaManip::laGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
+					objToGraspZ - 0.06, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+			JustinaManip::laGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
 					objToGraspZ - 0.04, 3000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-			JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.15,
-					objToGraspZ - 0.04, 3000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-			JustinaManip::laGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.10,
+			JustinaManip::laGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
 					objToGraspZ - 0.06, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
@@ -2871,12 +2879,12 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
 		JustinaManip::laGoTo("navigation", 3000);
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-		JustinaNavigation::moveDist(-0.15, 5000);
+		//JustinaNavigation::moveDist(-0.15, 5000);
 		
-        JustinaManip::laGoTo("put_storing", 3000);
+        JustinaManip::laGoTo("put_storing1", 3000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-        JustinaNavigation::moveDist(0.15, 5000);
+        JustinaNavigation::moveDist(0.4, 5000);
 
 		JustinaManip::startLaOpenGripper(0.6);
         ros::spinOnce();
@@ -2894,12 +2902,12 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
 		JustinaManip::raGoTo("navigation", 3000);
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-		JustinaNavigation::moveDist(-0.15, 5000);
+		//JustinaNavigation::moveDist(-0.15, 5000);
 		
-        JustinaManip::raGoTo("put_storing", 3000);
+        JustinaManip::raGoTo("put_storing1", 3000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-        JustinaNavigation::moveDist(0.18, 5000);
+        JustinaNavigation::moveDist(0.4, 5000);
 
 		JustinaManip::startRaOpenGripper(0.6);
         ros::spinOnce();
