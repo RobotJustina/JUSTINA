@@ -534,7 +534,7 @@ int main(int argc, char** argv)
 
                 
                 if(numberGuest<maxNumberGuest){
-                    ros::Duration(1.0).sleep();
+                    /*ros::Duration(1.0).sleep();
                     JustinaNavigation::moveDistAngle(0.0, -1.5708, 2000);
                     ros::Duration(1.0).sleep();
                     JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
@@ -543,34 +543,37 @@ int main(int argc, char** argv)
                     ros::Duration(1.5).sleep();
                     JustinaTasks::detectObjectInGripper("umbrella", true, 10000);
                     withLeftArm = true;
-                    ros::Duration(1.0).sleep();
+                    ros::Duration(1.0).sleep();*/
+                    JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
+				    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
+				    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("hey guest, do not forget to take your coat");
+        		    ros::Duration(2.0).sleep();
+                }
+                else{
+                    JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				    ros::Duration(1.0).sleep();
+                    JustinaManip::laGoTo("navigation", 3000);
+                    JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
+                    JustinaHRI::say("hey guest, do not forget to take your coat");
+        		    ros::Duration(2.0).sleep();
                 }
 
-
-                JustinaHRI::say("hey guest, please take your coat");
-        		ros::Duration(2.0).sleep();
-
-                
-                
-
-                JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				ros::Duration(1.0).sleep();
-                JustinaManip::laGoTo("navigation", 3000);
-                JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-
-
                 JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
-        		ros::Duration(2.0).sleep();
+        		ros::Duration(1.0).sleep();
 
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 ros::Duration(1.0).sleep();
+                JustinaHRI::say("Do not forget use the umbrella to protect us");
+				ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
                 JustinaTasks::guideAPerson("corridor", 300000, 1.5);
                 
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
-        		ros::Duration(1.5).sleep();
+        		ros::Duration(1.0).sleep();
                 nextState = SM_SearchTaxiDriver;
                 
                 break;
