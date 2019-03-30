@@ -2933,6 +2933,7 @@ int main(int argc, char **argv) {
 	JustinaRepresentation::setNodeHandle(&n);
 	
 	JustinaRepresentation::initKDB("", false, 20000);
+    JustinaRepresentation::initKDB("/gpsr_2019/gpsr.dat", false, 20000);
     	idsPerson.push_back("person");
 
 	if (argc > 3){

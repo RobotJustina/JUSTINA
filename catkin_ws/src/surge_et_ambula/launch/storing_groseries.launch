@@ -1,8 +1,8 @@
 <launch>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<!-- arg name="initial_pose_x" value="6.65"/>
-		<arg name="initial_pose_y" value="-1.38325"/>
-		<arg name="initial_pose_a" value="0"/ -->
+		<arg name="initial_pose_x" value="5.36"/>
+		<arg name="initial_pose_y" value="1.61"/>
+		<arg name="initial_pose_a" value="1.5708"/>
 	</include>
 	<group ns="knowledge">
 		<node name="rospy_clips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
