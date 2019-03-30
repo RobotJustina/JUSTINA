@@ -657,12 +657,12 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		    	int intentos = 0;
 			std::vector<std::string> tokens1;
 			
-			JustinaHRI::loadGrammarSpeechRecognized("name_response.xml");
 			JustinaHRI::waitAfterSay("Hello my name is Justina", 10000);
 			//JustinaHRI::waitAfterSay("tell me, my name is, in order to response my question", 10000);}
 			//JustinaHRI::waitAfterSay("Well, tell me what is your name please", 10000);
 			/// codigo para preguntar nombre Se usara un servicio
 			while(intentos < 5 && !conf){
+				JustinaHRI::loadGrammarSpeechRecognized("name_response.xml");
 			    JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
 			if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
 			    //JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
