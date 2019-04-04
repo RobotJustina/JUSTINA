@@ -17,6 +17,7 @@
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/dark_justina.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
 	<include file="$(find surge_et_ambula)/launch/dark_justina_hardware.launch">
 		<arg name="simul" value="true"/>
 		<arg name="simul_pcl" value="true"/>
@@ -26,8 +27,13 @@
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
 	</group>
+	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 	<group ns="interoperation">
 		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+	<group ns="manipulation">
+		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
 	</group>
 
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">

@@ -5,7 +5,7 @@
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_hexa_base.py" output="screen">
-			<param name="simul" value="false"/>
+			<param name="simul" value="$(arg simul)"/>
 			<param name="port1" value="/dev/justinaRC30"/>
 			<param name="port2" value="/dev/justinaRC15"/>
 		</node>
@@ -15,14 +15,14 @@
 			<param name="baud" value="200000"/>
 			<param name="bulk_enable" value="true"/>
 			<param name="write_sync_enable" value="true"/>
-			<param name="simul" value="$(arg simul)"/>
+			<param name="simul" value="true"/>
 		</node>
 		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="false">
 			<param name="port" value="/dev/justinaLeftArm"/>
 			<param name="baud" value="1000000"/>
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="true"/>
-			<param name="simul" value="$(arg simul)"/>
+			<param name="simul" value="true"/>
 		</node>
 		<node name="head" pkg="head" type="head_node" output="screen">
 			<param name="port" value="/dev/justinaHead"/>
@@ -33,8 +33,8 @@
 			<param name="simul" value="$(arg simul)"/>
 		</node>
 		<node name="torso" pkg="torso" type="torso_node_pololu" output="screen">
-			<param name="simul" value="false"/>
-			<param name="port" value="/dev/ttyACM2"/>
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port" value="/dev/justinaTorso"/>
 		</node>
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
