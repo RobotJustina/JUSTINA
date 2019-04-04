@@ -1915,6 +1915,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeou
                                     JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
 									//JustinaIROS::loggingNotificacion(ss.str());
                                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                                    isInRestrictedArea = true;
                                     break;
                                 }
                             }
