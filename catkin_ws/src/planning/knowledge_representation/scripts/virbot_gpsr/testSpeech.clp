@@ -29,8 +29,11 @@
         (intento 1)
         (num_intentos 3)
 	(plan_active no)
-        (num_places 0)
+        
+	;;for get places into the room
+	(num_places 0)
         (visit_places 0)
+	(start split_room)
 
 	;;for speech generation of the number of orders in eegpsr cat2 montreal
 	(num_order 1)

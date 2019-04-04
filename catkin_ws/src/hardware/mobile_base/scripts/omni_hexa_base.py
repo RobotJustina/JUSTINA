@@ -314,9 +314,9 @@ class MobileOmniBaseNode:
                     #self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 24.0/35.0)
                     #self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 24.0/35.0)                                           
                     #self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 24.0/35.0)
-                    self.speed_front_left  =  -int(self.speed_front_left  * self.TICKS_PER_METER_FRONTAL)
-                    self.speed_front_right =  -int(self.speed_front_right * self.TICKS_PER_METER_FRONTAL)
-                    self.speed_rear  =  -int(self.speed_rear  * self.TICKS_PER_METER_LATERAL)
+                    self.speed_front_left  =  -int(self.speed_front_left  * self.TICKS_PER_METER_FRONTAL * 1.25)
+                    self.speed_front_right =  -int(self.speed_front_right * self.TICKS_PER_METER_FRONTAL * 1.25)
+                    self.speed_rear  =  -int(self.speed_rear  * self.TICKS_PER_METER_LATERAL * 1.25)
             
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
