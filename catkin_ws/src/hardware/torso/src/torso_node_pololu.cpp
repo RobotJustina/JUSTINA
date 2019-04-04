@@ -34,13 +34,13 @@ void callbackRelativeHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     }
     goalPose.data[0] = absPosition + msg->data[0];
     unsigned int goalTarget;
-    if(goalPose.data[0] < 0.03 || goalPose.data[0] > 0.3){
+    if(goalPose.data[0] < 0.02 || goalPose.data[0] > 0.3){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
-        if(goalPose.data[0] < 0)
-            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] < 0.02)
+            goalPose.data[0] = 0.02f;
         if(goalPose.data[0] > 0.3)
             goalPose.data[0] = 0.3f;
-        goalSpeeds_simul[0] = 0.001;
+        goalSpeeds_simul[0] = 0.004;
     }
     if(!simul){
         goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
@@ -52,13 +52,13 @@ void callbackAbsoluteHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving absolute new goal pose." << std::endl;
     newGoalPose = true;
     goalPose.data[0] = msg->data[0];
-    if(msg->data[0] < 0.03 || goalPose.data[0] > 0.3){
+    if(msg->data[0] < 0.02 || goalPose.data[0] > 0.3){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
-        if(goalPose.data[0] < 0)
-            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] < 0.02)
+            goalPose.data[0] = 0.02f;
         if(goalPose.data[0] > 0.3)
             goalPose.data[0] = 0.3f;
-        goalSpeeds_simul[0] = 0.001;
+        goalSpeeds_simul[0] = 0.004;
     }
     if(!simul){
         unsigned int goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
