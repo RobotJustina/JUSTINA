@@ -843,7 +843,10 @@ void callbackCmdFindObject(
 			JustinaHRI::waitAfterSay(ss.str(), 2500);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
 			ss.str("");
-			ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z ;
+			if(withLeftOrRightArm)
+				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
+			else
+				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right only_find";
 		} else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
