@@ -36,11 +36,11 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?obj ?room)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions review_room ?obj ?room)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?obj ?room)(actions_num_params 3 5)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions make_task ?name ?obj finded)(actions_num_params 4 4)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions move manipulator ?obj)(duration 6000)))
 	(assert (plan (name ?name) (number 5)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
-	(assert (finish-planner ?name 5))
+	(assert (finish-planner ?name 100))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
