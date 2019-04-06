@@ -651,7 +651,7 @@ meaning_mapping_patterns_gpsr = [
 	"Luggage": [["bag", "baggage", "valise", "suitcase", "trolley"], [], [], []],
 	"Taxi": [["uber", "taxi", "cab"], [], [], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_bag) (params -Luggage-) (step )) " +
-                                "(task (plan user_speech) (action_type follow_man) (params man no_location)(step ))" +
+                                "(task (plan user_speech) (action_type follow_to_taxi) (params man no_location)(step ))" +
                                 "(task (plan user_speech) (action_type handover_object) (params bag)(step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
