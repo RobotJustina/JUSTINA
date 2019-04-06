@@ -82,6 +82,7 @@ int main(int argc, char **argv){
     int attemptsConfirmation = 0;
     int attemptsWaitConfirmation = 0;
     int attemptsMemorizing = 0;
+    float pitchAngle;
     int genderRecog;
     std::string param, typeOrder;
     std::string lastName, lastDrink;
@@ -640,10 +641,10 @@ int main(int argc, char **argv){
                     JustinaKnowledge::getKnownLocation("john", goalx, goaly, goala);
                     JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
                     if(pointingArmY > 0){
-                        usePointArmLeft = false;
+                        usePointArmLeft = true;
                         JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                     }else{
-                        usePointArmLeft = true;
+                        usePointArmLeft = false;
                         JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                     }
                     pointingNormal = sqrt(pointingArmX * pointingArmX + pointingArmY * pointingArmY + pointingArmZ * pointingArmZ);
@@ -669,11 +670,15 @@ int main(int argc, char **argv){
                     if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.45 + torsoSpine), dist_to_head));
+                    pitchAngle = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                    if(pitchAngle <= -M_PI)
+                        pitchAngle += 2 * M_PI;
+                    else if(pitchAngle >= M_PI)
+                        pitchAngle -= 2 * M_PI;
                     if(usePointArmLeft)
-                        JustinaManip::startLaGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0);
+                        JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                     else
-                        JustinaManip::startRaGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0);
-                    // TODO PUT THE ARM POINTIN
+                        JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                     JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 }
                 ss.str("");
@@ -682,10 +687,10 @@ int main(int argc, char **argv){
                 JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                 JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
                 if(pointingArmY > 0){
-                    usePointArmLeft = false;
+                    usePointArmLeft = true;
                     JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                 }else{
-                    usePointArmLeft = true;
+                    usePointArmLeft = false;
                     JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                 }
                 pointingNormal = sqrt(pointingArmX * pointingArmX + pointingArmY * pointingArmY + pointingArmZ * pointingArmZ);
@@ -711,10 +716,15 @@ int main(int argc, char **argv){
                 if(angleHead > M_PI)
                     angleHead = 2 * M_PI - angleHead;
                 JustinaManip::startHdGoTo(angleHead, atan2(guest_z - (1.45 + torsoSpine), dist_to_head));
+                pitchAngle = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                if(pitchAngle <= -M_PI)
+                    pitchAngle += 2 * M_PI;
+                else if(pitchAngle >= M_PI)
+                    pitchAngle -= 2 * M_PI;
                 if(usePointArmLeft)
-                    JustinaManip::startLaGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0);
+                    JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                 else
-                    JustinaManip::startRaGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0);
+                    JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 findPersonCount = 0;
                 findPersonAttemps = 0;
