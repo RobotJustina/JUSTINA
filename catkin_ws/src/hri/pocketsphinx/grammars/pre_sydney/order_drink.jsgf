@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar order_drinks;
+public <command> = <drinks>;
+<drinks> = (I WANT A | I WANT | MY FAVORITE DRINK IS) (CHOCOLATE DRINK | SPRITE | GRAPE JUICE | ORANGE JUICE);
