@@ -979,7 +979,10 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
             JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
             JustinaHRI::stopFollowHuman();
             JustinaHRI::enableLegFinder(false);
+            ros::spinOnce();
             frontal_legs = false;
+            JustinaHRI::enableLegFinder(true);
+            ros::spinOnce();
             while(!frontal_legs){
                 if(JustinaHRI::frontalLegsFound()){
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
