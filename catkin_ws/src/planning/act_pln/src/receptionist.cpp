@@ -27,9 +27,9 @@
 #define MAX_ATTEMPTS_MEMORIZING 2
 #define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
-#define GRAMMAR_POCKET_COMMANDS "grammars/pre_guadalajara/receptionist_commands.jsgf"
-#define GRAMMAR_POCKET_DRINKS "grammars/pre_guadalajara/receptionist_drinks.jsgf"
-#define GRAMMAR_POCKET_NAMES "grammars/pre_guadalajara/receptionist_names.jsgf"
+#define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
+#define GRAMMAR_POCKET_DRINKS "grammars/pre_sydney/order_drink.jsgf"
+#define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
 #define GRAMMAR_COMMANDS "receptionist_commands.xml"
 #define GRAMMAR_DRINKS "receptionist_drinks.xml"
 #define GRAMMAR_NAMES "receptionist_names.xml"
@@ -91,7 +91,7 @@ int main(int argc, char **argv){
     std::string grammarCommandsID = "receptionisCommands";
     std::string grammarDrinksID = "receptionistDrinks";
     std::string grammarNamesID = "receptionistNames";
-    std::string recogLoc = "sofa";
+    std::string recogLoc = "kitchen";
     std::string entranceLoc = "entrance_door";
     Eigen::Vector3d centroid;
     
