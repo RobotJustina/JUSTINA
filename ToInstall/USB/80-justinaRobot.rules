@@ -33,5 +33,8 @@ SUBSYSTEM=="usb", ATTRS{idVendor}=="0d8c", ATTRS{idProduct}=="013c", MODE="666",
 SUBSYSTEM=="usb", ATTRS{idVendor}=="0d8c", ATTRS{idProduct}=="000c", MODE="666", SYMLINK+="justinaSonido3"
 #Arduino UNO
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="0043", MODE="0666", SYMLINK+="justinaTorso"
+#Torso JRK
+#SUBSYSTEMS=="usb", ATTRS{idVendor}=="1ffb", ATTRS{idProduct}=="0085", MODE="0666", SYMLINK+="justinaTorso"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1ffb", ATTRS{idProduct}=="0085", MODE="0777", SYMLINK+="justinaTorso"
 #Audio (Delfino Texas Instruments)
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="a6d0", MODE="0666", SYMLINK+="justinaAudio"

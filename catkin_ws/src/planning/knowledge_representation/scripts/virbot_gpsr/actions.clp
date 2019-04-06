@@ -110,7 +110,7 @@
 (defrule task_get_object
 	?f <- (task ?plan get_object ?param1 ?place ?step)
 	?f1 <- (item (name ?param1)(type Objects))
-        (item (name ?place))
+        (item (type Furniture) (name ?place))
 	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
@@ -131,7 +131,7 @@
 )
 
 (defrule task_get_object_man
-	?f <- (task ?plan get_object man ?place ?step)
+	?f <- (task ?plan follow_man man ?place ?step)
 	?f1 <- (item (name man)(type Person))
 	?f2 <- (item (name finish_objetive))
 	=>

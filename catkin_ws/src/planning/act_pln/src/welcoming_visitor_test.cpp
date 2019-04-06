@@ -244,6 +244,8 @@ int main(int argc, char** argv)
 
     std::vector<std::string>plumberNotAllowed;
     plumberNotAllowed.push_back("bedroom");
+    plumberNotAllowed.push_back("living_room");
+    plumberNotAllowed.push_back("dining_room");
     std::vector<std::string>delimanNotAllowed;
     delimanNotAllowed.push_back("bathroom");
     delimanNotAllowed.push_back("bedroom");

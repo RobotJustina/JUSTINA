@@ -18,42 +18,53 @@ int getFeedbackFromPosition(float position){
 }
 bool newGoalPose = false;
 std_msgs::Float32MultiArray goalPose;
+float goalSpeeds_simul[5] = {0.1, 0.1, 0.1, 0.1, 0.1};
 
 std::shared_ptr<JrkManager> jrkManager;
 int currFeedback = 0;
+bool simul = true;
 
 void callbackRelativeHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving relative new goal pose." << std::endl;
     newGoalPose = true;
-    currFeedback = jrkManager->getFeedback();
-    float absPosition = getPositionFromFeedback(currFeedback) / 100.0f;
+    float absPosition;
+    if(!simul){
+        currFeedback = jrkManager->getFeedback();
+        absPosition = getPositionFromFeedback(currFeedback) / 100.0f;
+    }
     goalPose.data[0] = absPosition + msg->data[0];
     unsigned int goalTarget;
-    if(goalPose.data[0] < 0 || goalPose.data[0] > 0.3){
+    if(goalPose.data[0] < 0.02 || goalPose.data[0] > 0.3){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
-        if(goalPose.data[0] < 0)
-            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] < 0.02)
+            goalPose.data[0] = 0.02f;
         if(goalPose.data[0] > 0.3)
             goalPose.data[0] = 0.3f;
+        goalSpeeds_simul[0] = 0.004;
     }
-    goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
-    jrkManager->setTarget(goalTarget);
+    if(!simul){
+        goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
+        jrkManager->setTarget(goalTarget);
+    }
 }
 
 void callbackAbsoluteHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving absolute new goal pose." << std::endl;
     newGoalPose = true;
     goalPose.data[0] = msg->data[0];
-    if(msg->data[0] < 0 || goalPose.data[0] > 0.3){
+    if(msg->data[0] < 0.02 || goalPose.data[0] > 0.3){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
-        if(goalPose.data[0] < 0)
-            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] < 0.02)
+            goalPose.data[0] = 0.02f;
         if(goalPose.data[0] > 0.3)
             goalPose.data[0] = 0.3f;
+        goalSpeeds_simul[0] = 0.004;
     }
-    unsigned int goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
-    std::cout << "tosro_node_pololu.->Send goal target:" << goalTarget << std::endl;
-    jrkManager->setTarget(goalTarget);
+    if(!simul){
+        unsigned int goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
+        std::cout << "tosro_node_pololu.->Send goal target:" << goalTarget << std::endl;
+        jrkManager->setTarget(goalTarget);
+    }
 }
 
 int main(int argc, char ** argv){
@@ -74,6 +85,11 @@ int main(int argc, char ** argv){
     }
     else
         correctParams &= true;
+    
+    if(ros::param::has("~simul"))
+        ros::param::get("~simul", simul);
+    else
+        simul = true;
 
     if(!correctParams){
         std::cerr << "Can not initialized the arm left node, please put correct params to this node, for example." << std::endl;
@@ -81,8 +97,9 @@ int main(int argc, char ** argv){
         std::cerr << "baud : 1000000" << std::endl;
         return -1;
     }
-   
-    jrkManager = std::make_shared<JrkManager>(port, baudRate, 100);
+    
+    if(!simul) 
+        jrkManager = std::make_shared<JrkManager>(port, baudRate, 100);
 
     ros::Publisher pubTorsoPose = n.advertise<std_msgs::Float32MultiArray>("/hardware/torso/current_pose", 1);
     ros::Publisher pubGoalReached = n.advertise<std_msgs::Bool>("/hardware/torso/goal_reached", 1);
@@ -90,11 +107,13 @@ int main(int argc, char ** argv){
     ros::Subscriber subRelativeHeight = n.subscribe("/hardware/torso/goal_rel_pose", 1, callbackRelativeHeight);
     ros::Subscriber subAbsoluteHeight = n.subscribe("/hardware/torso/goal_pose", 1, callbackAbsoluteHeight);
 
-    jrkManager->getErrorsHalting();
+    if(!simul)
+        jrkManager->getErrorsHalting();
 
     std::string names[5] = {"spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"};
 
     float positions[5] = {0, 0, 0, 0, 0};
+    float deltaPose[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
 
     sensor_msgs::JointState jointStates;
     jointStates.name.insert(jointStates.name.begin(), names, names + 5);
@@ -106,19 +125,28 @@ int main(int argc, char ** argv){
     goalPose.data.resize(3);
 
     while(ros::ok()){
-    
-        try{
-            currFeedback = jrkManager->getFeedback();
-        }
-        catch(JrkTimeout exceptionTimeout){
-            std::cout << "torso_node_pololu.->Can not read the feedback torso." << exceptionTimeout.what() << std::endl;
-        }
-        // std::cout << "torso_node_pololu.->Feedback:" << currFeedback << std::endl;
         float position;
-        if(currFeedback >= 0)
-            position = getPositionFromFeedback(currFeedback) / 100.0f;
-        else
-            position = jointStates.position[0];
+        if(!simul){         
+            try{
+                currFeedback = jrkManager->getFeedback();
+            }
+            catch(JrkTimeout exceptionTimeout){
+                std::cout << "torso_node_pololu.->Can not read the feedback torso." << exceptionTimeout.what() << std::endl;
+            }
+            // std::cout << "torso_node_pololu.->Feedback:" << currFeedback << std::endl;
+            if(currFeedback >= 0)
+                positions[0] = getPositionFromFeedback(currFeedback) / 100.0f;
+            else
+                positions[0] = jointStates.position[0];
+        }
+        else{
+            deltaPose[0] = goalPose.data[0] - positions[0];
+            if(deltaPose[0] > goalSpeeds_simul[0])
+                deltaPose[0] = goalSpeeds_simul[0];
+            if(deltaPose[0] < -goalSpeeds_simul[0])
+                deltaPose[0] = -goalSpeeds_simul[0];
+            positions[0] += deltaPose[0];
+        }
 
         if(newGoalPose){
             float err = fabs(position - goalPose.data[0]);
@@ -131,9 +159,9 @@ int main(int argc, char ** argv){
         }
 
         jointStates.header.stamp = ros::Time::now();
-        jointStates.position[0] = position;
+        jointStates.position[0] = positions[0];
 
-        msgCurrentPose.data[0] = position;
+        msgCurrentPose.data[0] = positions[0];
         msgCurrentPose.data[1] = 0.0;
         msgCurrentPose.data[2] = 0.0;
 
@@ -144,7 +172,8 @@ int main(int argc, char ** argv){
         ros::spinOnce();
     }
 
-    jrkManager->motorOff();
+    if(!simul)
+        jrkManager->motorOff();
 
     return 1;
 

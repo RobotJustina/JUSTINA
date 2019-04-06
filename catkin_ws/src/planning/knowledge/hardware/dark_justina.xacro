@@ -172,10 +172,12 @@
 		</visual>
 	</link>
 
-	<joint name="spine_connect" type="fixed">
-		<origin xyz="0 0 0.42"/>
+	<joint name="spine_connect" type="prismatic">
+		<origin xyz="0 0 0.12"/>
 		<parent link="torso_link"/>
+		<limit effort="1000" lower="0.02" upper="0.3" velocity="0.2"/>
 		<child link="spine_link"/>
+		<axis xyz="0 0 1" />
 	</joint>
 
 	<link name="spine_link">
@@ -574,7 +576,117 @@
 	Head links and Joint
   ################################
     -->
-	<link name="head_link1">
+	<joint name="neck_connect" type="fixed">
+		<!-- 0.12 + 0.829  + 0.06 -->
+		<origin xyz="0 0 1.009" rpy="0 0 0"/>
+		<parent link="spine_link"/>
+		<child link="neck_link"/>
+	</joint>
+
+	<link name="neck_link">
+		<collision>
+			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<geometry><cylinder length="0.12" radius="0.016"/></geometry>
+			<material name="white"><color rgba="1.0 1.0 1.0 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${neck_mass}"/>
+			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.12"/>
+		</inertial>
+	</link>
+	
+	<joint name="pan_dyn_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.045" rpy="0 0 0"/>
+		<parent link="neck_link"/>
+		<child link="pan_dyn_link"/>
+	</joint>
+
+	<link name="pan_dyn_link">
+		<collision>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx64.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_64_mass}"/>
+			<origin xyz= "0 0 -0.02" rpy="0 0 0"/>
+			<box_inertia m="${MX_64_mass}" x="0.06" y="0.04" z="0.06"/>
+		</inertial>
+	</link>
+	
+	<joint name="pan_connect" type="revolute">
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+		<parent link="pan_dyn_link"/>
+		<child link="head_link1"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.5708" lower="-1.5708" effort="100" velocity="1.2" />
+	</joint>
+
+	<link name="head_link1"/>
+	
+	<joint name="tilt_dyn_connect" type="fixed">
+		<origin xyz="0.01 0.0 0.03" rpy="-1.5708 0 0"/>
+		<parent link="head_link1"/>
+		<child link="tilt_dyn_link"/>
+	</joint>
+	
+	<link name="tilt_dyn_link">
+		<collision>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx106.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_106_mass}"/>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<box_inertia m="${MX_106_mass}" x="0.06" y="0.04" z="0.06"/>
+		</inertial>
+	</link>
+
+	<joint name="tilt_connect" type="revolute">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<parent link="tilt_dyn_link"/>
+		<child link="head_link2"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.0" lower="0.0" effort="1000" velocity="1.2" />
+	</joint>
+	
+	<link name="head_link2"/>
+	
+	<joint name="kinect_connect" type="fixed">
+		<origin xyz="0.02 -0.08 0" rpy="0 1.5707 0"/>
+		<parent link="head_link2"/>
+		<child link="kinect_link"/>
+	</joint>
+	
+	<link name="kinect_link">
+		<visual>
+			<origin xyz="0 0.04 -0.03" rpy="0 ${PI} 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/kinect.stl"/>
+			</geometry>
+			<material name="black"/>
+		</visual>
+	</link>
+	
+	<!--link name="head_link1">
 		<visual>
 			<origin xyz= "-0.01 0 -0.015" rpy="0 0 0"/>
 			<geometry><box size="0.06 0.04 0.04"/></geometry>
@@ -601,7 +713,7 @@
 
 
 	<joint name="pan_connect" type="revolute">
-		<origin xyz="0.0 0.0 0.18" rpy="0 0 0"/>
+		<origin xyz="0.0 0.0 1.009" rpy="0 0 0"/>
 		<parent link="spine_link"/>
 		<child link="head_link1"/>
 		<axis xyz="0 0 1" />
@@ -620,7 +732,7 @@
 		<origin xyz="0.02 -0.08 0" rpy="0 1.5707 0"/>
 		<parent link="head_link2"/>
 		<child link="kinect_link"/>
-	</joint>
+	</joint-->
 
 	<transmission name="tran1">
 		<type>transmission_interface/SimpleTransmission</type>
