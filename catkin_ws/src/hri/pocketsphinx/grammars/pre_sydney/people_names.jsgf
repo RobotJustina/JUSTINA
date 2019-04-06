@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar people_names;
+public <command> = <name>;
+<name> = (MY NAME IS | I AM | I'M) (ALEX | CHARLIE | ELIZABETH | FRANCIS | JENNIFER | LINDA | MARY | PATRICIA | ROBIN | SKYLER | JAMES | JOHN | MICHAEL | ROBERT | WILLIAM | DAVID | JAMES | ROBERT | SCOTT | RICHARD);
