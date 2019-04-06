@@ -934,6 +934,7 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     
     JustinaHRI::waitAfterSay("Human, please put in front of me", 3000, 300);
     JustinaHRI::enableLegFinder(true);
+    ros::spinOnce();
     
     while(!frontal_legs){
         if(JustinaHRI::frontalLegsFound()){
@@ -944,6 +945,7 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
             JustinaHRI::startFollowHuman();
             frontal_legs = true;
         }
+        ros::spinOnce();
     }
 
     while(!finish_follow){
@@ -979,17 +981,20 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
             JustinaHRI::enableLegFinder(false);
             frontal_legs = false;
             while(!frontal_legs){
-                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                JustinaHRI::waitAfterSay("I found you, please walk", 4000, 300);
-                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                JustinaHRI::startFollowHuman();
+                if(JustinaHRI::frontalLegsFound()){
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I found you, please walk", 4000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                    JustinaHRI::startFollowHuman();
+                    ros::spinOnce();
+                    loop.sleep();
+                    JustinaHRI::startFollowHuman();
+                    frontal_legs = true;
+                }
                 ros::spinOnce();
-                loop.sleep();
-                JustinaHRI::startFollowHuman();
-                frontal_legs = true;
             }
         }        
-        
+        ros::spinOnce();
     }
 	
     JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
