@@ -23,10 +23,12 @@
 	?f <- (received ?sender command cmd_get_bag get_bag 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions get_bag))
         ?f2 <- (Arm (name right))
+	?f3 <- (item (name bag))
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))
 	(modify ?f2 (status ready) (grasp bag))
+	(modify ?f3 (status grabed))
 )
 
 (defrule exe-plan-task-no-geted-bag 
