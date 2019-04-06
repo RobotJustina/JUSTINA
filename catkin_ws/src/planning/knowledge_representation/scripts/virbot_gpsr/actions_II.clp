@@ -176,7 +176,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Object Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?object ?room)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(actions_num_params 0 0)(duration 6000)))
         (assert (finish-planner ?name 100))
 )
 
@@ -376,17 +376,10 @@
 (defrule update_number_task_for_split_room
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current)))
 	?f1 <- (plan (name ?name) (number ?current))
-        ;?f3 <- (item (name ?place) (status nil)(possession ?room))
-        ;?f4 <- (num_places ?num)
 	?f5 <- (update num task)
 	=>
-	;(retract ?f4)
-	;(assert (num_places (+ ?num 2)))
 	(modify ?f (actions_num_params ?final (- ?current 1)))
-        ;(assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
-        ;(assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)))
 	(modify ?f1 (number (+ ?current 2)))
-        ;(modify ?f3 (status prev_review))
 )
 
 (defrule update_number_task_for_split_room_final
@@ -405,22 +398,21 @@
 	(modify ?f1 (number (+ ?n 2)))
 	(modify ?f3 (status prev_review))
 	(assert (start split_room))
-	;;(assert (finish split_room))
 )
 
 (defrule update_number_task_for_split_room_cero
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st active) (eq ?st inactive))) (actions review_room ?object ?room) (actions_num_params 0 0))
-	?f1 <- (plan (name ?name) (number ?n))
 	?f2 <- (update num task)
 	?f3 <- (split_room params ?p1 ?p2)
-	;?f4 <- (num_places ?num)
+	?f4 <- (item (name ?place) (status prev_split)(possession ?room))
+	?f5 <- (num_places ?num)
 	=>
-	(retract ?f2 ?f3)
-	(assert (finish split_room))
-        ;(assert (num_places (+ ?num 2)))
-        ;(assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
-        ;(assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)) )
-        ;(modify ?f3 (status prev_review))
+	(retract ?f2 ?f3 ?f5)
+	(assert (start split_room))
+        (assert (num_places (+ ?num 2)))
+        (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)) )
+        (modify ?f4 (status prev_review))
 )
 
 
@@ -428,15 +420,10 @@
         ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room) (actions_num_params ?p1 ?p2))
         ?f1 <- (item (name ?object) (type Objects))
         ?f3 <- (item (name ?place) (status nil)(possession ?room))
-        ;?f4 <- (num_places ?num)
 	?f5 <- (start split_room)
         =>
-	;(retract ?f4)
         (retract ?f5)
         (assert (visit_place_in_room ?place))
-        ;(assert (num_places (+ ?num 2)))
-        ;(assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
-        ;(assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)) )
         (modify ?f3 (status prev_split))
 	(assert (update num task))
 	(assert (split_room params ?p1 ?p2))

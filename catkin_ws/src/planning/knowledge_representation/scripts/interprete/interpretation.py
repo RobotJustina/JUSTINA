@@ -227,7 +227,7 @@ meaning_mapping_patterns_gpsr = [
 	{"params": ["Action_follow", "Pron"],
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -237,7 +237,7 @@ meaning_mapping_patterns_gpsr = [
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man -Location-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -597,7 +597,7 @@ meaning_mapping_patterns_gpsr = [
 	"Location_first":[[], [], ["place"], []],
 	"Location_second":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
-				"(task (plan user_speech) (action_type get_object) (params man -Location_second-) (step )) ", 
+				"(task (plan user_speech) (action_type follow_man) (params man -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -644,20 +644,19 @@ meaning_mapping_patterns_gpsr = [
         ###
         ### MANIPULATION
         ###
-
-        ##$deliver  = $vbbtake the {aobject} from the {room} to the {placement 2}
-	{"params": ["Action_take","Object", "Room", "Place"],
-	"Action_take": [["take", "bring"], [], [], []],
-        "Object": [[],[],["item"],[]],
-	"Room":[[],[],["place"],[]],
-	"Place":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Room-) (step ))" +
-				"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Room-) (step ))" +
-                                "(task (plan user_speech) (action_type grasp) (params -Object-))" +
-	                        "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
+        
+        ##$vbbtake my $luggage to the $taxi
+	{"params": ["Action_take", "Luggage","Taxi"],
+	"Action_take": [["bring", "take"], [], [], []],
+	"Luggage": [["bag", "baggage", "valise", "suitcase", "trolley"], [], [], []],
+	"Taxi": [["uber", "taxi", "cab"], [], [], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_bag) (params -Luggage-) (step )) " +
+                                "(task (plan user_speech) (action_type follow_man) (params man no_location)(step ))" +
+                                "(task (plan user_speech) (action_type handover_object) (params bag)(step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
+	"planner_not_confirmed": ''},
+
 ]
 
 meaning_mapping_patterns_high_gpsr = [
@@ -1315,7 +1314,7 @@ meaning_mapping_patterns_eegpsr = [
 	 "Person": [[],[],["person"],[]],
 	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person- ) (step ))" +
-				 "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
+				 "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
 	 "planner_not_confirmed": ''},
@@ -1527,7 +1526,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_follow", "Pron"],
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -1537,7 +1536,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man -Location-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -1698,7 +1697,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Location_first":[[], [], ["place"], []],
 	"Location_second":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
-				"(task (plan user_speech) (action_type get_object) (params man -Location_second-) (step )) ", 
+				"(task (plan user_speech) (action_type follow_man) (params man -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2243,7 +2242,7 @@ meaning_mapping_patterns_catering_comfort = [
 	"Action_follow": [["follow", "escort", "accompany", "take", "lead"], [], [], []],
 	"Pron":[["me"],[],[],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" + 
-                                "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
+                                "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2252,7 +2251,7 @@ meaning_mapping_patterns_catering_comfort = [
 	{"params": ["Action_follow", "Pron"],
 	"Action_follow": [["follow", "escort", "accompany", "take", "lead"], [], [], []],
 	"Pron":[["us","you","it","him","her","them"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))" + 
+	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))" + 
                                 "(task (plan user_speech) (action_type update_location_coords) (params current_person) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -2264,7 +2263,7 @@ meaning_mapping_patterns_catering_comfort = [
 	"Person":[[],[],["person"],[]],
 	"Location":[[],[],["place"],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" + 
-                                "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))" +
+                                "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))" +
                                 "(task (plan user_speech) (action_type update_location_coords) (params current_person) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',

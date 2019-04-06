@@ -131,7 +131,7 @@
 )
 
 (defrule task_get_object_man
-	?f <- (task ?plan get_object man ?place ?step)
+	?f <- (task ?plan follow_man man ?place ?step)
 	?f1 <- (item (name man)(type Person))
 	?f2 <- (item (name finish_objetive))
 	=>
