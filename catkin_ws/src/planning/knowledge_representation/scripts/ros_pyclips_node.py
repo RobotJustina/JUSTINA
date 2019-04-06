@@ -562,6 +562,13 @@ def cmd_get_bag(cmd):
     pubCmdGetBag.publish(request)
     return cmd._id
 
+def cmd_follow_to_taxi(cmd):
+    global pubCmdFollowToTaxi 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdFollowToTaxi.publish(request)
+    return cmd._id
+
 def offer_drink(cmd):
     global pubCmdOfferDrink 
     print "Executing Function: " + cmd.name
@@ -652,7 +659,8 @@ fmap = {
     'get_order':get_order,
     'deliver_order':deliver_order,
     'objects_on_location':objects_on_location,
-    'cmd_get_bag': cmd_get_bag
+    'cmd_get_bag': cmd_get_bag,
+    'cmd_follow_to_taxi': cmd_follow_to_taxi 
 }
 
 def quit():
@@ -668,7 +676,7 @@ def main():
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
-    global pubCmdGetBag 
+    global pubCmdGetBag, pubCmdFollowToTaxi 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -712,6 +720,7 @@ def main():
     pubCmdUpdateKnowLocation = rospy.Publisher('/planning_clips/cmd_update_know_location', PlanningCmdClips, queue_size=1)
     pubCmdClipsSignal = rospy.Publisher('/planning_clips/cmd_clips_signal', PlanningCmdClips, queue_size=1)
     pubCmdGetBag = rospy.Publisher('/planning_clips/cmd_get_bag', PlanningCmdClips, queue_size=1)
+    pubCmdFollowToTaxi = rospy.Publisher('/planning_clips/cmd_follow_to_taxi', PlanningCmdClips, queue_size=1)
     
     ##topicos de serving drinks
     pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)

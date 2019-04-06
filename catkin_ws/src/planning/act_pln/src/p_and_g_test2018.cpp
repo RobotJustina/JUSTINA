@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 	int maxDelayAfterSay = 300;
 	int cont_z;
 	int type;
-	bool openDWFlag=false; //set this flag as false due to the dishwasher will be open by default
+	bool openDWFlag=true;
 
 
 
@@ -279,16 +279,16 @@ int main(int argc, char** argv)
 
       		case SM_DeliverObject:
       			std::cout << "P & G Test...-> delivering the objects" << std::endl;
-				if(openDWFlag){
-					JustinaHRI::say("Human, please, open the dishwasher just until the half");
-					ros::Duration(0.5).sleep();
-					JustinaHRI::say("for example just open it 45 degrees");
-					ros::Duration(0.5).sleep();
-					JustinaHRI::say("Human, please, pull off the rack");
-					ros::Duration(5.0).sleep();
-					JustinaHRI::say("thank you");
-					ros::Duration(0.5).sleep();
-				}
+			if(openDWFlag){
+				JustinaHRI::say("Human, please, open the dishwasher just until the half");
+				ros::Duration(0.5).sleep();
+				JustinaHRI::say("for example just open it 45 degrees");
+				ros::Duration(0.5).sleep();
+				JustinaHRI::say("Human, please, pull off the rack");
+				ros::Duration(5.0).sleep();
+				JustinaHRI::say("thank you");
+				ros::Duration(0.5).sleep();
+			}
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
@@ -313,15 +313,15 @@ int main(int argc, char** argv)
 
       			if(objTaken == 0 && chances==4){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
-					JustinaHRI::say("human close the diswasher, please");
-					ros::Duration(0.5).sleep();
-				}
+				JustinaHRI::say("human close the diswasher, please");
+				ros::Duration(0.5).sleep();
+			}
 
       			else if(objTaken==0 && chances ==2){
       				nextState = SM_NAVIGATE_TO_THE_TABLE;
-					JustinaHRI::say("human, please, keep the diswasher open for me");
-					ros::Duration(0.5).sleep();
-				}
+				JustinaHRI::say("human, please, keep the diswasher open for me");
+				ros::Duration(0.5).sleep();
+			}
 
       			else
       				nextState = SM_DeliverObject;

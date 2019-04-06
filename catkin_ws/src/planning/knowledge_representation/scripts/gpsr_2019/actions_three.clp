@@ -38,6 +38,18 @@
 
 )
 
+(defrule task_follow_to_taxi
+	?f <- (task ?plan follow_to_taxi man ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pfollow_to_taxi ?place ?step))
+	(modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,6 +79,17 @@
 	(assert (finish-planner ?name 2))
 )
 
+(defrule plan_follow_to_taxi
+	?goal <- (objetive follow_to_taxi ?name ?place ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Follow to taxi" crlf)
+	(assert (plan (name ?name) (number 1)(actions make_task ?name man went)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions follow_to_taxi man ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_followed)(duration 6000)))
+	(assert (finish-planner ?name 3))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -91,5 +114,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive get_bag task_get_bag ?step))
+)
+
+(defrule exe_scheduled-follow-to-taxi
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pfollow_to_taxi ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive follow_to_taxi task_follow_to_taxi ?place ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

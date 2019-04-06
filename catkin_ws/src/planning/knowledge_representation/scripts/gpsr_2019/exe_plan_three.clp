@@ -38,5 +38,30 @@
 	(retract ?f)
 	(modify ?f1 (status accomplished))
 )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;; follow to the taxi, uber, cab
+(defrule exe-plan-task-follow-task
+	(plan (name ?name) (number ?num-pln) (status active) (actions follow_to_taxi man ?place) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?place ""))
+	(assert (send-blackboard ACT-PLN cmd_follow_to_taxi ?command ?t 4))
+)
 
+(defrule exe-plan-task-followed-to-taxi 
+	?f <- (received ?sender command cmd_follow_to_taxi ?place 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions follow_to_taxi man ?place))
+	?f2 <- (item (name man))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+	(modify ?f2 (status followed))
+)
+
+(defrule exe-plan-no-followed-to taxi
+	?f <- (received ?sender command cmd_follow_to_taxi ?place 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions follow_to_taxi man ?place))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

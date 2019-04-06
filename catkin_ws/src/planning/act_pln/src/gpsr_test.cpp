@@ -890,6 +890,114 @@ void callbackCmdFindObject(
 	
 }
 
+void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "----------- Command Follow to taxi" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    ros::Rate loop(10);
+    
+    JustinaHRI::waitAfterSay("Tell me, here is my taxi, when we reached the taxi, please tell me, follow me, for start following you", 12000, 300);
+    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+    int cont_z=0;
+    bool reco_follow = false;
+    bool frontal_legs = false;
+    bool finish_follow = false;
+    bool userConfirmation = false;
+
+    std::string lastRecoSpeech;
+    
+	JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+    while(!reco_follow){
+        if(JustinaHRI::waitForSpecificSentence("follow me" , 15000)){
+            reco_follow = true;
+        }
+        else                    
+            cont_z++;    		
+
+        if(cont_z>3){
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("Please repeat the command", 5000, 300);
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            cont_z=0;
+        }
+    }
+    
+    JustinaHRI::waitAfterSay("Human, please put in front of me", 3000, 300);
+    JustinaHRI::enableLegFinder(true);
+    
+    while(!frontal_legs){
+        if(JustinaHRI::frontalLegsFound()){
+            std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk", 10000, 300);
+            JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
+            JustinaHRI::startFollowHuman();
+            frontal_legs = true;
+        }
+    }
+
+    while(!finish_follow){
+        if(JustinaHRI::waitForSpecificSentence("stop follow me", 7000)){
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+	            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+                JustinaHRI::waitAfterSay("is it the car location, please tell me robot yes, or robot no", 10000, 300);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
+                if(userConfirmation){
+                    JustinaHRI::stopFollowHuman();
+                    JustinaHRI::enableLegFinder(false);
+                    //JustinaKnowledge::addUpdateKnownLoc("car_location");	
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I stopped", 2000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                    cont_z=8;
+                    finish_follow = true;
+                    break;
+                }
+                else{
+	                JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("Ok, please walk", 3000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                }
+        }
+        if(!JustinaHRI::frontalLegsFound()){
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500, 300);
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            JustinaHRI::stopFollowHuman();
+            JustinaHRI::enableLegFinder(false);
+            frontal_legs = false;
+            while(!frontal_legs){
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                JustinaHRI::waitAfterSay("I found you, please walk", 4000, 300);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                JustinaHRI::startFollowHuman();
+                ros::spinOnce();
+                loop.sleep();
+                JustinaHRI::startFollowHuman();
+                frontal_legs = true;
+            }
+        }        
+        
+    }
+	
+    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+
+    responseMsg.successful = 1;
+    command_response_pub.publish(responseMsg);
+}
+
 void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 {
 	std::cout << testPrompt << "-------- Command Find Category--------" << std::endl;
@@ -2938,6 +3046,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
     ros::Subscriber subCmdGetBag = n.subscribe("/planning_clips/cmd_get_bag", 1, callbackCmdGetBag);
+    ros::Subscriber subCmdFollowToTaxi = n.subscribe("/planning_clips/cmd_follow_to_taxi", 1, callbackCmdFollowToTaxi);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
