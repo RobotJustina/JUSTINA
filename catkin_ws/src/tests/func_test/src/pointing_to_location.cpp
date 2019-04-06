@@ -1,5 +1,6 @@
 #include <iostream>
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaManip.h"
 
@@ -11,6 +12,7 @@ int main(int argc, char** argv)
     JustinaKnowledge::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
+    JustinaNavigation::setNodeHandle(&n);
     ros::Rate loop(10);
 
     int nextState = 1;
@@ -20,13 +22,14 @@ int main(int argc, char** argv)
     float goalx, goaly, goala;
     float pointingArmX, pointingArmY, pointingArmZ;
     float pointingDirX, pointingDirY, pointingDirZ, pointingNormal;
-    float distanceArm = 0.4;
+    float distanceArm = 0.6;
+    float pitchAngle;
     bool usePointArmLeft = false;
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
         case 1:
-            JustinaKnowledge::getKnownLocation("kitchen", goalx, goaly, goala);
+            JustinaKnowledge::getKnownLocation("bedroom", goalx, goaly, goala);
             JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
             if(pointingArmY > 0){
                 usePointArmLeft = true;
@@ -40,10 +43,26 @@ int main(int argc, char** argv)
             pointingDirX = pointingArmX / pointingNormal;
             pointingDirY = pointingArmY / pointingNormal;
             pointingDirZ = pointingArmZ / pointingNormal;
-            if(usePointArmLeft)
+
+
+            float robotX, robotY, robotTheta;
+            JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+
+            pitchAngle = atan2(goaly - robotY, goalx - robotX) - robotTheta;
+            if(pitchAngle <= -M_PI)
+                pitchAngle += 2 * M_PI;
+            else if(pitchAngle >= M_PI)
+                pitchAngle -= 2 * M_PI;
+
+            std::cout << pitchAngle << std::endl;
+            /*if(usePointArmLeft)
                 JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0, 3000);
             else
-                JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0, 3000);
+                JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, 0, 1.5708, 0, 3000);*/
+            if(usePointArmLeft)
+                JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
+            else
+                JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
             nextState = 2;
             break;
         default:
