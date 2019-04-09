@@ -658,7 +658,7 @@ int main(int argc, char **argv){
                     if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.45 + torsoSpine), dist_to_head));
-
+                    JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                     if(JustinaKnowledge::existKnownLocation("guest")){
                         JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                         JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
@@ -678,12 +678,16 @@ int main(int argc, char **argv){
                             pitchAngle += 2 * M_PI;
                         else if(pitchAngle >= M_PI)
                             pitchAngle -= 2 * M_PI;
-                        if(usePointArmLeft)
+                        if(usePointArmLeft){
                             JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
-                        else
+                            JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            JustinaManip::startLaGoTo("home");
+                        }else{
                             JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
+                            JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            JustinaManip::startRaGoTo("home");
+                        }
                     }
-                    JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
 
                 }
                 ss.str("");
@@ -729,12 +733,16 @@ int main(int argc, char **argv){
                             pitchAngle += 2 * M_PI;
                         else if(pitchAngle >= M_PI)
                             pitchAngle -= 2 * M_PI;
-                        if(usePointArmLeft)
+                        if(usePointArmLeft){
                             JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
-                        else
+                            JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            JustinaManip::startLaGoTo("home");
+                        }else{
                             JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
+                            JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            JustinaManip::startRaGoTo("home");
+                        }
                     }
-                    JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                 }
                 findPersonCount = 0;
                 findPersonAttemps = 0;
@@ -797,8 +805,8 @@ int main(int argc, char **argv){
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
-                JustinaManip::startLaGoTo("home");
-                JustinaManip::startRaGoTo("home");
+                //JustinaManip::startLaGoTo("home");
+                //JustinaManip::startRaGoTo("home");
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
