@@ -656,6 +656,24 @@ meaning_mapping_patterns_gpsr = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+        
+        ###############
+        ### COMPLEX MANIPULATION
+        ############
+        
+        ##$vbbring me the $abspos object $cmanobjsrc
+	{"params": ["Action_take", "Person", "Abspos", "Object", "Place"],
+	"Action_take": [["give", "bring"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Abspos": [[], [], ["abspos"], []],
+	"Object": [["object"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object)(params -Object- -Place- -Abspos-)(step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params )(step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
 
 ]
 

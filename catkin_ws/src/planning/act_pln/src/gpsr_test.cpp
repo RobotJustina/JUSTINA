@@ -847,7 +847,53 @@ void callbackCmdFindObject(
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
 			else
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right only_find";
-		} else {
+		} else if (tokens[0] == "pose"){
+            ss.str("");
+            ss << "I am looking for objects on the " << tokens[1];
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::alignWithTable(0.42);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            int numObj = 0;
+            int contador = 0;
+			geometry_msgs::Pose pose;
+
+            ss.str("");
+			ss <<"object 2 2 2 left";
+
+            do{
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                std::vector<vision_msgs::VisionObject> recognizedObjects;
+                std::cout << "Find a object " << std::endl;
+                bool found = 0;
+                    found = JustinaVision::detectObjects(recognizedObjects);
+                    int indexFound = 0;
+                    if (found) {
+                        ss.str("");
+                        found = false;
+                        if (tokens[2] == "left_most"){
+                            vision_msgs::VisionObject vObject = recognizedObjects[0];
+	                        pose = recognizedObjects[0].pose;
+                            std::cout << "object left:  " << vObject.id << std::endl;
+				            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+                        }
+                        if (tokens[2] == "right_most"){
+                            vision_msgs::VisionObject vObject = recognizedObjects[recognizedObjects.size()];
+	                        pose = recognizedObjects[recognizedObjects.size()].pose;
+                            std::cout << "object right:  " << vObject.id << std::endl;
+				            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
+                        }
+                        numObj = recognizedObjects.size();
+                    }
+                    contador++;
+            } while( numObj<3 && contador < 10);
+            
+            success = (numObj == 0)?false:true;
+		    
+            responseMsg.params = ss.str();
+
+        } else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			bool finishMotion = false;
@@ -883,7 +929,7 @@ void callbackCmdFindObject(
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	if(tokens[0] == "only_find"){
+	if(tokens[0] == "only_find" || tokens[0] == "pose"){
 		if(nfp) command_response_pub.publish(responseMsg);}
 	else
 		{if(nfp) validateAttempsResponse(responseMsg);}
@@ -941,7 +987,10 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
             std::cout << "NavigTest.->Frontal legs found!" << std::endl;
             JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
             JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk", 10000, 300);
-            JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            JustinaHRI::startFollowHuman();
+            ros::spinOnce();
+            loop.sleep();
             JustinaHRI::startFollowHuman();
             frontal_legs = true;
         }
@@ -949,10 +998,10 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     }
 
     while(!finish_follow){
-        if(JustinaHRI::waitForSpecificSentence("stop follow me", 7000)){
+        if(JustinaHRI::waitForSpecificSentence("here is my taxi", 7000)){
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
-                JustinaHRI::waitAfterSay("is it the car location, please tell me robot yes, or robot no", 10000, 300);
+                JustinaHRI::waitAfterSay("is it the taxi, please tell me robot yes, or robot no", 10000, 300);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
                 if(userConfirmation){

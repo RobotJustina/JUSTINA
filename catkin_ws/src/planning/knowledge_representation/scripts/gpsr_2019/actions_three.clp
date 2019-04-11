@@ -43,11 +43,25 @@
 	?f1 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
-	(printout t "" crlf)
+	(printout t "Task follow to taxi, uber, cab" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (task pfollow_to_taxi ?place ?step))
 	(modify ?f1 (status nil))
+)
+
+(defrule task_get_abspos_object
+	?f <- (task ?plan get_object ?object ?place ?abspos ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name ?object))
+	=>
+	(retract ?f)
+	(printout t "Get abspos object" crlf)
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pget_abspos_obj ?object ?place ?abspos ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,6 +104,21 @@
 	(assert (finish-planner ?name 3))
 )
 
+(defrule plan_get_abspos_object
+	?goal <- (objetive get_abs_obj ?name ?object ?place ?abspos ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Abspos Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions ask_for ?object ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to ?object)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions attend ?object)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions find-pos-object ?place ?abspos)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions make_task ?name ?object finded)(actions_num_params 6 6)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions move manipulator )(duration 6000))) 
+	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
+	(assert (finish-planner ?name 7))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -124,5 +153,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive follow_to_taxi task_follow_to_taxi ?place ?step))
+)
+
+(defrule exe_scheduled-get-abspos-object 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pget_abspos_obj ?object ?place ?abspos ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive get_abs_obj task_get_abs_obj ?object ?place ?abspos ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -274,6 +274,7 @@
 
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
+	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
 	( Arm (name right)(bandera false))
 	( Arm (name left) (bandera true))
 
@@ -315,6 +316,8 @@
         (item (type Speech) (name speech_2) (image i_finish_the_test))
 	(item (type Speech) (name speech))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
+	
+	( item (type Objects) (name object)(zone nil)(pose 1.048340 1.107002 0.0))
 
 ;;;;;; hecho para guardar el satus de la confirmacion
 	(item (type Confirmation) (name conf) (status nil))

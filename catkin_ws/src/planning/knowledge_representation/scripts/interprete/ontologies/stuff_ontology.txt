@@ -11,6 +11,7 @@
 (item 			is_kind_of 		stuff)
 (place 			is_kind_of 		stuff)
 (gesture		is_kind_of		stuff)
+(abspos			is_kind_of		stuff)
 
 
 # personas y robot
@@ -315,4 +316,9 @@
 (yellow_dressed						is_kind_of		colord)
 (orange_dressed						is_kind_of		colord)
 (gray_dressed						is_kind_of		colord)
+
+## Absolute pose
+(left_most	is_kind_of	abspos)
+(right_most	is_kind_of	abspos)
+
 

@@ -124,7 +124,7 @@
         (retract ?f)
         ;(modify ?f2 (status accomplished))
         (modify ?f3 (status verify))
-	    (modify ?f1 (pose ?x ?y ?z) (status finded));;;; modified for verify arm task		
+	(modify ?f1 (pose ?x ?y ?z) (status finded));;;; modified for verify arm task
 )
 
 (defrule exe-plan-no-found-object
