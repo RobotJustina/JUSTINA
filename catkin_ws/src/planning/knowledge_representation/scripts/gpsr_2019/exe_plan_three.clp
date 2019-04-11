@@ -112,12 +112,14 @@
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator))
 	?f3 <- (item (name robot));;;;;;;;;; T1 test for quit grasp object subtask
 	?f4 <- (item (name object))
+	?f5 <- (Arm (grasp ?object))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
 	(modify ?f3 (hands ?object));;;;; T1 test
 	(modify ?f1 (status grabed));;;;;; T1 test
 	(modify ?f4 (status grabed))
+	(modify ?f5 (grasp object))
         ;(retract ?f3)
 )
 

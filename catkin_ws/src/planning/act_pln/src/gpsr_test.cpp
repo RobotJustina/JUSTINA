@@ -874,9 +874,9 @@ void callbackCmdFindObject(
                         found = false;
                         vision_msgs::VisionObject aux_vObject = recognizedObjects[0];
                         for(int i = 0; i < recognizedObjects.size() - 1; i++){
-                            if(tokens[2] == "right_most" && aux_vObject.pose.position.y > recognizedObjects[i+1].pose.position.y)
+                            if(tokens[2] == "right_most" && aux_vObject.pose.position.y > recognizedObjects[i+1].pose.position.y && recognizedObjects[i+1].pose.position.x < 1.0)
                                 aux_vObject = recognizedObjects[i+1];
-                            if(tokens[2] == "left_most" && aux_vObject.pose.position.y < recognizedObjects[i+1].pose.position.y)
+                            if(tokens[2] == "left_most" && aux_vObject.pose.position.y < recognizedObjects[i+1].pose.position.y && recognizedObjects[i+1].pose.position.x < 1.0)
                                 aux_vObject = recognizedObjects[i+1];
                         }
                         //if (tokens[2] == "left_most"){
