@@ -872,18 +872,28 @@ void callbackCmdFindObject(
                     if (found) {
                         ss.str("");
                         found = false;
-                        if (tokens[2] == "left_most"){
-                            vision_msgs::VisionObject vObject = recognizedObjects[0];
-	                        pose = recognizedObjects[0].pose;
-                            std::cout << "object left:  " << vObject.id << std::endl;
-				            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+                        vision_msgs::VisionObject aux_vObject = recognizedObjects[0];
+                        for(int i = 0; i < recognizedObjects.size() - 1; i++){
+                            if(tokens[2] == "right_most" && aux_vObject.pose.position.y > recognizedObjects[i+1].pose.position.y)
+                                aux_vObject = recognizedObjects[i+1];
+                            if(tokens[2] == "left_most" && aux_vObject.pose.position.y < recognizedObjects[i+1].pose.position.y)
+                                aux_vObject = recognizedObjects[i+1];
                         }
-                        if (tokens[2] == "right_most"){
+                        //if (tokens[2] == "left_most"){
+                            vision_msgs::VisionObject vObject = aux_vObject;
+	                        pose = aux_vObject.pose;
+                            std::cout << "object left:  " << vObject.id << std::endl;
+                            if(tokens[2] == "left_most")
+				                ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+                            if(tokens[2] == "right_most")
+				                ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
+                        //}
+                        /*if (tokens[2] == "right_most"){
                             vision_msgs::VisionObject vObject = recognizedObjects[recognizedObjects.size()];
 	                        pose = recognizedObjects[recognizedObjects.size()].pose;
                             std::cout << "object right:  " << vObject.id << std::endl;
 				            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
-                        }
+                        }*/
                         numObj = recognizedObjects.size();
                     }
                     contador++;

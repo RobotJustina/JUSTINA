@@ -106,6 +106,29 @@
         (assert (send-blackboard ACT-PLN move_actuator ?command ?t 4))
 )
 
+(defrule exe-plan-grasped-pos-object 
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 1)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator))
+	?f3 <- (item (name robot));;;;;;;;;; T1 test for quit grasp object subtask
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+	(modify ?f3 (hands ?object));;;;; T1 test
+	(modify ?f1 (status grabed));;;;;; T1 test
+        ;(retract ?f3)
+)
+
+(defrule exe-plan-no-grasped-pos-object
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator))
+	?f3 <- (Arm (grasp ?object))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (status nil) (grasp nil))
+)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
