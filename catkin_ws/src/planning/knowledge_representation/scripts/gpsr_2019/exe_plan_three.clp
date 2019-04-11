@@ -79,7 +79,7 @@
 	?f4 <- (item (name object))
         =>
         (retract ?f)
-        ;(modify ?f2 (status accomplished))
+        (modify ?f2 (status accomplished))
         (modify ?f3 (status ready) (grasp ?block1))
 	(modify ?f1 (pose ?x ?y ?z) (status finded));;;; modified for verify arm task
 	(modify ?f4 (image ?block1)(status finded))
