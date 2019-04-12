@@ -729,13 +729,13 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     bool ra = false;
     std::string object_name;
 
-    if(tokens.size() > 2){
+    if(tokens.size() > 3){
         ss.str("");
-        ss << tokens[0] << "_" << tokens[1];
+        ss << tokens[1] << "_" << tokens[2];
         object_name = ss.str();
     }
     else{
-        object_name = tokens[0];
+        object_name = tokens[1];
     }
 
     while(!success && attemps<4){
