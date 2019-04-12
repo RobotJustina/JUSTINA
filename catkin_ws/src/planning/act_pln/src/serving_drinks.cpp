@@ -727,6 +727,16 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 	bool success = false;
     bool la = false;
     bool ra = false;
+    std::string object_name;
+
+    if(tokens.size() > 2){
+        ss.str("");
+        ss << tokens[0] << "_" << tokens[1];
+        object_name = ss.str();
+    }
+    else{
+        object_name = tokens[0];
+    }
 
     while(!success && attemps<4){
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
@@ -735,26 +745,26 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
    for (int i = 1; i < tokens.size()-1; i++){
         ss.str("");
-        ss << "Barman I need a " << tokens[i]; 
+        ss << "Barman I need a " << object_name; 
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
         ss.str("");
-        ss << "please put the " << tokens[i] << " in my gripper";
+        ss << "please put the " << object_name << " in my gripper";
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
         if(!ra){
 
             JustinaManip::raGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+            JustinaTasks::detectObjectInGripper(object_name, false, 7000);
             ra = true;
             ss.str("");
-            ss << "(assert (set_object_arm " << tokens[i] << " false))";
+            ss << "(assert (set_object_arm " << object_name << " false))";
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
             JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
         }
         if(!la && tokens.size() > 3){
             JustinaManip::laGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+            JustinaTasks::detectObjectInGripper(object_name, false, 7000);
             la = true;
-            ss << "(assert (set_object_arm " << tokens[i] << " true))";
+            ss << "(assert (set_object_arm " << object_name << " true))";
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
         }
 
