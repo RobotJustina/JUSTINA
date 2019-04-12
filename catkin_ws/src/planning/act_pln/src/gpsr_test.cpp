@@ -847,7 +847,55 @@ void callbackCmdFindObject(
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
 			else
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right only_find";
-		} else {
+		} else if (tokens[0] == "pose"){
+            ss.str("");
+            ss << "I am looking for objects on the " << tokens[1];
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::alignWithTable(0.42);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            int numObj = 0;
+            int contador = 0;
+			geometry_msgs::Pose pose;
+
+            ss.str("");
+			ss <<"object 2 2 2 left";
+
+            do{
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                std::vector<vision_msgs::VisionObject> recognizedObjects;
+                std::cout << "Find a object " << std::endl;
+                bool found = 0;
+                    found = JustinaVision::detectObjects(recognizedObjects);
+                    int indexFound = 0;
+                    if (found) {
+                        ss.str("");
+                        found = false;
+                        vision_msgs::VisionObject aux_vObject = recognizedObjects[0];
+                        for(int i = 0; i < recognizedObjects.size() - 1; i++){
+                            if(tokens[2] == "right_most" && aux_vObject.pose.position.y > recognizedObjects[i+1].pose.position.y && recognizedObjects[i+1].pose.position.x < 1.0)
+                                aux_vObject = recognizedObjects[i+1];
+                            if(tokens[2] == "left_most" && aux_vObject.pose.position.y < recognizedObjects[i+1].pose.position.y && recognizedObjects[i+1].pose.position.x < 1.0)
+                                aux_vObject = recognizedObjects[i+1];
+                        }
+                        vision_msgs::VisionObject vObject = aux_vObject;
+                        pose = aux_vObject.pose;
+                        std::cout << "object left:  " << vObject.id << std::endl;
+                        if(tokens[2] == "left_most")
+                            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+                        if(tokens[2] == "right_most")
+                            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
+                        numObj = recognizedObjects.size();
+                    }
+                    contador++;
+            } while( numObj<3 && contador < 10);
+            
+            success = (numObj == 0)?false:true;
+		    
+            responseMsg.params = ss.str();
+
+        } else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			bool finishMotion = false;
@@ -883,11 +931,130 @@ void callbackCmdFindObject(
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	if(tokens[0] == "only_find"){
+	if(tokens[0] == "only_find" || tokens[0] == "pose"){
 		if(nfp) command_response_pub.publish(responseMsg);}
 	else
 		{if(nfp) validateAttempsResponse(responseMsg);}
 	
+}
+
+void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "----------- Command Follow to taxi" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    ros::Rate loop(10);
+    
+    JustinaHRI::waitAfterSay("Tell me, here is my taxi, when we reached the taxi, please tell me, follow me, for start following you", 12000, 300);
+    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+    int cont_z=0;
+    bool reco_follow = false;
+    bool frontal_legs = false;
+    bool finish_follow = false;
+    bool userConfirmation = false;
+
+    std::string lastRecoSpeech;
+    
+	JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+    while(!reco_follow){
+        if(JustinaHRI::waitForSpecificSentence("follow me" , 15000)){
+            reco_follow = true;
+        }
+        else                    
+            cont_z++;    		
+
+        if(cont_z>3){
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("Please repeat the command", 5000, 300);
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            cont_z=0;
+        }
+    }
+    
+    JustinaHRI::waitAfterSay("Human, please put in front of me", 3000, 300);
+    JustinaHRI::enableLegFinder(true);
+    ros::spinOnce();
+    
+    while(!frontal_legs){
+        if(JustinaHRI::frontalLegsFound()){
+            std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk", 10000, 300);
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            JustinaHRI::startFollowHuman();
+            ros::spinOnce();
+            loop.sleep();
+            JustinaHRI::startFollowHuman();
+            frontal_legs = true;
+        }
+        ros::spinOnce();
+    }
+
+    while(!finish_follow){
+        if(JustinaHRI::waitForSpecificSentence("here is my taxi", 7000)){
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+	            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+                JustinaHRI::waitAfterSay("is it the taxi, please tell me robot yes, or robot no", 10000, 300);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
+                if(userConfirmation){
+                    JustinaHRI::stopFollowHuman();
+                    JustinaHRI::enableLegFinder(false);
+                    //JustinaKnowledge::addUpdateKnownLoc("car_location");	
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I stopped", 2000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                    cont_z=8;
+                    finish_follow = true;
+                    break;
+                }
+                else{
+	                JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("Ok, please walk", 3000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                }
+        }
+        if(!JustinaHRI::frontalLegsFound()){
+            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+            JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500, 300);
+            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+            JustinaHRI::stopFollowHuman();
+            JustinaHRI::enableLegFinder(false);
+            ros::spinOnce();
+            frontal_legs = false;
+            JustinaHRI::enableLegFinder(true);
+            ros::spinOnce();
+            while(!frontal_legs){
+                if(JustinaHRI::frontalLegsFound()){
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I found you, please walk", 4000, 300);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                    JustinaHRI::startFollowHuman();
+                    ros::spinOnce();
+                    loop.sleep();
+                    JustinaHRI::startFollowHuman();
+                    frontal_legs = true;
+                }
+                ros::spinOnce();
+            }
+        }        
+        ros::spinOnce();
+    }
+	
+    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+
+    responseMsg.successful = 1;
+    command_response_pub.publish(responseMsg);
 }
 
 void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -2938,6 +3105,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
     ros::Subscriber subCmdGetBag = n.subscribe("/planning_clips/cmd_get_bag", 1, callbackCmdGetBag);
+    ros::Subscriber subCmdFollowToTaxi = n.subscribe("/planning_clips/cmd_follow_to_taxi", 1, callbackCmdFollowToTaxi);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);

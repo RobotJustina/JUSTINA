@@ -37,7 +37,7 @@
 	;;; DRINKS
 	(item (type Objects) (name chocolate_drink)(zone counter)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color pink)(grasp 9)(size 1) (wide 1) (height 5) (weight 9)(smallest yes))
 	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 5) (wide 4) (height 6) (weight 8))
-	(item (type Objects) (name gape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
+	(item (type Objects) (name grape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
 	(item (type Objects) (name orange_juice)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
 	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
 
@@ -232,6 +232,7 @@
 	(item (type Furniture) (name counter)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name dishwasher)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	
+	(item (type Furniture) (name bar)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room living_room))
 	;(item (type Furniture) (name hall_1)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited)(room hall))
 	
 	;(item (type Furniture) (name bidet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
@@ -274,6 +275,7 @@
 
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
+	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
 	( Arm (name right)(bandera false))
 	( Arm (name left) (bandera true))
 
@@ -315,6 +317,8 @@
         (item (type Speech) (name speech_2) (image i_finish_the_test))
 	(item (type Speech) (name speech))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
+	
+	( item (type Objects) (name object)(zone nil)(pose 1.048340 1.107002 0.0))
 
 ;;;;;; hecho para guardar el satus de la confirmacion
 	(item (type Confirmation) (name conf) (status nil))
