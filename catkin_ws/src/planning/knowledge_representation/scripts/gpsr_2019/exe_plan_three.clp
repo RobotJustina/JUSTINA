@@ -117,7 +117,7 @@
         (retract ?f)
         (modify ?f2 (status accomplished))
 	(modify ?f3 (hands ?object));;;;; T1 test
-	(modify ?f1 (status grabed));;;;;; T1 test
+	;(modify ?f1 (status grabed));;;;;; T1 test
 	(modify ?f4 (status grabed))
 	(modify ?f5 (grasp object))
         ;(retract ?f3)

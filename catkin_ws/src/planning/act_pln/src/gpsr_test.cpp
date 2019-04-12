@@ -879,21 +879,13 @@ void callbackCmdFindObject(
                             if(tokens[2] == "left_most" && aux_vObject.pose.position.y < recognizedObjects[i+1].pose.position.y && recognizedObjects[i+1].pose.position.x < 1.0)
                                 aux_vObject = recognizedObjects[i+1];
                         }
-                        //if (tokens[2] == "left_most"){
-                            vision_msgs::VisionObject vObject = aux_vObject;
-	                        pose = aux_vObject.pose;
-                            std::cout << "object left:  " << vObject.id << std::endl;
-                            if(tokens[2] == "left_most")
-				                ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
-                            if(tokens[2] == "right_most")
-				                ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
-                        //}
-                        /*if (tokens[2] == "right_most"){
-                            vision_msgs::VisionObject vObject = recognizedObjects[recognizedObjects.size()];
-	                        pose = recognizedObjects[recognizedObjects.size()].pose;
-                            std::cout << "object right:  " << vObject.id << std::endl;
-				            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
-                        }*/
+                        vision_msgs::VisionObject vObject = aux_vObject;
+                        pose = aux_vObject.pose;
+                        std::cout << "object left:  " << vObject.id << std::endl;
+                        if(tokens[2] == "left_most")
+                            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+                        if(tokens[2] == "right_most")
+                            ss << vObject.id << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
                         numObj = recognizedObjects.size();
                     }
                     contador++;

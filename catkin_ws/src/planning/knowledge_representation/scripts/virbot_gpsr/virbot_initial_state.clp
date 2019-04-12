@@ -37,7 +37,7 @@
 	;;; DRINKS
 	(item (type Objects) (name chocolate_drink)(zone counter)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color pink)(grasp 9)(size 1) (wide 1) (height 5) (weight 9)(smallest yes))
 	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 5) (wide 4) (height 6) (weight 8))
-	(item (type Objects) (name gape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
+	(item (type Objects) (name grape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 7) (wide 9) (height 7) (weight 4))
 	(item (type Objects) (name orange_juice)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
 	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 8) (wide 5) (height 10) (weight 10)(heaviest yes))
 
