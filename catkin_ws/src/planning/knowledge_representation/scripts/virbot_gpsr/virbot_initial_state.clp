@@ -232,6 +232,7 @@
 	(item (type Furniture) (name counter)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name dishwasher)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	
+	(item (type Furniture) (name bar)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room living_room))
 	;(item (type Furniture) (name hall_1)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited)(room hall))
 	
 	;(item (type Furniture) (name bidet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
