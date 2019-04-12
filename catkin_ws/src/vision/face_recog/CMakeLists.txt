@@ -19,6 +19,9 @@ find_package(OpenCV REQUIRED)
 find_package(dlib REQUIRED)
 set(CMAKE_PREFIX_PATH "/usr/local/")
 set(OpenCV_INCLUDE_DIRS "/usr/local/include")
+SET(OPENCV_DNN_SAMPLES_REQUIRED_DEPS opencv_core opencv_imgproc opencv_dnn
+    opencv_imgcodecs opencv_videoio opencv_highgui
+    ${OpenCV_LIB_COMPONENTS})
 
 catkin_package(
 )
@@ -37,6 +40,10 @@ add_executable(face_recog_node
   #src/MagicalSourceCode.cpp
 )
 
+#add_executable(face_opencv_dnn
+#  src/face_opencv_dnn.cpp
+#)
+
 add_dependencies(face_recog_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(face_recog_node
@@ -45,3 +52,13 @@ target_link_libraries(face_recog_node
   ${catkin_LIBRARIES}
   dlib::dlib
 )
+
+#add_dependencies(face_opencv_dnn ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+#target_link_libraries(face_opencv_dnn
+#  ${OpenCV_LIBS}
+#  ${PCL_LIBRARIES}
+#  ${catkin_LIBRARIES}
+#  /usr/local/lib/libopencv_dnn.so.3.3.1  
+#  ${OPENCV_DNN_SAMPLES_REQUIRED_DEPS}
+#)
