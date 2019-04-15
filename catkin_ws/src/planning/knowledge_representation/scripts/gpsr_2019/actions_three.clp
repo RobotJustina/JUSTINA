@@ -73,7 +73,7 @@
 	(printout t "Get relpos object")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task pget_relpos_object object ?place ?relpos ?object))
+	(assert (task pget_relpos_obj object ?place ?relpos ?object ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 )
@@ -200,7 +200,7 @@
 	?f1 <- (task pget_relpos_obj object ?place ?relpos ?object ?step)
 	=>
 	(retract ?f1)
-	(assert (objetive get_rel_obj task_get_rel_obj object ?place ?abspos ?relpos ?step))
+	(assert (objetive get_rel_obj task_get_rel_obj object ?place ?relpos ?object ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
