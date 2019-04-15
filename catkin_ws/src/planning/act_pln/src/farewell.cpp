@@ -29,10 +29,10 @@
 #define SM_WAIT_NAME 120
 #define SM_COMFIRMATION_NAME 130
 
-#define GRAMMAR_POCKET_COMMANDS "grammars/pre_guadalajara/receptionist_commands.jsgf"
-#define GRAMMAR_POCKET_NAMES "grammars/pre_guadalajara/receptionist_names.jsgf"
-#define GRAMMAR_COMMANDS "receptionist_commands.xml"
-#define GRAMMAR_NAMES "receptionist_names.xml"
+#define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
+#define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
+#define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_NAMES "people_names.xml"
 #define TIMEOUT_SPEECH 10000
 #define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
 #define MAX_DELAY_AFTER_SAY 300
