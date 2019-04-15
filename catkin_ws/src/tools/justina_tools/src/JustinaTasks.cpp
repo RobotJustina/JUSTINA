@@ -5893,6 +5893,45 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 }
 
 bool JustinaTasks::findGenderGesturePerson(std::string gesture, int gender, std::string location, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, bool fWaitSpecificGesture){
+	bool recog = false;
+	bool moveBase = false;
+	float initTil = initAngTil;
+	float incTil = incAngTil;
+	bool direction = false;
+    bool taskStop = false;
+	Eigen::Vector3d centroidGesture = Eigen::Vector3d::Zero();
 
-
+	for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
+		for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
+			float currTil;
+			for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)) && !recog; headTilTurn+=incTil){
+				currTil = headTilTurn;
+				JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
+				if(moveBase){
+					JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
+					moveBase = false;
+				}
+				JustinaManip::waitForHdGoalReached(3000);
+				std::vector<vision_msgs::GestureSkeleton> gestures;
+                if(fWaitSpecificGesture)
+				    recog = waitRecognizedSpecificGesture(gestures, gesture, 3000);
+                else
+				    recog = waitRecognizedGesture(gestures, 3000);
+				if(recog)
+					recog = getNearestRecognizedGesture(gesture, gestures, maxDistance, centroidGesture, location);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                ros::spinOnce();
+                taskStop = JustinaTasks::tasksStop();
+                if(taskStop)
+                    return false;
+			}
+			initTil = currTil;
+			direction ^= true;
+			incTil = -incTil; 
+		}
+		moveBase = true;
+	}
+	if(recog)
+		gesturePos = centroidGesture;
+	return recog;
 }
