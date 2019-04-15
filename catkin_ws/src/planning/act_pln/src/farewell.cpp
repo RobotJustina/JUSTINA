@@ -534,16 +534,7 @@ int main(int argc, char** argv)
 
                 
                 if(numberGuest<maxNumberGuest){
-                    /*ros::Duration(1.0).sleep();
-                    JustinaNavigation::moveDistAngle(0.0, -1.5708, 2000);
-                    ros::Duration(1.0).sleep();
-                    JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
-                    ros::Duration(1.5).sleep();
-                    JustinaHRI::say("please close the umbrella and put in my gripper");
-                    ros::Duration(1.5).sleep();
-                    JustinaTasks::detectObjectInGripper("umbrella", true, 10000);
-                    withLeftArm = true;
-                    ros::Duration(1.0).sleep();*/
+                   
                     JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
 				    ros::Duration(1.0).sleep();
                     JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
@@ -552,6 +543,8 @@ int main(int argc, char** argv)
         		    ros::Duration(2.0).sleep();
                 }
                 else{
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep(); 
                     JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
 				    ros::Duration(1.0).sleep();
                     JustinaManip::laGoTo("navigation", 3000);
