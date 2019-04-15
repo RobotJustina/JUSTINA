@@ -75,6 +75,7 @@ int main(int argc, char** argv)
 	int cont_z;
 	int type;
 	bool openDWFlag=false; //set this flag as false due to the dishwasher will be open by default
+	bool takeCascadePod=false;
 
 
 
@@ -311,13 +312,19 @@ int main(int argc, char** argv)
 
       			chances++;
 
-      			if(objTaken == 0 && chances==4){
+      			if(objTaken == 0 && chances==6){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
 					JustinaHRI::say("human close the diswasher, please");
 					ros::Duration(0.5).sleep();
 				}
 
-      			else if(objTaken==0 && chances ==2){
+      			else if(objTaken==0 && chances== 4){
+					nextState = SM_NAVIGATE_TO_THE_TABLE;
+					JustinaHRI::say("human, please, keep the diswasher open for me");
+					ros::Duration(0.5).sleep();
+				}
+
+				else if(objTaken==0 && chances ==2){
       				nextState = SM_NAVIGATE_TO_THE_TABLE;
 					JustinaHRI::say("human, please, keep the diswasher open for me");
 					ros::Duration(0.5).sleep();
