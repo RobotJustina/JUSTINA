@@ -5876,14 +5876,19 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 
 
 	JustinaTasks::guideAPerson("taxi", 300000);
-
-    /*float torsoSpine, torsoWaist, torsoShoulders;
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-	float currx, curry, currtheta;
-	JustinaNavigation::getRobotPose(currx, curry, currtheta);
-    float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
-    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
-	*/
+	JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+    float dist_to_head = sqrt( pow( wgc.x() - robot_x, 2) + pow(wgc.y() - robot_y, 2));
+    //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(wgc.y() - robot_y, wgc.x() - robot_x) - robot_a;
+    if(angleHead < -M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+
 	return true;
 }
 
