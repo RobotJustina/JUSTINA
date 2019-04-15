@@ -919,25 +919,30 @@ void callbackCmdFindObject(
                     found = JustinaVision::detectObjects(recognizedObjects);
                     int indexFound = 0;
                     if (found && recognizedObjects.size()> 2) {
-                        ss.str("");
-                        found = false;
+                        //ss.str("");
+                        //found = false;
                         if(found){
+                            found = false;
                             for(int i = 0; i < recognizedObjects.size(); i++){
-                                if(recognizedObjects[i].id == tokens[3] )
+                                if(recognizedObjects[i].id == tokens[3] ){
                                     ref_obj = true;
                                     ref_obj_index = i;
                                     ref_obj_pose = recognizedObjects[i].pose;
+                                }
                             }
                         }
                         if(ref_obj){
                             ref_obj = false;
+                            std::cout << "INIT TO SEARCH CONDITION OF RELPOS" << std::endl;
                             if(tokens[2] == "at_the_left_of"){
                                 for(int i = 0; i < recognizedObjects.size(); i++){
-                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0){
+                                    std::cout << "AT THE LEFT OF" << std::endl;
+                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.5){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
                                             << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
                                         ref_obj = true;
+                                        std::cout << ss.str() << std::endl;
                                     }
                                 }
                             }
