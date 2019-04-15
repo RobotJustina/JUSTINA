@@ -37,7 +37,7 @@
 
 	;;for speech generation of the number of orders in eegpsr cat2 montreal
 	(num_order 1)
-	(order _)
+	(order !)
 	
 	;;;for speech generation of the person description in eegpsr cat2 montreal
 	(person_description _)

@@ -847,7 +847,7 @@ void callbackCmdFindObject(
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
 			else
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right only_find";
-		} else if (tokens[0] == "pose"){
+		} else if (tokens[0] == "abspose"){
             ss.str("");
             ss << "I am looking for objects on the " << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 2500);
@@ -895,6 +895,100 @@ void callbackCmdFindObject(
 		    
             responseMsg.params = ss.str();
 
+        } else if (tokens[0] == "relpose"){
+            ss.str("");
+            ss << "I am looking for the object " << tokens[2] << " the " << tokens[3];
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::alignWithTable(0.42);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            int contador = 0;
+            bool ref_obj = false;
+            int ref_obj_index = 0;
+			geometry_msgs::Pose ref_obj_pose;
+
+            ss.str("");
+			ss <<"object 2 2 2 left";
+
+            do{
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                std::vector<vision_msgs::VisionObject> recognizedObjects;
+                std::cout << "Find a object " << std::endl;
+                bool found = 0;
+                    found = JustinaVision::detectObjects(recognizedObjects);
+                    int indexFound = 0;
+                    if (found && recognizedObjects.size()> 2) {
+                        ss.str("");
+                        found = false;
+                        if(found){
+                            for(int i = 0; i < recognizedObjects.size(); i++){
+                                if(recognizedObjects[i].id == tokens[3] )
+                                    ref_obj = true;
+                                    ref_obj_index = i;
+                                    ref_obj_pose = recognizedObjects[i].pose;
+                            }
+                        }
+                        if(ref_obj){
+                            ref_obj = false;
+                            if(tokens[2] == "at_the_left_of"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                        ref_obj = true;
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "at_the_right_of"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.y < ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                        ref_obj = true;
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "on_top_of" || tokens[2] == "above"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.z > ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                        ref_obj = true;
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "under"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                        ref_obj = true;
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "behind"){
+                                if(recognizedObjects.size() > ref_obj_index + 1){
+                                    ss.str("");
+                                    ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
+                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
+                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " left";
+                                    ref_obj = true;
+                                }
+                            }
+                        }
+                    }
+                    contador++;
+            } while(!ref_obj && contador < 10);
+            
+            success = ref_obj;
+            responseMsg.params = ss.str();
+
+        
         } else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;

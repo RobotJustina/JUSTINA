@@ -65,16 +65,24 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;; get the abspos object
-(defrule exe-plan-task-get-pos-object
+(defrule exe-plan-task-get-abspos-object
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-pos-object ?place ?pos)(duration ?t))
 	=>
-	(bind ?command (str-cat "pose "  ?place " " ?pos ""))
+	(bind ?command (str-cat "abspose "  ?place " " ?pos ""))
 	(assert (send-blackboard ACT-PLN find_object ?command ?t 4))
 )
+
+(defrule exe-plan-task-get-relpos-object
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-pos-object ?place ?pos ?object)(duration ?t))
+	=>
+	(bind ?command (str-cat "relpose "  ?place " " ?pos " " ?object ""))
+	(assert (send-blackboard ACT-PLN find_object ?command ?t 4))
+)
+
 (defrule exe-plan-geted-pos-object 
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 1)
  	    ?f1 <- (item (name ?block1))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object ?place ?pos))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object $?params))
 	    ?f3 <- (Arm (name ?arm))
 	?f4 <- (item (name object))
         =>
@@ -88,11 +96,10 @@
 (defrule exe-plan-no-geted-pos-object 
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 0)
         ?f1 <- (item (name ?block1))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object ?place ?pos))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object $?params))
         =>
         (retract ?f)
 	(modify ?f2 (status accomplished)) ;performance for IROS
-        ;(modify ?f2 (status active))//normal performance gpsr and eegpsr
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;; grasp object
 
