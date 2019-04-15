@@ -5886,3 +5886,72 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 	*/
 	return true;
 }
+
+bool JustinaTasks::findGenderGesturePerson(std::string gesture, int gender, std::string location){
+	std::vector<int> facesDistances;
+	std::stringstream ss;
+	std::string personID = "";
+    ros::Time time;
+
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
+
+
+	Eigen::Vector3d centroidFace;
+	int genderRecog;
+	
+	bool recog = turnAndRecognizeFace(personID, gender, NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog, location);
+	std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
+		<< "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
+	std::cout << std::endl;
+	//personLocation.clear();
+
+	ss.str("");
+	if (!recog) {
+		//std::cout << "I have not found a person " << person << std::endl;
+		//(recogByID) ? ss << "I did not find you " << person : ss << "I did not find a person";
+		//JustinaHRI::waitAfterSay(ss.str(), 2000);
+        time = ros::Time::now();
+		JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+		return false;
+	}
+
+	//std::cout << "I have found a person " << person << std::endl;
+	//ss << person << ", I found you";
+	//(recogByID) ? ss << person << ", I found you" : ss << ", I find a person";
+	//JustinaHRI::waitAfterSay(ss.str(), 2000);
+    time = ros::Time::now();
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+	JustinaHRI::insertAsyncSpeech("I am getting close to you", 500, time.sec, 10);
+
+	float cx, cy, cz;
+	cx = centroidFace(0, 0);
+	cy = centroidFace(1, 0);
+	cz = centroidFace(2, 0);
+	float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
+	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+	tf::Vector3 worldFaceCentroid(cx, cy, cz);
+
+	int waitToClose = (int) (dis * 10000);
+	std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+	std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+
+	//JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+	closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	float currx, curry, currtheta;
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    float dist_to_head = sqrt( pow( worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
+    //JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
+    if(angleHead < -M_PI)
+        angleHead = 2 * M_PI + angleHead;
+    if(angleHead > M_PI)
+        angleHead = 2 * M_PI - angleHead;
+    JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+
+    return true;
+
+}
