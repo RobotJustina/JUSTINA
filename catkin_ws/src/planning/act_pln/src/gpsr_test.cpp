@@ -907,6 +907,7 @@ void callbackCmdFindObject(
             bool ref_obj = false;
             int ref_obj_index = 0;
 			geometry_msgs::Pose ref_obj_pose;
+            float rel_obj_dist = 1000.0;
 
             ss.str("");
 			ss <<"object 2 2 2 left";
@@ -919,16 +920,12 @@ void callbackCmdFindObject(
                     found = JustinaVision::detectObjects(recognizedObjects);
                     int indexFound = 0;
                     if (found && recognizedObjects.size()> 2) {
-                        //ss.str("");
-                        //found = false;
-                        if(found){
-                            found = false;
-                            for(int i = 0; i < recognizedObjects.size(); i++){
-                                if(recognizedObjects[i].id == tokens[3] ){
-                                    ref_obj = true;
-                                    ref_obj_index = i;
-                                    ref_obj_pose = recognizedObjects[i].pose;
-                                }
+                        found = false;
+                        for(int i = 0; i < recognizedObjects.size(); i++){
+                            if(recognizedObjects[i].id == tokens[3] ){
+                                ref_obj = true;
+                                ref_obj_index = i;
+                                ref_obj_pose = recognizedObjects[i].pose;
                             }
                         }
                         if(ref_obj){
@@ -937,22 +934,26 @@ void callbackCmdFindObject(
                             if(tokens[2] == "at_the_left_of"){
                                 for(int i = 0; i < recognizedObjects.size(); i++){
                                     std::cout << "AT THE LEFT OF" << std::endl;
-                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.5){
+                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.5 
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
                                             << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
                                         ref_obj = true;
                                         std::cout << ss.str() << std::endl;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
                                     }
                                 }
                             }
                             else if(tokens[2] == "at_the_right_of"){
                                 for(int i = 0; i < recognizedObjects.size(); i++){
-                                    if (recognizedObjects[i].pose.position.y < ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0){
+                                    if (recognizedObjects[i].pose.position.y < ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
-                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
                                         ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
                                     }
                                 }
                             }
@@ -961,7 +962,7 @@ void callbackCmdFindObject(
                                     if (recognizedObjects[i].pose.position.z > ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
-                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
                                         ref_obj = true;
                                     }
                                 }
@@ -971,7 +972,7 @@ void callbackCmdFindObject(
                                     if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
-                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
                                         ref_obj = true;
                                     }
                                 }
@@ -981,7 +982,7 @@ void callbackCmdFindObject(
                                     ss.str("");
                                     ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
                                     << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
-                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " left";
+                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " right";
                                     ref_obj = true;
                                 }
                             }
