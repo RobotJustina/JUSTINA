@@ -110,6 +110,18 @@
         (item (type Property) (name largest) (zone bookcase))
         (item (type Property) (name thinnest) (zone bookcase))
 
+	;;;;; Abspos
+        (item (type Abspos) (name left_most))
+        (item (type Abspos) (name right_most))
+        
+	;;;;; Relpos
+	(item (type Relpos) (name at_the_right_of))
+	(item (type Relpos) (name at_the_left_of))
+	(item (type Relpos) (name on_top_of))
+	(item (type Relpos) (name above))
+	(item (type Relpos) (name behind))
+	(item (type Relpos) (name under))
+
 ;;;;;;;;;;PEOPLE
 
 	;;;; Fameles

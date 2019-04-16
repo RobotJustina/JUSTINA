@@ -958,32 +958,42 @@ void callbackCmdFindObject(
                                 }
                             }
                             else if(tokens[2] == "on_top_of" || tokens[2] == "above"){
+                                rel_obj_dist = 0.0;
                                 for(int i = 0; i < recognizedObjects.size(); i++){
-                                    if (recognizedObjects[i].pose.position.z > ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
+                                    if (recognizedObjects[i].pose.position.z > ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z)){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
                                             << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
                                         ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z);
                                     }
                                 }
                             }
                             else if(tokens[2] == "under"){
+                                rel_obj_dist = 0.0;
                                 for(int i = 0; i < recognizedObjects.size(); i++){
-                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0){
+                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z)){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
                                             << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
                                         ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z);
                                     }
                                 }
                             }
                             else if(tokens[2] == "behind"){
-                                if(recognizedObjects.size() > ref_obj_index + 1){
-                                    ss.str("");
-                                    ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
-                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
-                                    << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " right";
-                                    ref_obj = true;
+                                for(int i = ref_obj_index + 1; i < recognizedObjects.size(); i++){
+                                    if(recognizedObjects[i].pose.position.x < 1.5 
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
+                                        ss.str("");
+                                        ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
+                                        << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
+                                        << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " right";
+                                        ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
+                                    }
                                 }
                             }
                         }
@@ -1536,33 +1546,34 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::string prop;
 	std::string opropObj;
 	std::vector<std::string> objects;
-	currentName = tokens[0];
-	categoryName = tokens[1];
+	currentName = tokens[1];
+	categoryName = tokens[2];
 
 	bool finishMotion = false;
 	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 
-	if(tokens[0] == "biggest")
+	if(tokens[1] == "biggest")
 		prop = "bigger";
-	else if (tokens[0] == "smallest")
+	else if (tokens[1] == "smallest")
 		prop = "smaller";
-	else if (tokens[0] == "heaviest")
+	else if (tokens[1] == "heaviest")
 		prop = "heavier";
-	else if (tokens[0] == "lightest")
+	else if (tokens[1] == "lightest")
 		prop = "lighter";
-	else if (tokens[0] == "largest")
+	else if (tokens[1] == "largest")
 		prop = "larger";
-	else if (tokens[0] == "thinnest")
+	else if (tokens[1] == "thinnest")
 		prop = "thinner";
 
 	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
+	std::vector<vision_msgs::VisionObject> recognizedObjects;
 		
 	do{	
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		//std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
 		bool found = 0;
 		for (int j = 0; j < 10; j++) {
@@ -1577,11 +1588,11 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 					std::map<std::string, std::pair<std::string, int> >::iterator it = countObj.find(vObject.id);
 					if (it != countObj.end())
 						it->second.second = it->second.second + 1;
-					if (it->second.second == 1 && tokens[1] == "nil"){
+					if (it->second.second == 1 && tokens[2] == "nil"){
 						objects.push_back(it->first);
 						std::cout << "OBJETO: " << it->first << std::endl;
 					}
-					if (it->second.second == 1 && tokens[1] != "nil" && tokens[1] == it->second.first){
+					if (it->second.second == 1 && tokens[2] != "nil" && tokens[2] == it->second.first){
 						objects.push_back(it->first);
 						std::cout << "OBJETO: " << it->first << std::endl;
 					}
@@ -1638,6 +1649,35 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			}
 		}
 	}
+
+    if(tokens[0] == "for_grasp"){
+        if (objects.size() == 0){
+            ss.str("");
+			ss <<"object 2 2 2 left";
+            responseMsg.params = ss.str();
+            responseMsg.successful = 0;
+        }
+        else{
+            for(int i = 0; i < recognizedObjects.size(); i++){
+                if(recognizedObjects[i].id == objectName){
+                    ss.str("");
+                    if(recognizedObjects[i].pose.position.y > 0){
+                        ss << objectName << " " << recognizedObjects[i].pose.position.x << " " 
+                            << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                    }
+                    else{
+                        ss << objectName << " " << recognizedObjects[i].pose.position.x << " " 
+                            << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
+                        
+                    }
+
+                    responseMsg.params = ss.str();
+                    responseMsg.successful = 1;
+                    i = recognizedObjects.size();
+                }
+            }
+        }
+    }
 
 	command_response_pub.publish(responseMsg);
 	countObj.clear();

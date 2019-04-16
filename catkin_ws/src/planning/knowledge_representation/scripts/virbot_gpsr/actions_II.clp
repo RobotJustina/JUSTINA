@@ -715,12 +715,12 @@
         (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category)(duration ?t))
         ?f1 <- (item (name ?property)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?property " " ?category ""))
+        (bind ?command (str-cat "only_find " ?property " " ?category ""))
         (assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
 )
 
 (defrule exe-plan-af-property-object
-        ?f <-  (received ?sender command prop_obj ?property ?category 1)
+        ?f <-  (received ?sender command prop_obj only_find ?property ?category 1)
         ?f1 <- (item (name ?property))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category))
         =>
@@ -730,7 +730,7 @@
 )
 
 (defrule exe-plan-neg-property-object
-        ?f <-  (received ?sender command prop_obj ?property ?category 0)
+        ?f <-  (received ?sender command prop_obj only_find ?property ?category 0)
         ?f1 <- (item (name ?property))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category))
         =>
