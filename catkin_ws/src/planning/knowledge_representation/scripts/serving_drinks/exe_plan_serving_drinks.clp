@@ -139,7 +139,7 @@
 	?f3 <- (order_counter ?oc)
 	=>
 	(retract ?f ?f1 ?f2 ?f3)
-	(bind ?command(str-cat "" ?ord "" ?obj "_" ))
+	(bind ?command(str-cat "" ?ord "" ?obj "!" ))
 	(assert (object_counter (+ ?n 1)))
 	(assert (order ?command))
 	(assert (deliver_order ?obj ?person ?num))
@@ -154,7 +154,7 @@
 	?f3 <- (order_counter ?oc&:(neq ?oc ?orders))
 	=>
 	(retract ?f ?f1)
-	(assert (order _))
+	(assert (order !))
 	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
 	;(assert (deliver_order ?obj ?person ?num))
@@ -170,7 +170,7 @@
 	?f3 <- (item (name people))
 	=>
 	(retract ?f ?f1 ?f2)
-	(assert (order _))
+	(assert (order !))
 	(assert (d_order ?ord))
 	(bind ?command (str-cat "" ?ord " " ?place))
 	(modify ?f3 (status deliver_order))
