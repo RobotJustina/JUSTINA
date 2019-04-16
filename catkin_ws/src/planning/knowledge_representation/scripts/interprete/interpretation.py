@@ -673,6 +673,48 @@ meaning_mapping_patterns_gpsr = [
 				"(task (plan user_speech) (action_type handover_object) (params )(step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        ##$vbbring me the object $relpos the {object}  $cmanobjsrc
+	{"params": ["Action_take", "Person", "Relpos",  "Object", "Place"],
+	"Action_take": [["give", "bring"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Relpos": [[], [], ["relpos"], []],
+	"Object": [[], [], ["item"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Place- -Relpos- -Object-) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        ##$vbbring me the $oprop (object | {category}) $cmanobjsrc
+	{"params": ["Action_take", "Person", "Oprop",  "Object", "Place"],
+	"Action_take": [["give", "bring"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Oprop": [[], [], ["adjectivea"], []],
+	"Object": [["object"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object -Place- -Oprop- nil) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        ##$vbbring me the $oprop (object | {category}) $cmanobjsrc
+	{"params": ["Action_take", "Person", "Oprop",  "Category", "Place"],
+	"Action_take": [["give", "bring"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Oprop": [[], [], ["adjectivea"], []],
+	"Category": [[], [], ["category"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Place- -Oprop- -Category-) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
 
 ]
@@ -828,7 +870,7 @@ meaning_mapping_patterns_high_gpsr = [
 	{"params": ["Action_take", "Person", "Oprop",  "Object", "Place"],
 	"Action_take": [["give", "bring"], [], [], []],
 	"Person": [["me"], [], [], []],
-	"Relpos": [[], [], ["adjetivea"], []],
+	"Relpos": [[], [], ["adjectivea"], []],
 	"Object": [["object"], [], [], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
@@ -842,7 +884,7 @@ meaning_mapping_patterns_high_gpsr = [
 	{"params": ["Action_take", "Person", "Oprop",  "Category", "Place"],
 	"Action_take": [["give", "bring"], [], [], []],
 	"Person": [["me"], [], [], []],
-	"Relpos": [[], [], ["adjetivea"], []],
+	"Relpos": [[], [], ["adjectivea"], []],
 	"Category": [[], [], ["category"], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
