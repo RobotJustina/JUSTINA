@@ -175,7 +175,9 @@
 		<child link="laser_link_rear"/>
 	</joint>
 
-	<joint name="torso_connect" type="fixed"> 
+	<joint name="torso_connect" type="fixed">
+		<!-- This is is the teorical metrics 0.34 + 0.565 -->
+		<!-- origin xyz= "0 0 0.905" rpy="0 0 0"/ -->
 		<origin xyz= "0 0 0.9" rpy="0 0 0"/>
 		<parent link="base_link"/>
 		<child link="torso_link"/>
@@ -204,7 +206,7 @@
 	</link>
 
 	<joint name="spine_connect" type="prismatic"> 
-		<origin xyz= "0.0 0 0.11" rpy="0 0 0"/>
+		<origin xyz= "0.0 0 0.162" rpy="0 0 0"/>
 		<parent link="torso_link"/>
 		<child link="spine_link"/>
 		<limit effort="1000" lower="0.2" upper="0.5" velocity="0.2"/>
@@ -233,7 +235,7 @@
 	</link>
 
 	<joint name="neck_connect" type="fixed">
-		<origin xyz="0 0 0.14" rpy="0 0 0"/>
+		<origin xyz="0 0 0.1345" rpy="0 0 0"/>
 		<parent link="spine_link"/>
 		<child link="neck_link"/>
 	</joint>
@@ -256,7 +258,7 @@
 	</link>
 
 	<joint name="pan_dyn_connect" type="fixed">
-		<origin xyz="0.0 0.0 0.045" rpy="0 0 0"/>
+		<origin xyz="0.005 0.0 0.0417" rpy="0 0 0"/>
 		<parent link="neck_link"/>
 		<child link="pan_dyn_link"/>
 	</joint>
@@ -291,7 +293,7 @@
 	<link name="head_link1"/>
 	
 	<joint name="tilt_dyn_connect" type="fixed">
-		<origin xyz="0.01 0.0 0.03" rpy="-1.5708 0 0"/>
+		<origin xyz="0.0 0.0 0.0275" rpy="-1.5708 0 0"/>
 		<parent link="head_link1"/>
 		<child link="tilt_dyn_link"/>
 	</joint>
@@ -326,16 +328,16 @@
 	<link name="head_link2"/>
 	
 	<joint name="kinect_connect" type="fixed">
-		<origin xyz="0.02 -0.08 0" rpy="0 1.5707 0"/>
+		<origin xyz="0.0218 -0.0758 0" rpy="0 1.5707 0"/>
 		<parent link="head_link2"/>
 		<child link="kinect_link"/>
 	</joint>
 	
 	<link name="kinect_link">
 		<visual>
-			<origin xyz="0 0.04 -0.03" rpy="0 ${PI} 0"/>
+			<!-- origin xyz="0 0.04 -0.03" rpy="0 ${PI} 0"/-->
 			<geometry>
-				<mesh filename="package://knowledge/hardware/stl/kinect.stl"/>
+				<mesh filename="package://knowledge/hardware/stl/kinect.dae"/>
 			</geometry>
 			<material name="black"/>
 		</visual>
