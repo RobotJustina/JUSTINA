@@ -720,23 +720,13 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     	std::vector<std::string> tokens1;
 	std::string str = responseMsg.params;
 	split(tokens1, str, is_any_of(" "));
-	boost::replace_all(tokens1[0], "_", " ");
+	boost::replace_all(tokens1[0], "!", " ");
 	split(tokens, tokens1[0], is_any_of(" "));
 	std::stringstream ss;
     int attemps = 0;
 	bool success = false;
     bool la = false;
     bool ra = false;
-    std::string object_name;
-
-    if(tokens.size() > 3){
-        ss.str("");
-        ss << tokens[1] << "_" << tokens[2];
-        object_name = ss.str();
-    }
-    else{
-        object_name = tokens[1];
-    }
 
     while(!success && attemps<4){
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
@@ -745,26 +735,26 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
    for (int i = 1; i < tokens.size()-1; i++){
         ss.str("");
-        ss << "Barman I need a " << object_name; 
+        ss << "Barman I need a " << tokens[i]; 
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
         ss.str("");
-        ss << "please put the " << object_name << " in my gripper";
+        ss << "please put the " << tokens[i] << " in my gripper";
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
         if(!ra){
 
             JustinaManip::raGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(object_name, false, 7000);
+            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
             ra = true;
             ss.str("");
-            ss << "(assert (set_object_arm " << object_name << " false))";
+            ss << "(assert (set_object_arm " << tokens[i] << " false))";
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
             JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
         }
         if(!la && tokens.size() > 3){
             JustinaManip::laGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(object_name, false, 7000);
+            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
             la = true;
-            ss << "(assert (set_object_arm " << object_name << " true))";
+            ss << "(assert (set_object_arm " << tokens[i] << " true))";
             JustinaRepresentation::sendAndRunCLIPS(ss.str());
         }
 
@@ -790,7 +780,7 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     std::vector<std::string> tokens1;
 	std::string str = responseMsg.params;
 	split(tokens1, str, is_any_of(" "));
-	boost::replace_all(tokens1[0], "_", " ");
+	boost::replace_all(tokens1[0], "!", " ");
 	split(tokens, tokens1[0], is_any_of(" "));
 	std::stringstream ss;
     
@@ -800,7 +790,7 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     int attemps = 0;
 	bool success = false;
     bool armFlag = false;
-
+    
     while(!success && attemps<4){
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size()-1], 120000);
         attemps++;

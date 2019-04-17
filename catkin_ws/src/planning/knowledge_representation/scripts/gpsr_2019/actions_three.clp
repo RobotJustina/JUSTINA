@@ -68,12 +68,42 @@
 	?f <- (task ?plan get_object object ?place ?relpos ?object ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name object))
+	(item (type Objects)(name ?object))
 	=>
 	(retract ?f)
 	(printout t "Get relpos object")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (task pget_relpos_obj object ?place ?relpos ?object ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
+(defrule task_get_oprop_category
+	?f <- (task ?plan get_object object ?place ?oprop ?category ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name object))
+	(item (type Category) (name ?category))
+	=>
+	(retract ?f)
+	(printout t "Get relpos object")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pget_oprop_obj ?place ?oprop ?category ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
+(defrule task_get_oprop_object
+	?f <- (task ?plan get_object object ?place ?oprop nil ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name object))
+	=>
+	(retract ?f)
+	(printout t "Get relpos object")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pget_oprop_obj ?place ?oprop nil ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 )
@@ -147,6 +177,21 @@
 	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
 	(assert (finish-planner ?name 7))
 )
+
+(defrule plan_get_oprop_object
+	?goal <- (objetive get_oprop_obj ?name ?place ?oprop ?category ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Relpos Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions ask_for object ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to object)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions attend object)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions find-pos-object ?place ?oprop ?category)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions make_task ?name object finded)(actions_num_params 6 6)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions move manipulator )(duration 6000))) 
+	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
+	(assert (finish-planner ?name 7))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,6 +246,16 @@
 	=>
 	(retract ?f1)
 	(assert (objetive get_rel_obj task_get_rel_obj object ?place ?relpos ?object ?step))
+)
+
+(defrule exe_scheduled-get-oprop-object 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pget_oprop_obj ?place ?oprop ?category ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive get_oprop_obj task_get_oprop_obj ?place ?oprop ?category ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
