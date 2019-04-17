@@ -485,7 +485,7 @@
 	    <parent link="shoulders_left_link"/>
 	    <child link="left_arm_link1"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <!--The next six origins are taken from the Denavit-Hartenberg parameters -->
     <joint name="la_2_joint" type="revolute">
@@ -493,42 +493,42 @@
 	    <parent link="left_arm_link1"/>
 	    <child link="left_arm_link2"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_3_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
 	    <parent link="left_arm_link2"/>
 	    <child link="left_arm_link3"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_4_joint" type="revolute">
 	    <origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/><!--Transformation from link3 to link4 when theta3 = 0 -->
 	    <parent link="left_arm_link3"/>
 	    <child link="left_arm_link4"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_5_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
 	    <parent link="left_arm_link4"/>
 	    <child link="left_arm_link5"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_6_joint" type="revolute">
 	    <origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/><!--Transformation from link5 to link6 when theta5 = 0 -->
 	    <parent link="left_arm_link5"/>
 	    <child link="left_arm_link6"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_7_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
 	    <parent link="left_arm_link6"/>
 	    <child link="left_arm_link7"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_grip_center_joint" type="fixed">
 	    <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
@@ -540,14 +540,14 @@
 	    <parent link="left_arm_grip_center"/> 
 	    <child link="left_arm_grip_left"/> 
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="la_grip_right" type="revolute">
 	    <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
 	    <parent link="left_arm_grip_center"/> 
 	    <child link="left_arm_grip_right"/> 
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
 
 
@@ -658,7 +658,7 @@
 	    <parent link="shoulders_right_link"/>
 	    <child link="right_arm_link1"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <!--The next six origins are taken from the Denavit-Hartenberg parameters -->
     <joint name="ra_2_joint" type="revolute">
@@ -666,42 +666,42 @@
 	    <parent link="right_arm_link1"/>
 	    <child link="right_arm_link2"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_3_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
 	    <parent link="right_arm_link2"/>
 	    <child link="right_arm_link3"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_4_joint" type="revolute">
 	    <origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/><!--Transformation from link3 to link4 when theta3 = 0 -->
 	    <parent link="right_arm_link3"/>
 	    <child link="right_arm_link4"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_5_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
 	    <parent link="right_arm_link4"/>
 	    <child link="right_arm_link5"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_6_joint" type="revolute">
 	    <origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/><!--Transformation from link5 to link6 when theta5 = 0 -->
 	    <parent link="right_arm_link5"/>
 	    <child link="right_arm_link6"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_7_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
 	    <parent link="right_arm_link6"/>
 	    <child link="right_arm_link7"/>
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_grip_center_joint" type="fixed">
 	    <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
@@ -713,14 +713,14 @@
 	    <parent link="right_arm_grip_center"/> 
 	    <child link="right_arm_grip_left"/> 
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_grip_right" type="revolute">
 	    <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
 	    <parent link="right_arm_grip_center"/> 
 	    <child link="right_arm_grip_right"/> 
 	    <axis xyz="0 0 1" />
-	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
 
     <transmission name="tran1">
