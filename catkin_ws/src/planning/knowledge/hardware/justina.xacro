@@ -135,20 +135,20 @@
 	</link>
 
 	<joint name="laser_connect" type="fixed">
-		<origin xyz="0.08 0 0.37" />
+		<origin xyz="0.188565 0 0.41432" />
 		<parent link="base_link"/>
 		<child link="laser_link"/>
 	</joint>
 
 	<link name="laser_link">
 		<collision>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 -0.03966" rpy="0 0 0"/>
 			<geometry>
 				<box size="0.08 0.08 0.095"/>
 			</geometry>
 		</collision>
 		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 -0.03966" rpy="0 0 0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
 			</geometry>
@@ -162,7 +162,7 @@
 	
 	<link name="laser_link_rear">
 		<visual>
-			<origin xyz="0 0 0" rpy="0 0 3.1416"/>
+			<origin xyz="0 0 -0.037775" rpy="0 0 3.1416"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
 			</geometry>
@@ -170,7 +170,7 @@
 	</link>
 
 	<joint name="laser_connect_rear" type="fixed">
-		<origin xyz="-0.2325 0 0.325" rpy="0 0 3.1416"/>
+		<origin xyz="-0.2325 0 0.36277" rpy="0 0 3.1416"/>
 		<parent link="base_link"/>
 		<child link="laser_link_rear"/>
 	</joint>
