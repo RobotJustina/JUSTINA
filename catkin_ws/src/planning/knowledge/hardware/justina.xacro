@@ -328,14 +328,17 @@
 	<link name="head_link2"/>
 	
 	<joint name="kinect_connect" type="fixed">
-		<origin xyz="0.0218 -0.0758 0" rpy="0 1.5707 0"/>
+		<!-- origin xyz="0.0218 -0.0758 0" rpy="0 1.5707 0"/-->
+		<!-- This is for the offset -->
+		<origin xyz="0.0618 -0.0758 0" rpy="0 1.5707 0"/>
 		<parent link="head_link2"/>
 		<child link="kinect_link"/>
 	</joint>
 	
 	<link name="kinect_link">
 		<visual>
-			<!-- origin xyz="0 0.04 -0.03" rpy="0 ${PI} 0"/-->
+			<!-- This is for the offset -->
+			<origin xyz="0 0 -0.04" rpy="0 0 0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/kinect.dae"/>
 			</geometry>
