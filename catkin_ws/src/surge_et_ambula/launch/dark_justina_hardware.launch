@@ -30,11 +30,11 @@
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="true"/>
 			<param name="read_simul" value="false"/>
-			<param name="simul" value="$(arg simul)"/>
+			<param name="simul" value="true"/>
 		</node>
 		<node name="torso" pkg="torso" type="torso_node_pololu" output="screen">
-			<param name="simul" value="$(arg simul)"/>
-			<param name="port" value="/dev/justinaTorso"/>
+			<param name="simul" value="true"/>
+			<param name="port" value="/dev/ttyACM0"/>
 			<param name="baud" value="9600"/>
 		</node>
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
