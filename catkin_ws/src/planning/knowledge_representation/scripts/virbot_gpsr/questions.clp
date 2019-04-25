@@ -669,7 +669,7 @@
 
 )
 
-;;;;; insert quentity of poses
+;;;;; insert quantity of poses
 (defrule set_pose_q
 	?f <- (cmd_set_pose_q ?pose ?q 1)
 	?f1 <- (item (type Pose)(name ?pose))
@@ -696,3 +696,38 @@
 	(printout t "Insert person " ?name " " ?pose " " ?gender)
 	(assert (crowd (name ?name) (pose ?pose) (gender ?gender) (gesture nil)))
 )
+;;;;;get size prop
+(defrule get_size_value
+	?f <- (cmd_get_prop_value ?obj ?size&:(or (eq ?size biggest) (eq ?size smallest)) 1)
+	(item (name ?obj) (size ?s))
+	=>
+	(retract ?f)
+	(printout t "" ?s "")
+)
+
+(defrule get_weight_value
+	?f <- (cmd_get_prop_value ?obj ?heavy&:(or (eq ?heavy heaviest) (eq ?heavy lightest)) 1)
+	(item (name ?obj) (weight ?s))
+	=>
+	(retract ?f)
+	(printout t "" ?s "")
+)
+
+(defrule get_height_value
+	?f <- (cmd_get_prop_value ?obj ?large&:(or (eq ?large largest) (eq ?large thinnest)) 1)
+	(item (name ?obj) (height ?s))
+	=>
+	(retract ?f)
+	(printout t "" ?s "")
+)
+;;;;;;;
+(defrule get_speech
+	?f <- (cmd_get_speech 1)
+	?f1 <- (item (name speech)(image ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (image nil))
+	(printout t "" ?speech "")
+)
+
+;;;;

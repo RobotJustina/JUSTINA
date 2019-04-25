@@ -715,6 +715,49 @@ meaning_mapping_patterns_gpsr = [
 				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        ##tell me which are the three $oprop (objects | {category}) on the {placement 1 meta: Place at least 5 objects on the {placement 1}}
+	{"params": ["Action_tell", "Person", "Three", "Oprop", "Object", "Location"],
+	"Action_tell": [["tell"], [], [], []],
+	"Person": [["me"], [], [], []],
+        "Three": [["three", "3"],[],[],[]],
+	"Oprop": [[], [], ["adjectivea"], []],
+	"Object": [["object", "objects"], [], [], []],
+	"Location":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_prop_object) (params -Oprop- nil three) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_what_three_cat) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        ##tell me which are the three $oprop (objects | {category}) on the {placement 1 meta: Place at least 5 objects on the {placement 1}}
+	{"params": ["Action_tell", "Person", "Three", "Oprop", "Category", "Location"],
+	"Action_tell": [["tell"], [], [], []],
+	"Person": [["me"], [], [], []],
+        "Three": [["three", "3"],[],[],[]],
+	"Oprop": [[], [], ["adjectivea"], []],
+	"Category": [[], [], ["category"], []],
+	"Location":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_prop_object) (params -Oprop- -Category- three) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_what_three_cat) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        ##$vbfind three {category} in the {room meta: Place only 3 objects in the room}
+	{"params": ["Action_find", "Three", "Category", "Location"],
+        "Action_find": [["find", "look_for", "locate"], [], [], []],
+	"Three": [["three"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"Location":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
+	"verbal_confirmation": '',	
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
 
 ]
@@ -938,7 +981,7 @@ meaning_mapping_patterns_high_gpsr = [
 
         ##$vbfind three {category} in the {room meta: Place only 3 objects in the room}
 	{"params": ["Action_find", "Three", "Category", "Location"],
-	"Action_find": [["tell"], [], [], []],
+        "Action_find": [["find", "look_for", "locate"], [], [], []],
 	"Three": [["three"], [], [], []],
 	"Category": [[], [], ["category"], []],
 	"Location":[[], [], ["place"], []],

@@ -93,6 +93,19 @@ std::pair<bool, int> findInVector( std::vector<T> & vecOfElements, const T & ele
     return result;
 }
 
+struct propObj{
+    std::string obj;
+    int value;
+};
+
+bool compareUpward(propObj obj1, propObj obj2){
+    return (obj1.value < obj2.value);
+}
+
+bool compareDownward(propObj obj1, propObj obj2){
+    return (obj1.value > obj2.value);
+}
+
 bool lateralMov(float &pos, float &advance, float &maxAdvance){
     bool finishMotion = false;
 		pos += advance;
@@ -661,6 +674,15 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				responseMsg.successful = 1;
 			}
 		}
+        else if(param1.compare("tell_what_three_cat") == 0){
+            ss.str("");
+            ss << "(assert (cmd_get_speech 1))";
+            std::string query;
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+		    boost::replace_all(query, "_", " ");
+            JustinaHRI::waitAfterSay(query, 2000);
+			responseMsg.successful = 1;
+        }
 		else if(param1.compare("tell_gender_pose") == 0){
 			ss.str("");
 			if (currentName == "no_gender_pose")
@@ -1384,13 +1406,14 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::string opropObj;
 	std::vector<std::string> objects;
     std::vector<int> obj_index;
+    std::vector<propObj> prop_obj;
 	currentName = tokens[1];
 	categoryName = tokens[2];
 
 	bool finishMotion = false;
 	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 
-	if(tokens[1] == "biggest")
+	/*if(tokens[1] == "biggest")
 		prop = "bigger";
 	else if (tokens[1] == "smallest")
 		prop = "smaller";
@@ -1401,16 +1424,21 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	else if (tokens[1] == "largest")
 		prop = "larger";
 	else if (tokens[1] == "thinnest")
-		prop = "thinner";
+		prop = "thinner";*/
 
     std::string query;
+    std::string category;
+    
+    category = tokens[2];
+    if(category == "nil")
+        category = "objects";
 
 	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
-		
+    	
 	do{	
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		std::cout << "Find a object " << std::endl;
@@ -1451,16 +1479,26 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	if(objects.size() == 0){
 		objectName = "none";
 		responseMsg.successful = 0;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "I_am_sorry,_i_can_not_find_the_three_" << tokens[1] << "_" << category;
 	}
 
 	else if (objects.size() == 1){
 		std::cout << "There are only one object" << std::endl;
 		objectName = objects.at(0);
 		responseMsg.successful = 1;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "The_" << tokens[1] << "_" << category <<"_that_i_found_is_";
+        propObj obj_aux;
+        obj_aux.obj = objects.at(0);
+        obj_aux.value = 1;
+        prop_obj.push_back(obj_aux);
 	}
 
-	bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
-	if (success && objects.size() > 1) {
+	/*bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
+	if (tokens[0] == "only_find" && success && objects.size() > 1) {
 		knowledge_msgs::StrQueryKDB srv;
 		objectName = objects.at(0);
 		for(int i=1; i<objects.size(); i++){
@@ -1479,7 +1517,44 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				responseMsg.successful = 0;
 			}
 		}
-	}
+	}*/
+
+    if (objects.size() > 1){
+        propObj obj_aux;
+        for(int i = 0; i < objects.size(); i++){
+            ss.str("");
+            ss << "(assert (cmd_get_prop_value " << objects.at(i)<< " " << tokens[1] << " 1))";
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+            obj_aux.obj = objects.at(i);
+            obj_aux.value = std::atoi(query.c_str());
+            prop_obj.push_back(obj_aux);
+        }
+        if(tokens[1] == "biggest" || tokens[1] == "heaviest" || tokens[1] == "largest"){
+            std::sort(prop_obj.begin(), prop_obj.end(), compareDownward);
+        }
+        else{
+            std::sort(prop_obj.begin(), prop_obj.end(), compareUpward);
+        }
+        objectName = prop_obj.at(0).obj;
+        responseMsg.successful = 1;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "The_" << tokens[1] << "_"<< category <<"_that_i_found_are_";
+    }
+
+    if(tokens[0] == "find_three_obj"){
+        int i = 0;
+        while (i < 3 && i < prop_obj.size()){
+                if (i == 2)
+                    ss << "and_the_" << prop_obj.at(i).obj;
+                else if (i == 1 && prop_obj.size() == 2)
+                    ss << "and_the_" << prop_obj.at(i).obj;
+                else 
+                    ss << "the_" << prop_obj.at(i).obj << ",_";
+                i++;
+        }
+        responseMsg.params = ss.str();
+    }
 
     if(tokens[0] == "for_grasp"){
         if (objects.size() == 0){

@@ -108,6 +108,35 @@
 	(modify ?f2 (status nil))
 )
 
+(defrule task_find_three_oprop_object
+	?f <- (task ?plan find_prop_object ?oprop nil three ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name object))
+	=>
+	(retract ?f)
+	(printout t "Get relpos object")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pfind_three_oprop_obj ?oprop nil three ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
+(defrule task_find_three_oprop_category
+	?f <- (task ?plan find_prop_object ?oprop ?category three ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name object))
+	(item (type Category) (name ?category))
+	=>
+	(retract ?f)
+	(printout t "Get relpos object")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pfind_three_oprop_obj ?oprop ?category three ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -192,6 +221,16 @@
 	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
 	(assert (finish-planner ?name 7))
 )
+
+(defrule plan_find_three_oprop_object
+	?goal <- (objetive find_three_oprop_obj ?name ?oprop ?category three ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN find three oprop objects" crlf)
+	(assert (plan (name ?name) (number 1)(actions property_object ?oprop ?category three)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_finded)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -256,6 +295,16 @@
 	=>
 	(retract ?f1)
 	(assert (objetive get_oprop_obj task_get_oprop_obj ?place ?oprop ?category ?step))
+)
+
+(defrule exe_scheduled-find-three-oprop-object 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pfind_three_oprop_obj ?oprop ?category three ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive find_three_oprop_obj task_find_three_oprop_obj ?oprop ?category three ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

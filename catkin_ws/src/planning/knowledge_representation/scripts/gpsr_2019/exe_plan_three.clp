@@ -152,4 +152,32 @@
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; thre oprop objects
+(defrule exe-plan-find-three-opos-object
+	(plan (name ?name) (number ?num-pln) (status active) (actions property_object ?oprop ?category three)(duration ?t))
+	=>
+        (bind ?command (str-cat "find_three_obj " ?oprop " " ?category ""))
+	(assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
+)
+
+(defrule exe-plan-finded-three-oprop-object 
+        ?f <-  (received ?sender command prop_obj ?type ?oprop ?category ?speech 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+	(modify ?f3 (image ?speech))
+)
+
+(defrule exe-plan-no-finded-three-oprop-object 
+        ?f <-  (received ?sender command ?find_object ?type ?oprop ?category ?speech 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (image ?speech))
+)
+
+;;;;;;;;;;;;;;;;;;;;
