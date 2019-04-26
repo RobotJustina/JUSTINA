@@ -528,9 +528,10 @@
         ?f4 <- (visit_places ?n2)
 	?f5 <- (Arm (name ?arm))
         =>
-        (retract ?f3)
+        ;(retract ?f3)
         (retract ?f)
         (retract ?f4)
+	(retract ?f6)
         (assert (delate_no_visited_rooms ?name))
         (modify ?f2 (status accomplished))
         (modify ?f1 (pose ?x ?y ?z) (status finded))
@@ -592,19 +593,35 @@
 
 (defrule exe-plan-found-cat
         ?f <-  (received ?sender command find_category ?category ?place ?cantidad 1)
-        ?f1 <- (item (name ?category))
+        ;?f1 <- (item (name ?category))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category ?place))
-        ?f3 <- (finish-planner ?name ?n1)
+        ;?f3 <- (finish-planner ?name ?n1)
         ?f4 <- (visit_places ?n2)
+	?f5 <- (num_objects_found ?nof)
         =>
-        (retract ?f3)
+        ;(retract ?f3)
         (retract ?f)
         (retract ?f4)
-        (assert (delate_no_visited_rooms ?name))
+	(retract ?f5)
+        ;(assert (delate_no_visited_rooms ?name))
         (modify ?f2 (status accomplished))
-        (modify ?f1 (status finded))
-        (assert (finish-planner ?name ?num-pln))
+        ;(modify ?f1 (status finded))
+        ;(assert (finish-planner ?name ?num-pln))
         (assert (visit_places (+ 2 ?n2)))
+	(assert (num_object_found (+ ?nof ?cantidad)))
+)
+
+(defrule exe-plan-only-found-object-finish-planner
+	?f <- (plan (name ?name) (number ?num-pln)(status accomplished)(actions review_room ?category ?room) (actions_num_params ?n))
+	?f1 <- (num_objects_found ?nof&:(>= (?n ?nof)))
+	?f2 <- (finish-planner ?name ?n1)
+	?f3 <- (item (name ?category))
+	=>
+	(retract ?f1 ?f2)
+	(assert (delate_no_visited_rooms ?name))
+	(assert (finish-planner ?name ?num-pln))
+	(assert (num_objects_found 0))
+	(modify ?f3 (status finded))
 )
 
 (defrule exe-plan-no-found-cat

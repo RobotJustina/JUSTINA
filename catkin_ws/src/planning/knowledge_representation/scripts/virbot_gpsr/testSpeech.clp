@@ -33,7 +33,7 @@
 	;;for get places into the room
 	(num_places 0)
         (visit_places 0)
-	(num_objects_found 1)
+	(num_objects_found 0)
 	(start split_room)
 
 	;;for speech generation of the number of orders in eegpsr cat2 montreal

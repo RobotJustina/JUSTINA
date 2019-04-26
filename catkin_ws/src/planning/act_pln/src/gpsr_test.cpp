@@ -1245,7 +1245,8 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
 	int numObj  = 0;
-    std::string query;
+	std::string query;
+	std::vector<std::string> objects;
 
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -1267,6 +1268,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					//std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
                     if(query == tokens[0])
                        numObj++;
+			objects.push_back(vObject.id);
 				}
 			}
 		}
@@ -1277,6 +1279,17 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	ss.str("");
 	currentName = tokens[0];
 	if(numObj > 0){
+		ss << "I found the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
+		ss.str("");
+		ss << "I found ";
+		for (int i = 0; i < objects.size(); i++){
+			if(i == objects.size() - 1 && i != 0)
+				ss << " and the " << objects.at(i);
+			else
+				ss << "the " << objects.at(i) << ", ";
+		}
+		ss.str();
 		ss << "I found " << numObj << " " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
