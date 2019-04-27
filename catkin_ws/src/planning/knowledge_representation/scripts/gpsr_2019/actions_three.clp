@@ -137,6 +137,21 @@
 	(modify ?f2 (status nil))
 )
 
+
+(defrule task_find_three_oprop_category
+	?f <- (task ?plan find_category_room ?category ?place three ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (type Category) (name ?category))
+	=>
+	(retract ?f)
+	(printout t "Find three objects of some category in some room")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments ?category status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pfind_three_cat ?category ?place three ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -148,7 +163,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?obj ?room)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions review_room ?obj ?room)(actions_num_params 3 5)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?obj ?room)(actions_num_params 3 5 1)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions make_task ?name ?obj finded)(actions_num_params 4 4)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions move manipulator ?obj)(duration 6000)))
 	(assert (plan (name ?name) (number 5)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
@@ -231,6 +246,17 @@
 	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_finded)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
+
+(defrule plan_find_three_cat
+	?goal <- (objetive find_three_cat ?name ?category ?room three ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Find Three Category Object Task" crlf)
+        (assert (plan (name ?name) (number 1)(actions ask_for ?category ?room)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?category ?room)(actions_num_params 3 3 3)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_finded)(duration 6000)))
+        (assert (finish-planner ?name 3))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -307,4 +333,13 @@
 	(assert (objetive find_three_oprop_obj task_find_three_oprop_obj ?oprop ?category three ?step))
 )
 
+(defrule exe_scheduled-find-three-cat 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pfind_three_cat ?category ?place three ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive find_three_cat task_find_three_cat ?category ?place three ?step))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1256,6 +1256,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		for (int j = 0; j < 10; j++) {
 			std::cout << "Test object" << std::endl;
             numObj = 0;
+            objects.clear();
 			found = JustinaVision::detectObjects(recognizedObjects);
 			if (found) {
 				found = false;
@@ -1268,7 +1269,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					//std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
                     if(query == tokens[0])
                        numObj++;
-			objects.push_back(vObject.id);
+			            objects.push_back(vObject.id);
 				}
 			}
 		}

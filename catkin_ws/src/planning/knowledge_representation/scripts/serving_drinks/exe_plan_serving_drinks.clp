@@ -44,7 +44,7 @@
 ;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-offer-drink
-	(plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders) (duration ?t))
+	(plan (name ?name) (number ?num-pln) (status active) (actions offer_drink ?eatdrink) (actions_num_params ?orders) (duration ?t))
 	=>
 	(bind ?command (str-cat "offer-drink"))
 	(assert (send-blackboard ACT-PLN offer_drink ?command ?t 4))
@@ -53,7 +53,7 @@
 
 (defrule exe-plan-offered-drink
 	?f <- (received ?sender command offer_drink ?param 1)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink ?eatdrink) (actions_num_params ?orders))
 	?f2 <- (num_order ?n&:(< ?n (+ ?orders 1)))
 	?f3 <- (item (name offer))
 	?f4 <- (item (name people))
@@ -68,7 +68,7 @@
 
 (defrule exe-plan-offered-last-drink
 	?f <- (received ?sender command offer_drink ?param 1)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink ?eatdrink) (actions_num_params ?orders))
 	?f2 <- (num_order ?n&:(eq ?n (+ ?orders 1)))
 	?f3 <- (item (name offer))
 	?f4 <- (item (name people))
@@ -82,8 +82,8 @@
 )
 
 (defrule exe-plan-no-offered-drink
-	?f <- (received ?sender command offer_drink ?parma 0)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
+	?f <- (received ?sender command offer_drink ?param 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink ?eatdrink) (actions_num_params ?orders))
 	?f2 <- (item (name offer))
 	?f3 <- (item (name people))
 	=>

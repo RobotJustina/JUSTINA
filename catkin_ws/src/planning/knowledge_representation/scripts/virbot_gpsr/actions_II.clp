@@ -176,7 +176,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Object Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?object ?room)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(actions_num_params 0 0)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(actions_num_params 0 0 1)(duration 6000)))
         (assert (finish-planner ?name 100))
 )
 
@@ -374,7 +374,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule update_number_task_for_split_room
-	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current)))
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current) ?nof))
 	?f1 <- (plan (name ?name) (number ?current))
 	?f5 <- (update num task)
 	=>
@@ -383,7 +383,7 @@
 )
 
 (defrule update_number_task_for_split_room_final
-	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0)))
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
 	?f1 <- (plan (name ?name) (number ?n))
         ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
 	?f4 <- (num_places ?num)
@@ -401,7 +401,7 @@
 )
 
 (defrule update_number_task_for_split_room_cero
-	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st active) (eq ?st inactive))) (actions review_room ?object ?room) (actions_num_params 0 0))
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st active) (eq ?st inactive))) (actions review_room ?object ?room) (actions_num_params 0 0 ?nof))
 	?f2 <- (update num task)
 	?f3 <- (split_room params ?p1 ?p2)
 	?f4 <- (item (name ?place) (status prev_split)(possession ?room))
@@ -417,7 +417,7 @@
 
 
 (defrule split_review_room
-        ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room) (actions_num_params ?p1 ?p2))
+        ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room) (actions_num_params ?p1 ?p2 ?nof))
         ?f1 <- (item (name ?object) (type Objects))
         ?f3 <- (item (name ?place) (status nil)(possession ?room))
 	?f5 <- (start split_room)
@@ -430,7 +430,7 @@
 )
 
 (defrule split_review_room_no_places
-	?f <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room) (actions_num_params ?p1 ?p2))
+	?f <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room) (actions_num_params ?p1 ?p2 ?nof))
 	(not (item (name ?place) (status nil) (possession ?room)))
 	=>
 	(assert (finish split_room))
@@ -490,12 +490,14 @@
         ?f <- (num_places ?n1)
         ?f2 <- (visit_places ?n2&:(eq ?n2 ?n1))
         ?f3 <- (delate_no_visited_rooms ?name)
+        ?f1 <- (plan (name ?name) (number ?num) (status active) (actions find_cat_obj ?category ?place))
         =>
         (retract ?f)
         (retract ?f2)
         (retract ?f3)
         (assert (num_places 0))
         (assert (visit_places 0))
+	(modify ?f1 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -503,7 +505,7 @@
 
 
 (defrule exe-plan-visit-place
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions review_room ?object ?room) (actions_num_params ?p1 ?p2)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions review_room ?object ?room) (actions_num_params ?p1 ?p2 ?nof)(duration ?t))
 	?f <- (finish split_room)
         =>
 	(retract ?f)
@@ -531,9 +533,9 @@
         ;(retract ?f3)
         (retract ?f)
         (retract ?f4)
-	(retract ?f6)
+	;(retract ?f6)
         (assert (delate_no_visited_rooms ?name))
-        (modify ?f2 (status accomplished))
+        ;(modify ?f2 (status accomplished))
         (modify ?f1 (pose ?x ?y ?z) (status finded))
         (assert (finish-planner ?name ?num-pln))
         (assert (visit_places (+ 2 ?n2)))
@@ -604,24 +606,63 @@
         (retract ?f4)
 	(retract ?f5)
         ;(assert (delate_no_visited_rooms ?name))
-        (modify ?f2 (status accomplished))
+        ;(modify ?f2 (status accomplished))
         ;(modify ?f1 (status finded))
         ;(assert (finish-planner ?name ?num-pln))
         (assert (visit_places (+ 2 ?n2)))
-	(assert (num_object_found (+ ?nof ?cantidad)))
+	(assert (num_objects_found (+ ?nof ?cantidad)))
+	(assert (verify finish_find_cat))
+)
+
+(defrule exe-plan-only-found-object-parcial-planner
+	?f <- (plan (name ?name) (number ?num)(status accomplished)(actions review_room ?category ?room) (actions_num_params ?p1 ?p2 ?n))
+	(num_places ?n1)
+	?f5 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category ?place))
+	?f1 <- (num_objects_found ?nof&:(< ?nof ?n))
+	;?f2 <- (finish-planner ?name ?n2)
+	;?f3 <- (item (name ?category))
+	?f6 <- (verify finish_find_cat)
+	=>
+	(retract ?f6)
+	;(assert (delate_no_visited_rooms ?name))
+	;(assert (finish-planner ?name ?num-pln))
+	;(assert (num_objects_found 0))
+	;(modify ?f3 (status finded))
+	(modify ?f5 (status acomplished))
 )
 
 (defrule exe-plan-only-found-object-finish-planner
-	?f <- (plan (name ?name) (number ?num-pln)(status accomplished)(actions review_room ?category ?room) (actions_num_params ?n))
-	?f1 <- (num_objects_found ?nof&:(>= (?n ?nof)))
-	?f2 <- (finish-planner ?name ?n1)
+	?f <- (plan (name ?name) (number ?num)(status accomplished)(actions review_room ?category ?room) (actions_num_params ?p1 ?p2 ?n))
+	(num_places ?n1)
+	?f5 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category ?place))
+	?f1 <- (num_objects_found ?nof&:(>= ?nof ?n))
+	?f2 <- (finish-planner ?name ?n2)
 	?f3 <- (item (name ?category))
+	?f6 <- (verify finish_find_cat)
 	=>
-	(retract ?f1 ?f2)
+	(retract ?f1 ?f2 ?f6)
 	(assert (delate_no_visited_rooms ?name))
 	(assert (finish-planner ?name ?num-pln))
 	(assert (num_objects_found 0))
 	(modify ?f3 (status finded))
+	;(modify ?f5 (status acomplished))
+)
+
+(defrule exe-plan-only-found-object-finish-planner-final-intent
+	?f <- (plan (name ?name) (number ?num)(status accomplished)(actions review_room ?category ?room) (actions_num_params ?p1 ?p2 ?n))
+	(num_places ?n1)
+	?f5 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category ?place))
+	?f1 <- (num_objects_found ?nof)
+	?f2 <- (finish-planner ?name ?n2)
+	?f3 <- (item (name ?category))
+	?f6 <- (verify finish_find_cat)
+	=>
+	(retract ?f1 ?f2 ?f6)
+	(assert (delate_no_visited_rooms ?name))
+	(assert (finish-planner ?name ?num-pln))
+	(assert (num_objects_found 0))
+	(modify ?f3 (status finded))
+	;(modify ?f5 (status acomplished))
 )
 
 (defrule exe-plan-no-found-cat

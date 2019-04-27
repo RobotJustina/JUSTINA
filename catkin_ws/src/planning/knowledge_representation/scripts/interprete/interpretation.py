@@ -752,14 +752,39 @@ meaning_mapping_patterns_gpsr = [
         ##$vbfind three {category} in the {room meta: Place only 3 objects in the room}
 	{"params": ["Action_find", "Three", "Category", "Location"],
         "Action_find": [["find", "look_for", "locate"], [], [], []],
-	"Three": [["three"], [], [], []],
+	"Three": [["three", "3"], [], [], []],
 	"Category": [[], [], ["category"], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_category_room) (params -Category- -Location- three) (step )) ", 
 	"verbal_confirmation": '',	
 	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
+	"planner_not_confirmed": ''},
+	
+        #guide to room
+	{"params": ["Action_guide", "Pron", "Back"],
+	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
+	"Back":[["back"], [], [], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide current_loc) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
+        ########
+        ### PARTY HOST
+        #########
+        
+        #$vbserve (drinks | snacks) to $phpeopler
+	{"params": ["Action_serve", "EatDrink", "Phpeople", "Place"],
+	"Action_serve": [["serve" , "arrange" ,"deliver" , "distribute" , "give", "provide"], [], [], []],
+	"EatDrink":[[],[],["category"],[]],
+	"Phpeople":[["everyone", "people", "men", "women", "guests", "elders", "children"],[],[],[]],
+	"Place":[[],[],["place"],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type offer_eat_drink) (params -Phpeople- -EatDrink- -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
 ]
 
 meaning_mapping_patterns_high_gpsr = [

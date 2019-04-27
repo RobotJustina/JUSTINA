@@ -12,6 +12,7 @@ exe_plan_two.clp
 exe_plan_eegpsr_2.clp
 exe_plan_eegpsr_2i.clp
 exe_plan_basic_tasks.clp
+exe_plan_serving_drinks.clp
 exec_plan_kdb.clp
 questions.clp
 finish_plan.clp
