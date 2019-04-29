@@ -5992,3 +5992,7 @@ bool JustinaTasks::findGenderGesturePerson(std::string gesture, int gender, floa
 	}
 	return recog;
 }
+
+bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2){
+	return true;
+}
