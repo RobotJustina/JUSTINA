@@ -38,7 +38,14 @@ class JustinaTasks
             SM_MEMORIZING_OPERATOR,
             SM_WAIT_FOR_LEGS_FOUND,
             SM_FOLLOWING_PHASE,
-            SM_FOLLOWING_FINISHED
+            SM_FOLLOWING_FINISHED,
+            SM_INIT,
+            SM_NAVIGATE_LOCATION,
+            SM_FIND_PERSON,
+            SM_GUIDE_PERSON, 
+            SM_CONFIRMATION,
+            SM_INTRODUCE,
+            SM_FINISH
         };
 
         enum POSE{
@@ -72,7 +79,7 @@ class JustinaTasks
         static bool waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &skeletons, POSE pose, float timeout);
         static bool waitRecognizedYolo(std::vector<std::string> ids, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
-        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "");
+        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "", bool guide=false);
         static bool findSkeletonPerson(POSE pose = NONE, std::string location = "");
         static bool turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location);
         static bool findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE specificPos = NONE, std::string location = "");
