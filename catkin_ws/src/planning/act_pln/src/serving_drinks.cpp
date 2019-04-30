@@ -78,7 +78,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	//lastCmdName = msg.name;
 	if (msg.successful == 0
 			&& (msg.name.compare("move_actuator") == 0
-					|| msg.name.compare("find_object") == 0
+					//|| msg.name.compare("find_object") == 0
 					|| msg.name.compare("status_object") == 0
 					|| msg.name.compare("many_obj") == 0
 					|| msg.name.compare("answer") == 0
