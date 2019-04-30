@@ -44,14 +44,15 @@
 	(assert (plan (name ?name) (number 13) (actions set_plan_status ?name)(actions_num_params 5 11)(duration 6000)))
 	
 	(assert (plan (name ?name) (number 14)(actions set_plan_status ?name)(actions_num_params 15 17)(duration 6000)))
-	(assert (plan (name ?name) (number 15) (actions get_ordered_objects ?place1)(actions_num_params 1 1)(duration 6000)));;;(actions_params obj_per_attemp total_orders)
+	(assert (plan (name ?name) (number 15)(actions make_task ?name offer offered) (actions_num_params 16 18)))
+	(assert (plan (name ?name) (number 16) (actions get_ordered_objects ?place1)(actions_num_params 1 1)(duration 6000)));;;(actions_params obj_per_attemp total_orders)
 	;(assert (plan (name ?name) (number 16) (actions find-person specific)(actions_num_params 1 2)(duration 6000)))
-	(assert (plan (name ?name) (number 16) (actions deliver_order ?place2) (duration 6000)))
-	(assert (plan (name ?name) (number 17) (actions repeat_task ?name people deliver_order) (actions_num_params 15 16 1 5) (duration 6000)))
-	(assert (plan (name ?name) (number 18) (actions set_plan_status ?name)(actions_num_params 15 16)(duration 6000)))
-	(assert (plan (name ?name) (number 19) (actions update_status finish_objetive finish_test)(duration 6000)))
+	(assert (plan (name ?name) (number 17) (actions deliver_order ?place2) (duration 6000)))
+	(assert (plan (name ?name) (number 18) (actions repeat_task ?name people deliver_order) (actions_num_params 15 16 1 5) (duration 6000)))
+	(assert (plan (name ?name) (number 19) (actions set_plan_status ?name)(actions_num_params 15 16)(duration 6000)))
+	(assert (plan (name ?name) (number 20) (actions update_status finish_objetive finish_test)(duration 6000)))
 
-	(assert (finish-planner ?name 19))
+	(assert (finish-planner ?name 20))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

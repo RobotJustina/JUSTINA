@@ -335,6 +335,6 @@ defrule exe-plan-droped-actuator
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person person ?place))
         =>
         (retract ?f)
-        (modify ?f2 (status active))   
+        (modify ?f2 (status accomplished))   
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

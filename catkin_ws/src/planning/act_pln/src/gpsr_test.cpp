@@ -68,7 +68,7 @@ std::string cat_grammar= "gpsr_guadalajara.xml";
 std::string microsoft_grammars[3];
 std::string sphinx_grammars[3];
 bool alternative_drink = true;
-bool poket_reco = true;
+bool poket_reco = false;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
@@ -157,7 +157,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	//lastCmdName = msg.name;
 	if (msg.successful == 0
 			&& (msg.name.compare("move_actuator") == 0
-					|| msg.name.compare("find_object") == 0
+					//|| msg.name.compare("find_object") == 0
 					|| msg.name.compare("status_object") == 0
 					|| msg.name.compare("many_obj") == 0
 					|| msg.name.compare("answer") == 0
@@ -3513,6 +3513,9 @@ int main(int argc, char **argv) {
 		std::cout << "MAX TIME: " << maxTime << std::endl;
 		std::cout << "Grammar: " << cat_grammar << std::endl;}
 
+        microsoft_grammars[0] = "confirmation.xml";
+        microsoft_grammars[1] = "what_drink.xml";
+        microsoft_grammars[2] = "name_response.xml";
 
 	while (ros::ok()) {
 
