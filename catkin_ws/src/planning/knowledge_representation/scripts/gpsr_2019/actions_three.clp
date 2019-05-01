@@ -152,6 +152,70 @@
 	(modify ?f2 (status nil))
 )
 
+(defrule task_find_person_in_door
+	?f <- (task ?plan find_person_in_door ?person ?door ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name ?person))
+	?f3 <- (item (name ?door) (image ?location))
+	?f4 <- (item (name ?location))
+	=>
+	(retract ?f)
+	(printout t "Find a person in the door")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_went)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pfind_person_in_door ?person ?location ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status current_person))
+	(modify ?f4 (status nil))
+)
+
+(defrule task_introduce_to_people
+	?f <- (task ?plan introduce_person ?php ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name ?place))
+	?f3 <- (item (name ?person) (status current_person))
+	=>
+	(retract ?f)
+	(printout t "Introduce person to people")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_introduced)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pintroduce_person ?person ?php ?place ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+	(modify ?f3 (status nil))
+)
+
+(defrule task_introduce_to_person
+	?f <- (task ?plan introduce_person ?person1 ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name ?place))
+	?f3 <- (item (name ?person2) (status current_person))
+	?f4 <- (item (name ?person1))
+	=>
+	(retract ?f)
+	(printout t "Introduce person to people")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_introduced)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pintroduce_person ?person1 ?person2 ?place ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+	(modify ?f3 (status nil))
+)
+
+(defrule task_make_a_question
+	?f <- (task ?plan make_question ?question ?step)
+	?f1 <- (item (name finish_objetive))
+	?f2 <- (item (name ?person) (status current_person))
+	=>
+	(retract ?f)
+	(printout t "Justina Make a question")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pmake_question ?person ?question ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -257,6 +321,48 @@
 	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_finded)(duration 6000)))
         (assert (finish-planner ?name 3))
 )
+
+(defrule plan_find_person_in_door
+	?goal <- (objetive find_person_in_door ?name ?person ?place ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-person specific ?person ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_went)(duration 6000)))
+	(assert (finish-planner ?name 3))
+)
+
+(defrule plan_introduce_person
+	?goal <- (objetive introduce_person ?name ?person ?php ?place ?step)
+	=>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
+	(bind ?speech(str-cat "I am sorry, I could not find " ?person))
+	(assert (plan (name ?name) (number 1)(actions make_task_neg ?name ?person went)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name ?person went)(actions_num_params 4 5)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions introduce-person ?person ?php ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions update_status finish_objetive finaly_introduced)(duration 6000)))
+	(assert (finish-planner ?name 6))
+)
+
+(defrule plan_make_question_leave
+	?goal <- (objetive make_question ?name ?person leave ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Justina make a question" crlf)
+	(bind ?q(str-cat "Hello,_do_you_want_to_leave_the_house"))
+	(bind ?confirmation(str-cat "do_you_really_want_to_leave"))
+	(bind ?speech(str-cat "I am sorry, I could not find the person"))
+	(assert (plan (name ?name) (number 1)(actions make_task_neg ?name ?person went)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name ?person went) (actions_num_params 4 4)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions make_question leave ?q ?confirmation)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions update_status finish_objetive finaly_asked)(duration 6000)))
+	(assert (finish-planner ?name 5))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -341,5 +447,35 @@
 	=>
 	(retract ?f1)
 	(assert (objetive find_three_cat task_find_three_cat ?category ?place three ?step))
+)
+
+(defrule exe_scheduled-find-person-in-door 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pfind_person_in_door ?person ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive find_person_in_door task_find_person_in_door ?person ?place ?step))
+)
+
+(defrule exe_scheduled-introduce-person 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pintroduce_person ?person ?php ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive introduce_person task_introduce_person ?person ?php ?place ?step))
+)
+
+(defrule exe_scheduled-make-question  
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pmake_question ?person ?question ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive make_question task_make_question ?person ?question ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

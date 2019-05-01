@@ -309,6 +309,10 @@
 	( item (type Door) (name outsidedoor) (status closed) )
 	( item (type Door) (name fridgedoor) (status closed) (possession fridge))
 	( item (type Door) (name cupboarddoor) (status closed) (possession cupboard))
+	( item (type Door) (name front) (image entrance)(status closed) (possession cupboard))
+	( item (type Door) (name main) (image entrance)(status closed) (possession cupboard))
+	( item (type Door) (name back) (image exit)(status closed) (possession cupboard))
+	( item (type Door) (name rear) (image exit)(status closed) (possession cupboard))
 	( item (type Zone) (name tablezone) (status closed) (possession table))
 
 ; Human-Robot-Interface

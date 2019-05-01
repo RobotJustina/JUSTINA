@@ -784,6 +784,69 @@ meaning_mapping_patterns_gpsr = [
 	"conceptual_dependency": "(task (plan user_speech) (action_type offer_eat_drink) (params -Phpeople- -EatDrink- -Place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        #$vbmeet {name} at the $door and introduce {pron} to $phpeopler
+	{"params": ["Action_meet", "Person", "Pos", "Door"],
+	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
+	"Person":[[],[],["person"],[]],
+	"Pos":[["front", "back", "main", "rear"],[],[],[]],
+	"Door":[["entrance", "door"],[],[],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_door) (params -Person- -Pos-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+	{"params": ["Action_introduce", "Pron", "Phpeople", "Place"],
+	"Action_introduce": [["introduce"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
+	"Phpeople":[["everyone", "people", "men", "women", "guests", "elders", "children"],[],[],[]],
+	"Place":[[],[],["place"],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type introduce_person) (params -Phpeople- -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        #$vbmeet {name} at the {beacon} and ask {pron} to leave
+	{"params": ["Action_meet", "Person", "Place"],
+	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
+	"Person":[[],[],["person"],[]],
+	"Place":[[],[],["place"],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        {"params": ["Action_ask", "Pron", "To", "Leave"],
+	"Action_ask": [["ask"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
+	"To":[["to"],[],[],[]],
+	"Leave":[["leave"],[],[],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type make_question) (params leave) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        #$vbmeet {name 1} at the {beacon 1} and introduce {pron} to {name 2} at the {beacon 2}
+	{"params": ["Action_introduce", "Pron", "Person", "Place"],
+	"Action_introduce": [["introduce"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
+	"Person":[[],[],["person"],[]],
+	"Place":[[],[],["place"],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type introduce_person) (params -Person- -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        #$vbmeet {name 1} at the {beacon 1} and $vbguide {pron} to {pron pos} $taxi
+	{"params": ["Action_guide", "Pron", "To", "Taxi"],
+	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
+	"To":[["To"],[],[],[]],
+	"Taxi":[["taxi", "cab", "uber"],[],[],[]],
+	"conceptual_dependency": "(task (plan user_speech) (action_type guide_to_taxi) (params man_guide ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
 ]
 

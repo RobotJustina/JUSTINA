@@ -3039,6 +3039,46 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Introduce Person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	
+    responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdMakeQuestion(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Make Question ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	
+    responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for incomplete information ---------"
 			<< std::endl;
@@ -3471,6 +3511,8 @@ int main(int argc, char **argv) {
     ros::Subscriber subCmdTrainPerson = n.subscribe("/planning_clips/cmd_train_person", 1, callbackCmdTrainPerson);
     ros::Subscriber subCmdGetOrderObject = n.subscribe("/planning_clips/cmd_get_order_object", 1, callbackCmdGetOrderObject);
     ros::Subscriber subCmdDeliverOrder = n.subscribe("/planning_clips/cmd_deliver_order", 1, callbackCmdDeliverOrder);
+    ros::Subscriber subCmdIntroducePerson = n.subscribe("/planning_clips/introduce_person", 1, callbackCmdIntroducePerson);
+    ros::Subscriber subCmdMakeQuestion = n.subscribe("/planning_clips/make_question", 1, callbackCmdMakeQuestion);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);

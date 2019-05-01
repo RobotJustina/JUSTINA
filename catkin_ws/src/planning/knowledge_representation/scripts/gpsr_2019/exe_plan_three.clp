@@ -180,4 +180,53 @@
 	(modify ?f3 (image ?speech))
 )
 
-;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;  introduce person to people
+(defrule exe-plan-introduce-person 
+	(plan (name ?name) (number ?num-pln) (status active) (actions introduce-person ?person ?php ?place)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?person " " ?php  " " ?place ""))
+	(assert (send-blackboard ACT-PLN introduce_person ?command ?t 4))
+)
+
+(defrule exe-plan-introduced-person 
+        ?f <-  (received ?sender command introduce_person ?person ?php ?place 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-introduced-person
+        ?f <-  (received ?sender command introduce_person ?person ?php ?place 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;; make a question
+(defrule exe-plan-make-a-question 
+	(plan (name ?name) (number ?num-pln) (status active) (actions make_question ?type ?q ?conf)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?type " " ?q  " " ?conf ""))
+	(assert (send-blackboard ACT-PLN make_question ?command ?t 4))
+)
+
+(defrule exe-plan-made_a_question
+        ?f <-  (received ?sender command make_question ?t ?q ?conf 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions make_question $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-made-a-question
+        ?f <-  (received ?sender command make_question ?t ?q ?conf 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions make_question $?params))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+;;;;;;
+

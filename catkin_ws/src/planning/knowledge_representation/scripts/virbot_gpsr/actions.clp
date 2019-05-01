@@ -87,7 +87,7 @@
 	(assert (cd-task (cd pfindperson) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;
 	(modify ?f1 (status nil))
-	(modify ?f2 (status nil))
+	(modify ?f2 (status current_person))
 )
 
 
@@ -104,7 +104,7 @@
 	(assert (cd-task (cd pfindspcperson) (actor robot)(obj robot)(from ?person)(to ?place)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;
 	(modify ?f1 (status nil))
-	(modify ?f2 (status nil))
+	(modify ?f2 (status current_person))
 )
 
 (defrule task_get_object
