@@ -569,6 +569,20 @@ def cmd_follow_to_taxi(cmd):
     pubCmdFollowToTaxi.publish(request)
     return cmd._id
 
+def introduce_person(cmd):
+    global pubCmdIntroducePerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdIntroducePerson.publish(request)
+    return cmd._id
+
+def make_question(cmd):
+    global pubCmdMakeQuestion 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdMakeQuestion.publish(request)
+    return cmd._id
+
 def offer_drink(cmd):
     global pubCmdOfferDrink 
     print "Executing Function: " + cmd.name
@@ -660,7 +674,9 @@ fmap = {
     'deliver_order':deliver_order,
     'objects_on_location':objects_on_location,
     'cmd_get_bag': cmd_get_bag,
-    'cmd_follow_to_taxi': cmd_follow_to_taxi 
+    'cmd_follow_to_taxi': cmd_follow_to_taxi,
+    'introduce_person': introduce_person,
+    'make_question': make_question
 }
 
 def quit():
@@ -676,7 +692,7 @@ def main():
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
-    global pubCmdGetBag, pubCmdFollowToTaxi 
+    global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -721,6 +737,8 @@ def main():
     pubCmdClipsSignal = rospy.Publisher('/planning_clips/cmd_clips_signal', PlanningCmdClips, queue_size=1)
     pubCmdGetBag = rospy.Publisher('/planning_clips/cmd_get_bag', PlanningCmdClips, queue_size=1)
     pubCmdFollowToTaxi = rospy.Publisher('/planning_clips/cmd_follow_to_taxi', PlanningCmdClips, queue_size=1)
+    pubCmdIntroducePerson = rospy.Publisher('/planning_clips/introduce_person', PlanningCmdClips, queue_size=1)
+    pubCmdMakeQuestion = rospy.Publisher('/planning_clips/make_question', PlanningCmdClips, queue_size=1)
     
     ##topicos de serving drinks
     pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)

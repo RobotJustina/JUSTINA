@@ -38,7 +38,14 @@ class JustinaTasks
             SM_MEMORIZING_OPERATOR,
             SM_WAIT_FOR_LEGS_FOUND,
             SM_FOLLOWING_PHASE,
-            SM_FOLLOWING_FINISHED
+            SM_FOLLOWING_FINISHED,
+            SM_INIT,
+            SM_NAVIGATE_LOCATION,
+            SM_FIND_PERSON,
+            SM_GUIDE_PERSON, 
+            SM_CONFIRMATION,
+            SM_INTRODUCE,
+            SM_FINISH
         };
 
         enum POSE{
@@ -72,7 +79,7 @@ class JustinaTasks
         static bool waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &skeletons, POSE pose, float timeout);
         static bool waitRecognizedYolo(std::vector<std::string> ids, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
-        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "");
+        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "", bool guide=false);
         static bool findSkeletonPerson(POSE pose = NONE, std::string location = "");
         static bool turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location);
         static bool findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE specificPos = NONE, std::string location = "");
@@ -117,11 +124,15 @@ class JustinaTasks
         static bool visitorOpenDoor(int timeout);
         static bool followVisitor();
         static bool findAndGuideYolo(std::vector<std::string> ids, POSE pose = NONE, std::string location = "");
+	static bool getNearestRecognizedYolo(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location);
+        
+        static bool waitRecognizedFaceGesture(float timeout, std::string id, int gender, std::string gesture, std::vector<vision_msgs::VisionFaceObject> &facesRecog, Eigen::Vector3d &centroidFace, std::string location = "");
+        static bool findGenderGesturePerson(std::string gesture, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidFace, POSE pose = NONE, std::string location = "", bool fWaitSpecificGesture= true);
+        static bool introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeSkeleton(POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidSkeleton, std::string location);
         static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture, std::string location);
         static bool getNearestRecognizedSkeleton(std::vector<vision_msgs::Skeleton> skeletons, float distanceMax, Eigen::Vector3d &centroid, std::string location);
-        static bool getNearestRecognizedYolo(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location);
         static std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized);
 };

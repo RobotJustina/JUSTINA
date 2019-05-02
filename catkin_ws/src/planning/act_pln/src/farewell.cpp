@@ -29,10 +29,10 @@
 #define SM_WAIT_NAME 120
 #define SM_COMFIRMATION_NAME 130
 
-#define GRAMMAR_POCKET_COMMANDS "grammars/pre_guadalajara/receptionist_commands.jsgf"
-#define GRAMMAR_POCKET_NAMES "grammars/pre_guadalajara/receptionist_names.jsgf"
-#define GRAMMAR_COMMANDS "receptionist_commands.xml"
-#define GRAMMAR_NAMES "receptionist_names.xml"
+#define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
+#define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
+#define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_NAMES "people_names.xml"
 #define TIMEOUT_SPEECH 10000
 #define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
 #define MAX_DELAY_AFTER_SAY 300
@@ -276,16 +276,7 @@ int main(int argc, char** argv)
 
 
                 switchSpeechReco(true, GRAMMAR_POCKET_COMMANDS, GRAMMAR_COMMANDS, "Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no");
-                /*JustinaHRI::enableSpeechRecognized(false);
-                JustinaHRI::waitAfterSay("Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no", 12000);
-                ros::Duration(1.0).sleep();
-                if(JustinaHRI::usePocketSphinx)
-                    JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
-                else
-                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);*/
                 
-                //JustinaHRI::enableSpeechRecognized(true);
-
 
                 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
@@ -313,186 +304,7 @@ int main(int argc, char** argv)
 
                 break;
 
-            /*case SM_RecognizeGuest:
-                std::cout << "Farewell Test...-> SM_RecognizeVisitor" << std::endl;
-                attemptsSpeechReco = 0;
-                attemptsSpeechInt = 0;
-                lastName = "guest";
-
-                JustinaHRI::waitAfterSay("Hello human, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
-                   if(JustinaHRI::usePocketSphinx)
-                       JustinaHRI::enableGrammarSpeechRecognized(grammarNamesID, 0);//load the grammar
-                   else
-                       JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_NAMES);
-
-                JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
-                attemptsConfirmation = 0;
-                attemptsWaitConfirmation = 0;
-
-                nextState = SM_WAIT_NAME;
-
-                break;
             
-            case SM_WAIT_NAME:
-                std::cout <<  "Farewell-> State: SM_WAIT_NAME" << std::endl;
-                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH)){
-                    if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech)){
-                        if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param)){
-                            ss.str("");
-                            if(typeOrder.compare("receptionist_guest_name") == 0){
-                                tokens.clear();
-                                if(param.compare(" ") != 0 || param.compare("") != 0){
-                                    ss << "so, is your name ";
-                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
-                                    ss2.str("");
-                                    for(int i = 0; i < tokens.size(); i++){
-                                        ss << tokens[i] << " ";
-                                        ss2 << tokens[i];
-                                        if(i < tokens.size() -1)
-                                            ss2 << " ";
-                                    }
-                                    lastName = ss2.str();
-                                    ss << ", please tell me justina yes or justina no";
-                                    JustinaHRI::enableSpeechRecognized(false);
-                                    JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
-                                    if(JustinaHRI::usePocketSphinx)
-                                        JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
-                                    else
-                                        JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
-                                    JustinaHRI::enableSpeechRecognized(true);
-                            
-                                    nextState = SM_COMFIRMATION_NAME;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if(attemptsSpeechInt < MAX_ATTEMPTS_SPEECH_INT){
-                        JustinaHRI::enableSpeechRecognized(false);
-                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
-                        attemptsSpeechInt++;
-                        JustinaHRI::enableSpeechRecognized(true);
-                    }
-                    else{
-                        JustinaHRI::enableSpeechRecognized(false);
-                        attemptsSpeechReco = 0;
-                        attemptsSpeechInt = 0;
-                    
-                        ss2.str("");
-                        if(lastName.compare("guest"))
-                            ss2 << "Sorry I can not understand your name ";
-                        else
-                            ss2 << "Ok, your name is " << lastName;
-                        JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
-                        names.push_back(lastName);
-
-                        JustinaHRI::enableSpeechRecognized(true);
-                    
-                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				        ros::Duration(1.0).sleep();
-                        JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-
-
-                        nextState = SM_GoCoatRack;
-                        
-                    }
-                }
-                else{
-                    if(attemptsSpeechReco < MAX_ATTEMPTS_SPEECH_RECO){
-                        JustinaHRI::enableSpeechRecognized(false);
-                       
-                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
-                        
-                        attemptsSpeechReco++;
-                        JustinaHRI::enableSpeechRecognized(true);
-                    }
-                    else{
-                        JustinaHRI::enableSpeechRecognized(false);
-                        attemptsSpeechReco = 0;
-                        attemptsSpeechInt = 0;
-                        
-                        ss2.str("");
-                        if(lastName.compare("guest"))
-                            ss2 << "Sorry I can not understand your name ";
-                        else
-                            ss2 << "Ok, your name is " << lastName;
-                        JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
-                        names.push_back(lastName);
-                        JustinaHRI::enableSpeechRecognized(true);
-                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				        ros::Duration(1.0).sleep();
-                        JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-                        nextState = SM_GoCoatRack;
-                        
-                    }
-                }
-                break;
-
-            case SM_COMFIRMATION_NAME:
-                std::cout << "Farewell Test...-> SM_CONFIRMATION_NAME" << std::endl;
-                attemptsSpeechReco = 0;
-                attemptsSpeechInt = 0;
-
-                /*JustinaHRI::enableSpeechRecognized(false);
-                JustinaHRI::waitAfterSay("Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no", 12000);
-                ros::Duration(1.0).sleep();
-                if(JustinaHRI::usePocketSphinx)
-                    JustinaHRI::enableGrammarSpeechRecognized(grammarCommandsID, 0);//load the grammar
-                else
-                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
-                
-                JustinaHRI::enableSpeechRecognized(true);
-
-                ss2.str("");
-                
-                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
-                    if(lastRecoSpeech.find("yes") != std::string::npos){
-                        
-                        ss2 << "Ok, your name is " << lastName;
-                        JustinaHRI::waitAfterSay(ss2.str(), 12000, MIN_DELAY_AFTER_SAY);
-                        names.push_back(lastName);
-                        JustinaHRI::enableSpeechRecognized(true);
-                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				        ros::Duration(1.0).sleep();
-                        JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-                        nextState = SM_GoCoatRack;
-                    }
-                        
-
-                    else{
-                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
-                        
-                        attemptsSpeechReco++;
-                        JustinaHRI::enableSpeechRecognized(true);
-                        nextState = SM_WAIT_NAME;
-                    }
-                        
-                }
-
-                else {
-                    if(attemptsWaitConfirmation < MAX_ATTEMPTS_WAIT_CONFIRMATION){
-                        attemptsWaitConfirmation++;
-                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
-                        JustinaHRI::enableSpeechRecognized(true);
-                        nextState = SM_WAIT_NAME;
-                    }
-                    else{
-                        JustinaHRI::enableSpeechRecognized(false);
-                        JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
-                        ros::Duration(1.0).sleep();
-                        JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
-				        ros::Duration(1.0).sleep();
-                        JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
-                        nextState = SM_GoCoatRack;
-                    }
-                }
-                break;*/
-
             
             case SM_ReturnSearchWaving:
                 std::cout << "Farewell Test...-> SM_ReturnSearchWaving" << std::endl;
@@ -534,16 +346,7 @@ int main(int argc, char** argv)
 
                 
                 if(numberGuest<maxNumberGuest){
-                    /*ros::Duration(1.0).sleep();
-                    JustinaNavigation::moveDistAngle(0.0, -1.5708, 2000);
-                    ros::Duration(1.0).sleep();
-                    JustinaHRI::say("Hey human, please lend me the umbrella for the guests");
-                    ros::Duration(1.5).sleep();
-                    JustinaHRI::say("please close the umbrella and put in my gripper");
-                    ros::Duration(1.5).sleep();
-                    JustinaTasks::detectObjectInGripper("umbrella", true, 10000);
-                    withLeftArm = true;
-                    ros::Duration(1.0).sleep();*/
+                   
                     JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
 				    ros::Duration(1.0).sleep();
                     JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
@@ -552,6 +355,8 @@ int main(int argc, char** argv)
         		    ros::Duration(2.0).sleep();
                 }
                 else{
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep(); 
                     JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
 				    ros::Duration(1.0).sleep();
                     JustinaManip::laGoTo("navigation", 3000);

@@ -65,16 +65,34 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;; get the abspos object
-(defrule exe-plan-task-get-pos-object
+(defrule exe-plan-task-get-abspos-object
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-pos-object ?place ?pos)(duration ?t))
+	(item (type Abspos) (name ?pos))
 	=>
-	(bind ?command (str-cat "pose "  ?place " " ?pos ""))
+	(bind ?command (str-cat "abspose "  ?place " " ?pos ""))
 	(assert (send-blackboard ACT-PLN find_object ?command ?t 4))
 )
+
+(defrule exe-plan-task-get-relpos-object
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-pos-object ?place ?pos ?object)(duration ?t))
+	(item (type Relpos) (name ?pos))
+	=>
+	(bind ?command (str-cat "relpose "  ?place " " ?pos " " ?object ""))
+	(assert (send-blackboard ACT-PLN find_object ?command ?t 4))
+)
+
+(defrule exe-plan-task-get-oprop-object
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-pos-object ?place ?oprop ?category)(duration ?t))
+	(item (type Property) (name ?oprop))
+	=>
+	(bind ?command (str-cat "for_grasp " ?oprop " " ?category ""))
+	(assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
+)
+
 (defrule exe-plan-geted-pos-object 
-        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 1)
+        ?f <-  (received ?sender command ?find_object ?block1 ?x ?y ?z ?arm 1)
  	    ?f1 <- (item (name ?block1))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object ?place ?pos))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object $?params))
 	    ?f3 <- (Arm (name ?arm))
 	?f4 <- (item (name object))
         =>
@@ -86,13 +104,12 @@
 )
 
 (defrule exe-plan-no-geted-pos-object 
-        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 0)
+        ?f <-  (received ?sender command ?find_object ?block1 ?x ?y ?z ?arm 0)
         ?f1 <- (item (name ?block1))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object ?place ?pos))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object $?params))
         =>
         (retract ?f)
 	(modify ?f2 (status accomplished)) ;performance for IROS
-        ;(modify ?f2 (status active))//normal performance gpsr and eegpsr
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;; grasp object
 
@@ -135,4 +152,81 @@
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;; thre oprop objects
+(defrule exe-plan-find-three-opos-object
+	(plan (name ?name) (number ?num-pln) (status active) (actions property_object ?oprop ?category three)(duration ?t))
+	=>
+        (bind ?command (str-cat "find_three_obj " ?oprop " " ?category ""))
+	(assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
+)
+
+(defrule exe-plan-finded-three-oprop-object 
+        ?f <-  (received ?sender command prop_obj ?type ?oprop ?category ?speech 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+	(modify ?f3 (image ?speech))
+)
+
+(defrule exe-plan-no-finded-three-oprop-object 
+        ?f <-  (received ?sender command ?find_object ?type ?oprop ?category ?speech 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (image ?speech))
+)
+
+;;;;;;;;;;;  introduce person to people
+(defrule exe-plan-introduce-person 
+	(plan (name ?name) (number ?num-pln) (status active) (actions introduce-person ?person ?php ?place)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?person " " ?php  " " ?place ""))
+	(assert (send-blackboard ACT-PLN introduce_person ?command ?t 4))
+)
+
+(defrule exe-plan-introduced-person 
+        ?f <-  (received ?sender command introduce_person ?person ?php ?place 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-introduced-person
+        ?f <-  (received ?sender command introduce_person ?person ?php ?place 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
+	?f3 <- (item (name speech))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;; make a question
+(defrule exe-plan-make-a-question 
+	(plan (name ?name) (number ?num-pln) (status active) (actions make_question ?type ?q ?conf)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?type " " ?q  " " ?conf ""))
+	(assert (send-blackboard ACT-PLN make_question ?command ?t 4))
+)
+
+(defrule exe-plan-made_a_question
+        ?f <-  (received ?sender command make_question ?t ?q ?conf 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions make_question $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-made-a-question
+        ?f <-  (received ?sender command make_question ?t ?q ?conf 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions make_question $?params))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+;;;;;;
+

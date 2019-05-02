@@ -19,6 +19,11 @@
 #include <ctime>
 #include <map>
 
+#define POS 0.0
+#define ADVANCE 0.3 
+#define MAXA 3.0
+#define TIMEOUT_MEMORIZING 3000
+
 using namespace boost::algorithm;
 
 enum SMState {
@@ -60,6 +65,14 @@ bool fplan = false;
 double maxTime = 180;
 std::string cat_grammar= "gpsr_guadalajara.xml";
 
+std::string microsoft_grammars[3];
+std::string sphinx_grammars[3];
+bool alternative_drink = true;
+bool poket_reco = false;
+std::string no_drink;
+std::string prev_drink = "no_prev";
+JustinaTasks::POSE poseRecog;
+
 int num_speech_intents = 0;
 std::vector<std::string> idsPerson;
 
@@ -72,11 +85,79 @@ ros::ServiceClient srvCltAskName;
 ros::ServiceClient srvCltAskIncomplete;
 ros::ServiceClient srvCltQueryKDB;
 
+template <typename T>
+std::pair<bool, int> findInVector( std::vector<T> & vecOfElements, const T & element){
+    std::pair<bool, int> result;
+    typename std::vector<T>::iterator it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
+
+    if(it != vecOfElements.end()){
+        result.second = std::distance(vecOfElements.begin(), it);
+        result.first = true;
+    }
+    else{
+        result.second = -1;
+        result.first = false;
+    }
+
+    return result;
+}
+
+void switchSpeechReco(int grammar_id, std::string speech){
+    if (poket_reco){
+        //use pocket sphinx
+        //JustinaHRI::usePocketSphinx = true;
+        JustinaHRI::enableGrammarSpeechRecognized(sphinx_grammars[grammar_id], 2.0);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        JustinaHRI::enableSpeechRecognized(false);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
+    }
+
+    else{
+        //use speech recognition of microsoft
+        //JustinaHRI::usePocketSphinx = false;
+        JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
+        JustinaHRI::waitAfterSay(speech,5000);
+    }
+}
+
+struct propObj{
+    std::string obj;
+    int value;
+};
+
+bool compareUpward(propObj obj1, propObj obj2){
+    return (obj1.value < obj2.value);
+}
+
+bool compareDownward(propObj obj1, propObj obj2){
+    return (obj1.value > obj2.value);
+}
+
+bool lateralMov(float &pos, float &advance, float &maxAdvance){
+    bool finishMotion = false;
+		pos += advance;
+		if ( pos == maxAdvance){
+			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			advance = -2 * advance;
+		}
+		if (pos == -1 * maxAdvance){
+			JustinaNavigation::moveLateral(advance, 2000);}
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		if (pos == -3 *maxAdvance){
+			JustinaNavigation::moveLateral(0.3, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			finishMotion = true;}
+        return finishMotion;
+}
+
 void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	//lastCmdName = msg.name;
 	if (msg.successful == 0
 			&& (msg.name.compare("move_actuator") == 0
-					|| msg.name.compare("find_object") == 0
+					//|| msg.name.compare("find_object") == 0
 					|| msg.name.compare("status_object") == 0
 					|| msg.name.compare("many_obj") == 0
 					|| msg.name.compare("answer") == 0
@@ -622,6 +703,15 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				responseMsg.successful = 1;
 			}
 		}
+        else if(param1.compare("tell_what_three_cat") == 0){
+            ss.str("");
+            ss << "(assert (cmd_get_speech 1))";
+            std::string query;
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+		    boost::replace_all(query, "_", " ");
+            JustinaHRI::waitAfterSay(query, 2000);
+			responseMsg.successful = 1;
+        }
 		else if(param1.compare("tell_gender_pose") == 0){
 			ss.str("");
 			if (currentName == "no_gender_pose")
@@ -847,7 +937,7 @@ void callbackCmdFindObject(
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
 			else
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right only_find";
-		} else if (tokens[0] == "pose"){
+		} else if (tokens[0] == "abspose"){
             ss.str("");
             ss << "I am looking for objects on the " << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 2500);
@@ -868,7 +958,6 @@ void callbackCmdFindObject(
                 std::cout << "Find a object " << std::endl;
                 bool found = 0;
                     found = JustinaVision::detectObjects(recognizedObjects);
-                    int indexFound = 0;
                     if (found) {
                         ss.str("");
                         found = false;
@@ -895,28 +984,124 @@ void callbackCmdFindObject(
 		    
             responseMsg.params = ss.str();
 
+        } else if (tokens[0] == "relpose"){
+            ss.str("");
+            ss << "I am looking for the object " << tokens[2] << " the " << tokens[3];
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::alignWithTable(0.42);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            int contador = 0;
+            bool ref_obj = false;
+            int ref_obj_index = 0;
+			geometry_msgs::Pose ref_obj_pose;
+            float rel_obj_dist = 1000.0;
+
+            ss.str("");
+			ss <<"object 2 2 2 left";
+
+            do{
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                std::vector<vision_msgs::VisionObject> recognizedObjects;
+                std::cout << "Find a object " << std::endl;
+                bool found = 0;
+                    found = JustinaVision::detectObjects(recognizedObjects);
+                    if (found && recognizedObjects.size()> 2) {
+                        found = false;
+                        for(int i = 0; i < recognizedObjects.size(); i++){
+                            if(recognizedObjects[i].id == tokens[3] ){
+                                ref_obj = true;
+                                ref_obj_index = i;
+                                ref_obj_pose = recognizedObjects[i].pose;
+                            }
+                        }
+                        if(ref_obj){
+                            ref_obj = false;
+                            std::cout << "INIT TO SEARCH CONDITION OF RELPOS" << std::endl;
+                            if(tokens[2] == "at_the_left_of"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    std::cout << "AT THE LEFT OF" << std::endl;
+                                    if (recognizedObjects[i].pose.position.y > ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.5 
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " left";
+                                        ref_obj = true;
+                                        std::cout << ss.str() << std::endl;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "at_the_right_of"){
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.y < ref_obj_pose.position.y && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
+                                        ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "on_top_of" || tokens[2] == "above"){
+                                rel_obj_dist = 0.0;
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.z > ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z)){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
+                                        ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z);
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "under"){
+                                rel_obj_dist = 0.0;
+                                for(int i = 0; i < recognizedObjects.size(); i++){
+                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z)){
+                                        ss.str("");
+                                        ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
+                                            << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
+                                        ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z);
+                                    }
+                                }
+                            }
+                            else if(tokens[2] == "behind"){
+                                for(int i = ref_obj_index + 1; i < recognizedObjects.size(); i++){
+                                    if(recognizedObjects[i].pose.position.x < 1.5 
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
+                                        ss.str("");
+                                        ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
+                                        << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
+                                        << " " << recognizedObjects[ref_obj_index + 1].pose.position.z << " right";
+                                        ref_obj = true;
+                                        rel_obj_dist = fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    contador++;
+            } while(!ref_obj && contador < 10);
+            
+            success = ref_obj;
+            responseMsg.params = ss.str();
+
+        
         } else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			bool finishMotion = false;
-			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+			float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 			do{
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-				/*pos += advance;
-				if ( pos == maxAdvance && !success){
-					JustinaNavigation::moveLateral(advance, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					advance = -2 * advance;
-				}
-				if (pos == -1 * maxAdvance && !success){
-					JustinaNavigation::moveLateral(advance, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-				}
-				if (pos == -3 *maxAdvance && !success){
-					JustinaNavigation::moveLateral(0.3, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					finishMotion = true;}*/
 				finishMotion = true;
+                //finishMotion = lateralMov(pos, advance, maxAdvance);
 			}while(!finishMotion && !success);
 
 			if(withLeftOrRightArm)
@@ -1073,51 +1258,8 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-	std::map<std::string, std::string > catList;
-	
-	catList["chocolate"] = "snacks";
-	catList["cream"] = "snacks";
-	catList["pringles"] = "snacks";
-
-	/*catList["tea_spoon"] = "cutlery";
-	catList["fork"] = "cutlery";
-	catList["spoon"] = "cutlery";
-	catList["knife"] = "cutlery";
-	catList["napkin"] = "cutlery";
-
-	catList["apple"] = "fruits";
-	catList["melon"] = "fruits";
-	catList["banana"] = "fruits";
-	catList["pear"] = "fruits";
-	catList["peach"] = "fruits";*/
-
-	catList["energy_drink"] = "drinks";
-	catList["coffee"] = "drinks";
-	catList["coke"] = "drinks";
-	catList["juice"] = "drinks";
-
-	/*catList["shampoo"] = "toiletries";
-	catList["soap"] = "toiletries";
-	catList["cloth"] = "toiletries";
-	catList["sponge"] = "toiletries";
-	catList["tooth_paste"] = "toiletries";
-
-	catList["box"] = "containers";
-	catList["bag"] = "containers";
-	catList["tray"] = "containers";*/
-	
-	catList["apple"] = "food";
-	catList["corn"] = "food";
-	catList["cereal"] = "food";
-
-	/*catList["big_dish"] = "tableware";
-	catList["small_dish"] = "tableware";
-	catList["bowl"] = "tableware";
-	catList["glass"] = "tableware";
-	catList["mug"] = "tableware";*/
-
 	bool finishMotion = false;
-	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1131,67 +1273,53 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	JustinaTasks::alignWithTable(0.42);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-
-	std::map<std::string, int> countCat;
-	countCat["snacks"] = 0;
-	//countCat["fruits"] = 0;
-	countCat["food"] = 0;
-	countCat["drinks"] = 0;
-	//countCat["toiletries"] = 0;
-	//countCat["containers"] = 0;
-	//countCat["cutlery"] = 0;
-	//countCat["tableware"] = 0;
-
-	int arraySize = 0;
 	int numObj  = 0;
+	std::string query;
+	std::vector<std::string> objects;
 
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
-		bool found = 0;
+		bool found = false;
 		for (int j = 0; j < 10; j++) {
 			std::cout << "Test object" << std::endl;
+            numObj = 0;
+            objects.clear();
 			found = JustinaVision::detectObjects(recognizedObjects);
-			int indexFound = 0;
 			if (found) {
 				found = false;
 				for (int i = 0; i < recognizedObjects.size(); i++) {
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
-					std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
-					if (it != catList.end() && it->second == tokens[0]){
-						std::map<std::string, int>::iterator ap = countCat.find(it->second);
-						ap->second = ap->second + 1;
-						arraySize++;
-					}
+                    ss.str("");
+                    ss << "(assert (cmd_simple_category " << vObject.id <<" 1))";
+                    JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+					//std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
+                    if(query == tokens[0])
+                       numObj++;
+			            objects.push_back(vObject.id);
 				}
-				if(arraySize > numObj)
-					numObj = arraySize;
-				arraySize = 0;
 			}
 		}
-		/*pos += advance;
-		if ( pos == maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			advance = -2 * advance;
-		}
-		if (pos == -1 * maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		}
-		if (pos == -3 *maxAdvance){
-			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}*/
 		finishMotion = true;
+        //finishMotion = lateralMov(pos, advance, maxAdvance);
 	}while(!finishMotion && numObj<1);
 
 	ss.str("");
 	currentName = tokens[0];
-	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
 	if(numObj > 0){
+		ss << "I found the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
+		ss.str("");
+		ss << "I found ";
+		for (int i = 0; i < objects.size(); i++){
+			if(i == objects.size() - 1 && i != 0)
+				ss << " and the " << objects.at(i);
+			else
+				ss << "the " << objects.at(i) << ", ";
+		}
+		ss.str();
 		ss << "I found " << numObj << " " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
@@ -1213,8 +1341,6 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
-	catList.clear();
-	countCat.clear();
 }
 
 void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -1233,60 +1359,10 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-	std::map<std::string, int > countObj;
-	countObj["cream"] = 0;
-	countObj["chocolate"] = 0;
-	countObj["pringles"] = 0;
-
-	/*countObj["tea_spoon"] = 0;
-	countObj["fork"] = 0;
-	countObj["spoon"] = 0;
-	countObj["knife"] = 0;
-	countObj["napkin"] = 0;
-
-	countObj["apple"] = 0;
-	countObj["melon"] = 0;
-	countObj["banana"] = 0;
-	countObj["pear"] = 0;
-	countObj["peach"] = 0;*/
-
-	countObj["energy_drink"] = 0;
-	countObj["juice"] = 0;
-	countObj["coke"] = 0;
-	countObj["coffee"] = 0;
-
-	/*countObj["shampoo"] = 0;
-	countObj["soap"] = 0;
-	countObj["cloth"] = 0;
-	countObj["sponge"] = 0;
-	countObj["tooth_paste"] = 0;
-
-	countObj["box"] = 0;
-	countObj["bag"] = 0;
-	countObj["tray"] = 0;*/
-	
-	countObj["apple"] = 0;
-	countObj["corn"] = 0;
-	countObj["cereal"] = 0;
-
-	/*countObj["big_dish"] = 0;
-	countObj["small_dish"] = 0;
-	countObj["bowl"] = 0;
-	countObj["glass"] = 0;
-	countObj["mug"] = 0;*/
-	
-	/*countObj["chopstick"] = 0;
-	countObj["fork"] = 0;
-	countObj["spoon"] = 0;
-
-	countObj["milk"] = 0;
-	countObj["juice"] = 0;*/
-
-	int arraySize = 0;
 	int numObj = 0;
 
 	bool finishMotion = false;
-	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1304,47 +1380,27 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
-		bool found = 0;
+		bool found = false;
 		for (int j = 0; j < 10; j++) {
+            numObj = 0;
 			std::cout << "Test object" << std::endl;
 			found = JustinaVision::detectObjects(recognizedObjects);
-			int indexFound = 0;
 			if (found) {
 				found = false;
 				for (int i = 0; i < recognizedObjects.size(); i++) {
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
-					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-					if (it != countObj.end() && vObject.id == tokens[0]){
-						it->second = it->second + 1;
-						arraySize++;
-					}
-					std::cout << "ITERADOR: " << it->second << std::endl;
+					//std::map<std::string, int>::iterator it = countObj.find(vObject.id);
+					if (vObject.id == tokens[0])
+						numObj++;
 				}
-				if(arraySize > numObj)
-					numObj = arraySize;
-				arraySize = 0;
 			}
 		}
 		finishMotion = true;
-		/*pos += advance;
-		if ( pos == maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			advance = -2 * advance;
-		}
-		if (pos == -1 * maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		}
-		if (pos == -3 *maxAdvance){
-			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}*/
+        //finishMotion = lateralMov(pos, advance, maxAdvance);
 	}while (!finishMotion);
 
 	ss.str("");
-	std::map<std::string, int>::iterator objRes = countObj.find(tokens[0]);
 	currentName = tokens[0];
 	if(numObj > 0){
 		ss << "I found the " << tokens[0];
@@ -1367,8 +1423,6 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
-	countObj.clear();
-	
 }
 
 void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -1386,48 +1440,6 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-	std::map<std::string, std::pair<std::string, int> > countObj;
-	
-	countObj["chocolate"] = std::make_pair(std::string("snacks"),0);
-	countObj["pringles"] = std::make_pair(std::string("snacks"),0);
-	countObj["cream"] = std::make_pair(std::string("snacks"),0);
-
-	/*countObj["tea_spoon"] = std::make_pair(std::string("cutlery"),0);
-	countObj["fork"] = std::make_pair(std::string("cutlery"),0);
-	countObj["spoon"] = std::make_pair(std::string("cutlery"),0);
-	countObj["knife"] = std::make_pair(std::string("cutlery"),0);
-	countObj["napkin"] = std::make_pair(std::string("cutlery"),0);
-
-	countObj["apple"] = std::make_pair(std::string("fruits"),0);
-	countObj["melon"] = std::make_pair(std::string("fruits"),0);
-	countObj["banana"] = std::make_pair(std::string("fruits"),0);
-	countObj["pear"] = std::make_pair(std::string("fruits"),0);
-	countObj["peach"] = std::make_pair(std::string("fruits"),0);*/
-
-	countObj["juice"] = std::make_pair(std::string("drinks"),0);
-	countObj["energy_drink"] = std::make_pair(std::string("drinks"),0);
-	countObj["coke"] = std::make_pair(std::string("drinks"),0);
-	countObj["coffee"] = std::make_pair(std::string("drinks"),0);
-
-	/*countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
-	countObj["soap"] = std::make_pair(std::string("toiletries"),0);
-	countObj["cloth"] = std::make_pair(std::string("toiletries"),0);
-	countObj["sponge"] = std::make_pair(std::string("toiletries"),0);
-	countObj["tooth_paste"] = std::make_pair(std::string("toiletries"),0);
-
-	countObj["box"] = std::make_pair(std::string("containers"),0);
-	countObj["bag"] = std::make_pair(std::string("containers"),0);
-	countObj["tray"] = std::make_pair(std::string("containers"),0);*/
-	
-	countObj["corn"] = std::make_pair(std::string("food"),0);
-	countObj["apple"] = std::make_pair(std::string("food"),0);
-	countObj["cereal"] = std::make_pair(std::string("food"),0);
-
-	/*countObj["big_dish"] = std::make_pair(std::string("tableware"),0);
-	countObj["small_dish"] = std::make_pair(std::string("tableware"),0);
-	countObj["bowl"] = std::make_pair(std::string("tableware"),0);
-	countObj["glass"] = std::make_pair(std::string("tableware"),0);
-	countObj["mug"] = std::make_pair(std::string("tableware"),0);*/
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1436,89 +1448,100 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::string prop;
 	std::string opropObj;
 	std::vector<std::string> objects;
-	currentName = tokens[0];
-	categoryName = tokens[1];
+    std::vector<int> obj_index;
+    std::vector<propObj> prop_obj;
+	currentName = tokens[1];
+	categoryName = tokens[2];
 
 	bool finishMotion = false;
-	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 
-	if(tokens[0] == "biggest")
+	/*if(tokens[1] == "biggest")
 		prop = "bigger";
-	else if (tokens[0] == "smallest")
+	else if (tokens[1] == "smallest")
 		prop = "smaller";
-	else if (tokens[0] == "heaviest")
+	else if (tokens[1] == "heaviest")
 		prop = "heavier";
-	else if (tokens[0] == "lightest")
+	else if (tokens[1] == "lightest")
 		prop = "lighter";
-	else if (tokens[0] == "largest")
+	else if (tokens[1] == "largest")
 		prop = "larger";
-	else if (tokens[0] == "thinnest")
-		prop = "thinner";
+	else if (tokens[1] == "thinnest")
+		prop = "thinner";*/
+
+    std::string query;
+    std::string category;
+    
+    category = tokens[2];
+    if(category == "nil")
+        category = "objects";
 
 	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
-		
+	std::vector<vision_msgs::VisionObject> recognizedObjects;
+    	
 	do{	
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
 		bool found = 0;
 		for (int j = 0; j < 10; j++) {
 			std::cout << "Test object" << std::endl;
 			found = JustinaVision::detectObjects(recognizedObjects);
-			int indexFound = 0;
 			if (found) {
 				found = false;
 				for (int i = 0; i < recognizedObjects.size(); i++) {
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
-					std::map<std::string, std::pair<std::string, int> >::iterator it = countObj.find(vObject.id);
-					if (it != countObj.end())
-						it->second.second = it->second.second + 1;
-					if (it->second.second == 1 && tokens[1] == "nil"){
-						objects.push_back(it->first);
-						std::cout << "OBJETO: " << it->first << std::endl;
+                    std::pair<bool, int> element_in_vector = findInVector<std::string>(objects, vObject.id); 
+					if (tokens[2] == "nil" && !element_in_vector.first){
+						objects.push_back(vObject.id);
+                        obj_index.push_back(i); 
+						std::cout << "OBJETO: " << vObject.id << std::endl;
 					}
-					if (it->second.second == 1 && tokens[1] != "nil" && tokens[1] == it->second.first){
-						objects.push_back(it->first);
-						std::cout << "OBJETO: " << it->first << std::endl;
+					if (tokens[2] != "nil" && !element_in_vector.first){
+                        ss.str("");
+                        ss << "(assert (cmd_simple_category " << vObject.id << " 1))";
+				        JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                        if(query == tokens[2]){
+    						objects.push_back(vObject.id);
+                            obj_index.push_back(i);
+					    	std::cout << "OBJETO: " << vObject.id << std::endl;
+                        }
 					}
 						
 				}
 			}
 		}
 		finishMotion = true;
-		/*pos += advance;
-		if ( pos == maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			advance = -2 * advance;
-		}
-		if (pos == -1 * maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);}
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		if (pos == -3 *maxAdvance){
-			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}*/
+        //finishMotion = lateralMov(pos, advance, maxAdvance);
 	}while(!finishMotion);
 	
 	
 	if(objects.size() == 0){
 		objectName = "none";
 		responseMsg.successful = 0;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "I_am_sorry,_i_can_not_find_the_three_" << tokens[1] << "_" << category;
 	}
 
 	else if (objects.size() == 1){
 		std::cout << "There are only one object" << std::endl;
 		objectName = objects.at(0);
 		responseMsg.successful = 1;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "The_" << tokens[1] << "_" << category <<"_that_i_found_is_";
+        propObj obj_aux;
+        obj_aux.obj = objects.at(0);
+        obj_aux.value = 1;
+        prop_obj.push_back(obj_aux);
 	}
 
-	bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
-	if (success && objects.size() > 1) {
+	/*bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
+	if (tokens[0] == "only_find" && success && objects.size() > 1) {
 		knowledge_msgs::StrQueryKDB srv;
 		objectName = objects.at(0);
 		for(int i=1; i<objects.size(); i++){
@@ -1537,10 +1560,70 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				responseMsg.successful = 0;
 			}
 		}
-	}
+	}*/
+
+    if (objects.size() > 1){
+        propObj obj_aux;
+        for(int i = 0; i < objects.size(); i++){
+            ss.str("");
+            ss << "(assert (cmd_get_prop_value " << objects.at(i)<< " " << tokens[1] << " 1))";
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+            obj_aux.obj = objects.at(i);
+            obj_aux.value = std::atoi(query.c_str());
+            prop_obj.push_back(obj_aux);
+        }
+        if(tokens[1] == "biggest" || tokens[1] == "heaviest" || tokens[1] == "largest"){
+            std::sort(prop_obj.begin(), prop_obj.end(), compareDownward);
+        }
+        else{
+            std::sort(prop_obj.begin(), prop_obj.end(), compareUpward);
+        }
+        objectName = prop_obj.at(0).obj;
+        responseMsg.successful = 1;
+        ss.str("");
+        ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
+            << "The_" << tokens[1] << "_"<< category <<"_that_i_found_are_";
+    }
+
+    if(tokens[0] == "find_three_obj"){
+        int i = 0;
+        while (i < 3 && i < prop_obj.size()){
+                if (i == 2)
+                    ss << "and_the_" << prop_obj.at(i).obj;
+                else if (i == 1 && prop_obj.size() == 2)
+                    ss << "and_the_" << prop_obj.at(i).obj;
+                else 
+                    ss << "the_" << prop_obj.at(i).obj << ",_";
+                i++;
+        }
+        responseMsg.params = ss.str();
+    }
+
+    if(tokens[0] == "for_grasp"){
+        if (objects.size() == 0){
+            ss.str("");
+			ss <<"object 2 2 2 left";
+            responseMsg.params = ss.str();
+            responseMsg.successful = 0;
+        }
+        else{
+            std::pair<bool, int> element_index = findInVector<std::string>(objects, objectName);
+            ss.str("");
+            if(recognizedObjects[element_index.second].pose.position.y > 0){
+                ss << objectName << " " << recognizedObjects[element_index.second].pose.position.x << " " 
+                    << recognizedObjects[element_index.second].pose.position.y << " " << recognizedObjects[element_index.second].pose.position.z << " left";
+            }
+            else{
+                ss << objectName << " " << recognizedObjects[element_index.second].pose.position.x << " " 
+                    << recognizedObjects[element_index.second].pose.position.y << " " << recognizedObjects[element_index.second].pose.position.z << " right";
+                
+            }
+            responseMsg.params = ss.str();
+            responseMsg.successful = 1;
+        }
+    }
 
 	command_response_pub.publish(responseMsg);
-	countObj.clear();
 }
 
 void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -2678,6 +2761,324 @@ void callbackCmdGetBag(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command offer drink to person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    std::string lastReco;
+    std::string lastInt;
+
+    bool drink_conf = false;
+    bool name_conf = false;
+    std::string drink;
+    std::string name;
+	std::string query;
+    int count  = 0;
+    
+    bool success = ros::service::waitForService("spg_say", 5000);
+    //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
+
+    while(!drink_conf && count < 3){
+        switchSpeechReco(1, "tell me what drink do you want");
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+        if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+            if(JustinaRepresentation::stringInterpretation(lastReco, drink))
+                std::cout << "last int: " << drink << std::endl;
+                ss.str("");
+                ss << "Do you want " << drink;
+                count++;
+
+		if (!alternative_drink && (no_drink == drink || prev_drink == drink)){
+			count--;
+			continue;
+		}
+                
+                switchSpeechReco(0, ss.str());
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes" || lastReco == "justina yes"){
+                    drink_conf = true;
+			if (alternative_drink){
+			    ss.str("");
+                ss << "(assert (status-object-on-location " << drink << " 1))";    
+				JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+				if (query != "on_the_bar"){
+					ss.str("");
+					ss << "I am sorry, the " << drink << " is out of stock , please choose another one";
+					no_drink = drink;
+					drink_conf = false;
+					JustinaHRI::waitAfterSay(ss.str(), 2000);
+					alternative_drink = false;
+					count--;
+				}
+			}
+		}
+                //count++;
+        }
+    }
+        count = 0;
+        drink_conf = false;
+        ss.str("");
+	prev_drink = drink;
+        ss << "Ok a " << drink << " for you";
+        JustinaHRI::waitAfterSay(ss.str(),5000);
+    
+    while(!drink_conf && count < 3){
+        switchSpeechReco(2, "tell me what is your name please");
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+        if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+            if(JustinaRepresentation::stringInterpretation(lastReco, name))
+                std::cout << "last int: " << name << std::endl;
+                ss.str("");
+                ss << "is " << name << " your name";
+                switchSpeechReco(0, ss.str());
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
+                
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes" || lastReco == "justina yes")
+                    drink_conf = true;
+                count++;
+        }
+    }
+        
+        ss.str("");
+        ss << "Ok " << name << " I will bring you a " << drink << " from the bar";
+        JustinaHRI::waitAfterSay(ss.str(),5000);
+
+    ss.str("");
+    ss << "(assert (give-drink-to-person " << drink << " " << name << "))";
+    JustinaRepresentation::sendAndRunCLIPS(ss.str());
+    JustinaHRI::enableSpeechRecognized(false);
+    
+    JustinaHRI::enableSpeechRecognized(true);
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command  Train person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    bool finish_train = false;
+    int count = 0;
+    
+	if (poseRecog == JustinaTasks::SITTING || poseRecog == JustinaTasks::LYING)
+        JustinaManip::hdGoTo(0.0, -0.6, 5000);
+    else
+        JustinaManip::hdGoTo(0.0, 0.0, 5000);
+
+    JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
+    JustinaVision::faceTrain(tokens[0], 4);
+    
+    while(!finish_train && count < 4){
+        if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
+                finish_train = true;
+        }
+        count++;
+    }
+    JustinaManip::hdGoTo(0.0, 0.0, 5000);
+    JustinaHRI::waitAfterSay("thank you", 6000);
+	
+    //JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+	//boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+	
+    responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+
+void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command get objects from the guest orders ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    	std::vector<std::string> tokens;
+    	std::vector<std::string> tokens1;
+	std::string str = responseMsg.params;
+	split(tokens1, str, is_any_of(" "));
+	boost::replace_all(tokens1[0], "!", " ");
+	split(tokens, tokens1[0], is_any_of(" "));
+	std::stringstream ss;
+    int attemps = 0;
+	bool success = false;
+    bool la = false;
+    bool ra = false;
+
+    while(!success && attemps<4){
+        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
+        attemps++;
+    }
+
+   for (int i = 1; i < tokens.size()-1; i++){
+        ss.str("");
+        ss << "Barman I need a " << tokens[i]; 
+        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+        ss.str("");
+        ss << "please put the " << tokens[i] << " in my gripper";
+        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+        if(!ra){
+
+            JustinaManip::raGoTo("navigation", 3000);
+            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+            ra = true;
+            ss.str("");
+            ss << "(assert (set_object_arm " << tokens[i] << " false))";
+            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+            JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+        }
+        if(!la && tokens.size() > 3){
+            JustinaManip::laGoTo("navigation", 3000);
+            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+            la = true;
+            ss << "(assert (set_object_arm " << tokens[i] << " true))";
+            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+        }
+
+   } 
+	
+    responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command deliver object ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+    std::vector<std::string> tokens1;
+	std::string str = responseMsg.params;
+	split(tokens1, str, is_any_of(" "));
+	boost::replace_all(tokens1[0], "!", " ");
+	split(tokens, tokens1[0], is_any_of(" "));
+	std::stringstream ss;
+    
+    std::string name;
+    std::string arm;
+
+    int attemps = 0;
+	bool success = false;
+    bool armFlag = false;
+    
+    while(!success && attemps<4){
+        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size()-1], 120000);
+        attemps++;
+    }
+    success = false;
+   for (int i = 1; i < tokens.size() -1 ; i++){
+       ss.str("");
+       ss << "(assert (get_person " << tokens[i] << "))";
+       JustinaRepresentation::strQueryKDB(ss.str(), name, 1000);
+       if(name != "None"){
+            ss.str("");
+            ss << name << " please look at me, I try to find you";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            while(!success && attemps <4){
+    			success = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE, true, tokens[tokens.size()-1]);
+                attemps++;
+            }
+            if(success){
+                ss.str("");
+                ss << "(assert (get_arm " << tokens[i] << "))" ;
+                JustinaRepresentation::strQueryKDB(ss.str(), arm, 1000);
+                armFlag = (arm == "true") ? true : false;
+		        success = JustinaTasks::dropObject(tokens[i], armFlag, 30000);
+                ss.str("");
+                ss << name << " enjoy the " << tokens[i];
+                JustinaHRI::waitAfterSay(ss.str(), 4000, 0);
+            }
+            else{
+                ss.str("");
+                ss << "I am sorry, I cant find you " << name;
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            }
+       }
+   } 
+	
+    responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Introduce Person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	
+    responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdMakeQuestion(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Make Question ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	
+    responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for incomplete information ---------"
 			<< std::endl;
@@ -3106,6 +3507,12 @@ int main(int argc, char **argv) {
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
     ros::Subscriber subCmdGetBag = n.subscribe("/planning_clips/cmd_get_bag", 1, callbackCmdGetBag);
     ros::Subscriber subCmdFollowToTaxi = n.subscribe("/planning_clips/cmd_follow_to_taxi", 1, callbackCmdFollowToTaxi);
+    ros::Subscriber subCmdOfferDrink = n.subscribe("/planning_clips/cmd_offer_drink", 1, callbackCmdOfferDrink);
+    ros::Subscriber subCmdTrainPerson = n.subscribe("/planning_clips/cmd_train_person", 1, callbackCmdTrainPerson);
+    ros::Subscriber subCmdGetOrderObject = n.subscribe("/planning_clips/cmd_get_order_object", 1, callbackCmdGetOrderObject);
+    ros::Subscriber subCmdDeliverOrder = n.subscribe("/planning_clips/cmd_deliver_order", 1, callbackCmdDeliverOrder);
+    ros::Subscriber subCmdIntroducePerson = n.subscribe("/planning_clips/introduce_person", 1, callbackCmdIntroducePerson);
+    ros::Subscriber subCmdMakeQuestion = n.subscribe("/planning_clips/make_question", 1, callbackCmdMakeQuestion);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
@@ -3148,6 +3555,10 @@ int main(int argc, char **argv) {
 		std::cout << "MAX TIME: " << maxTime << std::endl;
 		std::cout << "Grammar: " << cat_grammar << std::endl;}
 
+        microsoft_grammars[0] = "confirmation.xml";
+        microsoft_grammars[1] = "what_drink.xml";
+        microsoft_grammars[2] = "name_response.xml";
+
 	while (ros::ok()) {
 
 		switch (state) {
@@ -3178,26 +3589,26 @@ int main(int argc, char **argv) {
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-						JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+						JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 						state = SM_SEND_INIT_CLIPS;
 					}
 				} else {
 					JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 					JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-					JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+					JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 					state = SM_SEND_INIT_CLIPS;
 				}
 			} else {
 				JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 				JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-				JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+				JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
 		case SM_INIT_SPEECH:
 			JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 			JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-			JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+			JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 			state = SM_SEND_INIT_CLIPS;
 		break;
 		case SM_SEND_INIT_CLIPS:
@@ -3209,7 +3620,7 @@ int main(int argc, char **argv) {
 			break;
 		case SM_RUN_SM_CLIPS:
             if(JustinaTasks::tasksStop()){
-                // TODO HERE IS TO RESET CLIPS
+                // ALL HERE IS TO RESET CLIPS
                 std_msgs::Empty msg;
                 pubResetTime.publish(msg);
                 JustinaHardware::stopRobot();

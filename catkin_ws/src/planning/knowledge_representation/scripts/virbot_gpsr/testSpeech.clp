@@ -33,11 +33,12 @@
 	;;for get places into the room
 	(num_places 0)
         (visit_places 0)
+	(num_objects_found 0)
 	(start split_room)
 
 	;;for speech generation of the number of orders in eegpsr cat2 montreal
 	(num_order 1)
-	(order _)
+	(order !)
 	
 	;;;for speech generation of the person description in eegpsr cat2 montreal
 	(person_description _)
@@ -262,6 +263,7 @@
 	(modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento (+ ?intento 1)))
+	(assert (delate current_person))
 )
 
 (defrule no_task_command_exitdoor
@@ -286,6 +288,7 @@
         (modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento 1))
+	(assert (delate current_person))
 )
 
 (defrule no_task_command_cero_steps
@@ -365,6 +368,22 @@
 ;;;;;;;;;;;; Manejar numero de comandos que va recibir por prueba;;;;
 ;;;;;;;;;;;; Por ejemplo Si son 3 comandos debe viajar 2 veces a la Arena y la última vez al exitdoor;;;;;;;
 
+;;;;;;;;;; delate current person status
+(defrule delate_current_person
+	?f <- (delate current_person)
+	?f1 <- (item (name ?name) (status current person))
+	=>
+	(retract ?f)
+	(modify ?f1 (status nil))
+	(assert (delate current_person))
+)
 
+(defrule delate_not_status_current_person
+	?f <- (delate current_person)
+	?f1 <- (not (item (name ?name) (status current_person)))
+	=>
+	(retract ?f)
+)
 
+;;;;;;;;;;;;;
 

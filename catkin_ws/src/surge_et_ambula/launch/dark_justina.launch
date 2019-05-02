@@ -17,7 +17,6 @@
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/dark_justina.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-	<node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
 	<include file="$(find surge_et_ambula)/launch/dark_justina_hardware.launch">
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
@@ -26,6 +25,19 @@
 	<group ns="hri">
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
+		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp">
+			<param name="obst_xmin" value="0.115"/>
+			<param name="obst_xmax" value="0.435"/>
+			<param name="obst_ymin" value="-0.26"/>
+			<param name="obst_ymax" value="0.26"/>
+			<param name="obst_div" value="9"/>
+		</node>
+		<node name="human_follower" pkg="human_follower" type="human_follower_node" args="--move_head" output="screen">
+			<param name="use_pot_fields" value="true"/>
+			<param name="k_inf_rep" value="0.11"/>
+		</node>
+		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
 	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 	<group ns="interoperation">
