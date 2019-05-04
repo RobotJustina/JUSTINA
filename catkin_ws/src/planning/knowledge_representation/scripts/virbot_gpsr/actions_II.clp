@@ -140,18 +140,18 @@
         (modify ?f1 (status nil))
 )
 
-(defrule task_ask_for_incomplete
-	?f <- (task ?plan ask_info ?nti ?incomplete ?step)
-	?f1 <- (item (type question) (name ?nti))
-	=>
-	(retract ?f)
-	(printout t "Task in order to ask for incomplete info")
-        (assert (state (name ?plan)(number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments ?nti status asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pask_info) (actor robot)(obj robot)(from ?nti)(to ?incomplete)(name-scheduled ?plan)(state-number ?step)))
-        (modify ?f1 (status nil))
-	
-)
+;(defrule task_ask_for_incomplete
+;	?f <- (task ?plan ask_info ?nti ?incomplete ?step)
+;	?f1 <- (item (type question) (name ?nti))
+;	=>
+;	(retract ?f)
+;	(printout t "Task in order to ask for incomplete info")
+;        (assert (state (name ?plan)(number ?step)(duration 6000)))
+;        (assert (condition (conditional if) (arguments ?nti status asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+;        (assert (cd-task (cd pask_info) (actor robot)(obj robot)(from ?nti)(to ?incomplete)(name-scheduled ?plan)(state-number ?step)))
+;        (modify ?f1 (status nil))
+;	
+;)
 
 (defrule task_ask_for_incomplete
 	?f <- (task ?plan ask_info ?nti ?incomplete ?param ?step)
