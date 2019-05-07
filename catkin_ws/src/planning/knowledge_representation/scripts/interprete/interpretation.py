@@ -147,7 +147,7 @@ meaning_mapping_patterns_gpsr = [
 	
 	#find person 1 parametro
 	{"params": ["Action_find","Find_person"],
-	"Action_find": [["find", "look_for", "locate", "meet"], [], [], []],
+	"Action_find": [["find", "look_for", "locate"], [], [], []],
 	"Find_person": [[], [], ["person"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
 	"verbal_confirmation": '',
@@ -903,6 +903,26 @@ meaning_mapping_patterns_gpsr = [
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
 	 "planner_not_confirmed": ''},
+	 
+        #incomplete = meet $inguidewho and $vbguide {pron}
+	{"params": ["Action_find", "Person"],
+	 "Action_find": [["meet"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+	                         "(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '', 
+	 "planner_not_confirmed": ''},
+	
+        #and $vbguide {pron}	
+	{"params": ["Action_guide", "Pron"],
+	 "Action_guide": [["guide", "escort", "take", "lead", "accompany"],[],[],[]],
+	 "Pron": [["her", "him", "it"],[],[],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params man_guide) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''}, 
 
 	####
 	### OFFER objects

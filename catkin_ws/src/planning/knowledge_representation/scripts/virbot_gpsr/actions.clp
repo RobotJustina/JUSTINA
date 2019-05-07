@@ -27,6 +27,7 @@
 	?f <- (task ?plan update_object_location ?param1 ?param2 ?step)
 	?f1 <- (item (name ?param2))
 	;?f2 <- (item (name robot))
+	?f3 <- (item (name question_1));;;this is used for ask origin place
 	=>
 	(retract ?f)
 	(printout t "Object location task" crlf)
@@ -35,6 +36,7 @@
 	(assert (cd-task (cd ptrans) (actor robot)(obj robot)(from frontexit)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
+	(modify ?f3 (status asked))
 	;(modify ?f2 (zone frontexit))
 )
 
@@ -157,8 +159,8 @@
         (assert (condition (conditional if) (arguments finish_objetive status finaly_followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man_guide)(name-scheduled ?plan)(state-number ?step)))
         ;;;;;;;;;;;
-        (modify ?f1 (status nil))
-	(modify ?f2 (status nil))
+        ;(modify ?f1 (status nil))
+	;(modify ?f2 (status nil))
 )
 
 (defrule task_save_position

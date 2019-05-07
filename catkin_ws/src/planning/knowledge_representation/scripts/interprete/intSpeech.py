@@ -77,10 +77,11 @@ def separaTask(cadena):
 			if paramTam > 2:
 				if firstparam[2] == 'place_destiny':
 					if step == tempStep + tu + 1:
-						step = step - 1
-						fpush = False
-						temp2 = 'params'
-						#print "TEST DESTINY " + str(step)
+						#step = step - 1
+						#fpush = False
+						#temp2 = 'params'
+						print "TEST DESTINY " + str(step)
+						no_man_guide = False
 					else:
 						no_man_guide = False
 						tempStep = step
@@ -88,11 +89,11 @@ def separaTask(cadena):
 						#print "TEST TEMPSTEP " + str(tempStep)
 				elif firstparam[2] == 'follow_place_origin':
 					if step == tempStep + tu:
-						step = step -1
-						fpush = False
-						tu = tu - 1
-						temp2  = 'params'
-						#print "TEST ORIGIN " + str(step)
+						#step = step -1
+						#fpush = False
+						#tu = tu - 1
+						#temp2  = 'params'
+						print "TEST ORIGIN " + str(step)
 			
 			if firstparam[0] == 'params' and get_object:
 				task_object = firstparam[1]

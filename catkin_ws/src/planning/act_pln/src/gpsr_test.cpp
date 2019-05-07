@@ -1856,7 +1856,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	if(tokens[0] == "place_destiny"){
 		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
-		JustinaHRI::waitAfterSay("Well, tell me where is the destiny location", 10000);}
+		JustinaHRI::waitAfterSay("Well, tell me which is the place you want to be guided", 10000);}
 	ss.str("");
 
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -1869,7 +1869,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		else if(tokens[0] == "object")
 			ss << "Do you want i look for the " << name << ", say robot yes or robot no";
 		else if(tokens[0] == "place_destiny")
-			ss << "Do you want i guide the person to the " << name << ", say robot yes or robot no";
+			ss << "Do you want i guide you to the " << name << ", say robot yes or robot no";
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 		//change grammar
 		JustinaHRI::loadGrammarSpeechRecognized("confirmation.xml");
@@ -1884,7 +1884,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			else if(tokens[0] == "object")
 				ss << "well i try to find the " << name << " in its default location";
 			else if(tokens[0] == "place_destiny")
-				ss << "well i will guide the person to the " << name;
+				ss << "well i will guide you to the " << name;
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			ss.str("");
 			ss << msg->params << " " << name;

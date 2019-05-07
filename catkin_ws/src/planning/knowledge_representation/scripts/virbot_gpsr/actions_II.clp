@@ -156,14 +156,14 @@
 (defrule task_ask_for_incomplete
 	?f <- (task ?plan ask_info ?nti ?incomplete ?param ?step)
 	?f1 <- (item (type question) (name ?nti))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Task in order to ask for incomplete information")
         (assert (state (name ?plan)(number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments ?nti status asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments finish_objetive status asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pask_info) (actor robot)(obj ?param)(from ?nti)(to ?incomplete)(name-scheduled ?plan)(state-number ?step)))
-        (modify ?f1 (status nil))
-	
+        (modify ?f2 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -264,7 +264,8 @@
 	(retract ?goal)
 	(printout t "Prueba preguntar por informacion incompleta" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for_incomplete ?nti ?incomplete ?plan ?param)(duration 6000)))
-        (assert (finish-planner ?name 1))
+        (assert (plan (name ?name) (number 2)(actions update_status finish_objetive asked)(duration 6000)))
+        (assert (finish-planner ?name 2))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -925,10 +926,20 @@
 
 (defrule exe-plan-ask-for-incomplete
 	(plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti ?incomplete ?plan ?param)(duration ?t))
-	?f1 <- (item (name ?nti) )
+	?f1 <- (item (name ?nti) (status ?st&:(neq ?st asked)))
 	=>
 	(bind ?command (str-cat "" ?incomplete " " ?plan " " ?param ""))
 	(assert (send-blackboard ACT-PLN ask_incomplete ?command ?t 4))
+	(assert (task incomplete active))
+)
+
+(defrule exe-plan-ask-for-incomplete-accomplished
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti ?incomplete ?plan ?param)(duration ?t))
+	?f1 <- (item (name ?nti) (status asked))
+	(not (task incomplete active))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status no_ask))
 )
 
 (defrule exe-plan-af-ask-incomplete_follow
@@ -936,12 +947,13 @@
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti follow_place_origin ?plan ?param))
 	?f3 <- (task ?plan find_person_in_room ?person ?step)
+	?f4 <- (task incomplete active)
 	=>
-	(retract ?f)
+	(retract ?f ?f4)
 	(retract ?f3)
 	(assert (task ?plan find_person_in_room ?person ?response ?step))
 	(modify ?f2 (status accomplished))
-	(modify ?f1 (status asked))
+	(modify ?f1 (status no_ask))
 )
 
 (defrule exe-plan-af-ask-incomplete_gesture
@@ -950,11 +962,12 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti gesture_place_origin ?plan ?param))
         ?f3 <- (cd-task (cd pgesture_person) (actor robot)(obj robot)(from exitdoor)(to ?gesture)(name-scheduled ?plan)(state-number ?step))
 	?f4 <- (task ?plan update_object_location temp place_loc ?step2)
+	?f5 <- (task incomplete active)
 	=>
 	(retract ?f)
-	(retract ?f4)
+	(retract ?f4 ?f5)
 	(modify ?f2 (status accomplished))
-	(modify ?f1 (status asked))
+	(modify ?f1 (status no_ask))
 	(assert (task ?plan update_object_location location ?response ?step2))
 )
 
@@ -963,12 +976,13 @@
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti place_destiny ?plan ?param))
 	?f3 <- (task ?plan get_object man_guide ?step)
+	?f4 <- (task incomplete active)
 	=>
 	(retract ?f)
-	(retract ?f3)
+	(retract ?f3 ?f4)
 	(assert (task ?plan get_object man_guide ?response ?step))
 	(modify ?f2 (status accomplished))
-	(modify ?f1 (status asked))
+	(modify ?f1 (status no_ask))
 )
 
 (defrule exe-plan-af-ask-incomplete_destiny_place_two
@@ -976,12 +990,13 @@
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti place_destiny ?plan ?param))
 	?f3 <- (task ?plan get_object man_guide ?place ?step)
+	?f4 <- (task incomplete active)
 	=>
 	(retract ?f)
-	(retract ?f3)
+	(retract ?f3 ?f4)
 	(assert (task ?plan get_object man_guide ?response ?step))
 	(modify ?f2 (status accomplished))
-	(modify ?f1 (status asked))
+	(modify ?f1 (status no_ask))
 )
 
 (defrule exe-plan-af-ask-incomplete_object
@@ -990,14 +1005,15 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti object ?plan ?param))
 	?f3 <- (task ?plan get_object ?location ?step)
 	?f4 <- (task ?plan handover_object default_location ?step2)
+	?f5 <- (task incomplete active)
 	=>
 	(retract ?f)
 	(retract ?f3)
-	(retract ?f4)
+	(retract ?f4 ?f5)
 	(assert (task ?plan get_object ?response ?location ?step))
 	(assert (task ?plan handover_object ?response ?step2))
 	(modify ?f2 (status accomplished))
-	(modify ?f1 (status asked))
+	(modify ?f1 (status no_ask))
 )
 
 (defrule exe-plan-neg-ask-incomplete

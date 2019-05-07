@@ -230,3 +230,27 @@
 )
 ;;;;;;
 
+(defrule exe-plan-guide-to-taxi 
+	(plan (name ?name) (number ?num-pln) (status active) (actions guide_to_taxi ?person)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?person ""))
+	(assert (send-blackboard ACT-PLN guide_to_taxi ?command ?t 4))
+)
+
+(defrule exe-plan-guided_to_taxi
+        ?f <-  (received ?sender command guide_to_taxi ?person 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions guide_to_taxi $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-guided-to-taxi
+        ?f <-  (received ?sender command guide_to_taxi ?person 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions guide_to_taxi $?params))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+;;;;;;;;;;;;;

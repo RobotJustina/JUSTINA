@@ -13,6 +13,7 @@
 (gesture		is_kind_of		stuff)
 (abspos			is_kind_of		stuff)
 (relpos			is_kind_of		stuff)
+(category		is_kind_of		stuff)
 
 
 # personas y robot
