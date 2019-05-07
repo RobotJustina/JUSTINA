@@ -17,6 +17,7 @@ from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Bool
+from sensor_msgs.msg import JointState
 #from geometry_msgs.msg import TransformStamped
 #from geometry_msgs.msg import Twist
 #from hardware_tools import roboclaw
@@ -305,6 +306,7 @@ class MobileOmniBaseNode:
         
         self.pubBattery = rospy.Publisher("mobile_base/base_battery", Float32, queue_size = 1);
         #subStop    = rospy.Subscriber("robot_state/stop", Empty, callback_stop, queue_size=1);
+        self.pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
         self.subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, self.cmd_speeds_callback, queue_size=1);
         self.subCmdVel  = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, self.cmd_vel_callback, queue_size=1);
         self.subSimul   = rospy.Subscriber("/simulated", Bool, self.callback_simulated, queue_size = 1);
@@ -317,6 +319,9 @@ class MobileOmniBaseNode:
         encoder_rear = 0
         self.newData = False
         self.no_new_data_counter = 5
+        jointStates = JointState()
+        jointStates.name = ["wheel_left_connect", "wheel_right_connect", "wheel_back_connect", "wheel_front_connect"]
+        jointStates.position = [0 , 0, 0, 0]
         while not rospy.is_shutdown():
             if not self.simul:
                 if self.newData:
@@ -441,6 +446,12 @@ class MobileOmniBaseNode:
             #    rospy.logdebug(e)
             #TODO Update the updater function
             self.encodm.update_publish(encoder_left, encoder_right, encoder_front, encoder_rear)
+            jointStates.header.stamp = rospy.Time.now()
+            jointStates.position[0] = 0
+            jointStates.position[1] = 0
+            jointStates.position[2] = 0
+            jointStates.position[3] = 0
+            self.pubJointStates.publish(jointStates)
             rate.sleep();
 
     def shutdown(self):
