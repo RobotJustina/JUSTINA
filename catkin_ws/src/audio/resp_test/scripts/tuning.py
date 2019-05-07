@@ -55,7 +55,7 @@ PARAMETERS = {
     'GAMMA_NN_SR': (19, 36, 'float', 3, 0, 'rw', 'Over-subtraction factor of non-stationary noise for ASR. ', '[0.0 .. 3.0] (default: 1.1)'),
     'MIN_NS_SR': (19, 37, 'float', 1, 0, 'rw', 'Gain-floor for stationary noise suppression for ASR.', '[−inf .. 0] dB (default: −16dB = 20log10(0.15))'),
     'MIN_NN_SR': (19, 38, 'float', 1, 0, 'rw', 'Gain-floor for non-stationary noise suppression for ASR.', '[−inf .. 0] dB (default: −10dB = 20log10(0.3))'),
-    'GAMMAVAD_SR': (19, 39, 'float', 80, 0, 'rw', 'Set the threshold for voice activity detection.', '[−inf .. 60] dB (default: 3.5dB 20log10(1.5))'),
+    'GAMMAVAD_SR': (19, 39, 'float', 1000, 0, 'rw', 'Set the threshold for voice activity detection.', '[−inf .. 60] dB (default: 3.5dB 20log10(1.5))'),
     # 'KEYWORDDETECT': (20, 0, 'int', 1, 0, 'ro', 'Keyword detected. Current value so needs polling.'),
     'DOAANGLE': (21, 0, 'int', 359, 0, 'ro', 'DOA angle. Current value. Orientation depends on build configuration.')
 }
