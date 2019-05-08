@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from tuning import Tuning
-from std_msgs.msg import Int8, Bool
+from std_msgs.msg import Int16, Bool
 import rospy
 import usb.core
 import usb.util
@@ -19,8 +19,7 @@ RESPEAKER_INDEX = 2  # refer to input device id
 CHUNK = 1024
 RECORD_SECONDS = 3
 
-DTYPE = np.int16
-MAX_INT = 32768.0
+
 
 class Tuning_respeaker(object):
 	VENDOR_ID = 0x2886
@@ -34,7 +33,7 @@ class Tuning_respeaker(object):
 
 	def set_vad(self):
 		mic_tuning = Tuning(self.dev)
-		mic_tuning.set_vad_threshold(25)
+		mic_tuning.set_vad_threshold(50)
 		
 
 	def get_doa_value(self):
@@ -55,7 +54,7 @@ class Tuning_respeaker(object):
 def doa_publish():
 	tuner_resp = Tuning_respeaker()
 	tuner_resp.set_vad()
-	pub_doa = rospy.Publisher('sound_direction', Int8, queue_size=1)
+	pub_doa = rospy.Publisher('sound_direction', Int16, queue_size=1)
 	pub_vad = rospy.Publisher('vad_sound', Bool, queue_size=1)
 	rospy.init_node('doa_test', anonymous=True)
 	rate = rospy.Rate(10)
@@ -63,11 +62,11 @@ def doa_publish():
 
 		doa_value = tuner_resp.get_doa_value()
 		vad_value = tuner_resp.get_vad_value()
+		pub_doa.publish(doa_value)
+		pub_vad.publish(vad_value)
 		if (vad_value == True):
 			rospy.loginfo(doa_value)
 		#rospy.loginfo(vad_value)
-		pub_doa.publish(doa_value)
-		pub_vad.publish(vad_value)
 		rate.sleep()
 
 if __name__ == '__main__':
