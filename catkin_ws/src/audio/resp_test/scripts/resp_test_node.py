@@ -8,7 +8,7 @@ import time
 import pyaudio
 import wave
 import numpy as np
-import scipy.signal
+#import scipy.signal
 
 
 RESPEAKER_RATE = 16000
