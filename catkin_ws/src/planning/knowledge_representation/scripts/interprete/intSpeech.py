@@ -25,6 +25,7 @@ def set_mapping(mapping):
     egprs_interpreter.set_mapping(mapping)    
 
 def separaTask(cadena):
+        global ask_info_index 
 	spc = cadena.split("(task")
 	spc.remove('')
 	s = []
@@ -37,10 +38,12 @@ def separaTask(cadena):
 	update_location = False
 	find_person = False
 	deliver_object = False
+        ask_info = False 
         no_get_object_many_room = True
 	fpush = True
 	tu = 2
 	tempStep = 1
+        ask_info_index = 0;
 	no_man_guide = True
 	for i in spc:
 		temp  = i.split("(")
@@ -74,6 +77,9 @@ def separaTask(cadena):
 					if paramTam > 3:
 						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
+                                elif firstparam[1] == 'ask_info':
+                                        ask_info = True;
+                                        ask_info_index = ask_info_index + 1
 			if paramTam > 2:
 				if firstparam[2] == 'place_destiny':
 					if step == tempStep + tu + 1:
@@ -119,14 +125,21 @@ def separaTask(cadena):
 				else:
 					find_person = False
 			elif firstparam[0] == 'params' and deliver_object:
-				temp2 = firstparam[0] + " " + task_object + " " + firstparam[1]
+				temp2 = firstparam[0] + " " + task_object #+ " " + firstparam[1]
+				for i in range(1,len(firstparam)):
+                                    temp2 = temp2 + " " + firstparam[i]
 				deliver_object = False
 				
 			s.append(temp2)
 			print "PUSH: " + temp2
-		if fpush:
+		if fpush and not(ask_info):
 			q.pushC(s)
 			planQ.pushC(s)
+                elif ask_info:
+                        print 'insert element ask info index: ' + str(ask_info_index)
+                        q.insertElement(s, ask_info_index)
+                        planQ.insertElement(s, ask_info_index)
+                        ask_info = False
 		fpush = True
 		s = []
 
@@ -149,6 +162,7 @@ def cmd_task(c):
 		return (0, "No_Task")
 
 def cmd_int(c):
+        global ask_info_index 
 	try:
 		cadena  = cmdQ.popC()
 	except:
@@ -229,6 +243,7 @@ def cmd_int(c):
                         instruction = 'false'
                     result = result.replace('(inst', '(task')
                     instruction = 'true'
+                ask_info_index = 0
 		separaTask(result)
 		args = temp1.replace(' ','_')
                 if instruction == 'true':

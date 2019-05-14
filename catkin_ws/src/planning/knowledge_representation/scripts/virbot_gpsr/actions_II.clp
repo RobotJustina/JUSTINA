@@ -376,16 +376,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule update_number_task_for_split_room
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current) ?nof))
-	?f1 <- (plan (name ?name) (number ?current))
+	?f1 <- (plan (name ?name) (actions ?act&:(neq ?act make_task) $?params)(number ?current))
 	?f5 <- (update num task)
 	=>
-	(modify ?f (actions_num_params ?final (- ?current 1)))
+	(modify ?f (actions_num_params ?final (- ?current 1) ?nof))
 	(modify ?f1 (number (+ ?current 2)))
+)
+
+(defrule update_number_task_for_split_room_make_task
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current) ?nof))
+	?f1 <- (plan (name ?name) (actions make_task $?params)(actions_num_params ?anp1 ?anp2)(number ?current))
+	?f5 <- (update num task)
+	=>
+	(modify ?f (actions_num_params ?final (- ?current 1) ?nof))
+	(modify ?f1 (number (+ ?current 2)) (actions_num_params (+ ?anp1 2) (+ ?anp2 2)))
 )
 
 (defrule update_number_task_for_split_room_final
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
-	?f1 <- (plan (name ?name) (number ?n))
+	?f1 <- (plan (name ?name) (number ?n) (actions ?act&:(neq ?act make_task) $?params))
         ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
 	?f4 <- (num_places ?num)
 	?f5 <- (update num task)
@@ -393,10 +402,28 @@
 	=>
 	(retract ?f4 ?f5 ?f6)
 	(assert (num_places (+ ?num 2)))
-	(modify ?f (actions_num_params (+ ?p1 2) (+ ?p2 2)))
+	(modify ?f (actions_num_params (+ ?p1 2) (+ ?p2 2) ?nof))
         (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)))
         (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)))
 	(modify ?f1 (number (+ ?n 2)))
+	(modify ?f3 (status prev_review))
+	(assert (start split_room))
+)
+
+(defrule update_number_task_for_split_room_final_make_task
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
+	?f1 <- (plan (name ?name) (number ?n) (actions make_task $?params)(actions_num_params ?anp1 ?anp2))
+        ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
+	?f4 <- (num_places ?num)
+	?f5 <- (update num task)
+	?f6 <- (split_room params ?p1 ?p2)
+	=>
+	(retract ?f4 ?f5 ?f6)
+	(assert (num_places (+ ?num 2)))
+	(modify ?f (actions_num_params (+ ?p1 2) (+ ?p2 2) ?nof))
+        (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)))
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)))
+	(modify ?f1 (number (+ ?n 2)) (actions_num_params (+ ?anp1 2) (+ ?anp2 2)))
 	(modify ?f3 (status prev_review))
 	(assert (start split_room))
 )
@@ -575,7 +602,7 @@
         (retract ?f4)
         (retract ?f6)
         (modify ?f2 (status accomplished))
-        (modify ?f1 (pose ?x ?y ?z)(status finded))
+        ;(modify ?f1 (pose ?x ?y ?z)(status finded))
         (assert (finish-planner ?name ?num-pln))
         (assert (num_places 0))
         (modify ?f5 (status nil))
@@ -1012,6 +1039,21 @@
 	(retract ?f4 ?f5)
 	(assert (task ?plan get_object ?response ?location ?step))
 	(assert (task ?plan handover_object ?response ?step2))
+	(modify ?f2 (status accomplished))
+	(modify ?f1 (status no_ask))
+)
+
+(defrule exe-plan-af-ask-incomplete_take_object
+	?f <- (received ?sender command ask_incomplete object ?plan ?param ?response 1)
+	?f1 <- (item (name ?nti))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti object ?plan ?param))
+	?f3 <- (task ?plan get_object default_location ?location ?step)
+	?f5 <- (task incomplete active)
+	=>
+	(retract ?f)
+	(retract ?f3)
+	(retract ?f5)
+	(assert (task ?plan get_object ?response ?location ?step))
 	(modify ?f2 (status accomplished))
 	(modify ?f1 (status no_ask))
 )

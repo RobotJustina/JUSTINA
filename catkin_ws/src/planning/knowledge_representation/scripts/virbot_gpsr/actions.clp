@@ -36,7 +36,7 @@
 	(assert (cd-task (cd ptrans) (actor robot)(obj robot)(from frontexit)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
-	(modify ?f3 (status asked))
+	;(modify ?f3 (status asked))
 	;(modify ?f2 (zone frontexit))
 )
 

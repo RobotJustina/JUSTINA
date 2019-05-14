@@ -14,6 +14,8 @@
 (abspos			is_kind_of		stuff)
 (relpos			is_kind_of		stuff)
 (category		is_kind_of		stuff)
+(color			is_kind_of		stuff)
+#(rpos			is_kind_of		stuff)
 
 
 # personas y robot
@@ -89,8 +91,9 @@
 (arena			is_kind_of		place)
 (exit			is_kind_of		place)
 (entrance		is_kind_of		place)
-  
-
+(microwave		is_kind_of		place)
+(oven		is_kind_of		place)
+(fridge		is_kind_of		place)
 
 # comida
 (beverage 			is_kind_of 		item)
@@ -323,11 +326,18 @@
 (left_most	is_kind_of	abspos)
 (right_most	is_kind_of	abspos)
 
-"" Relative pose
+## Relative pose
 (at_the_left_of		is_kind_of	relpos)
 (at_the_right_of	is_kind_of	relpos)
 (on_top_of		is_kind_of	relpos)
 (above			is_kind_of	relpos)
 (behind			is_kind_of	relpos)
 (under			is_kind_of	relpos)
+
+## Rpos
+##(left		is_kind_of	rpos)
+##(right		is_kind_of	rpos)
+##(center		is_kind_of	rpos)
+##(middle_bottom	is_kind_of	rpos)
+##(top		is_kind_of	rpos)
 
