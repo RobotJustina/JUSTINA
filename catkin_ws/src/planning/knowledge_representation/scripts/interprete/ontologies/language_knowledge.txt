@@ -29,7 +29,7 @@
 (on 			tag 	prep_loc)
 (from 			tag 	prep_loc)
 (over 			tag 	prep_loc)
-(close 			tag 	prep_loc)
+#(close 			tag 	prep_loc)
 (along 			tag 	prep_loc)
 (with 			tag 	prep_loc)
 
