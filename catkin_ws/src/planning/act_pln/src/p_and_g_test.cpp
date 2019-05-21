@@ -130,7 +130,9 @@ int main(int argc, char** argv)
 
 			break;
 
-			case SM_WAIT_FOR_COMMAND:
+			//if needed a voice comand discomment next states
+			
+			/*case SM_WAIT_FOR_COMMAND:
 				JustinaHRI::waitAfterSay("Tell me, justina start, in order to perform the task", 12000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z=0;
@@ -147,7 +149,7 @@ int main(int argc, char** argv)
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     cont_z=0;
                 }
-			break;
+			break;*/
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
@@ -252,11 +254,15 @@ int main(int argc, char** argv)
 					objTaken ++;
 				}
 
-      			if(objTaken==2){
-      				nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
-      			}
-      			else
-      				nextState = SM_InspectTheObjetcs;
+				if(chances == 4 && objTaken == 1)
+					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+				else{
+					if(objTaken==2)
+      					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+      				else
+      					nextState = SM_InspectTheObjetcs;
+				}
+
       		break;
 
       		case SM_NAVIGATE_TO_THE_DISHWASHER:
@@ -312,7 +318,7 @@ int main(int argc, char** argv)
 
       			chances++;
 
-      			if(objTaken == 0 && chances==6){
+      			if(objTaken == 0 && chances==5){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
 					JustinaHRI::say("human close the diswasher, please");
 					ros::Duration(0.5).sleep();
