@@ -18,10 +18,11 @@ USER biorobotica
 WORKDIR $HOME
 RUN git clone https://github.com/RobotJustina/Mobile_Mask_RCNN
 RUN git clone https://github.com/rmartella/pycococreator
+RUN cd Mobile_Mask_RCNN && git pull origin master
 
 USER root
 WORKDIR $HOME
-RUN cd Mobile_Mask_RCNN && git pull origin master && pip install -r requirements.txt  && python setup.py install
+RUN cd Mobile_Mask_RCNN && pip install -r requirements.txt  && python setup.py install
 RUN cd pycococreator && python setup.py install
 USER biorobotica
 
