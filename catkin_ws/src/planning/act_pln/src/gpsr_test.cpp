@@ -1827,31 +1827,82 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	ros::Duration d = finishPlan - beginPlan;
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 	
+	bool conf = false;
+	int count  = 0;
+	std::string lastReco;
+	std::string name;
+	responseMsg.successful = 0;
+	
+	ss.str("");
+	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny")
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
+	if(tokens[0] == "object")
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, I want pringles", 10000);
+	
+    while(!conf && count < 3){
 	
 	ss.str("");
 	if(tokens[0] == "follow_place_origin"){
 		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 		ss << "Well, tell me where can i find " << tokens[2]; 
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
 	if(tokens[0] == "gesture_place_origin"){
 		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 		ss << "Well, tell me where can i find a " << tokens[2] << " person"; 
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
 	if(tokens[0] == "object"){
 		JustinaHRI::loadGrammarSpeechRecognized("incomplete_object.xml");
 		ss << "Well, tell me what " << tokens[2] << " do you want";
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, I want pringles", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	if(tokens[0] == "place_destiny"){
 		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the living table", 10000);
-		JustinaHRI::waitAfterSay("Well, tell me where is the destiny location", 10000);}
+		JustinaHRI::waitAfterSay("Well, tell me which is the place you want to be guided", 10000);}
 	ss.str("");
+
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+        if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+            if(JustinaRepresentation::stringInterpretation(lastReco, name))
+                std::cout << "last int: " << name << std::endl;
+                ss.str("");
+		if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
+			ss << "can i find " << tokens[2] << " in the " << name << ", say robot yes or robot no";
+		else if(tokens[0] == "object")
+			ss << "Do you want i look for the " << name << ", say robot yes or robot no";
+		else if(tokens[0] == "place_destiny")
+			ss << "Do you want i guide you to the " << name << ", say robot yes or robot no";
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		//change grammar
+		JustinaHRI::loadGrammarSpeechRecognized("confirmation.xml");
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
+                
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes" || lastReco == "justina yes"){
+			conf = true;
+			ss.str("");
+			if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
+				ss << "Well i will find the person in the " << name;
+			else if(tokens[0] == "object")
+				ss << "well i try to find the " << name << " in its default location";
+			else if(tokens[0] == "place_destiny")
+				ss << "well i will guide you to the " << name;
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
+			ss.str("");
+			ss << msg->params << " " << name;
+			responseMsg.params = ss.str();
+			responseMsg.successful = 1;
+		}
+		else{
+			ss.str("");
+			ss << msg->params << " nil";
+			responseMsg.params = ss.str();
+			responseMsg.successful = 0;
+		}
+                count++;
+        }
+    }
 		
 	/// codigo para preguntar nombre Se usara un servicio
-	bool success = ros::service::waitForService("spg_say", 5000);
+	/*bool success = ros::service::waitForService("spg_say", 5000);
 	success = success & ros::service::waitForService("/planning_clips/ask_incomplete",5000);
 	if (success) {
 		knowledge_msgs::planning_cmd srv;
@@ -1892,7 +1943,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	} else {
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
-	}
+	}*/
 
 
 
@@ -3079,6 +3130,26 @@ void callbackCmdMakeQuestion(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Guide to taxi ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	
+    responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for incomplete information ---------"
 			<< std::endl;
@@ -3513,6 +3584,7 @@ int main(int argc, char **argv) {
     ros::Subscriber subCmdDeliverOrder = n.subscribe("/planning_clips/cmd_deliver_order", 1, callbackCmdDeliverOrder);
     ros::Subscriber subCmdIntroducePerson = n.subscribe("/planning_clips/introduce_person", 1, callbackCmdIntroducePerson);
     ros::Subscriber subCmdMakeQuestion = n.subscribe("/planning_clips/make_question", 1, callbackCmdMakeQuestion);
+    ros::Subscriber subCmdGuideToTaxi = n.subscribe("/planning_clips/guide_to_taxi", 1, callbackCmdGuideToTaxi);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);

@@ -147,7 +147,7 @@ meaning_mapping_patterns_gpsr = [
 	
 	#find person 1 parametro
 	{"params": ["Action_find","Find_person"],
-	"Action_find": [["find", "look_for", "locate", "meet"], [], [], []],
+	"Action_find": [["find", "look_for", "locate"], [], [], []],
 	"Find_person": [[], [], ["person"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
 	"verbal_confirmation": '',
@@ -252,15 +252,15 @@ meaning_mapping_patterns_gpsr = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	#guide to room 2 parameters
-	{"params": ["Action_guide", "Person", "Location"],
-	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
-	"Person": [[], [], ["person"], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
+	#guide to room 2 parameters (was comented for Sidney gpsr)
+	#{"params": ["Action_guide", "Person", "Location"],
+	#"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+	#"Person": [[], [], ["person"], []],
+	#"Location":[[], [], ["place"], []],
+	#"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
+	#"verbal_confirmation": '',
+	#"planner_confirmed": '',
+	#"planner_not_confirmed": ''},
 
 
 	#####################NAGOYA 2017
@@ -847,311 +847,124 @@ meaning_mapping_patterns_gpsr = [
 	"conceptual_dependency": "(task (plan user_speech) (action_type guide_to_taxi) (params man_guide ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	######
+	## INCOMPLETE
+	####
+	
+	#$incomplete = $vbfollow {name 1 meta: {name 1} is at the {beacon 1}}
+	{"params": ["Action_follow", "Person"],
+	 "Action_follow": [["follow", "after"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person- ) (step ))" +
+				 "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	
+	#$incomplete = $cmanwarn $vbbring me (a | some) {object?}
+	{"params": ["Action_bring", "Me", "Category"],
+	 "Action_bring": [["bring", "give", "deliver"],[],[],[]],
+	 "Me": [["me"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+				 "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	
+	#$incomplete = $cmanwarn $vbdeliver {object?} to a {gesture 1} person {void meta: }
+	{"params": ["Action_deliver", "Category", "Gesture", "Place"],
+	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "Gesture": [[],[],["gesture"],[]],
+	 "Place": [[],[],["place"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+                                 "(task (plan user_speech) (action_type update_object_location)(params location -Place- )(step ))" +
+				 "(task (plan user_speech) (action_type find_pgg_person) (params -Gesture- -Place-)(step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	
+	#$incomplete = $vbguide {name 1 meta: {name 1} is at the {beacon 1} to the {beacon 2}}
+	{"params": ["Action_guide", "Person", "Location"],
+	 "Action_guide": [["guide", "take", "escort", "lead", "accompany"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "Location": [[],[],["place"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	 
+        #incomplete = meet $inguidewho and $vbguide {pron}
+	{"params": ["Action_find", "Person"],
+	 "Action_find": [["meet"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+	                         "(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '', 
+	 "planner_not_confirmed": ''},
+	
+        #and $vbguide {pron}	
+	{"params": ["Action_guide", "Pron"],
+	 "Action_guide": [["guide", "escort", "take", "lead", "accompany"],[],[],[]],
+	 "Pron": [["her", "him", "it"],[],[],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params man_guide) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''}, 
+
+	####
+	### OFFER objects
+	####
+	{"params": ["My", "Person_name"],
+	"My": [["My", "name"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	#I am
+	{"params": ["I", "Person_name"],
+	"I": [["i"], [], ["person"], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #I want drink
+	{"params": ["Person", "Want", "Favorite_drink"],
+	"Person": [["i"], [], [], []],
+	"Want": [["want"], [], [], []],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "-Favorite_drink-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+	####
+	### GET LOCATION NAMES
+	###
+	{"params": ["At", "Place"],
+	"At": [["at", "in"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "-Place-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
 ]
 
-meaning_mapping_patterns_high_gpsr = [
-	####
-	#$findp = $vbfind a ($pgesture | $ppose) person
-	{"params": ["Action_find","Person", "PGG"],
-	"Action_find": [["find", "locate", "look_for"], [], [], []],
-        "Person": [["man"],[],[],[]],
-	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- place_loc) (step ))", 
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-        
-        #### High GPSR
-
-        ###
-        ### MANIPULATION
-        ###
-
-        ##$deliver  = $vbbtake the {aobject} from the {room} to the {placement 2}
-	{"params": ["Action_take","Object", "Room", "Place"],
-	"Action_take": [["take", "bring"], [], [], []],
-        "Object": [[],[],["item"],[]],
-	"Room":[[],[],["place"],[]],
-	"Place":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Room-) (step ))" +
-				"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Room-) (step ))" +
-                                "(task (plan user_speech) (action_type grasp) (params -Object-))" +
-	                        "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        #$vbbring me the {aobject} from the {placement}
-	{"params": ["Action_take", "Person","Object", "Place"],
-	"Action_take": [["give", "bring"], [], [], []],
-	"Person": [["me"], [], [], []],
-        "Object": [[],[],["item"],[]],
-	"Place":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- place_loc) (step ))", 
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-	
-        #$takefrom
-	{"params": ["Action_take", "Object","Place_first"],
-	"Action_take": [["get" , "grasp" , "take" , "pick up", "bring"], [], [], []],
-	"Object": [[], [], ["item"], []],
-	"Place_first": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place_first-) (step )) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-	
-        # deliver to me
-	{"params": ["Action_deliver", "Person"],
-	"Action_deliver": [["give", "bring", "deliver"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	# deliver to person
-	{"params": ["Action_deliver", "Person"],
-	"Action_deliver": [["give", "bring", "deliver"], [], [], []],
-	"Person": [[], [], ["person"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
-							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	# deliver to person 2 parametros
-	{"params": ["Action_deliver", "Person", "Location"],
-	"Action_deliver": [["give", "bring", "deliver"], [], [], []],
-	"Person": [[], [], ["person"], []],
-	"Location": [[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" +
-							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-	
-        #deliver in place
-	{"params": ["Action_place", "Destination_place"],
-	"Action_place": [["place", "put"], [], [], []],
-	"Destination_place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type deliver_in_position) (params -Destination_place-) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbbtake my $luggage to the $taxi
-	{"params": ["Action_take", "Luggage","Taxi"],
-	"Action_take": [["bring", "take"], [], [], []],
-	"Luggage": [["bag", "baggage", "valise", "suitcase", "trolley"], [], [], []],
-	"Taxi": [["uber", "taxi", "cab"], [], [], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place_first-) (step )) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ###############
-        ### COMPLEX MANIPULATION
-        ############
-        
-        #$vbbtake the {kobject} to the {placement 2 meta: Block access to {placement 2} with a movable object or furniture}
-	{"params": ["Action_take", "Object", "To", "Place"],
-	"Action_take": [["take", "bring"], [], [], []],
-	"Object": [[], [], ["item"], []],
-	"To": [["to"], [], [], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
-				"(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbbring me the $abspos object $cmanobjsrc
-	{"params": ["Action_take", "Person","Abspos",  "Object", "Place"],
-	"Action_take": [["give", "bring"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Abspos": [["left_most", "right_most"], [], [], []],
-	"Object": [[], [], ["item"], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
-	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbbring me the object $relpos the {object}  $cmanobjsrc
-	{"params": ["Action_take", "Person", "Relpos",  "Object", "Place"],
-	"Action_take": [["give", "bring"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Relpos": [["at_the_left_of", "at_the_right_of", "on_top_of", "above", "behind", "under"], [], [], []],
-	"Object": [[], [], ["item"], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
-	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbbring me the $oprop (object | {category}) $cmanobjsrc
-	{"params": ["Action_take", "Person", "Oprop",  "Object", "Place"],
-	"Action_take": [["give", "bring"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Relpos": [[], [], ["adjectivea"], []],
-	"Object": [["object"], [], [], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
-	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbbring me the $oprop (object | {category}) $cmanobjsrc
-	{"params": ["Action_take", "Person", "Oprop",  "Category", "Place"],
-	"Action_take": [["give", "bring"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Relpos": [[], [], ["adjectivea"], []],
-	"Category": [[], [], ["category"], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) " +
-	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbclean the {room meta: Place 3 objects randomly, at least one on the floor.}
-	{"params": ["Action_clean", "Place"],
-	"Action_take": [["clean_up", "clean_out", "tidy_op", "neaten", "order"], [], [], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbtakeout the $garbage
-	{"params": ["Action_takeout", "Garbage"],
-	"Action_takeout": [["take_out", "dump"], [], [], []],
-	"Garbage": [["litter", "garbage", "trash", "waste", "debris", "junk"], [], [], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Place-) (step )) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##tell me which are the three $oprop (objects | {category}) on the {placement 1 meta: Place at least 5 objects on the {placement 1}}
-	{"params": ["Action_tell", "Person", "Oprop", "Object", "Location"],
-	"Action_get": [["tell"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Oprop": [[], [], ["adjetivea"], []],
-	"Object": [["object"], [], [], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
-	"verbal_confirmation": '',	
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##tell me which are the three $oprop (objects | {category}) on the {placement 1 meta: Place at least 5 objects on the {placement 1}}
-	{"params": ["Action_tell", "Person", "Oprop", "Category", "Location"],
-	"Action_get": [["tell"], [], [], []],
-	"Person": [["me"], [], [], []],
-	"Oprop": [[], [], ["adjetivea"], []],
-	"Category": [[], [], ["category"], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
-	"verbal_confirmation": '',	
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ##$vbfind three {category} in the {room meta: Place only 3 objects in the room}
-	{"params": ["Action_find", "Three", "Category", "Location"],
-        "Action_find": [["find", "look_for", "locate"], [], [], []],
-	"Three": [["three"], [], [], []],
-	"Category": [[], [], ["category"], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
-	"verbal_confirmation": '',	
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-	
-        ##$vbguide {pron} back
-	{"params": ["Action_guide", "Pron"],
-	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
-	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        ###########
-        ### PARTY HOST
-        ##########
-       
-        #$vbserve (drinks | snacks) to $phpeopler
-	{"params": ["Action_serve", "EatDrink", "Phpeople", "Place"],
-	"Action_serve": [["serve" , "arrange" ,"deliver" , "distribute" , "give", "provide"], [], [], []],
-	"EatDrink":[[],[],["category"],[]],
-	"Phpeople":[["everyone", "people", "men", "women", "guests", "elders", "children"],[],[],[]],
-	"Place":[[],[],["place"],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        #$vbmeet {name} at the $door and introduce {pron} to $phpeopler
-	{"params": ["Action_meet", "Person", "Pos", "Door", "Phpeople", "Place"],
-	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
-	"Person":[[],[],["person"],[]],
-	"Pos":[["front", "back", "main", "rear"],[],[],[]],
-	"Door":[["entrance", "door"],[],[],[]],
-	"Place":[[],[],["place"],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        #$vbmeet {name} at the {beacon} and ask {pron} to leave
-	{"params": ["Action_meet", "Person", "Place", "Leave"],
-	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
-	"Person":[[],[],["person"],[]],
-	"Place":[[],[],["place"],[]],
-	"Leave":[["leave"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        #$vbmeet {name 1} at the {beacon 1} and introduce {pron} to {name 2} at the {beacon 2}
-	{"params": ["Action_meet", "Person_first", "Place_first", "Introduce", "To", "Person_second", "Place_second"],
-	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
-	"Person_first":[[],[],["person"],[]],
-	"Place_first":[[],[],["place"],[]],
-	"Introduce":[["introduce"],[],[],[]],
-	"To":[["to"],[],[],[]],
-	"Person_second":[[],[],["person"],[]],
-	"Place_second":[[],[],["place"],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-        #$vbmeet {name 1} at the {beacon 1} and $vbguide {pron} to {pron pos} $taxi
-	{"params": ["Action_meet", "Person", "Place", "Action_guide", "Taxi"],
-	"Action_meet": [["contact" , "face" ,"find" , "greet"], [], [], []],
-	"Person":[[],[],["person"],[]],
-	"Place":[[],[],["place"],[]],
-	"Action_guide":[["accompany", "escort", "guide"],[],[],[]],
-	"Taxi":[["taxi", "cab", "uber"],[],[],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide ) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
-
-        ]
 
 meaning_mapping_patterns_spr = [
         #$Where is the {placement} located?
@@ -1620,7 +1433,7 @@ meaning_mapping_patterns_eegpsr2 = [
         #navigate
 	{"params": ["Action_nav", "Location"],
 	"Action_nav": [["navigate", "go", "locate", "enter"], [], [], []],
-	"Location": [[], [], ["place"], []],
+	"Location": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1648,7 +1461,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Find_person", "Person", "Person_location"],
 	"Find_person": [["find", "locate", "look_for"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Person_location": [[], [], ["place"], []],
+	"Person_location": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1678,7 +1491,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_deliver", "Person", "Location"],
 	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Location": [[], [], ["place"], []],
+	"Location": [[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" +
 							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
@@ -1689,7 +1502,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_get", "Get_object", "Source_get"],
 	"Action_get": [["get", "grasp", "take"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
-	"Source_get": [[], [], ["place"], []],
+	"Source_get": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1726,7 +1539,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_follow", "Pron", "Location"],
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
-	"Location":[[], [], ["place"], []],
+	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1736,7 +1549,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_guide", "Pron", "Location"],
 	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
-	"Location":[[], [], ["place"], []],
+	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1754,7 +1567,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	
         #$vbfind the $object 1 parametro
 	{"params": ["Action_get", "Get_object"],
-	"Action_get": [["find", "look_for", "locate"], [], [], []],
+	"Action_get": [["find", "look_for", "locate", "spot", "pinpoint"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
@@ -1779,7 +1592,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#$vbplace the $object on the {placement 2}
 	{"params": ["Action_take", "Object", "Place"],
-	"Action_take": [["put", "place", "deliver"], [], [], []],
+	"Action_take": [["put", "place", "deliver", "set", "leave"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
@@ -1838,7 +1651,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_talk": [["speak", "answer", "tell", "say"], [], [], []],
 	"Question": [[], [], ["question"], []],
 	"Person": [[], [], ["person"], []],
-	"Location":[[], [], ["place"], []],
+	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" + 
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question -Question-) (step ))",
 	"verbal_confirmation": '',
@@ -1855,7 +1668,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_get", "Object", "Location"],
 	"Action_get": [["find", "look_for", "locate"], [], [], []],
 	"Object": [[], [], ["item"], []],
-	"Location":[[], [], ["place"], []],
+	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))"+
 				"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Location-) (step ))",
 	"verbal_confirmation": '',	
@@ -1885,8 +1698,8 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_follow", "Person", "Location_first", "Location_second"],
 	"Action_follow": [["follow", "after"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Location_first":[[], [], ["place"], []],
-	"Location_second":[[], [], ["place"], []],
+	"Location_first":[[], [], ["place", "room"], []],
+	"Location_second":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
 				"(task (plan user_speech) (action_type follow_man) (params man -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
@@ -1902,8 +1715,8 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_guide", "Person", "Location_first", "Location_second"],
 	"Action_guide": [["guide" , "escort" , "take" , "lead" , "accompany"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Location_first":[[], [], ["place"], []],
-	"Location_second":[[], [], ["place"], []],
+	"Location_first":[[], [], ["place", "room"], []],
+	"Location_second":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
 				"(task (plan user_speech) (action_type get_object) (params man_guide -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
@@ -1914,10 +1727,10 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_guide", "Person", "Location_first", "May", "Action_find", "Location_second"],
 	"Action_guide": [["guide" , "escort" , "take" , "lead" , "accompany"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Location_first":[[], [], ["place"], []],
+	"Location_first":[[], [], ["place", "room"], []],
 	"May":[["may", "can", "will"],[],[],[]],
 	"Action_find":[["find"],[],[],[]],
-	"Location_second":[[], [], ["place"], []],
+	"Location_second":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_second-) (step )) " +
 				"(task (plan user_speech) (action_type get_object) (params man_guide -Location_first-) (step )) ", 
 	"verbal_confirmation": '',
@@ -1938,7 +1751,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Many":[["many"],[],[],[]],
         "PeopleDsc":[[],[],["gesture", "colord", "outfit", "posprs", "color"],[]],
         "Ppl":[[],[],["people", "ppl"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency": "(task (plan user_speech) (action_type find_how_many_people) (params -Ppl- -PeopleDsc- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -1951,7 +1764,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "EatDrink":[["eat", "drink"],[],[],[]],
         "PeopleDsc":[[],[],["gesture", "colord", "outfit", "posprs", "color"],[]],
         "Ppl":[[],[],["people", "ppl"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink) (params -Ppl- -PeopleDsc- -EatDrink- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -1964,7 +1777,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "To":[["to"],[],[],[]],
         "Person":[[],[],["gprsn", "people"],[]],
         "PeopleDsc":[[],[],["gesture", "apparel", "property"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type bring_obj_to_prsn) (params -Person- -PeopleDsc- -Object- -Location-) (step ))", 
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -1978,7 +1791,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn", "people"],[]],
         "Color":[[],[],["color"],[]],
         "Outfit":[[],[],["outfit"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type bring_obj_to_prsn) (params -Person- -Color- -Outfit- -Object- -Location-) (step ))", 
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -1989,7 +1802,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_greet":[["hello", "introduce_yourself", "greet", "salute", "handshake"],[],[],[]],
         "Person":[[],[],["gprsn", "people"],[]],
         "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_person) (params -Person- -PeopleDsc- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -2001,7 +1814,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn"],[]],
         "Color":[[],[],["color"],[]],
         "Outfit": [[],[],["outfit"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_person) (params -Person- -Color -Outfit- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -2013,7 +1826,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_follow":[["follow", "after", "behind", "accompany"],[],[],[]],
         "Person":[[],[],["gprsn", "people"],[]],
         "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type follow_person) (params -Person- -PeopleDsc- -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2025,7 +1838,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn"],[]],
         "Color":[[],[],["color"],[]],
         "Outfit":[[],[],["outfit"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type follow_person) (params -Person- -Color- -Outfit- -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2036,9 +1849,9 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
         "Person":[[],[],["gprsn"],[]],
         "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
-        "Location_first":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
         "To":[["to"],[],[],[]],
-        "Location_second":[[],[],["place"],[]],
+        "Location_second":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_person) (params -Person- -PeopleDsc- -Location_first- -Location_second-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2050,8 +1863,8 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn"],[]],
         "Color":[[],[],["color"],[]],
         "Outfit":[[],[],["outfit"],[]],
-        "Location_first":[[],[],["place"],[]],
-        "Location_second":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
+        "Location_second":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_person) (params -Person- -Color- -Outfit- -Location_first- -Location_second-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2065,7 +1878,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person_first":[["me"],[],[],[]],
         "Person_second":[["person", "man"],[],[],[]],
         "Posture":[[],[],["posprs"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type describe_person) (params -Posture- -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2076,8 +1889,8 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_describe":[["describe"],[],[],[]],
         "Person":[[],[],["gprsn"],[]],
         "Posture":[[],[],["posprs"],[]],
-        "Location_first":[[],[],["place"],[]],
-        "Location_second":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
+        "Location_second":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type describe_person) (params -Posture- -Location_first- -Location_second-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2087,7 +1900,7 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params":["Action_meet", "Person", "Location"],
         "Action_meet":[["meet", "contact", "know", "acquainted"],[],[],[]],
         "Person":[[],[],["person"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type remind_person) (params -Person- -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2097,7 +1910,7 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params":["Action_greet", "Pron", "Location"],
         "Action_greet":[["greet", "find"],[],[],[]],
         "Pron":[["her", "him", "it"],[],[],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_person) (params -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2111,7 +1924,7 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params":["Action_greet", "Person", "Location"],
         "Action_greet":[["hello", "introduce_yourself", "greet", "salute", "handshake"],[],[],[]],
         "Person":[[],[],["person"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_name) (params -Person- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -2122,7 +1935,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_offer":[["offer"],[],[],[]],
         "EatDrink":[["eat", "drink"],[],[],[]],
         "Person":[[],[],["person"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink_known_person) (params -Person- -EatDrink- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
@@ -2133,7 +1946,7 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params":["Action_follow", "Person", "Location"],
         "Action_follow":[["follow", "after", "behind", "accompany"],[],[],[]],
         "Person":[[],[],["person"],[]],
-        "Location":[[],[],["place"],[]],
+        "Location":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type follow_known_person) (params -Person- -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2143,9 +1956,9 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params":["Action_guide", "Person", "Location_first", "To", "Location_second"],
         "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
         "Person":[[],[],["person"],[]],
-        "Location_first":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
         "To":[["to"],[],[],[]],
-        "Location_second":[[],[],["place"],[]],
+        "Location_second":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_known_person) (params -Person- -Location_first- -Location_second-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2194,7 +2007,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
         "Person":[[],[],["gprsn"],[]],
         "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
-        "Location_first":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_person_no_location) (params -Person- -PeopleDsc- -Location_first-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
@@ -2206,11 +2019,448 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn"],[]],
         "Color":[[],[],["color"],[]],
         "Outfit":[[],[],["outfit"],[]],
-        "Location_first":[[],[],["place"],[]],
+        "Location_first":[[],[],["place", "room"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_person_no_location) (params -Person- -Color- -Outfit- -Location_first-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
-        "planner_not_confirmed":''}
+        "planner_not_confirmed":''},
+
+        #########
+        #### NEW COMMANDS FOR SIDNEY 
+        ######
+       
+        ###
+        ## Bring from description
+        ###
+
+        #$bringdesc = $vbdeliver me the $bdwhat from the {placement 1}
+	{"params": ["Action_deliver", "Person", "Desc","Object", "Place"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person": [["me"], [], [], []],
+        "Desc": [[],[],["color", "adjectivea", "abspos", "property"],[]],
+	"Object": [["object"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object -Place- -Desc- nil) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$bringdesc = $vbdeliver me the $bdwhat from the {placement 1}
+	{"params": ["Action_deliver", "Person", "Desc", "Category", "Place"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person": [["me"], [], [], []],
+        "Desc": [[],[],["color", "adjectivea", "abspos", "property"],[]],
+	"Category": [[], [], ["category"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Place- -Desc- -Category-) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$bringdesc = take the $bdwhat from the {placement 1} to the {placement 2}
+	{"params": ["Action_take", "Desc", "Object", "Origin_place", "Destiny_place"],
+	"Action_take": [["take"], [], [], []],
+        "Desc": [[],[],["color", "adjectivea", "abspos", "property"],[]],
+	"Object": [["object"], [], [], []],
+	"Origin_place": [[], [], ["place"], []],
+	"Destiny_place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Origin_place- -Desc- nil) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params -Destiny_place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        #$bringdesc = take the $bdwhat from the {placement 1} to the {placement 2}
+        {"params": ["Action_take", "Desc", "Category", "Origin_place", "Destiny_place"],
+	"Action_take": [["take"], [], [], []],
+        "Desc": [[],[],["color", "adjectivea", "abspos", "property"],[]],
+	"Category": [[], [], ["category"], []],
+	"Origin_place": [[], [], ["place"], []],
+	"Destiny_place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Origin_place- -Desc- -Category-) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params -Destiny_place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$bringdesc = $vbdeliver me the {category} at the $rpos {placement 1}
+	{"params": ["Action_deliver", "Person",  "Category", "Rpos","Place"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person": [["me"], [], [], []],
+        "Rpos": [["left", "right", "center", "middle_bottom", "top"],[],[],[]],
+	"Category": [[], [], ["category"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object -Place- -Rpos- -Category-) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$bringdesc = $vbdeliver me something in a $canpourin
+	{"params": ["Action_deliver", "Person",  "Something", "Canpourin"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Something": [["something"], [], [], []],
+	"Canpourin": [[], [], ["item"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object default_location canpourin -Canpourin-) (step )) " +
+	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$bringdesc = take the {category} at the {placement 1}'s $rpos to the {placement 2}
+        {"params": ["Action_take", "Category", "Origin_place", "Rpos","Destiny_place"],
+	"Action_take": [["take"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"Origin_place": [[], [], ["place"], []],
+        "Rpos": [["left", "right", "center", "middle_bottom", "top"],[],[],[]],
+	"Destiny_place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Origin_place- -Rpos- -Category-) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params -Destiny_place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        ####
+        ## Bring from/to storage
+        ###
+        
+        #$store = put the {object} into the $storage
+        {"params": ["Action_put", "Object", "Into", "Storage"],
+	"Action_put": [["put"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"Into": [["into"], [], [], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params -Storage-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        {"params": ["Action_put", "Object", "Into", "Special_object","Storage"],
+	"Action_put": [["put"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"Into": [["into"], [], [], []],
+	"Special_object": [[], [], ["item"], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params -Storage- -Special_object-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$store = pick up a {category} from the {placement} and put it into the $storage
+        {"params": ["Action_take", "Category", "Place"],
+	"Action_take": [["take"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Place- biggest -Category-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        {"params": ["Action_put", "It", "Into", "Storage"],
+	"Action_put": [["put"], [], [], []],
+	"It": [["it"], [], [], []],
+	"Into": [["into"], [], [], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type deliver_in_position) (params -Storage-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        {"params": ["Action_put", "It", "Into", "Special_object", "Storage"],
+	"Action_put": [["put"], [], [], []],
+	"It": [["it"], [], [], []],
+	"Into": [["into"], [], [], []],
+	"Special_object": [[], [], ["item"], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type deliver_in_position) (params -Storage- -Special_object-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$findordI = $vbgor to the {room}, $vbfind the {object?}
+        {"params": ["Action_find", "Category"],
+	"Action_find": [["find", "look_for", "locate", "spot", "pinpoint"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #No se implemento $findorsI = $vbfind (a | the) {object meta: Robot must place it on the {placement}}
+        #$takeI = $vbtake the {aobject? meta: Place to } from the {placement}
+        #$takeI = $vbtake the {aobject meta: Robot will find it on the {placement}}
+        
+        #$place    = $vbplace it on the {placement}
+        #$placeI   = $vbplace it to the {placement?}
+        {"params": ["Action_place", "Place"],
+	"Action_place": [["put", "place", "leave", "set"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        {"params": ["Action_place", "Room"],
+	"Action_place": [["put", "place", "leave", "set"], [], [], []],
+	"Room": [[], [], ["room"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object_place -Room-) (step ))" +
+                                "(task (plan user_speech) (action_type deliver_in_position) (params default_location) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$mvobjI   = $vbplace the {object} in the {placement?}
+        {"params": ["Action_place", "Object", "Room"],
+	"Action_place": [["put", "place", "leave", "set"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"Room": [[], [], ["room"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object_place -Room-) (step ))" +
+                                "(task (plan user_speech) (action_type get_object) (params -Object- default_location))" +
+                                "(task (plan user_speech) (action_type deliver_in_position) (params default_location) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$mvobjI   = $vbplace a {object? meta: place 3 objects of the same category at {placement 1}} on the {placement 1}
+        {"params": ["Action_place", "Category", "Place"],
+	"Action_place": [["put", "place", "leave", "set"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+                                "(task (plan user_speech) (action_type get_object) (params default_object default_location))" +
+                                "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        #and $vbguide {pron}	
+	{"params": ["Action_guide", "Pron"],
+	 "Action_guide": [["guide", "escort", "take", "lead", "accompany"],[],[],[]],
+	 "Pron": [["her", "him", "it"],[],[],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))" +
+	                        "(task (plan user_speech) (action_type get_object) (params man_guide) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''}, 
+
+        #$countobj  = tell $repwho how many $countwhat are in the {placement 1}
+	{"params": ["Action_talk", "Person", "Many", "Category", "Location"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
+	"Category": [["snacks", "cutlery", "food", "drinks", "tableware", "containers", "fruits", "cleaning_stuff"], [], [], []],
+	"Location":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location-) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	{"params": ["Action_talk", "Person", "Many", "Color", "Object", "Location"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
+	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
+	"Object": [[], [], ["item"], []],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location- -Color-) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        {"params": ["Action_talk", "Person", "Many", "Color", "Category", "Location"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
+	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
+	"Category": [[], [], ["category"], []],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Category- -Location- -Color-) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$countobj  = count the $countwhat at the {placement 1} and $report
+	{"params": ["Action_count", "Category", "Location"],
+	"Action_count": [["count"], [], [], []],
+	"Category": [["snacks", "cutlery", "food", "drinks", "tableware", "containers", "fruits", "cleaning_stuff"], [], [], []],
+	"Location":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	{"params": ["Action_count", "Color", "Object", "Location"],
+	"Action_count": [["count"], [], [], []],
+	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
+	"Object": [[], [], ["item"], []],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location- -Color-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        {"params": ["Action_count", "Color", "Category", "Location"],
+	"Action_count": [["count"], [], [], []],
+	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
+	"Category": [[], [], ["category"], []],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Category- -Location- -Color-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        {"params": ["Action_report", "Person"],
+	"Action_report": [["inform", "report"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$descobj  = describe the objects in the {placement} to $repwho
+        {"params": ["Action_describe", "Object", "Place", "Person"],
+	"Action_describe": [["describe"], [], [], []],
+	"Object": [["objects", "object"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"Person":[["me"],[],[],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object_description) (params object -Place-) (step ))" +
+                                "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$retrieve  = $vbdeliver me some {category} from the $storage
+        {"params": ["Action_deliver", "Person", "Category", "Storage"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Category": [[], [], ["category"], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Storage- biggest -Category-) (step )) " +
+                                "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$task      = open the (entrance | exit | corridor) door
+        #$task      = close the (entrance | exit | corridor) door
+        {"params": ["Action", "Pos", "Door"],
+	"Action": [["open", "close"], [], [], []],
+	"Pos":[["entrance", "exit", "corridor"],[],[],[]],
+	"Door": [["door"], [], [], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type interact_with_door) (params door -Pos- -Action-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$pour      = $vbdeliver me some $pourable in a $canpourin
+        {"params": ["Action_deliver", "Person", "Pourable", "Canpourin"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Pourable": [[], [], ["item"], []],
+	"Canpourin": [[], [], ["item"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params pour) (step ))" + 
+                                "(task (plan user_speech) (action_type get_object) (params -Pourable- default_loaction) (step )) " +
+                                "(task (plan user_speech) (action_type put_into_object) (params -Canpourin- default_location -Pourable-)(step ))" +
+                                "(task (plan user_speech) (action_type get_special_object) (params -Canpourin-) (step ))" +
+                                "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$pour      = $vbpour some $pourable in a $canpourin
+        {"params": ["Action_pour", "Pourable", "Canpourin"],
+	"Action_pour": [["pour", "serve"], [], [], []],
+	"Pourable": [[], [], ["item"], []],
+	"Canpourin": [[], [], ["item"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params pour) (step ))" + 
+                                "(task (plan user_speech) (action_type get_object) (params -Pourable- default_loaction) (step )) " +
+                                "(task (plan user_speech) (action_type put_into_object) (params -Canpourin- default_location -Pourable-))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #$serve     = $vbplace a $tableware on the {placement} and a $cutlery $servewhere
+        {"params": ["Action_place", "Tableware", "Place"],
+	"Action_place": [["place", "set", "put", "leave"], [], [], []],
+	"Tableware": [[], [], ["item"], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params tableware))" +
+                                "(task (plan user_speech) (action_type get_special_object) (params -Tableware-) (step ))" + 
+                                "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        {"params": ["Cutlery", "On", "Pos"],
+	"Cutlery": [[], [], ["item"], []],
+	"On": [["on"], [], [], []],
+	"Pos": [["it", "right", "left"], [], [], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params -Cutlery- default_loaction))" +
+                                "(task (plan user_speech) (action_type serve_cutlery) (params -Cutlery- tableware_place -Pos- ) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	####
+	### OFFER objects
+	####
+	{"params": ["My", "Person_name"],
+	"My": [["My", "name"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	#I am
+	{"params": ["I", "Person_name"],
+	"I": [["i"], [], ["person"], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #I want drink
+	{"params": ["Person", "Want", "Favorite_drink"],
+	"Person": [["i"], [], [], []],
+	"Want": [["want"], [], [], []],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "-Favorite_drink-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+	####
+	### GET LOCATION NAMES
+	###
+	{"params": ["At", "Place"],
+	"At": [["at", "in"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "-Place-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
 
         ]
 

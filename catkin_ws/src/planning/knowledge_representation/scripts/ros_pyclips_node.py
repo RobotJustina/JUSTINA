@@ -583,6 +583,13 @@ def make_question(cmd):
     pubCmdMakeQuestion.publish(request)
     return cmd._id
 
+def guide_to_taxi(cmd):
+    global pubCmdGuideToTaxi 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGuideToTaxi.publish(request)
+    return cmd._id
+
 def offer_drink(cmd):
     global pubCmdOfferDrink 
     print "Executing Function: " + cmd.name
@@ -676,7 +683,8 @@ fmap = {
     'cmd_get_bag': cmd_get_bag,
     'cmd_follow_to_taxi': cmd_follow_to_taxi,
     'introduce_person': introduce_person,
-    'make_question': make_question
+    'make_question': make_question,
+    'guide_to_taxi': guide_to_taxi
 }
 
 def quit():
@@ -692,7 +700,7 @@ def main():
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
-    global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion 
+    global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi  
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -739,6 +747,7 @@ def main():
     pubCmdFollowToTaxi = rospy.Publisher('/planning_clips/cmd_follow_to_taxi', PlanningCmdClips, queue_size=1)
     pubCmdIntroducePerson = rospy.Publisher('/planning_clips/introduce_person', PlanningCmdClips, queue_size=1)
     pubCmdMakeQuestion = rospy.Publisher('/planning_clips/make_question', PlanningCmdClips, queue_size=1)
+    pubCmdGuideToTaxi = rospy.Publisher('/planning_clips/guide_to_taxi', PlanningCmdClips, queue_size=1)
     
     ##topicos de serving drinks
     pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)

@@ -193,6 +193,7 @@ def ontology_words_mapping(sentence):
 	sentence = re.sub('search for ', 'search_for ', sentence)
 
 	sentence = re.sub('look for', 'look_for', sentence)
+	sentence = re.sub('middle bottom', 'middle_bottom', sentence)
 
         #Montral special objects names
         sentence = re.sub('bathroom s cabinet', 'bathroom_s_cabinet', sentence)

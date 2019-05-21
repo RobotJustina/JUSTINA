@@ -28,3 +28,25 @@ class classCola:
 			return self.items.pop()
 		except:
 			raise ValueError("La cola esta vacia")
+
+        def insertElement(self, x, index):
+                plan_inicio = self.items[:index-1]
+                plan_final = self.items[index-1:]
+                index_t = index + 1
+                
+                new_task = x;
+                new_task[3] = "step " + str(index)
+                
+                plan_inicio.append(new_task)
+                #plan_inicio.extend(plan_final)
+                #print(plan_inicio)
+
+                for i in plan_final:
+                    task = i
+                    task[3] = "step " + str(index_t)
+                    index_t = index_t + 1
+                    plan_inicio.append(task)
+                #    if len(task)>1:
+                #print(plan_inicio)
+                self.items = plan_inicio
+
