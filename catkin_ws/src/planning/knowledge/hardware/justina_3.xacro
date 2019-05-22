@@ -174,62 +174,86 @@
 		<parent link="base_link"/>
 		<child link="laser_link_rear"/>
 	</joint>
-	
+
 	<joint name="torso_connect" type="fixed">
-		<origin xyz="0 0 0.291"/>
+		<!-- This is is the teorical metrics 0.34 + 0.565 -->
+		<!-- origin xyz= "0 0 0.905" rpy="0 0 0"/ -->
+		<origin xyz= "0 0 0.9" rpy="0 0 0"/>
 		<parent link="base_link"/>
 		<child link="torso_link"/>
 	</joint>
 
 	<link name="torso_link">
-		<!-- collision  -->
-		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+		<collision>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
 			<geometry>
-				<mesh filename="package://knowledge/hardware/stl/baseTorso.dae"/>
+				<!-- box size="0.08 0.08 0.095"/ -->
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
 			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+			</geometry>
+			<material name="black_gray"><color rgba="0.2 0.2 0.2 1"/></material>
 		</visual>
+		<inertial>
+			<mass value="${torso_mass}"/>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="0 0 0"/>
+			<box_inertia m="${torso_mass}" x="0.07" y="0.09" z="0.55"/>
+		</inertial>
 	</link>
 
-	<joint name="spine_connect" type="prismatic">
-		<origin xyz="0 0 0.12"/>
+	<joint name="spine_connect" type="prismatic"> 
+		<origin xyz= "0.0 0 0.162" rpy="0 0 0"/>
 		<parent link="torso_link"/>
-		<limit effort="1000" lower="0.02" upper="0.3" velocity="0.2"/>
 		<child link="spine_link"/>
+		<limit effort="1000" lower="0.2" upper="0.5" velocity="0.2"/>
 		<axis xyz="0 0 1" />
 	</joint>
 
 	<link name="spine_link">
-		<!-- collision  -->
-		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+		<collision>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
 			<geometry>
-				<mesh filename="package://knowledge/hardware/stl/spineTorso.dae"/>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
 			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+			</geometry>
+			<material name="gray_white"><color rgba="0.6 0.6 0.6 1"/></material>
 		</visual>
+		<inertial>
+			<mass value="${spine_mass}"/>
+			<origin xyz= "0 0 -0.5325" rpy="0 0 0"/>
+			<box_inertia m="${spine_mass}" x="0.07" y="0.09" z="0.54"/>
+		</inertial>
 	</link>
 
 	<joint name="neck_connect" type="fixed">
-		<!-- 0.12 + 0.829  + 0.06 -->
-		<origin xyz="0 0 1.009" rpy="0 0 0"/>
+		<origin xyz="0 0 0.1345" rpy="0 0 0"/>
 		<parent link="spine_link"/>
 		<child link="neck_link"/>
 	</joint>
 
 	<link name="neck_link">
 		<collision>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
 			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
 		</collision>
 		<visual>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
-			<geometry><cylinder length="0.12" radius="0.016"/></geometry>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
 			<material name="white"><color rgba="1.0 1.0 1.0 1"/></material>
 		</visual>
 		<inertial>
 			<mass value="${neck_mass}"/>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
-			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.12"/>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.14"/>
 		</inertial>
 	</link>
 
@@ -322,9 +346,20 @@
 		</visual>
 	</link>
 	
-	<link name="shoulders_link">
-	</link>
+	<joint name="shoulders_connect" type="fixed">
+		<origin xyz="0.0 0.0 -0.06" rpy="0 1.5708 0"/>
+		<parent link="spine_link"/>
+		<child link="shoulders_link"/>
+	</joint>
+	
+	<link name="shoulders_link"/>
 
+	<joint name="shoulders_left_connect" type="fixed">
+		<origin xyz="0 0.145 0" rpy="0 0 0"/>
+		<parent link="shoulders_link"/>
+		<child link="shoulders_left_link"/>
+	</joint>
+	
 	<link name="shoulders_left_link">
 		<visual>
 			<origin xyz="0.035 0.085 0" rpy = "0 0 0"/>
@@ -333,33 +368,21 @@
 		</visual>
 	</link>
 
-	<link name="shoulders_right_link">
-		<visual>
-			<origin xyz="0.035 -0.085 0" rpy = "0 0 0"/>
-			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
-			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
-		</visual>
-	</link>
-
-	<joint name="shoulders_connect" type="fixed">
-		<origin xyz="0.0 0.0 0.829" rpy="0 1.5708 0"/>
-		<parent link="spine_link"/>
-		<child link="shoulders_link"/>
-	</joint>
-
-	<joint name="shoulders_left_connect" type="fixed">
-		<origin xyz="0 0.145 0" rpy="0 0 0"/>
-		<parent link="shoulders_link"/>
-		<child link="shoulders_left_link"/>
-	</joint>
-
 	<joint name="shoulders_right_connect" type="fixed">
 		<origin xyz="0 -0.145 0" rpy="0 0 0"/>
 		<parent link="shoulders_link"/>
 		<child link="shoulders_right_link"/>
 	</joint>
 	
-    <!--
+	<link name="shoulders_right_link">
+		<visual>
+			<origin xyz="0.035 -0.085 0" rpy = "0 0 0"/>
+			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
+			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+		</visual>
+	</link>   
+
+	<!--
 	Left arm links and joints
     -->
     <link name="left_arm_link0">
@@ -638,7 +661,7 @@
 	    <parent link="shoulders_right_link"/>
 	    <child link="right_arm_link1"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <!--The next six origins are taken from the Denavit-Hartenberg parameters -->
     <joint name="ra_2_joint" type="revolute">
@@ -646,42 +669,42 @@
 	    <parent link="right_arm_link1"/>
 	    <child link="right_arm_link2"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_3_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
 	    <parent link="right_arm_link2"/>
 	    <child link="right_arm_link3"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_4_joint" type="revolute">
 	    <origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/><!--Transformation from link3 to link4 when theta3 = 0 -->
 	    <parent link="right_arm_link3"/>
 	    <child link="right_arm_link4"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_5_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
 	    <parent link="right_arm_link4"/>
 	    <child link="right_arm_link5"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_6_joint" type="revolute">
 	    <origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/><!--Transformation from link5 to link6 when theta5 = 0 -->
 	    <parent link="right_arm_link5"/>
 	    <child link="right_arm_link6"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_7_joint" type="revolute">
 	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
 	    <parent link="right_arm_link6"/>
 	    <child link="right_arm_link7"/>
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_grip_center_joint" type="fixed">
 	    <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
@@ -693,14 +716,14 @@
 	    <parent link="right_arm_grip_center"/> 
 	    <child link="right_arm_grip_left"/> 
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
     <joint name="ra_grip_right" type="revolute">
 	    <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
 	    <parent link="right_arm_grip_center"/> 
 	    <child link="right_arm_grip_right"/> 
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
+    	<limit effort="1000.0" lower="-1.570795" upper="1.570795" velocity="0.5"/>
     </joint>
 
     <transmission name="tran1">

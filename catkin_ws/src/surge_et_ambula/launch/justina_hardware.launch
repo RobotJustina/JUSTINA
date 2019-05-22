@@ -31,9 +31,14 @@
 			<param name="read_simul" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
-		<node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
+		<!-- node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port" value="/dev/justinaTorso"/>
+		</node -->
+		<node name="torso" pkg="torso" type="torso_node_pololu" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port" value="/dev/ttyACM0"/>
+			<param name="baud" value="9600"/>
 		</node>
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
