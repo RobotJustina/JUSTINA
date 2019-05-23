@@ -176,7 +176,7 @@
 	</joint>
 	
 	<joint name="torso_connect" type="fixed">
-		<origin xyz="0 0 0.291"/>
+		<origin xyz="0 0 0.8"/>
 		<parent link="base_link"/>
 		<child link="torso_link"/>
 	</joint>
@@ -184,7 +184,7 @@
 	<link name="torso_link">
 		<!-- collision  -->
 		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 -0.46" rpy="0 0 0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/baseTorso.dae"/>
 			</geometry>
@@ -192,7 +192,7 @@
 	</link>
 
 	<joint name="spine_connect" type="prismatic">
-		<origin xyz="0 0 0.12"/>
+		<origin xyz="0.0298 0 0.44"/>
 		<parent link="torso_link"/>
 		<limit effort="1000" lower="0.02" upper="0.3" velocity="0.2"/>
 		<child link="spine_link"/>
@@ -202,7 +202,7 @@
 	<link name="spine_link">
 		<!-- collision  -->
 		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="-0.0298 0.0 -0.81" rpy="0 0 0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/spineTorso.dae"/>
 			</geometry>
@@ -211,25 +211,25 @@
 
 	<joint name="neck_connect" type="fixed">
 		<!-- 0.12 + 0.829  + 0.06 -->
-		<origin xyz="0 0 1.009" rpy="0 0 0"/>
+		<origin xyz="0 0 0.124" rpy="0 0 0"/>
 		<parent link="spine_link"/>
 		<child link="neck_link"/>
 	</joint>
 
 	<link name="neck_link">
 		<collision>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<origin xyz= "0 0 -0.062" rpy="0 0 0"/>
 			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
 		</collision>
 		<visual>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
+			<origin xyz= "0 0 -0.062" rpy="0 0 0"/>
 			<geometry><cylinder length="0.12" radius="0.016"/></geometry>
 			<material name="white"><color rgba="1.0 1.0 1.0 1"/></material>
 		</visual>
 		<inertial>
 			<mass value="${neck_mass}"/>
-			<origin xyz= "0 0 -0.06" rpy="0 0 0"/>
-			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.12"/>
+			<origin xyz= "0 0 -0.062" rpy="0 0 0"/>
+			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.124"/>
 		</inertial>
 	</link>
 
@@ -342,7 +342,7 @@
 	</link>
 
 	<joint name="shoulders_connect" type="fixed">
-		<origin xyz="0.0 0.0 0.829" rpy="0 1.5708 0"/>
+		<origin xyz="0.0 0.0 -0.04" rpy="0 1.5708 0"/>
 		<parent link="spine_link"/>
 		<child link="shoulders_link"/>
 	</joint>
