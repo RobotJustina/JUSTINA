@@ -39,3 +39,4 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="2a03", ATTRS{idProduct}=="0043", MODE="0666
 SUBSYSTEM=="tty", ATTRS{idVendor}=="1ffb", ATTRS{idProduct}=="0085", ATTRS{serial}=="00205489", MODE="0666", SYMLINK+="justinaTorso"
 #Audio (Delfino Texas Instruments)
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="a6d0", MODE="0666", SYMLINK+="justinaAudio"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2886", ATTRS{idProduct}=="0018", MODE="0666", SYMLINK+="justinaRespeaker"

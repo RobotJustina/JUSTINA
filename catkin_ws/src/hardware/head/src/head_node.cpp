@@ -22,7 +22,8 @@ float goalSpeeds_simul[2] = {0.3, 0.3};
 
 int zero_head[2] = {2040, 2520};
 //float offset = -0.07671; // This for help me carry
-float offset = -0.10671; // This for help me carry
+//float offset = -0.10671; // This for help me carry
+float offset = -0.0;
 //float offset = -0.04; // This is for p and g 
 float offsetReadSimul = -0.04;
 
