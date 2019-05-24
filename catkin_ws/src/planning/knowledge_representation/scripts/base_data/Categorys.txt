@@ -1,0 +1,2 @@
+drinks kitchen 5 juice orange_juice fruit_juice grape_juice
+snacks kitchen 5 juice orange_juice fruit_juice grape_juice

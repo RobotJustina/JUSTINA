@@ -10,6 +10,12 @@
 #include <QtWidgets/QFileDialog>
 #include <QToolBar>
 
+#include<fstream>
+#include<string.h>
+#include<iostream>
+#include<QDebug>
+#include <QMessageBox>
+
 MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow){
@@ -168,12 +174,23 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->ui->locCLIPStab->setColumnCount(4);
     this->ui->locCLIPStab->setHorizontalHeaderLabels(locClipsTitles);
 
-     QStringList objClipsTitles;
-     objClipsTitles << "NAME" << "CATEGORY" << "LOCATION" << "ROOM" << "WEIGHT" << "SIZE" << "COLOR" << "QUANTITY";
-     this->ui->objCLIPStab->setColumnCount(8);
-     this->ui->objCLIPStab->setHorizontalHeaderLabels(objClipsTitles);
+    QStringList objClipsTitles;
+    objClipsTitles << "Name" << "Category" << "Location" << "Room" << "Weight" << "Size" << "Color" << "Quantity"<<"Biggest"<<"Smallest"<<"Heaviest"<<"Lightest";
+    this->ui->objCLIPStab->setColumnCount(12);
+    this->ui->objCLIPStab->setHorizontalHeaderLabels(objClipsTitles);
 
-     setlocClips();
+
+    QStringList peopleClipsTitles;
+    peopleClipsTitles <<"Name"<<"Age"<<"Gender";
+    this->ui->peopleCLIPStab->setColumnCount(3);
+    this->ui->peopleCLIPStab->setHorizontalHeaderLabels(peopleClipsTitles);
+
+    QStringList categoryClipsTitles;
+    categoryClipsTitles<<"Name"<<"Zone"<<"Quantity"<<"Biggest"<<"Smallest"<<"Heaviest"<<"Lightest";
+    this->ui->categoryCLIPStab->setColumnCount(7);
+    this->ui->categoryCLIPStab->setHorizontalHeaderLabels(categoryClipsTitles);
+
+    setlocClips();
 
 }
 
@@ -1257,7 +1274,6 @@ void MainWindow::enterCommandChanged(){
     JustinaRepresentation::sendCLIPS(this->ui->enterCommand->text().toStdString());
 }
 
-
 void MainWindow::on_openFileCommand_clicked()
 {
     std::string path;
@@ -1297,23 +1313,21 @@ void MainWindow::setlocClips()
     std::stringstream ss;
     ss << path << "/scripts/base_data/Locations.txt";
 
-    this->ui->locCLIPStab->setRowCount(0);
+    //this->ui->locCLIPStab->setRowCount(0);
     //obtain the information of the file Locations.txt
     //std::map<std::string, std::vector<std::string> > loc;
     JustinaRepresentation::getLocations(ss.str(), locations);
     //objects = loc;
-    int row = 0;
-    std::map<std::string, std::vector<std::string> >::iterator it = locations.begin();
-    for(std::map<std::string, std::vector<std::string> >::iterator it = locations.begin(); it != locations.end(); it++){
+    //int row = 0;
+    //std::map<std::string, std::vector<std::string> >::iterator it = locations.begin();
+    this->ui->locCLIPStab->setRowCount(0);
+    for(std::map<std::string, std::vector<std::string> >::iterator it = locations.begin(); it != locations.end(); ++it){
       this->ui->locCLIPStab->insertRow(this->ui->locCLIPStab->rowCount());
+      float row = this->ui->locCLIPStab->rowCount() - 1;
       this->ui->locCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->second[0])));
       this->ui->locCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it->first)));
       this->ui->locCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
-      if(it->second.size() > 2)
-        this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
-      else
-        this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(""));
-      row++;
+      this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
     }
     this->ui->locCLIPStab->resizeRowsToContents();
     this->ui->locCLIPStab->resizeColumnsToContents();
@@ -1321,16 +1335,19 @@ void MainWindow::setlocClips()
     this->ui->locCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->ui->locCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    /*---------------------------------------------------------------------------------------*/
     ss.str("");
     ss << path << "/scripts/base_data/Objects.txt";
 
     JustinaRepresentation::getObjects(ss.str(), objects);
     objects = objects;
 
-    row=0;
-    std::map<std::string, std::vector<std::string> >::iterator it2 = objects.begin();
+    //row=0;
+    //std::map<std::string, std::vector<std::string> >::iterator it2 = objects.begin();
+    this->ui->objCLIPStab->setRowCount(0);
     for(std::map<std::string, std::vector<std::string> >::iterator it2 = objects.begin(); it2 != objects.end(); it2++){
       this->ui->objCLIPStab->insertRow(this->ui->objCLIPStab->rowCount());
+      float row = this->ui->objCLIPStab->rowCount() - 1;
       this->ui->objCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it2->first)));
       this->ui->objCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it2->second[0])));
       this->ui->objCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it2->second[1])));
@@ -1339,13 +1356,65 @@ void MainWindow::setlocClips()
       this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it2->second[4])));
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
-      row++;
+
+      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
+      this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();
     this->ui->objCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
     this->ui->objCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->ui->objCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    /*-----------------------------------------------------------------------------------------------------*/
+    ss.str("");
+    ss<<path<<"/scripts/base_data/People.txt";
+    JustinaRepresentation::getPeoples(ss.str(),peoples);
+    peoples=peoples;
+    //row=0;
+    //std::map<std::string, std::vector<std::string> >::iterator it4 = peoples.begin();
+    this->ui->peopleCLIPStab->setRowCount(0);
+    for(std::map<std::string , std::vector<std::string> >::iterator itp = peoples.begin() ; itp != peoples.end() ; itp++){
+      this->ui->peopleCLIPStab->insertRow(this->ui->peopleCLIPStab->rowCount());
+      float row = this->ui->peopleCLIPStab->rowCount()-1;
+      this->ui->peopleCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(itp->first)));
+      this->ui->peopleCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(itp->second[0])));   
+      this->ui->peopleCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(itp->second[1])));  
+    }
+    this->ui->peopleCLIPStab->resizeRowsToContents();
+    this->ui->peopleCLIPStab->resizeColumnsToContents();
+    this->ui->peopleCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->peopleCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->peopleCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    /*---------------------------------------------------------------------------------------*/
+    ss.str("");
+    ss<<path<<"/scripts/base_data/Categorys.txt";
+    JustinaRepresentation::getCategorys(ss.str(),categorys);
+    categorys=categorys;
+    //row=0;
+    this->ui->categoryCLIPStab->setRowCount(0);
+    for(std::map<std::string , std::vector<std::string> >::iterator itc = categorys.begin() ; itc != categorys.end() ; itc++){
+         this->ui->categoryCLIPStab->insertRow(this->ui->categoryCLIPStab->rowCount());
+         float row = this->ui->categoryCLIPStab->rowCount()-1;
+         this->ui->categoryCLIPStab->setItem( row, NAME , new QTableWidgetItem(QString::fromStdString(itc->first)));
+         this->ui->categoryCLIPStab->setItem( row, X , new QTableWidgetItem(QString::fromStdString(itc->second[0])));
+         this->ui->categoryCLIPStab->setItem( row, Y , new QTableWidgetItem(QString::fromStdString(itc->second[1])));
+         this->ui->categoryCLIPStab->setItem( row, A , new QTableWidgetItem(QString::fromStdString(itc->second[2])));
+         this->ui->categoryCLIPStab->setItem( row, C1 , new QTableWidgetItem(QString::fromStdString(itc->second[3])));
+         this->ui->categoryCLIPStab->setItem( row, C2 , new QTableWidgetItem(QString::fromStdString(itc->second[4])));
+         this->ui->categoryCLIPStab->setItem( row, C3 , new QTableWidgetItem(QString::fromStdString(itc->second[5])));
+     }
+
+    this->ui->categoryCLIPStab->resizeRowsToContents();
+    this->ui->categoryCLIPStab->resizeColumnsToContents();
+    this->ui->categoryCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->categoryCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->categoryCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+
 }
 
 void MainWindow::on_addCLIPSloc_clicked()
@@ -1372,7 +1441,6 @@ void MainWindow::on_addCLIPSloc_clicked()
     //}
 
     this->ui->locCLIPStab->setRowCount(0);
-
     for(std::map<std::string, std::vector<std::string> >::iterator it = locations.begin(); it != locations.end(); ++it){
       this->ui->locCLIPStab->insertRow(this->ui->locCLIPStab->rowCount());
       float row = this->ui->locCLIPStab->rowCount() - 1;
@@ -1388,8 +1456,7 @@ void MainWindow::on_addCLIPSloc_clicked()
     this->ui->locCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
-void MainWindow::on_addCLIPSobj_clicked()
-{
+void MainWindow::on_addCLIPSobj_clicked(){
     std::cout << "QMainWindow.->on_addCLIPSLoc_clicked:" << std::endl;
     std::cout << "QMainWindow.->name:" << this->ui->nameCLIPSobj->text().toStdString() << std::endl;
     std::cout << "QMainWindow.->cat:" << this->ui->catCLIPSobj->text().toStdString() << std::endl;
@@ -1415,8 +1482,6 @@ void MainWindow::on_addCLIPSobj_clicked()
 
     JustinaRepresentation::addObjects(objects,name,values);
 
-
-
     //for(std::map<std::string, std::vector<std::string> >::iterator it2 = objects.begin(); it2 != objects.end(); it2++){
     //    std::cout << "SECOND:" << it2->first << std::endl;
     //}
@@ -1441,9 +1506,560 @@ void MainWindow::on_addCLIPSobj_clicked()
     this->ui->objCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
-void MainWindow::on_locCLIPStab_itemSelectionChanged()
-{
-    std::cout << "QMainWindow.->on_locTableWidget_itemSelectionChanged:" << std::endl;
+void MainWindow::on_addCLIPSpeoples_clicked(){
+
+    std::cout<<"Name"<<this->ui->nameCLIPSpeople->text().toStdString() <<std::endl;
+    std::cout<<"Age"<<this->ui->AgeCLIPSpeople->text().toStdString() <<std::endl;
+    std::cout<<"Gender"<<this->ui->GenderCLIPSpeople->text().toStdString()<<std::endl;
+
+    std::string name=this->ui->nameCLIPSpeople->text().toStdString();
+    std::vector<std::string> values;
+
+    values.push_back(this->ui->AgeCLIPSpeople->text().toStdString());
+    values.push_back(this->ui->GenderCLIPSpeople->text().toStdString());
+
+    JustinaRepresentation::addPeoples(peoples,name,values);
+    this->ui->peopleCLIPStab->setRowCount(0);
+    for(std::map<std::string , std::vector<std::string> >::iterator itp = peoples.begin() ; itp != peoples.end() ; itp++){
+      this->ui->peopleCLIPStab->insertRow(this->ui->peopleCLIPStab->rowCount());
+      float row = this->ui->peopleCLIPStab->rowCount()-1;
+      this->ui->peopleCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(itp->first)));
+      this->ui->peopleCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(itp->second[0])));   
+      this->ui->peopleCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(itp->second[1])));  
+    }
+    
+    this->ui->peopleCLIPStab->resizeRowsToContents();
+    this->ui->peopleCLIPStab->resizeColumnsToContents();
+    this->ui->peopleCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->peopleCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->peopleCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+void MainWindow::on_addCLIPScategory_clicked(){
+     std::cout<<"\n Name: "<<this->ui->nameCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Zone: "<<this->ui->zoneCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Quantity: "<<this->ui->quantityCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Biggest: "<<this->ui->biggetsCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Smallets: "<<this->ui->smallestCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Heaviets: "<<this->ui->heavietsCLIPScat->text().toStdString() <<std::endl;
+     std::cout<<"\n Lightets: "<<this->ui->lightestCLIPScat->text().toStdString() <<std::endl;
+
+     std::string name= this->ui->nameCLIPScat->text().toStdString();
+     std::vector<std::string> values;
+     values.push_back(this->ui->zoneCLIPScat->text().toStdString());
+     values.push_back(this->ui->quantityCLIPScat->text().toStdString());
+     values.push_back(this->ui->biggetsCLIPScat->text().toStdString());
+     values.push_back(this->ui->smallestCLIPScat->text().toStdString());
+     values.push_back(this->ui->heavietsCLIPScat->text().toStdString());
+     values.push_back(this->ui->lightestCLIPScat->text().toStdString());
+
+     JustinaRepresentation::addCategorys(categorys , name , values);
+     this->ui->categoryCLIPStab->setRowCount(0);
+     for(std::map<std::string , std::vector<std::string> >::iterator itc = categorys.begin() ; itc != categorys.end() ; itc++){
+         this->ui->categoryCLIPStab->insertRow(this->ui->categoryCLIPStab->rowCount());
+         float row = this->ui->categoryCLIPStab->rowCount()-1;
+         this->ui->categoryCLIPStab->setItem( row, NAME , new QTableWidgetItem(QString::fromStdString(itc->first)));
+         this->ui->categoryCLIPStab->setItem( row, X , new QTableWidgetItem(QString::fromStdString(itc->second[0])));
+         this->ui->categoryCLIPStab->setItem( row, Y , new QTableWidgetItem(QString::fromStdString(itc->second[1])));
+         this->ui->categoryCLIPStab->setItem( row, A , new QTableWidgetItem(QString::fromStdString(itc->second[2])));
+         this->ui->categoryCLIPStab->setItem( row, C1 , new QTableWidgetItem(QString::fromStdString(itc->second[3])));
+         this->ui->categoryCLIPStab->setItem( row, C2 , new QTableWidgetItem(QString::fromStdString(itc->second[4])));
+         this->ui->categoryCLIPStab->setItem( row, C3 , new QTableWidgetItem(QString::fromStdString(itc->second[5])));
+     }
+
+    this->ui->categoryCLIPStab->resizeRowsToContents();
+    this->ui->categoryCLIPStab->resizeColumnsToContents();
+    this->ui->categoryCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->categoryCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->categoryCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+
+void MainWindow::on_saveCLIPSloc_clicked(){
+    std::cout<<"\nFunction saved Locations :"<<std::endl;
+    std::string path= ros::package::getPath("knowledge_representation");
+    std::string directory="/scripts/base_data/Locations_Data_Base/";
+    QString extension=".txt";
+    std::cout<<"\n Directory"<< path+directory<< std::endl;
+    std::string folderPath=path+directory;
+    QString fileName = QFileDialog::getSaveFileName(this ,tr("Saving file of Locations"),
+                                 QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+    QString concatenation=fileName+extension;
+    qDebug()<<"Name File: "<<concatenation;
+
+    std::string filePath = concatenation.toStdString();
+    std::ofstream file(filePath.c_str());
+
+    if(file.fail()){
+        std::cout<<"\n Fail File "<<std::endl;
+    }else{
+        std::cout<<"File ready to save data "<<std::endl;
+    }
+    for(std::map<std::string , std::vector<std::string> >::iterator it = locations.begin() ; it != locations.end(); it++ ){
+     std::cout<<"\nType: "<<it->second[0]<<std::endl;
+     std::cout<<"\nName: "<<it->first<<std::endl;
+     std::cout<<"\nQuantity: "<<it->second[1]<<std::endl;
+     std::cout<<"\nRoom: "<<it->second[2]<<std::endl;
+     file<<it->second[0]<<" "<<it->first<<" "<<it->second[1]<<" "<<it->second[2]<<"\n";;
+    }
+    std::cout<<"\n  File Saved "<<std::endl;
+    file.close();
+}
+
+void MainWindow::on_saveCLIPSobj_clicked(){
+    std::cout<<"\nFunction saved Objects :"<<std::endl;
+    std::string path= ros::package::getPath("knowledge_representation");
+    std::string directory="/scripts/base_data/Objects_Data_Base/";
+    QString extension=".txt";
+    std::cout<<"\n Directory"<< path+directory<< std::endl;
+    std::string folderPath=path+directory;
+    QString fileName = QFileDialog::getSaveFileName(this ,tr("Saving file of Objects"),
+                                 QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+    qDebug()<<"file Name: "<<fileName;//
+
+    QString concatenation=fileName+extension;
+    qDebug()<<"Name File: "<<concatenation;
+
+    std::string filePath = concatenation.toStdString();
+    std::ofstream file(filePath.c_str());
+
+    if(file.fail()){
+        std::cout<<"\n Fail File "<<std::endl;
+    }else{
+        std::cout<<"File ready to save data "<<std::endl;
+    }
+    for(std::map<std::string , std::vector<std::string> >::iterator it = objects.begin() ; it != objects.end(); it++ ){
+        std::cout<<"\n Name: "<<it->first<<std::endl;
+        std::cout<<"\t Category: "<<it->second[0]<<std::endl;
+        std::cout<<"\t Loaction: "<<it->second[1]<< std::endl;
+        std::cout<<"\n Room: "<<it->second[2]<<std::endl;
+        std::cout<<"\t Weight: "<<it->second[3]<<std::endl;
+        std::cout<<"\t Size: "<<it->second[4]<< std::endl;
+        std::cout<<"\t Color: "<<it->second[5]<< std::endl;
+        std::cout<<"\t Quantity: "<<it->second[6]<< std::endl;
+        file<<it->first<<" "<<it->second[0]<<" "<<it->second[1]<<" "<<it->second[2]
+                 <<" "<<it->second[3]<<" "<<it->second[4]<<" "<<it->second[5]<<" "<<it->second[6]<<"\n";
+    }
+    std::cout<<"\n  File Saved "<<std::endl;
+    file.close();
+
+}
+
+void MainWindow::on_saveCLIPSpeoples_clicked(){
+    std::cout<<"\nFunction saved Peoples :"<<std::endl;
+    std::string path= ros::package::getPath("knowledge_representation");
+    std::string directory="/scripts/base_data/Peoples_Data_Base/";
+    QString extension=".txt";
+    std::cout<<"\n Directory"<< path+directory<< std::endl;
+    std::string folderPath=path+directory;
+    QString fileName = QFileDialog::getSaveFileName(this ,tr("Saving file of Peoples"),
+                                 QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+    QString concatenation=fileName+extension;
+    qDebug()<<"Name File: "<<concatenation;
+
+    std::string filePath = concatenation.toStdString();
+    std::ofstream file(filePath.c_str());
+
+    if(file.fail()){
+        std::cout<<"\n Fail File "<<std::endl;
+    }else{
+        std::cout<<"File ready to save data "<<std::endl;
+    }
+
+    for(std::map<std::string , std::vector<std::string> >::iterator it = peoples.begin() ; it != peoples.end(); it++ ){
+        std::cout<<"\n Name: "<<it->first;
+        std::cout<<"\t Age: "<<it->second[0];
+        std::cout<<"\t Gender: "<<it->second[1]<< std::endl;
+        file<<it->first<<" "<<it->second[0]<<" "<<it->second[1]<<"\n";
+    }
+
+    std::cout<<"\n  File Saved "<<std::endl;
+    file.close();
+
+}
+
+void MainWindow::on_saveCLIPScategory_clicked(){
+  std::cout<<"\nFunction saved Categorys :"<<std::endl;
+  std::string path= ros::package::getPath("knowledge_representation");
+    std::string directory="/scripts/base_data/Categorys_Data_Base/";
+    QString extension=".txt";
+    std::cout<<"\n Directory"<< path+directory<< std::endl;
+    std::string folderPath=path+directory;
+    QString fileName = QFileDialog::getSaveFileName(this ,tr("Saving file of Categorys"),
+                                 QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+    QString concatenation=fileName+extension;
+    qDebug()<<"Name File: "<<concatenation;
+
+    std::string filePath = concatenation.toStdString();
+    std::ofstream file(filePath.c_str());
+
+    if(file.fail()){
+        std::cout<<"\n Fail File "<<std::endl;
+    }else{
+        std::cout<<"File ready to save data "<<std::endl;
+    }
+
+    for(std::map<std::string , std::vector<std::string> >::iterator it = categorys.begin() ; it != categorys.end(); it++ ){
+        std::cout<<"\n Name: "<<it->first;
+        std::cout<<"\t Zone: "<<it->second[0];
+        std::cout<<"\t Quantity: "<<it->second[1]<< std::endl;
+        std::cout<<"\t Biggets: "<<it->second[2];
+        std::cout<<"\t Smallets: "<<it->second[3]<< std::endl;
+        std::cout<<"\t Heaviets: "<<it->second[4];
+        std::cout<<"\t Lightest: "<<it->second[5]<< std::endl;
+        file<<it->first<<" "<<it->second[0]<<" "<<it->second[1]<<" "<<it->second[2]<<" "<<it->second[3]
+                       <<" "<<it->second[4]<<" "<<it->second[5]<<"\n";
+    }
+
+    std::cout<<"\n  File Saved "<<std::endl;
+    file.close();
+}
+
+void MainWindow::on_loadCLIPSloc_clicked(){
+    std::cout<<"Function Load Locations :"<<std::endl;
+    std::string path= ros::package::getPath("knowledge_representation");
+   std::string directory="/scripts/base_data/Locations_Data_Base/";
+   std::string folderPath=path+directory;
+   std::cout<<"\n Directory that contains"<< folderPath<< std::endl;
+   QString fileName = QFileDialog::getOpenFileName(this , tr(" Open File "),QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+   qDebug()<<"\n Full Route: "<<fileName;
+
+
+   std::stringstream ss;
+   ss << fileName.toStdString();
+   JustinaRepresentation::getLocations(ss.str(),locations);
+   std::cout<<"\n Get Locations: "<<std::endl;
+   locations=locations;
+   int row = 0;
+   this->ui->locCLIPStab->setRowCount(0);
+   for(std::map<std::string, std::vector<std::string> >::iterator it = locations.begin(); it != locations.end(); it++){
+      this->ui->locCLIPStab->insertRow(this->ui->locCLIPStab->rowCount());
+      this->ui->locCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+      this->ui->locCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it->first)));
+      this->ui->locCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+      if(it->second.size() > 2)
+        this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+      else
+        this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(""));
+      row++;
+    }
+    this->ui->locCLIPStab->resizeRowsToContents();
+    this->ui->locCLIPStab->resizeColumnsToContents();
+    this->ui->locCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->locCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->locCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+    
+void MainWindow::on_loadCLIPSobj_clicked(){
+   std::cout<<"Function Load Objects :"<<std::endl;
+   std::cout<<"Function Load Locations :"<<std::endl;
+   std::string path= ros::package::getPath("knowledge_representation");
+   std::string directory="/scripts/base_data/Objects_Data_Base/";
+   std::string folderPath=path+directory;
+   std::cout<<"\n Directory that contains"<< folderPath<< std::endl;
+   QString fileName = QFileDialog::getOpenFileName(this , tr(" Open File "),QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+   qDebug()<<"\n Full Route: "<<fileName;
+
+   std::stringstream ss;
+   ss << fileName.toStdString();
+   JustinaRepresentation::getObjects(ss.str(),objects);
+   std::cout<<"\n Get Objects: "<<std::endl;
+   objects=objects;
+   int row=0;
+   this->ui->objCLIPStab->setRowCount(0);
+   for(std::map<std::string, std::vector<std::string> >::iterator it = objects.begin(); it != objects.end(); it++){
+      this->ui->objCLIPStab->insertRow(this->ui->objCLIPStab->rowCount());
+      this->ui->objCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+      this->ui->objCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+      this->ui->objCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+      this->ui->objCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+      this->ui->objCLIPStab->setItem(row, C1, new QTableWidgetItem(QString::fromStdString(it->second[3])));
+      this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it->second[4])));
+      this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it->second[5])));
+      this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it->second[6])));
+      row++;
+    }
+    this->ui->objCLIPStab->resizeRowsToContents();
+    this->ui->objCLIPStab->resizeColumnsToContents();
+    this->ui->objCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->objCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->objCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+}
+
+void MainWindow::on_loadCLIPSpeoples_clicked(){
+   std::cout<<"Function Load Peoples :"<<std::endl;
+   std::string path= ros::package::getPath("knowledge_representation");
+   std::string directory="/scripts/base_data/Locations_Data_Base/";
+   std::string folderPath=path+directory;
+   std::cout<<"\n Directory that contains"<< folderPath<< std::endl;
+   QString fileName = QFileDialog::getOpenFileName(this , tr(" Open File "),QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+   qDebug()<<"\n Full Route: "<<fileName;
+
+   std::stringstream ss;
+   ss << fileName.toStdString();
+   JustinaRepresentation::getPeoples(ss.str(),peoples);
+   std::cout<<"\n Get Peoples:"<<std::endl;
+   peoples=peoples;
+  
+   int row = 0;
+   this->ui->peopleCLIPStab->setRowCount(0);
+   for(std::map<std::string, std::vector<std::string> >::iterator it = peoples.begin(); it != peoples.end(); it++){
+       this->ui->peopleCLIPStab->insertRow(this->ui->peopleCLIPStab->rowCount());
+       this->ui->peopleCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+       this->ui->peopleCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+       this->ui->peopleCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+       row++;
+   }
+   this->ui->peopleCLIPStab->resizeRowsToContents();
+   this->ui->peopleCLIPStab->resizeColumnsToContents();
+   this->ui->peopleCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+   this->ui->peopleCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+   this->ui->peopleCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+}
+
+void MainWindow::on_loadCLIPScategory_clicked(){
+   std::cout<<"Function Load Categorys :"<<std::endl;
+   std::string path= ros::package::getPath("knowledge_representation");
+   std::string directory="/scripts/base_data/Categorys_Data_Base/";
+   std::string folderPath=path+directory;
+   std::cout<<"\n Directory that contains"<< folderPath<< std::endl;
+   QString fileName = QFileDialog::getOpenFileName(this , tr(" Open File "),QString::fromStdString(folderPath),tr("Text files(*.txt)"));
+   qDebug()<<"\n Full Route: "<<fileName;
+
+   std::stringstream ss;
+   ss << fileName.toStdString();
+   JustinaRepresentation::getCategorys(ss.str(),categorys);
+   std::cout<<"\n Get Categorys:"<<std::endl;
+   categorys=categorys;
+
+   int row = 0;
+   this->ui->categoryCLIPStab->setRowCount(0);
+   for(std::map<std::string, std::vector<std::string> >::iterator it = categorys.begin(); it != categorys.end(); it++){
+         this->ui->categoryCLIPStab->insertRow(this->ui->categoryCLIPStab->rowCount());
+         this->ui->categoryCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+         this->ui->categoryCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+         this->ui->categoryCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+         this->ui->categoryCLIPStab->setItem(row,A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+         this->ui->categoryCLIPStab->setItem(row,C1, new QTableWidgetItem(QString::fromStdString(it->second[3])));
+         this->ui->categoryCLIPStab->setItem(row,C2, new QTableWidgetItem(QString::fromStdString(it->second[4])));
+         this->ui->categoryCLIPStab->setItem(row,C4, new QTableWidgetItem(QString::fromStdString(it->second[5])));
+         row++;
+    }
+    this->ui->categoryCLIPStab->resizeRowsToContents();
+    this->ui->categoryCLIPStab->resizeColumnsToContents();
+    this->ui->categoryCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->ui->categoryCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->ui->categoryCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+}
+
+void MainWindow::on_deleteCLIPSobj_clicked(){
+    std::cout<<"Delete object CLIPS :"<<std::endl;
+    std::string name =this->ui->nameCLIPSobj->text().toStdString();
+    std::cout<<"\n Se eliminara: "<<name<<std::endl;
+    std::map<std::string , std::vector<std::string> >::iterator itx=objects.find(name);
+    if(itx != objects.end()){
+        std::cout<<"Si esta contenido en el map "<<std::endl;
+        JustinaRepresentation::deleteObjects(objects,name);
+        objects=objects;
+        int row=0;
+      this->ui->objCLIPStab->setRowCount(0);
+      for(std::map<std::string, std::vector<std::string> >::iterator it = objects.begin(); it != objects.end(); it++){
+        this->ui->objCLIPStab->insertRow(this->ui->objCLIPStab->rowCount());
+        this->ui->objCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+        this->ui->objCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+        this->ui->objCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+        this->ui->objCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+        this->ui->objCLIPStab->setItem(row, C1, new QTableWidgetItem(QString::fromStdString(it->second[3])));
+        this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it->second[4])));
+        this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it->second[5])));
+        this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it->second[6])));
+        row++;
+      }
+        this->ui->objCLIPStab->resizeRowsToContents();
+        this->ui->objCLIPStab->resizeColumnsToContents();
+        this->ui->objCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+        this->ui->objCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+        this->ui->objCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    }
+}
+
+void MainWindow::on_deleteCLIPSloc_clicked(){
+   std::cout<<"Delete location CLIPS :"<<std::endl;
+   std::string name =this->ui->nameCLIPSloc->text().toStdString();
+    std::cout<<"\n Se eliminara: "<<name<<std::endl;
+    std::map<std::string , std::vector<std::string> >::iterator itx=locations.find(name);
+    if(itx != locations.end()){
+        std::cout<<"Si esta contenido en el map "<<std::endl;
+        JustinaRepresentation::deleteLocations(locations,name);
+        locations=locations;
+        int row = 0;
+        this->ui->locCLIPStab->setRowCount(0);
+        for(std::map<std::string, std::vector<std::string> >::iterator it = locations.begin(); it != locations.end(); it++){
+            this->ui->locCLIPStab->insertRow(this->ui->locCLIPStab->rowCount());
+            this->ui->locCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+            this->ui->locCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it->first)));
+            this->ui->locCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+            if(it->second.size() > 2)
+                this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+            else
+                this->ui->locCLIPStab->setItem(row, A, new QTableWidgetItem(""));
+            row++;
+    }
+        this->ui->locCLIPStab->resizeRowsToContents();
+        this->ui->locCLIPStab->resizeColumnsToContents();
+        this->ui->locCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+        this->ui->locCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+        this->ui->locCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+}
+
+void MainWindow::on_deleteCLIPSpeoples_clicked(){
+    std::cout<<"Delete people CLIPS :"<<std::endl;
+    std::string name =this->ui->nameCLIPSpeople->text().toStdString();
+    std::cout<<"\n Se eliminara: "<<name<<std::endl;
+    std::map<std::string , std::vector<std::string> >::iterator itx=peoples.find(name);
+    if(itx != peoples.end()){
+        std::cout<<"Si esta contenido en el map "<<std::endl;
+        JustinaRepresentation::deletePeoples(peoples,name);
+        peoples=peoples;
+        int row = 0;
+        this->ui->peopleCLIPStab->setRowCount(0);
+        for(std::map<std::string, std::vector<std::string> >::iterator it = peoples.begin(); it != peoples.end(); it++){
+            this->ui->peopleCLIPStab->insertRow(this->ui->peopleCLIPStab->rowCount());
+            this->ui->peopleCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+            this->ui->peopleCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+            this->ui->peopleCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+            row++;
+        }
+        this->ui->peopleCLIPStab->resizeRowsToContents();
+        this->ui->peopleCLIPStab->resizeColumnsToContents();
+        this->ui->peopleCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+        this->ui->peopleCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+        this->ui->peopleCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+}
+
+void MainWindow::on_deleteCLIPScategory_clicked(){
+  std::cout<<"Delete category CLIPS :"<<std::endl;
+  std::string name =this->ui->nameCLIPScat->text().toStdString();
+    std::cout<<"\n Se eliminara: "<<name<<std::endl;
+    std::map<std::string , std::vector<std::string> >::iterator itx=categorys.find(name);
+    if(itx != categorys.end()){
+        std::cout<<"Si esta contenido en el map "<<std::endl;
+        JustinaRepresentation::deleteCategorys(categorys,name);
+        categorys=categorys;
+
+        int row = 0;
+        this->ui->categoryCLIPStab->setRowCount(0);
+        for(std::map<std::string, std::vector<std::string> >::iterator it = categorys.begin(); it != categorys.end(); it++){
+            this->ui->categoryCLIPStab->insertRow(this->ui->categoryCLIPStab->rowCount());
+            this->ui->categoryCLIPStab->setItem(row,NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+            this->ui->categoryCLIPStab->setItem(row,X, new QTableWidgetItem(QString::fromStdString(it->second[0])));
+            this->ui->categoryCLIPStab->setItem(row,Y, new QTableWidgetItem(QString::fromStdString(it->second[1])));
+            this->ui->categoryCLIPStab->setItem(row,A, new QTableWidgetItem(QString::fromStdString(it->second[2])));
+            this->ui->categoryCLIPStab->setItem(row,C1, new QTableWidgetItem(QString::fromStdString(it->second[3])));
+            this->ui->categoryCLIPStab->setItem(row,C2, new QTableWidgetItem(QString::fromStdString(it->second[4])));
+            this->ui->categoryCLIPStab->setItem(row,C4, new QTableWidgetItem(QString::fromStdString(it->second[5])));
+            row++;
+        }
+        this->ui->categoryCLIPStab->resizeRowsToContents();
+        this->ui->categoryCLIPStab->resizeColumnsToContents();
+        this->ui->categoryCLIPStab->setSelectionMode(QAbstractItemView::SingleSelection);
+        this->ui->categoryCLIPStab->setSelectionBehavior(QAbstractItemView::SelectRows);
+        this->ui->categoryCLIPStab->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    }
+}
+
+void MainWindow::on_createCLIPSfile_clicked(){
+    std::cout<<"Generate file CLIPS :"<<std::endl;
+
+    std::string path= ros::package::getPath("knowledge_representation");
+    std::string directory="/scripts/base_data/";
+    
+    std::string nameCLIPS="virbot_initial_state.clp";
+    std::string nameONTOLOGY="stuff_ontology.txt";
+    std::string pathFILECLIPS=path+directory+nameCLIPS;
+    std::cout<<"\n Directory:   "<<pathFILECLIPS<< std::endl;
+    
+    
+    std::ofstream CLIPSfile(pathFILECLIPS.c_str());
+
+    if(CLIPSfile.fail()){
+        std::cout<<"\n Fail File "<<std::endl;
+    }else{
+        std::cout<<"File CLIPS ready to save data "<<std::endl;
+    }
+
+   CLIPSfile<<"\n\n(deffacts Initial-state-objects-rooms-zones-actors";
+
+   std::cout<<" LOCATIONS :"<<std::endl;
+   CLIPSfile<<"\n\n\n";
+   CLIPSfile<<";;;;;;;; LOCATIONS";
+   CLIPSfile<<"\n\n\n";
+   for(std::map<std::string , std::vector<std::string> >::iterator it = locations.begin() ; it != locations.end(); it++ ){
+    //std::cout<<"\nType: "<<it->second[0]<<std::endl;
+    //std::cout<<"\nName: "<<it->first<<std::endl;
+    //std::cout<<"\nQuantity: "<<it->second[1]<<std::endl;
+    //std::cout<<"\nRoom: "<<it->second[2]<<std::endl;
+    CLIPSfile<<"\n(item (type "<<it->second[0]<<") (name "<<it->first<<") (pose -3.55 -3.0 0.0)(quantity "<<it->second[1]<<") (quantitys "<<it->second[1]<<"))\n";
+    
+   }
+
+   std::cout<<" OBJECTS :"<<std::endl;
+   CLIPSfile<<"\n\n\n";
+   CLIPSfile<<";;;;;;;;;;OBJECTS";
+   CLIPSfile<<"\n\n\n";
+   for(std::map<std::string , std::vector<std::string> >::iterator it2 = objects.begin() ; it2 != objects.end(); it2++ ){
+       std::cout<<"\n Name: "<<it2->first<<std::endl;
+       std::cout<<"\t Category: "<<it2->second[0]<<std::endl;
+       std::cout<<"\t Location: "<<it2->second[1]<< std::endl;
+       std::cout<<"\n Room: "<<it2->second[2]<<std::endl;
+       std::cout<<"\t Weight: "<<it2->second[3]<<std::endl;
+       std::cout<<"\t Size: "<<it2->second[4]<< std::endl;
+       std::cout<<"\t Color: "<<it2->second[5]<< std::endl;
+       std::cout<<"\t Quantity: "<<it2->second[6]<< std::endl;  
+       CLIPSfile<<"\n(item (type Objects) (name "<<it2->first<<") (zone "<<it2->second[1]<<") (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category "<<it2->second[0]<<") (room "<<it2->second[2]<<")(grasp 2)(weight "<<it2->second[3]<<")(size "<<it2->second[4]<<")(height 1)(wide 10)(color "<<it2->second[5]<<")(biggest yes)(smallest yes) (heaviest yes) (lightest yes))\n";  
+   }
+
+   std::cout<<" PEOPLES :"<<std::endl;
+   CLIPSfile<<"\n\n\n";
+   CLIPSfile<<";;;;;;;;;;PEOPLES";
+   CLIPSfile<<"\n\n\n";
+   for(std::map<std::string , std::vector<std::string> >::iterator it3 = peoples.begin() ; it3 != peoples.end(); it3++ ){
+       //std::cout<<"\n Name: "<<it3->first;
+       //std::cout<<"\t Age: "<<it3->second[0];
+       //std::cout<<"\t Gender: "<<it3->second[1]<< std::endl;
+       CLIPSfile<<"\n(item (type Objects) (name "<<it3->first<<")(zone living_room)"<<"(image "<<it3->first<<")"<<"(attributes pick)(pose -1.87 8.64 0.0))\n";
+   }
+
+   std::cout<<" CATEGORYS :"<<std::endl;
+   CLIPSfile<<"\n\n\n";
+   CLIPSfile<<";;;;;;;;;;CATEGORYS";
+   CLIPSfile<<"\n\n\n";
+   for(std::map<std::string , std::vector<std::string> >::iterator it4 = categorys.begin() ; it4 != categorys.end(); it4++ ){
+       //std::cout<<"\n Name: "<<it4->first;
+       //std::cout<<"\t Zone: "<<it4->second[0];
+       //std::cout<<"\t Quantity: "<<it4->second[1]<< std::endl;
+       //std::cout<<"\t Biggets: "<<it4->second[2];
+       //std::cout<<"\t Smallets: "<<it4->second[3]<< std::endl;
+       //std::cout<<"\t Heaviets: "<<it4->second[4];
+       //std::cout<<"\t Lightest: "<<it4->second[5]<< std::endl; 
+       CLIPSfile<<"\n(item (type Category) (name "<<it4->first<<") (zone "<<it4->second[0]<<")(quantity "<<3<<")(biggest "<<it4->second[2]<<")(smallest "<<it4->second[3]<<") (heaviest "<<it4->second[4]<<") (lightest "<<it4->second[5]<<"))  \n";  
+   }
+
+   CLIPSfile<<"\n)";
+   std::cout<<"\n  File Saved "<<std::endl;
+
+
+   CLIPSfile.close();
+}
+
+
+void MainWindow::on_locCLIPStab_itemSelectionChanged(){
+    std::cout << "QMainWindow.->on_locTableWidgetCLIPS_itemSelectionChanged:" << std::endl;
 
     QModelIndexList indexes = this->ui->locCLIPStab->selectionModel()->selectedRows();
 
@@ -1459,10 +2075,8 @@ void MainWindow::on_locCLIPStab_itemSelectionChanged()
 
 void MainWindow::on_objCLIPStab_itemSelectionChanged()
 {
-    std::cout << "QMainWindow.->on_locTableWidget_itemSelectionChanged:" << std::endl;
-
+    std::cout << "QMainWindow.->on_locTableWidgetCLIPS_itemSelectionChanged:" << std::endl;
     QModelIndexList indexes = this->ui->objCLIPStab->selectionModel()->selectedRows();
-
     foreach(QModelIndex index, indexes){
       //std::cout << "QMainWindow.->updateKnownLoacations:" << updateKnownLoacations << std::endl;
       std::cout << "QMainWindow.->row selected:" << this->ui->objCLIPStab->item(index.row(), NAME)->text().toStdString() << std::endl;
@@ -1475,6 +2089,35 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
       this->ui->colorCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C3)->text());
       this->ui->quantCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C4)->text());
     }
+}
+
+
+void MainWindow::on_peopleCLIPStab_itemSelectionChanged(){
+    std::cout << "QMainWindow.->on_peopleTableWidgetCLIPS_itemSelectionChanged:" << std::endl;
+    QModelIndexList indexes = this->ui->peopleCLIPStab->selectionModel()->selectedRows();
+    foreach(QModelIndex index, indexes){
+      std::cout << "QMainWindow.->row selected:" << this->ui->peopleCLIPStab->item(index.row(), NAME)->text().toStdString() << std::endl;
+      this->ui->nameCLIPSpeople->setText(this->ui->peopleCLIPStab->item(index.row(), NAME)->text());
+      this->ui->AgeCLIPSpeople->setText(this->ui->peopleCLIPStab->item(index.row(), X)->text());
+      this->ui->GenderCLIPSpeople->setText(this->ui->peopleCLIPStab->item(index.row(), Y)->text());
+    }
+
+}
+
+void MainWindow::on_categoryCLIPStab_itemSelectionChanged(){
+  std::cout << "QMainWindow.->on_categoryTableWidgetCLIPS_itemSelectionChanged:" << std::endl;
+   QModelIndexList indexes = this->ui->categoryCLIPStab->selectionModel()->selectedRows();
+   foreach(QModelIndex index, indexes){
+      std::cout << "QMainWindow.->row selected:" << this->ui->categoryCLIPStab->item(index.row(), NAME)->text().toStdString() << std::endl;
+      this->ui->nameCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),NAME)->text());
+      this->ui->zoneCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),X)->text());
+      this->ui->quantityCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),Y)->text());
+      this->ui->biggetsCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),A)->text());
+      this->ui->smallestCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),C1)->text());
+      this->ui->heavietsCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),C2)->text());
+      this->ui->lightestCLIPScat->setText(this->ui->categoryCLIPStab->item(index.row(),C3)->text());
+   }
+
 }
 
 void MainWindow::on_rotateButton_clicked()
@@ -1537,3 +2180,8 @@ void MainWindow::on_actBtnExecRobocup_pressed()
         system("rosrun act_pln storing_groseries_test &");
     }
 }
+
+
+
+
+

@@ -47,7 +47,7 @@
      <item>
       <widget class="QToolBox" name="toolBox">
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="navigation">
         <property name="geometry">
@@ -2380,7 +2380,7 @@ Size: 0.00 0.00 0.00</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>703</width>
+              <width>695</width>
               <height>1281</height>
              </rect>
             </property>
@@ -2398,14 +2398,14 @@ Size: 0.00 0.00 0.00</string>
                     <item>
                      <widget class="QTabWidget" name="tabWidget_2">
                       <property name="currentIndex">
-                       <number>2</number>
+                       <number>3</number>
                       </property>
                       <widget class="QWidget" name="tab_2">
                        <attribute name="title">
                         <string>Locations</string>
                        </attribute>
-                       <layout class="QHBoxLayout" name="horizontalLayout_33">
-                        <item>
+                       <layout class="QFormLayout" name="formLayout_17">
+                        <item row="0" column="0">
                          <widget class="QTableWidget" name="locCLIPStab">
                           <property name="minimumSize">
                            <size>
@@ -2415,12 +2415,30 @@ Size: 0.00 0.00 0.00</string>
                           </property>
                          </widget>
                         </item>
-                        <item>
+                        <item row="0" column="1">
                          <layout class="QVBoxLayout" name="verticalLayout_26">
                           <item>
                            <layout class="QVBoxLayout" name="verticalLayout_24">
                             <item>
                              <layout class="QFormLayout" name="formLayout_5">
+                              <property name="horizontalSpacing">
+                               <number>10</number>
+                              </property>
+                              <property name="verticalSpacing">
+                               <number>10</number>
+                              </property>
+                              <property name="leftMargin">
+                               <number>10</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>10</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>10</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>10</number>
+                              </property>
                               <item row="0" column="0">
                                <widget class="QLabel" name="label_5">
                                 <property name="text">
@@ -2435,13 +2453,13 @@ Size: 0.00 0.00 0.00</string>
                                <widget class="QLineEdit" name="typeCLIPSloc">
                                 <property name="minimumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
@@ -2461,13 +2479,13 @@ Size: 0.00 0.00 0.00</string>
                                <widget class="QLineEdit" name="nameCLIPSloc">
                                 <property name="minimumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
@@ -2487,13 +2505,13 @@ Size: 0.00 0.00 0.00</string>
                                <widget class="QLineEdit" name="quantCLIPSloc">
                                 <property name="minimumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
@@ -2513,13 +2531,13 @@ Size: 0.00 0.00 0.00</string>
                                <widget class="QLineEdit" name="roomCLIPSloc">
                                 <property name="minimumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>196</width>
+                                  <width>100</width>
                                   <height>22</height>
                                  </size>
                                 </property>
@@ -2530,31 +2548,23 @@ Size: 0.00 0.00 0.00</string>
                             <item>
                              <layout class="QHBoxLayout" name="horizontalLayout_32">
                               <item>
-                               <spacer name="horizontalSpacer_26">
-                                <property name="orientation">
-                                 <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>40</width>
-                                  <height>20</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                              <item>
                                <widget class="QPushButton" name="addCLIPSloc">
                                 <property name="minimumSize">
                                  <size>
-                                  <width>41</width>
-                                  <height>23</height>
+                                  <width>0</width>
+                                  <height>0</height>
                                  </size>
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>41</width>
-                                  <height>23</height>
+                                  <width>60</width>
+                                  <height>20</height>
                                  </size>
+                                </property>
+                                <property name="font">
+                                 <font>
+                                  <italic>true</italic>
+                                 </font>
                                 </property>
                                 <property name="text">
                                  <string>ADD</string>
@@ -2562,24 +2572,411 @@ Size: 0.00 0.00 0.00</string>
                                </widget>
                               </item>
                               <item>
-                               <spacer name="horizontalSpacer_27">
-                                <property name="orientation">
-                                 <enum>Qt::Horizontal</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
+                               <widget class="QPushButton" name="saveCLIPSloc">
+                                <property name="maximumSize">
                                  <size>
-                                  <width>40</width>
+                                  <width>60</width>
                                   <height>20</height>
                                  </size>
                                 </property>
-                               </spacer>
+                                <property name="text">
+                                 <string>SAVE</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="loadCLIPSloc">
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>60</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string>LOAD</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="deleteCLIPSloc">
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>60</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string>DELETE</string>
+                                </property>
+                               </widget>
                               </item>
                              </layout>
                             </item>
                            </layout>
                           </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                      <widget class="QWidget" name="tab_3">
+                       <attribute name="title">
+                        <string>Objects</string>
+                       </attribute>
+                       <layout class="QFormLayout" name="formLayout_16">
+                        <item row="0" column="0">
+                         <layout class="QHBoxLayout" name="horizontalLayout_31">
                           <item>
-                           <spacer name="verticalSpacer_4">
+                           <widget class="QTableWidget" name="objCLIPStab">
+                            <property name="minimumSize">
+                             <size>
+                              <width>341</width>
+                              <height>201</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <layout class="QFormLayout" name="formLayout_4">
+                            <property name="horizontalSpacing">
+                             <number>10</number>
+                            </property>
+                            <property name="verticalSpacing">
+                             <number>10</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>10</number>
+                            </property>
+                            <property name="topMargin">
+                             <number>10</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>10</number>
+                            </property>
+                            <property name="bottomMargin">
+                             <number>10</number>
+                            </property>
+                            <item row="0" column="0">
+                             <widget class="QLabel" name="label_9">
+                              <property name="text">
+                               <string>Name:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="0" column="1">
+                             <widget class="QLineEdit" name="nameCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="1" column="0">
+                             <widget class="QLabel" name="label_10">
+                              <property name="text">
+                               <string>Category:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="1" column="1">
+                             <widget class="QLineEdit" name="catCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="0">
+                             <widget class="QLabel" name="label_11">
+                              <property name="text">
+                               <string>Location:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="1">
+                             <widget class="QLineEdit" name="locCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="0">
+                             <widget class="QLabel" name="label_12">
+                              <property name="text">
+                               <string>Room:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="1">
+                             <widget class="QLineEdit" name="roomCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="4" column="0">
+                             <widget class="QLabel" name="label_13">
+                              <property name="text">
+                               <string>Weight:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="4" column="1">
+                             <widget class="QLineEdit" name="weightCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="5" column="0">
+                             <widget class="QLabel" name="label_14">
+                              <property name="text">
+                               <string>Size:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="5" column="1">
+                             <widget class="QLineEdit" name="sizeCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="6" column="0">
+                             <widget class="QLabel" name="label_15">
+                              <property name="text">
+                               <string>Color:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="6" column="1">
+                             <widget class="QLineEdit" name="colorCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="7" column="1">
+                             <widget class="QLineEdit" name="quantCLIPSobj">
+                              <property name="minimumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>100</width>
+                                <height>22</height>
+                               </size>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="7" column="0">
+                             <widget class="QLabel" name="label_16">
+                              <property name="text">
+                               <string>Quantity:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item row="1" column="0">
+                         <layout class="QFormLayout" name="formLayout_12">
+                          <property name="horizontalSpacing">
+                           <number>6</number>
+                          </property>
+                          <property name="verticalSpacing">
+                           <number>6</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>50</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>10</number>
+                          </property>
+                          <item row="1" column="0">
+                           <widget class="QPushButton" name="addCLIPSobj">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>ADD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
+                           <spacer name="verticalSpacer_8">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="4" column="0">
+                           <widget class="QPushButton" name="saveCLIPSobj">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>SAVE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="0">
+                           <spacer name="verticalSpacer_9">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="6" column="0">
+                           <widget class="QPushButton" name="loadCLIPSobj">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>LOAD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="8" column="0">
+                           <widget class="QPushButton" name="deleteCLIPSobj">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>DELETE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="7" column="0">
+                           <spacer name="verticalSpacer_16">
                             <property name="orientation">
                              <enum>Qt::Vertical</enum>
                             </property>
@@ -2595,146 +2992,589 @@ Size: 0.00 0.00 0.00</string>
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QWidget" name="tab_3">
+                      <widget class="QWidget" name="tab_4">
                        <attribute name="title">
-                        <string>Objects</string>
+                        <string>People</string>
                        </attribute>
-                       <layout class="QHBoxLayout" name="horizontalLayout_27">
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_31">
-                          <item>
-                           <widget class="QTableWidget" name="objCLIPStab">
+                       <layout class="QFormLayout" name="formLayout_13">
+                        <item row="0" column="0">
+                         <widget class="QTableWidget" name="peopleCLIPStab">
+                          <property name="minimumSize">
+                           <size>
+                            <width>341</width>
+                            <height>201</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <layout class="QFormLayout" name="formLayout_9">
+                          <property name="horizontalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="verticalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>10</number>
+                          </property>
+                          <item row="0" column="0">
+                           <widget class="QLabel" name="label_18">
+                            <property name="text">
+                             <string>Name:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1">
+                           <widget class="QLineEdit" name="nameCLIPSpeople">
                             <property name="minimumSize">
                              <size>
-                              <width>341</width>
-                              <height>201</height>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
                              </size>
                             </property>
                            </widget>
                           </item>
-                          <item>
-                           <layout class="QFormLayout" name="formLayout_4">
-                            <item row="0" column="0">
-                             <widget class="QLabel" name="label_9">
-                              <property name="text">
-                               <string>Name:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="0" column="1">
-                             <widget class="QLineEdit" name="nameCLIPSobj"/>
-                            </item>
-                            <item row="1" column="0">
-                             <widget class="QLabel" name="label_10">
-                              <property name="text">
-                               <string>Category:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="1" column="1">
-                             <widget class="QLineEdit" name="catCLIPSobj"/>
-                            </item>
-                            <item row="2" column="0">
-                             <widget class="QLabel" name="label_11">
-                              <property name="text">
-                               <string>Location:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="2" column="1">
-                             <widget class="QLineEdit" name="locCLIPSobj"/>
-                            </item>
-                            <item row="3" column="0">
-                             <widget class="QLabel" name="label_12">
-                              <property name="text">
-                               <string>Room:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="3" column="1">
-                             <widget class="QLineEdit" name="roomCLIPSobj"/>
-                            </item>
-                            <item row="4" column="0">
-                             <widget class="QLabel" name="label_13">
-                              <property name="text">
-                               <string>Weight:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="4" column="1">
-                             <widget class="QLineEdit" name="weightCLIPSobj"/>
-                            </item>
-                            <item row="5" column="0">
-                             <widget class="QLabel" name="label_14">
-                              <property name="text">
-                               <string>Size:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="5" column="1">
-                             <widget class="QLineEdit" name="sizeCLIPSobj"/>
-                            </item>
-                            <item row="6" column="0">
-                             <widget class="QLabel" name="label_15">
-                              <property name="text">
-                               <string>Color:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="6" column="1">
-                             <widget class="QLineEdit" name="colorCLIPSobj"/>
-                            </item>
-                            <item row="7" column="0">
-                             <widget class="QLabel" name="label_16">
-                              <property name="text">
-                               <string>Quantity:</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="7" column="1">
-                             <widget class="QLineEdit" name="quantCLIPSobj"/>
-                            </item>
-                           </layout>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="label_19">
+                            <property name="text">
+                             <string>Age :</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="1">
+                           <widget class="QLineEdit" name="AgeCLIPSpeople">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="0">
+                           <widget class="QLabel" name="label_20">
+                            <property name="text">
+                             <string>Gender:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="1">
+                           <widget class="QLineEdit" name="GenderCLIPSpeople">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
                           </item>
                          </layout>
                         </item>
-                        <item>
-                         <widget class="QPushButton" name="addCLIPSobj">
-                          <property name="text">
-                           <string>ADD</string>
+                        <item row="1" column="1">
+                         <layout class="QFormLayout" name="formLayout_14">
+                          <property name="horizontalSpacing">
+                           <number>10</number>
                           </property>
-                         </widget>
+                          <property name="verticalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>10</number>
+                          </property>
+                          <item row="1" column="0">
+                           <widget class="QPushButton" name="addCLIPSpeoples">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>ADD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
+                           <spacer name="verticalSpacer_10">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="4" column="0">
+                           <widget class="QPushButton" name="saveCLIPSpeoples">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>SAVE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="0">
+                           <spacer name="verticalSpacer_11">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="6" column="0">
+                           <widget class="QPushButton" name="loadCLIPSpeoples">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>LOAD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="8" column="0">
+                           <widget class="QPushButton" name="deleteCLIPSpeoples">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>DELETE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="7" column="0">
+                           <spacer name="verticalSpacer_12">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </item>
                        </layout>
                       </widget>
-                      <widget class="QWidget" name="tab_4">
+                      <widget class="QWidget" name="tab">
                        <attribute name="title">
-                        <string>Persons</string>
+                        <string>Category</string>
                        </attribute>
+                       <layout class="QFormLayout" name="formLayout_11">
+                        <item row="0" column="0">
+                         <widget class="QTableWidget" name="categoryCLIPStab">
+                          <property name="minimumSize">
+                           <size>
+                            <width>341</width>
+                            <height>201</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <layout class="QFormLayout" name="formLayout_10">
+                          <property name="horizontalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="verticalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>10</number>
+                          </property>
+                          <item row="0" column="0">
+                           <widget class="QLabel" name="label_21">
+                            <property name="text">
+                             <string>Name:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1">
+                           <widget class="QLineEdit" name="nameCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="label_22">
+                            <property name="text">
+                             <string>Zone :</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="1">
+                           <widget class="QLineEdit" name="zoneCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="0">
+                           <widget class="QLabel" name="label_23">
+                            <property name="text">
+                             <string>Quantity:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="1">
+                           <widget class="QLineEdit" name="quantityCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
+                           <widget class="QLabel" name="label_24">
+                            <property name="text">
+                             <string>Biggets:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="1">
+                           <widget class="QLineEdit" name="biggetsCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="4" column="0">
+                           <widget class="QLabel" name="label_25">
+                            <property name="text">
+                             <string>Smallest:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="4" column="1">
+                           <widget class="QLineEdit" name="smallestCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="0">
+                           <widget class="QLabel" name="label_26">
+                            <property name="text">
+                             <string>Heaviets:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="1">
+                           <widget class="QLineEdit" name="heavietsCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="6" column="0">
+                           <widget class="QLabel" name="label_27">
+                            <property name="text">
+                             <string>Lightest:</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="6" column="1">
+                           <widget class="QLineEdit" name="lightestCLIPScat">
+                            <property name="minimumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>100</width>
+                              <height>22</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item row="1" column="1">
+                         <layout class="QFormLayout" name="formLayout_15">
+                          <property name="horizontalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="verticalSpacing">
+                           <number>10</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>10</number>
+                          </property>
+                          <item row="1" column="0">
+                           <widget class="QPushButton" name="addCLIPScategory">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>ADD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
+                           <spacer name="verticalSpacer_13">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="4" column="0">
+                           <widget class="QPushButton" name="saveCLIPScategory">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>100</height>
+                             </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <italic>true</italic>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>SAVE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="5" column="0">
+                           <spacer name="verticalSpacer_14">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item row="6" column="0">
+                           <widget class="QPushButton" name="loadCLIPScategory">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>LOAD</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="8" column="0">
+                           <widget class="QPushButton" name="deleteCLIPScategory">
+                            <property name="maximumSize">
+                             <size>
+                              <width>60</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                            <property name="text">
+                             <string>DELETE</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="7" column="0">
+                           <spacer name="verticalSpacer_15">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
                       </widget>
                      </widget>
                     </item>
@@ -2749,14 +3589,45 @@ Size: 0.00 0.00 0.00</string>
                       <string>CLIPS_MAN</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_13">
-                      <item row="0" column="0">
+                      <item row="5" column="1">
+                       <layout class="QHBoxLayout" name="horizontalLayout_36">
+                        <item>
+                         <widget class="QPushButton" name="resetCLIPS">
+                          <property name="text">
+                           <string>RESET</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="runCLIPS">
+                          <property name="text">
+                           <string>RUN</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="5" column="2">
+                       <spacer name="horizontalSpacer_33">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>347</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="2" column="0">
                        <widget class="QLabel" name="label_3">
                         <property name="text">
                          <string>Command:</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
+                      <item row="2" column="1">
                        <widget class="QLineEdit" name="enterCommand">
                         <property name="minimumSize">
                          <size>
@@ -2775,7 +3646,7 @@ Size: 0.00 0.00 0.00</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="2">
+                      <item row="2" column="2">
                        <spacer name="horizontalSpacer_28">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
@@ -2788,14 +3659,14 @@ Size: 0.00 0.00 0.00</string>
                         </property>
                        </spacer>
                       </item>
-                      <item row="1" column="0">
+                      <item row="3" column="0">
                        <widget class="QLabel" name="label_17">
                         <property name="text">
                          <string>FILE:</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1">
+                      <item row="3" column="1">
                        <widget class="QLineEdit" name="loadCommand">
                         <property name="minimumSize">
                          <size>
@@ -2811,7 +3682,7 @@ Size: 0.00 0.00 0.00</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="2">
+                      <item row="3" column="2">
                        <layout class="QHBoxLayout" name="horizontalLayout_38">
                         <item>
                          <spacer name="horizontalSpacer_29">
@@ -2860,7 +3731,7 @@ Size: 0.00 0.00 0.00</string>
                         </item>
                        </layout>
                       </item>
-                      <item row="2" column="1">
+                      <item row="4" column="1">
                        <layout class="QHBoxLayout" name="horizontalLayout_35">
                         <item>
                          <widget class="QPushButton" name="factsCLIPS">
@@ -2885,7 +3756,7 @@ Size: 0.00 0.00 0.00</string>
                         </item>
                        </layout>
                       </item>
-                      <item row="2" column="2">
+                      <item row="4" column="2">
                        <spacer name="horizontalSpacer_30">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
@@ -2898,36 +3769,18 @@ Size: 0.00 0.00 0.00</string>
                         </property>
                        </spacer>
                       </item>
-                      <item row="3" column="1">
-                       <layout class="QHBoxLayout" name="horizontalLayout_36">
-                        <item>
-                         <widget class="QPushButton" name="resetCLIPS">
-                          <property name="text">
-                           <string>RESET</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QPushButton" name="runCLIPS">
-                          <property name="text">
-                           <string>RUN</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                      <item row="3" column="2">
-                       <spacer name="horizontalSpacer_33">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
+                      <item row="1" column="2">
+                       <widget class="QPushButton" name="createCLIPSfile">
+                        <property name="maximumSize">
                          <size>
-                          <width>347</width>
-                          <height>20</height>
+                          <width>200</width>
+                          <height>30</height>
                          </size>
                         </property>
-                       </spacer>
+                        <property name="text">
+                         <string>CREATED CLIPS FILE</string>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </widget>

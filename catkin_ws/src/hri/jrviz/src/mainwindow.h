@@ -60,6 +60,8 @@ public:
 
     std::map<std::string, std::vector<std::string> > locations;
     std::map<std::string, std::vector<std::string> > objects;
+    std::map<std::string, std::vector<std::string> > peoples;
+    std::map<std::string, std::vector<std::string> > categorys;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -129,6 +131,7 @@ public slots:
     void setPathKR();
     void setlocClips();
 
+
 private slots:
 
 
@@ -146,9 +149,43 @@ private slots:
 
     void on_addCLIPSobj_clicked();
 
+    void on_addCLIPSpeoples_clicked();//
+
+    void on_addCLIPScategory_clicked();//
+
+    void on_saveCLIPSloc_clicked();
+
+    void on_saveCLIPSobj_clicked();
+
+    void on_saveCLIPSpeoples_clicked();//
+
+    void on_saveCLIPScategory_clicked();
+    
+    void on_loadCLIPSloc_clicked();
+    
+    void on_loadCLIPSobj_clicked();
+
+    void on_loadCLIPSpeoples_clicked();
+
+    void on_loadCLIPScategory_clicked();
+
+    void on_createCLIPSfile_clicked();//
+
+    void on_deleteCLIPSobj_clicked();
+
+    void on_deleteCLIPSloc_clicked();
+
+    void on_deleteCLIPSpeoples_clicked();
+
+    void on_deleteCLIPScategory_clicked();
+
     void on_locCLIPStab_itemSelectionChanged();
 
     void on_objCLIPStab_itemSelectionChanged();
+
+    void on_peopleCLIPStab_itemSelectionChanged();
+
+    void on_categoryCLIPStab_itemSelectionChanged();
 
     void on_rotateButton_clicked();
 
@@ -180,7 +217,7 @@ private:
     void initToolbars();
 
     enum Column{
-        NAME, X, Y, A, C1, C2, C3, C4
+        NAME, X, Y, A, C1, C2, C3, C4 , C5 , C6 ,C7 ,C8
     };
 
     enum ColumnObj{

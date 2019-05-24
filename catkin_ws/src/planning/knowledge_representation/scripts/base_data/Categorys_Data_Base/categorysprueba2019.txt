@@ -1,0 +1,3 @@
+drinks kitchen 5 juice orange_juice fruit_juice grape_juice
+electronics bed_room 7 radio television dvd computer
+snacks kitchen 5 juice orange_juice fruit_juice grape_juice

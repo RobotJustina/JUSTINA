@@ -1,0 +1,11 @@
+ana 23 female
+angel 27 male
+arturo 27 male
+cintia 40 female
+jaime 55 male
+jazmin 23 female
+juan 20 male
+octavio 55 male
+ramon 56 male
+rocio 23 female
+rodrigo 40 male

@@ -1,0 +1,11 @@
+angelica 40 female
+cintia 40 female
+jaime 55 male
+juan 20 male
+marco 30 male
+octavio 55 male
+ramon 56 male
+reynaldo 33 male
+rodolfo 25 male
+rodrigo 40 male
+vanesa 27 female

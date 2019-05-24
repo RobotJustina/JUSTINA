@@ -1,0 +1,5 @@
+3chetos snack desk office 8 4 green 7
+chips snacks desk office 1 4 yellow 1
+oreo snack desk office 4 5 blue 3
+pringles snacks desk office 2 5 orange 1
+senbei snacks desk office 2 3 brown 1

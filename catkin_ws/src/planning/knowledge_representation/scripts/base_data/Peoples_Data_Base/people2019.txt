@@ -1,0 +1,8 @@
+angelica 40 female
+cintia 40 female
+eduardo 52 male
+jaime 55 male
+juan 20 male
+octavio 55 male
+ramon 56 male
+rodrigo 40 male
