@@ -15,6 +15,7 @@
 (relpos			is_kind_of		stuff)
 (category		is_kind_of		stuff)
 (color			is_kind_of		stuff)
+(room			is_kind_of		stuff)
 #(rpos			is_kind_of		stuff)
 
 
@@ -55,21 +56,21 @@
 #(couch			is_kind_of			person)
 
 # lugares
-(room 			is_kind_of  	place)
+#(room 			is_kind_of  	place)
 #(there 			is_kind_of 		place)
 #(here 			is_kind_of 		place)
 
 #ROOMS
-(bedroom 			is_kind_of 		place)
-(living_room		is_kind_of 		place)
-(office 			is_kind_of 		place)
-(kitchen 			is_kind_of 		place)
-(hallway 			is_kind_of 		place)
-(bathroom 			is_kind_of 		place)
-(dining_room			is_kind_of		place)
-(entrance_hall			is_kind_of		place)
-(corridor			is_kind_of		place)
-(hall			is_kind_of		place)
+(bedroom 			is_kind_of 		room)
+(living_room		is_kind_of 		room)
+(office 			is_kind_of 		room)
+(kitchen 			is_kind_of 		room)
+(hallway 			is_kind_of 		room)
+(bathroom 			is_kind_of 		room)
+(dining_room			is_kind_of		room)
+(entrance_hall			is_kind_of		room)
+(corridor			is_kind_of		room)
+(hall			is_kind_of		room)
 
 #PLACEMENT
 (bed	 			is_kind_of 		place)
