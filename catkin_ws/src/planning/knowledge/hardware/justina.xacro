@@ -176,7 +176,7 @@
 	</joint>
 	
 	<joint name="torso_connect" type="fixed">
-		<origin xyz="0 0 0.8"/>
+		<origin xyz="0.01 0 0.8"/>
 		<parent link="base_link"/>
 		<child link="torso_link"/>
 	</joint>
@@ -192,7 +192,7 @@
 	</link>
 
 	<joint name="spine_connect" type="prismatic">
-		<origin xyz="0.0298 0 0.44"/>
+		<origin xyz="0.02 0 0.44"/>
 		<parent link="torso_link"/>
 		<limit effort="1000" lower="0.02" upper="0.3" velocity="0.2"/>
 		<child link="spine_link"/>
@@ -202,7 +202,7 @@
 	<link name="spine_link">
 		<!-- collision  -->
 		<visual>
-			<origin xyz="-0.0298 0.0 -0.81" rpy="0 0 0"/>
+			<origin xyz="-0.02 0.0 -0.81" rpy="0 0 0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/stl/spineTorso.dae"/>
 			</geometry>
@@ -304,7 +304,8 @@
 	<link name="head_link2"/>
 	
 	<joint name="kinect_connect" type="fixed">
-		<origin xyz="0.0218 -0.0758 0" rpy="0 1.5707 0"/>
+		<origin xyz="0 -0.0758 0" rpy="0 1.5707 0"/>
+		<!-- origin xyz="0.0218 -0.0758 0" rpy="0 1.5707 0"/ -->
 		<!-- This is for the offset -->
 		<!-- origin xyz="0.0618 -0.0758 0" rpy="0 1.5707 0"/ -->
 		<parent link="head_link2"/>

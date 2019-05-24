@@ -20,6 +20,10 @@ sensor_msgs::PointCloud2::Ptr msgFromBag;
 bool use_oni = false;
 bool use_bag = false;
 int downsample_by = 1;
+float thetaOffset = 0;
+//float zOffset = 0.12;
+//float thetaOffset = 0;
+float zOffset = 0;
 
 //ros::Publisher pubImageIROS;
 //ros::Publisher pubDepthIROS;
@@ -56,14 +60,22 @@ void cvmat_2_rosmsg(cv::Mat& depth, cv::Mat& bgr, sensor_msgs::PointCloud2& msg)
 {
     //This function ONLY COPIES POINT DATA. For all headers, use initialize_msg();
     int idx = bgr.rows * bgr.cols;
-    
+
     for(int i=0; i < idx; i++)
     {
         memcpy(&msg.data[i*16], &depth.data[12*i], 12);
         memcpy(&msg.data[i*16 + 12], &bgr.data[3*i], 3);
         msg.data[16*i + 15] = 255;
-	float* y = (float*)&msg.data[16*i + 4];
+        float* y = (float*)&msg.data[16*i + 4];
+        float* z = (float*)&msg.data[16*i + 8];
         *y *= -1;
+        float yv = *y;
+        float zv = *z - zOffset;
+        //float zv = *z;
+        *y = yv * cos(thetaOffset) - zv * sin(thetaOffset);
+        *z = yv * sin(thetaOffset) + zv * cos(thetaOffset);
+        //*z -= zOffset;
+
     }
 }
 
@@ -107,7 +119,7 @@ bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_
         //pubDepthIROS.publish(resp.point_cloud);
         cvmat_2_rosmsg(depthMap, bgrImage, resp.point_cloud);
         pcl_ros::transformPointCloud("base_link", resp.point_cloud, resp.point_cloud, *tf_listener);
-	resp.point_cloud.header.frame_id = "base_link";
+        resp.point_cloud.header.frame_id = "base_link";
         return true;
     }
     else
@@ -182,12 +194,12 @@ int main(int argc, char** argv)
             downsample_by = atoi(argv[++i]); 
         }
     }
-    
+
     std::cout << "INITIALIZING KINECT MANAGER BY MARCOSOF ..." << std::endl;
     if(use_oni) std::cout << "KinectMan.->Using ONI file: " << file_name << std::endl;
     else if(use_bag) std::cout << "KinectMan.->Using BAG file: " << file_name << std::endl;
     else std::cout << "KinectMan.->Using real kinect..." << std::endl;
-    
+
     ros::init(argc, argv, "kinect_man");
     ros::NodeHandle n;
     ros::Publisher pubKinectFrame =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
@@ -217,7 +229,7 @@ int main(int argc, char** argv)
         else std::cout << "KinectMan.->Triying to initialize kinect sensor... " << std::endl;
         if(use_oni) capture.open(file_name);
         else capture.open(CV_CAP_OPENNI);
-        
+
         if(!capture.isOpened())
         {
             std::cout << "KinectMan.->Cannot open kinect :'(" << std::endl;
@@ -225,7 +237,7 @@ int main(int argc, char** argv)
         }
         capture.set(CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION, CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON);
         std::cout << "KinectMan.->Kinect sensor started :D" << std::endl;
-        
+
         while(ros::ok())
         {
             if(!capture.grab())
@@ -240,7 +252,7 @@ int main(int argc, char** argv)
                 cvmat_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
             if(pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
                 pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
-            
+
             if(pubKinectFrame.getNumSubscribers() > 0)
                 pubKinectFrame.publish(msgCloudKinect);
             if(pubRobotFrame.getNumSubscribers() > 0)
@@ -250,7 +262,7 @@ int main(int argc, char** argv)
                 downsample_pcl(msgCloudRobot, msgDownsampled, downsample_by);
                 pubDownsampled.publish(msgDownsampled);
             }
-            
+
             ros::spinOnce();
             loop.sleep();
         }
@@ -276,7 +288,7 @@ int main(int argc, char** argv)
                     tf_listener->waitForTransform("base_link", "kinect_link", msgFromBag->header.stamp, ros::Duration(0.5));
                     pcl_ros::transformPointCloud("base_link", *msgFromBag, msgCloudRobot, *tf_listener);
                 }
-                
+
                 if(pubKinectFrame.getNumSubscribers() > 0)
                     pubKinectFrame.publish(*msgFromBag);
                 if(pubRobotFrame.getNumSubscribers() > 0)
