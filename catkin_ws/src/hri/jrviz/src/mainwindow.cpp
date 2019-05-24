@@ -1357,10 +1357,10 @@ void MainWindow::setlocClips()
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
-      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
       this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
-      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));*/
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();
@@ -1498,6 +1498,7 @@ void MainWindow::on_addCLIPSobj_clicked(){
       this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it2->second[4])));
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
+    
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();
