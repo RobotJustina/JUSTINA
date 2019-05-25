@@ -1,0 +1,15 @@
+alex 40 female
+charlie 40 male
+elizabeth 40 male
+francis 40 male
+james 40 male
+jennifer 40 male
+john 40 male
+linda 40 male
+mary 40 male
+michael 40 male
+patricia 40 male
+robert 40 male
+robin 40 male
+skyler 40 male
+william 40 male
