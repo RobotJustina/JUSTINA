@@ -168,7 +168,7 @@
 #(water 			is_kind_of 		drink)
 #(milk 			is_kind_of 		drink)
 #(beer 			is_kind_of 		drink)
-#(coke 			is_kind_of 		drink)
+(coke 			is_kind_of 		drink)
 (juice 			is_kind_of 		drink)
 #(grape juice 		is_kind_of 		drink)
 #(cranberry_juice	is_kind_of 		drink)

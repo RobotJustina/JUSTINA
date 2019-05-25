@@ -1837,7 +1837,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 	if(tokens[0] == "object")
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, look for pringles", 10000);
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, i want pringles", 10000);
 	
     while(!conf && count < 3){
 	
