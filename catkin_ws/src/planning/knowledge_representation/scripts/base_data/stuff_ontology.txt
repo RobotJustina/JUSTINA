@@ -1,0 +1,20 @@
+
+
+
+#PERSON
+
+
+
+(angelica     is_kind_of      person)
+
+(cintia     is_kind_of      person)
+
+(jaime     is_kind_of      person)
+
+(juan     is_kind_of      person)
+
+(octavio     is_kind_of      person)
+
+(ramon     is_kind_of      person)
+
+(rodrigo     is_kind_of      person)

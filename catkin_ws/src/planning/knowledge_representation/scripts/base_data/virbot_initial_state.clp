@@ -19,15 +19,15 @@
 
 
 
-(item (type Objects) (name chips) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest yes)(smallest yes) (heaviest yes) (lightest yes)
+(item (type Objects) (name chips) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest yes)(smallest yes) (heaviest yes) (lightest yes))
 
-(item (type Objects) (name pringles) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 2)(size 5)(height 1)(wide 10)(color orange)(biggest yes)(smallest yes) (heaviest yes) (lightest yes)
+(item (type Objects) (name pringles) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 2)(size 5)(height 1)(wide 10)(color orange)(biggest yes)(smallest yes) (heaviest yes) (lightest yes))
 
-(item (type Objects) (name senbei) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 2)(size 3)(height 1)(wide 10)(color brown)(biggest yes)(smallest yes) (heaviest yes) (lightest yes)
+(item (type Objects) (name senbei) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room office)(grasp 2)(weight 2)(size 3)(height 1)(wide 10)(color brown)(biggest yes)(smallest yes) (heaviest yes) (lightest yes))
 
 
 
-;;;;;;;;;;PEOPLES
+;;;;;;;;;;PEOPLE
 
 
 
@@ -39,19 +39,11 @@
 
 (item (type Objects) (name juan)(zone living_room)(image juan)(attributes pick)(pose -1.87 8.64 0.0))
 
-(item (type Objects) (name marco)(zone living_room)(image marco)(attributes pick)(pose -1.87 8.64 0.0))
-
 (item (type Objects) (name octavio)(zone living_room)(image octavio)(attributes pick)(pose -1.87 8.64 0.0))
 
 (item (type Objects) (name ramon)(zone living_room)(image ramon)(attributes pick)(pose -1.87 8.64 0.0))
 
-(item (type Objects) (name reynaldo)(zone living_room)(image reynaldo)(attributes pick)(pose -1.87 8.64 0.0))
-
-(item (type Objects) (name rodolfo)(zone living_room)(image rodolfo)(attributes pick)(pose -1.87 8.64 0.0))
-
 (item (type Objects) (name rodrigo)(zone living_room)(image rodrigo)(attributes pick)(pose -1.87 8.64 0.0))
-
-(item (type Objects) (name vanesa)(zone living_room)(image vanesa)(attributes pick)(pose -1.87 8.64 0.0))
 
 
 
