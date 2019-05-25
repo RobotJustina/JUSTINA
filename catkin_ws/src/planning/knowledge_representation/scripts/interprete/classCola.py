@@ -49,4 +49,9 @@ class classCola:
                 #    if len(task)>1:
                 #print(plan_inicio)
                 self.items = plan_inicio
+                print(self.items)
+
+        def showQueue(self):
+            print(self.items)
+
 
