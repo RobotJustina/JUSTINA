@@ -217,7 +217,7 @@
 )
 
 (defrule task_guide_to_taxi
-	?f <- (task ?plan guide_to_taxi ?person ?step)
+	?f <- (task ?plan guide_to_taxi ?person ?question ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name ?person))
 	=>
@@ -225,7 +225,7 @@
 	(printout t "Guide to taxi")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_guided)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task pguide_to_taxi ?person ?step))
+	(assert (task pguide_to_taxi ?person ?question ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 )
@@ -379,13 +379,13 @@
 )
 
 (defrule plan_guide_to_taxi
-	?goal <- (objetive guide_to_taxi ?name ?person ?step)
+	?goal <- (objetive guide_to_taxi ?name ?person ?question ?step)
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Justina make a question" crlf)
 	(bind ?speech(str-cat "I am sorry, I could not find the person"))
 	(assert (plan (name ?name) (number 1)(actions make_task ?name ?person went) (actions_num_params 2 2)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions guide_to_taxi ?person)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions guide_to_taxi ?person ?question)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_guided)(duration 6000)))
 	(assert (finish-planner ?name 3))
 )
@@ -509,9 +509,9 @@
 	(state (name ?name) (number ?step) (status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task pguide_to_taxi ?person ?step)
+	?f1 <- (task pguide_to_taxi ?person ?question ?step)
 	=>
 	(retract ?f1)
-	(assert (objetive guide_to_taxi task_guide_to_taxi ?person ?step))
+	(assert (objetive guide_to_taxi task_guide_to_taxi ?person ?question ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

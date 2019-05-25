@@ -3141,13 +3141,113 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
-	
-    std::vector<std::string> tokens;
+
+    	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
+
+	std::string lastReco;
+	std::vector<std::string> idsUmbrella;
+	idsUmbrella.push_back("umbrella");
 	
-    responseMsg.successful = 1;
+	bool leave_conf = false;
+	bool guide_to_taxi = true;
+	bool findUmbrella = false;
+	int count = 0;
+
+	if(tokens[1] != "ask_for_leave")
+		leave_conf = true;
+    
+	while(!leave_conf && count < 3){
+		ss.str("");
+		ss << "Do you want to go, tell me robot yes o robot no";
+		switchSpeechReco(0, ss.str());
+		JustinaHRI::waitForSpeechRecognized(lastReco,400);
+		
+		JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+		if(lastReco == "robot yes" || lastReco == "justina yes")
+		    leave_conf = true;
+		else
+			JustinaHRI::waitAfterSay("Sorry I did not understand you", 10000);
+		count++;
+	}
+
+	if (!leave_conf){
+		guide_to_taxi = false;
+		responseMsg.successful = 0;
+                JustinaHRI::say("Ok I understand, please enjoy the party");
+        	ros::Duration(1.0).sleep();
+	}
+	else{
+		
+		JustinaHRI::say("I am going to guide you to the coat rack");
+		ros::Duration(1.0).sleep();
+		JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+		ros::Duration(1.0).sleep();
+		JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	    
+		JustinaTasks::guideAPerson("entrance", 300000, 1.5);
+		
+		JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
+		ros::Duration(1.0).sleep();
+		JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
+		ros::Duration(1.0).sleep();
+		JustinaHRI::say("hey guest, do not forget to take your coat");
+		ros::Duration(2.0).sleep();
+
+		JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
+		ros::Duration(1.0).sleep();
+
+		JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);/// revizar este giro, creo que hay que quitarlo
+		ros::Duration(1.0).sleep();
+		JustinaHRI::say("Do not forget use the umbrella to protect us");
+		ros::Duration(1.0).sleep();
+		JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+		JustinaTasks::guideAPerson("afuera", 300000, 1.5);
+
+		JustinaHRI::say("wait here with me I am looking for the taxi driver");
+		ros::Duration(1.0).sleep();
+                
+		count = 0;
+		while (!findUmbrella && count < 3){
+			findUmbrella = JustinaTasks::findAndGuideYolo(idsUmbrella);
+			count++;
+		}
+
+		if(findUmbrella){
+			JustinaManip::hdGoTo(0.0, 0.0, 1000);
+			JustinaHRI::waitAfterSay("Hello Taxi driver, my name is Justina, I came here with a guest that want to go home", 12000);
+			ros::Duration(1.0).sleep();
+			/*JustinaHRI::say("Hey guest i hope you have a nice trip, could you please lend me the umbrella");
+			ros::Duration(1.5).sleep();
+			JustinaHRI::say("please close the umbrella and put in my gripper");
+			ros::Duration(1.5).sleep();
+			JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
+			ros::Duration(1.0).sleep();*/
+			ss.str("");
+			ss << "Hey guest i hope you have a nice trip, Good bye ";
+			JustinaHRI::say(ss.str());
+			ros::Duration(1.0).sleep();
+			JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
+			ros::Duration(1.5).sleep();
+			responseMsg.successful = 1;
+			
+		}
+		else{
+			ss.str("");
+			ss << "I am sorry i cand find the taxi driver";
+			JustinaHRI::say(ss.str());
+			responseMsg.successful = 0;
+		}
+		
+	}
+
+	
+	//responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
 }
 
