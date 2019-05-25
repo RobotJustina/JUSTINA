@@ -192,7 +192,7 @@
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
-	(modify ?f2 (status nil))
+	;(modify ?f2 (status nil))
 )
 
 (defrule task_wait_for_user_instruction

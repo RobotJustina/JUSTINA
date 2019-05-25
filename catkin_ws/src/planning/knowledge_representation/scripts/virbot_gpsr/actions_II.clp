@@ -161,9 +161,9 @@
 	(retract ?f)
 	(printout t "Task in order to ask for incomplete information")
         (assert (state (name ?plan)(number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments finish_objetive status asked)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments ?nti status no_ask)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pask_info) (actor robot)(obj ?param)(from ?nti)(to ?incomplete)(name-scheduled ?plan)(state-number ?step)))
-        (modify ?f2 (status nil))
+        (modify ?f1 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

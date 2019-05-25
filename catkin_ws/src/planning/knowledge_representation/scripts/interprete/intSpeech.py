@@ -44,6 +44,7 @@ def separaTask(cadena):
 	tu = 2
 	tempStep = 1
         ask_info_index = 0;
+        origin_place = False;
 	no_man_guide = True
 	for i in spc:
 		temp  = i.split("(")
@@ -66,6 +67,7 @@ def separaTask(cadena):
                                         no_get_object_many_room = False
 				elif firstparam[1] == 'update_object_location':
 					update_location = True
+                                        origin_place = True
 				elif firstparam[1] == 'handover_object':
 					 handover_object = True
 				elif firstparam[1] == 'find_person_in_room':
@@ -136,12 +138,19 @@ def separaTask(cadena):
 			q.pushC(s)
 			planQ.pushC(s)
                 elif ask_info:
-                        print 'insert element ask info index: ' + str(ask_info_index)
-                        q.insertElement(s, ask_info_index)
-                        planQ.insertElement(s, ask_info_index)
-                        ask_info = False
+                        if  origin_place:
+                            origin_place = False
+                            step = step - 1
+                            ask_info_index = ask_info_index - 1
+                            ask_info = False
+                        else:
+                            print 'insert element ask info index: ' + str(ask_info_index)
+                            q.insertElement(s, ask_info_index)
+                            planQ.insertElement(s, ask_info_index)
+                            ask_info = False
 		fpush = True
 		s = []
+        q.showQueue();
 
 def cmd_task(c):
 	args = ''
@@ -237,6 +246,7 @@ def cmd_int(c):
 		return (0, args)
 	else:
 		q.empty()
+                planQ.empty()
                 instruction = 'false'
                 if result.find('(inst') != -1:
                     if result.find('(task') != -1:
@@ -295,6 +305,7 @@ def cmd_int_open(c):
 		return (0, args)
 	else:
 		q.empty()
+                planQ.empty()
 		separaTask(interpreted_command)
 		args = temp1.replace(' ','_')
 		#return Response.FromCommandObject(c, True, args)

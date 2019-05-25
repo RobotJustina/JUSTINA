@@ -12,7 +12,7 @@ import pyaudio
 
 import time
 import numpy as np
-import scipy.signal as signal
+#import scipy.signal as signal
 
 from std_msgs.msg import String, Bool, Int8 
 from std_srvs.srv import *
@@ -21,8 +21,8 @@ from hri_msgs.msg import RecognizedSpeech
 import os
 import commands
 
-b,a=signal.iirdesign(0.03,0.07,5,40)
-fulldata = np.array([])
+#b,a=signal.iirdesign(0.03,0.07,5,40)
+#fulldata = np.array([])
 
 RESPEAKER_RATE = 16000
 RESPEAKER_CHANNELS = 1 # change base on firmwares, 1_channel_firmware.bin as 1 or 6_channels_firmware.bin as 6
@@ -30,7 +30,7 @@ RESPEAKER_WIDTH = 2
 # run getDeviceInfo.py to get index
 RESPEAKER_INDEX = 2  # refer to input device id
 CHUNK = 1024
-
+"""
 def callback_with_filter(in_data, frame_count, time_info, flag):
     global b,a,fulldata #global variables for filter coefficients and array
     audio_data = np.fromstring(in_data, dtype=np.float32)
@@ -38,7 +38,7 @@ def callback_with_filter(in_data, frame_count, time_info, flag):
     audio_data = signal.filtfilt(b,a,audio_data,padlen=200).astype(np.float32).tostring()
     fulldata = np.append(fulldata,audio_data) #saves filtered data in an array
     return (audio_data, pyaudio.paContinue)
-
+"""
 class recognizer(object):
 
     def callbackSetKws(self, data):
