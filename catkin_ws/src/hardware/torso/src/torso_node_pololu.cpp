@@ -35,12 +35,12 @@ void callbackRelativeHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     }
     goalPose.data[0] = absPosition + msg->data[0];
     unsigned int goalTarget;
-    if(goalPose.data[0] < 0.01 || goalPose.data[0] > 0.3){
+    if(goalPose.data[0] < 0.01 || goalPose.data[0] > 0.294){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
         if(goalPose.data[0] < 0.01f)
             goalPose.data[0] = 0.01f;
-        if(goalPose.data[0] > 0.3)
-            goalPose.data[0] = 0.3f;
+        if(goalPose.data[0] > 0.294)
+            goalPose.data[0] = 0.294f;
         goalSpeeds_simul[0] = 0.004;
     }
     if(!simul){
@@ -53,12 +53,12 @@ void callbackAbsoluteHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving absolute new goal pose." << std::endl;
     newGoalPose = true;
     goalPose.data[0] = msg->data[0];
-    if(msg->data[0] < 0.01 || goalPose.data[0] > 0.3){
+    if(msg->data[0] < 0.01 || goalPose.data[0] > 0.294){
         std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
         if(goalPose.data[0] < 0.01)
             goalPose.data[0] = 0.01f;
-        if(goalPose.data[0] > 0.3)
-            goalPose.data[0] = 0.3f;
+        if(goalPose.data[0] > 0.294)
+            goalPose.data[0] = 0.294f;
         goalSpeeds_simul[0] = 0.004;
     }
     if(!simul){
@@ -126,7 +126,6 @@ int main(int argc, char ** argv){
     goalPose.data.resize(3);
 
     while(ros::ok()){
-        float position;
         if(!simul){         
             try{
                 currFeedback = jrkManager->getFeedback();
@@ -150,7 +149,7 @@ int main(int argc, char ** argv){
         }
 
         if(newGoalPose){
-            float err = fabs(position - goalPose.data[0]);
+            float err = fabs(positions[0] - goalPose.data[0]);
             if(err <= TH_ERR){
                 std_msgs::Bool msg;
                 msg.data = true;

@@ -1,0 +1,8 @@
+cleaning_stuff side_table 4 sponge sponge sponge sponge
+containers end_table 3 tray tray tray tray
+cutlery storage_table 3 fork fork fork fork
+drinks counter 5 grape_juice orange_juice coke grape_juice
+food cupboard 3 cereal cereal cereal cereal
+fruits bookcase 3 apple apple apple apple
+snacks bookcase 3 pringles pringles pringles pringles
+tableware storage_table 3 bowl bowl bowl bowl

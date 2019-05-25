@@ -1983,16 +1983,26 @@ void MainWindow::on_createCLIPSfile_clicked(){
     std::string nameCLIPS="virbot_initial_state.clp";
     std::string nameONTOLOGY="stuff_ontology.txt";
     std::string pathFILECLIPS=path+directory+nameCLIPS;
+    std::string pathFILEONTOLOGY=path+directory+nameONTOLOGY;
     std::cout<<"\n Directory:   "<<pathFILECLIPS<< std::endl;
-    
+    std::cout<<"\n Directory:   "<<pathFILEONTOLOGY<< std::endl;
+        
     
     std::ofstream CLIPSfile(pathFILECLIPS.c_str());
+    std::ofstream ONTOLOGYfile(pathFILEONTOLOGY.c_str());
 
     if(CLIPSfile.fail()){
-        std::cout<<"\n Fail File "<<std::endl;
+        std::cout<<"\n Fail File  CLIPS "<<std::endl;
     }else{
         std::cout<<"File CLIPS ready to save data "<<std::endl;
     }
+    
+   if(ONTOLOGYfile.fail()){
+        std::cout<<"\n Fail File ONTOLOGY"<<std::endl;
+    }else{
+        std::cout<<"File ONTOLOGY ready to save data "<<std::endl;
+    }
+
 
    CLIPSfile<<"\n\n(deffacts Initial-state-objects-rooms-zones-actors";
 
@@ -2014,26 +2024,30 @@ void MainWindow::on_createCLIPSfile_clicked(){
    CLIPSfile<<";;;;;;;;;;OBJECTS";
    CLIPSfile<<"\n\n\n";
    for(std::map<std::string , std::vector<std::string> >::iterator it2 = objects.begin() ; it2 != objects.end(); it2++ ){
-       std::cout<<"\n Name: "<<it2->first<<std::endl;
+       /*std::cout<<"\n Name: "<<it2->first<<std::endl;
        std::cout<<"\t Category: "<<it2->second[0]<<std::endl;
        std::cout<<"\t Location: "<<it2->second[1]<< std::endl;
        std::cout<<"\n Room: "<<it2->second[2]<<std::endl;
        std::cout<<"\t Weight: "<<it2->second[3]<<std::endl;
        std::cout<<"\t Size: "<<it2->second[4]<< std::endl;
        std::cout<<"\t Color: "<<it2->second[5]<< std::endl;
-       std::cout<<"\t Quantity: "<<it2->second[6]<< std::endl;  
+       std::cout<<"\t Quantity: "<<it2->second[6]<< std::endl;*/  
        CLIPSfile<<"\n(item (type Objects) (name "<<it2->first<<") (zone "<<it2->second[1]<<") (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category "<<it2->second[0]<<") (room "<<it2->second[2]<<")(grasp 2)(weight "<<it2->second[3]<<")(size "<<it2->second[4]<<")(height 1)(wide 10)(color "<<it2->second[5]<<")(biggest yes)(smallest yes) (heaviest yes) (lightest yes))\n";  
    }
 
-   std::cout<<" PEOPLES :"<<std::endl;
+   std::cout<<" PEOPLE :"<<std::endl;
    CLIPSfile<<"\n\n\n";
-   CLIPSfile<<";;;;;;;;;;PEOPLES";
+   CLIPSfile<<";;;;;;;;;;PEOPLE";
    CLIPSfile<<"\n\n\n";
+   ONTOLOGYfile<<"\n\n\n";
+   ONTOLOGYfile<<"#PERSON";
+   ONTOLOGYfile<<"\n";
    for(std::map<std::string , std::vector<std::string> >::iterator it3 = peoples.begin() ; it3 != peoples.end(); it3++ ){
        //std::cout<<"\n Name: "<<it3->first;
        //std::cout<<"\t Age: "<<it3->second[0];
        //std::cout<<"\t Gender: "<<it3->second[1]<< std::endl;
        CLIPSfile<<"\n(item (type Objects) (name "<<it3->first<<")(zone living_room)"<<"(image "<<it3->first<<")"<<"(attributes pick)(pose -1.87 8.64 0.0))\n";
+       ONTOLOGYfile<<"\n("<<it3->first<<"     is_kind_of      person)\n";
    }
 
    std::cout<<" CATEGORYS :"<<std::endl;
@@ -2056,6 +2070,7 @@ void MainWindow::on_createCLIPSfile_clicked(){
 
 
    CLIPSfile.close();
+   ONTOLOGYfile.close();
 }
 
 

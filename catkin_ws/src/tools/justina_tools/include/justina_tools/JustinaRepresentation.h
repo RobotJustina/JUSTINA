@@ -57,10 +57,12 @@ class JustinaRepresentation {
         static void agendaCLIPS(bool enable);
         static void sendCLIPS(std::string command);
         static void loadCLIPS(std::string file);
+        
         static void getLocations(std::string path ,std::map<std::string, std::vector<std::string> >& locations);
         static void getObjects(std::string path ,std::map<std::string, std::vector<std::string> >& objects);
         static void getCategorys(std::string path ,std::map<std::string, std::vector<std::string> >& categorys);//
         static void getPeoples(std::string path , std::map<std::string , std::vector<std::string> >& peoples);//
+        
         static void addLocations(std::map<std::string, std::vector<std::string> >& locations, std::string name, std::vector<std::string> values);
         static void addObjects(std::map<std::string, std::vector<std::string> >& objects, std::string name, std::vector<std::string> values);
         static void addPeoples(std::map<std::string , std::vector<std::string> >& peoples, std::string name, std::vector<std::string> values);//

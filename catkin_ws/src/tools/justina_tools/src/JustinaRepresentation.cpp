@@ -181,6 +181,12 @@ void JustinaRepresentation::getObjects(std::string path, std::map<std::string, s
         loc.push_back(parts[5]);
         loc.push_back(parts[6]);
         loc.push_back(parts[7]);
+        
+        /*loc.push_back(parts[8]);
+        loc.push_back(parts[9]);
+        loc.push_back(parts[10]);
+        loc.push_back(parts[11]);*/
+
 
         if (parseSuccess) {
             //std::cout << "LOCATIONS" << parts[0] << std::endl;
