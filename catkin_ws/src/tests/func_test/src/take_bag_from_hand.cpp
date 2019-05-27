@@ -117,7 +117,8 @@ int main(int argc, char **argv) {
 
             case SM_RecognizeGesture:
                 std::cout << "State machine: SM_RecognizeGesture" << std::endl;
-                if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid, leftArm))
+                JustinaHRI::say("Please put your hand with the mail in front of me, in midle hight ");
+                if(JustinaTasks::graspObjectFromHand(faces.recog_faces[0].face_centroid, leftArm))
                     std::cout << "test succesfully" << std::endl;
                 else
                 {
