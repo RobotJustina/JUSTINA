@@ -969,10 +969,9 @@ meaning_mapping_patterns_gpsr = [
 	"planner_not_confirmed": ''},
 
         #This is the object
-        {"params": ["This", "Is", "The", "Object"],
+        {"params": ["This", "Is", "Object"],
 	"This": [["this"], [], [], []],
 	"Is": [["is"], [], [], []],
-	"The": [["the"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"conceptual_dependency": "-Object-",
 	"verbal_confirmation": '',

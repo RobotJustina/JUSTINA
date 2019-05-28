@@ -3192,6 +3192,9 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             JustinaTasks::detectObjectInGripper("", false, 7000);
             JustinaHRI::waitAfterSay("thank you", 5000, 0);
             
+            count = 0;
+            help = false;
+            
             //ask object name
             while(!help && count < 3){
                 JustinaHRI::waitAfterSay("Now Say for instance, this is the apple, Please tell me the object's name, ", 10000);
@@ -3224,7 +3227,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 //task for put garbage into the bin
                 JustinaHRI::waitAfterSay("I can not put the object into the bin yet", 2000);
                 JustinaTasks::dropObject("unknown_object", false, 30000);
-                JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000); // change location for the real one
+                JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
             }
             else{
                 // task for put objects in default location
@@ -3239,7 +3242,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 JustinaTasks::placeObject(false); // right arm
                 JustinaManip::raGoTo("home", 6000);
 
-                JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000); // change location for the real one
+                JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
                 
             }
             obj_count++;
