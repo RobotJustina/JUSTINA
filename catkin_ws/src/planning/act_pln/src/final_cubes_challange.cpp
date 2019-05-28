@@ -2341,8 +2341,7 @@ int main(int argc, char **argv) {
                 else{
                     JustinaManip::startHdGoTo(0.0, -0.4);
                     JustinaHRI::say("Ready, now wait for the next instruction");
-                    JustinaHRI::say("Please put your hand with the cube in front of me, in midle hight ");
-                    if(JustinaTasks::graspObjectFromHand(faces.recog_faces[0].face_centroid, withLeftArm))
+                    if(JustinaTasks::graspObjectFromHand(faces.recog_faces[0].face_centroid, "cube", withLeftArm))
                         std::cout << "test succesfully" << std::endl;
                     else
                     {
