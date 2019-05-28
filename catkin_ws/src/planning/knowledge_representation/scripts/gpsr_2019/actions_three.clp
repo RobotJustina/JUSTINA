@@ -230,6 +230,18 @@
 	(modify ?f2 (status nil))
 )
 
+(defrule task_clean_up
+	?f <- (task ?plan clean_up ?room ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Clean Up")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_cleaned)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pclean_up ?room ?step))
+	(modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -389,6 +401,16 @@
 	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_guided)(duration 6000)))
 	(assert (finish-planner ?name 3))
 )
+
+(defrule plan_clean_up
+	?goal <- (objetive clean_up ?name ?room ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Justina make a question" crlf)
+	(assert (plan (name ?name) (number 1)(actions clean_up ?room)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_cleaned)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -513,5 +535,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive guide_to_taxi task_guide_to_taxi ?person ?question ?step))
+)
+
+(defrule exe_scheduled-clean-up
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pclean_up ?room ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive clean_up task_clean_up ?room ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -716,6 +716,20 @@ meaning_mapping_patterns_gpsr = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+
+        ##$cmancmd     = $vbclean the {room meta: Place 3 objects randomly, at least one on the floor.}
+	{"params": ["Action_clean", "Place"],
+	"Action_clean": [["clean", "tidy", "neaten", "orer"], [], [], []],
+	"Place": [[], [], ["room"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type clean_up) (params -Place-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+
+        ######
+        ### Find Objects
+        ######
         
         ##tell me which are the three $oprop (objects | {category}) on the {placement 1 meta: Place at least 5 objects on the {placement 1}}
 	{"params": ["Action_tell", "Person", "Three", "Oprop", "Object", "Location"],
@@ -950,6 +964,17 @@ meaning_mapping_patterns_gpsr = [
 	"Want": [["want"], [], [], []],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "-Favorite_drink-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #This is the object
+        {"params": ["This", "Is", "The", "Object"],
+	"This": [["this"], [], [], []],
+	"Is": [["is"], [], [], []],
+	"The": [["the"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"conceptual_dependency": "-Object-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
