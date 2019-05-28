@@ -5350,16 +5350,15 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
     }
     JustinaVision::stopSkeletonFinding();
 
-    if (JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot",
-                gestures, 2.5, nGesture, "")
-            || JustinaTasks::getNearestRecognizedGesture(
-                "pointing_left_to_robot", gestures, 2.5, nGesture, "")) {
+    if (JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture, "") || JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.5, nGesture, "")) {
         float armGoalX, armGoalY, armGoalZ;
         bool withLeftArm = false;
         bool usingTorse = true;
         armGoalX = nGesture(0, 0) - 0.10;
         armGoalY = nGesture(1, 0);
-        armGoalZ = nGesture(2, 0) - 0.15;
+        //armGoalZ = nGesture(2, 0) - 0.15;
+        armGoalZ = nGesture(2, 0);
+        
 
         JustinaHRI::waitAfterSay("wait, i will move my hand to the take the bag ", 4000, 0);
 
