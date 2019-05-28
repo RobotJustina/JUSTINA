@@ -731,3 +731,13 @@
 )
 
 ;;;;
+
+(defrule get_def_obj_location
+	?f <- (get_obj_default_loc ?obj 1)
+	(item (name ?obj) (zone ?def_loc))
+	=>
+	(retract ?f)
+	(printout t "" ?def_loc "")
+)
+
+;;;;;

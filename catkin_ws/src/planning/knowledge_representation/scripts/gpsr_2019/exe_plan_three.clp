@@ -254,3 +254,27 @@
 )
 
 ;;;;;;;;;;;;;
+(defrule exe-plan-clean-up 
+	(plan (name ?name) (number ?num-pln) (status active) (actions clean_up ?room)(duration ?t))
+	=>
+        (bind ?command (str-cat "" ?room ""))
+	(assert (send-blackboard ACT-PLN clean_up ?command ?t 4))
+)
+
+(defrule exe-plan-cleaned-up 
+        ?f <-  (received ?sender command clean_up ?room 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions clean_up $?params))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-cleaned-up
+        ?f <-  (received ?sender command clean_up ?room 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions clean_up $?params))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+;;;;;;;;;;;;;;
