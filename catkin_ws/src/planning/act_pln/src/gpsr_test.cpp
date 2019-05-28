@@ -3196,8 +3196,10 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             help = false;
             
             //ask object name
+            JustinaHRI::waitAfterSay("I can not recogniize the object", 10000);
             while(!help && count < 3){
-                JustinaHRI::waitAfterSay("Now Say for instance, this is the apple, Please tell me the object's name, ", 10000);
+                JustinaHRI::waitAfterSay("Please for known objects say for instance, this is the apple", 10000);
+                JustinaHRI::waitAfterSay("for unknown objects say, this is an unknown object, Please tell me the object's name", 10000);
                 JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
                 if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
                     if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
@@ -3221,8 +3223,10 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             //ss << "(assert (set_object_arm " << obj_name << " false))";
             //JustinaRepresentation::sendAndRunCLIPS(ss.str());
             JustinaHRI::waitAfterSay("thank you", 5000, 0);
+            ss.str("");
+            ss << "please wait for me in the center of the " << tokens[0] << ", I will need your help again";
 
-            JustinaHRI::waitAfterSay("please wait for me here", 1000);
+            JustinaHRI::waitAfterSay(ss.str(), 1000);
             if(obj_name == "unknown"){
                 //task for put garbage into the bin
                 JustinaHRI::waitAfterSay("I can not put the object into the bin yet", 2000);
@@ -3242,7 +3246,8 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 JustinaTasks::placeObject(false); // right arm
                 JustinaManip::raGoTo("home", 6000);
 
-                JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
+                if(count < 2)
+                    JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
                 
             }
             obj_count++;

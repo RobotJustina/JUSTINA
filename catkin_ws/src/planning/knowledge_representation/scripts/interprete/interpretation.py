@@ -977,6 +977,17 @@ meaning_mapping_patterns_gpsr = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+
+        #This is the unknown
+        {"params": ["This", "Is", "Unknown", "Object"],
+	"This": [["this"], [], [], []],
+	"Is": [["is"], [], [], []],
+	"Unknown": [["unknown"], [], [], []],
+        "Object": [["object"],[],[],[]],
+	"conceptual_dependency": "unknown_object",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 	
 	####
 	### GET LOCATION NAMES
