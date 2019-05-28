@@ -482,7 +482,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaNavigation::startMoveDist(-0.2);
             if (usingTorse)
                 JustinaManip::waitForTorsoGoalReached(1000);
-            JustinaManip::waitForLaGoalReached(1000);
+            JustinaManip::waitForRaGoalReached(1000);
             JustinaManip::startRaGoTo("navigation");
             JustinaManip::startTorsoGoTo(0.1, 0, 0);
             JustinaNavigation::waitForGoalReached(2000);
@@ -4844,8 +4844,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
             }
         } else {
             JustinaManip::startLaOpenGripper(0.8);
-            JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY,
-                    objToGraspZ, 15000);
+            JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
             JustinaManip::laStopGoToCartesian();
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -4875,13 +4874,11 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaManip::waitForTorsoGoalReached(20000);
                 if (typeCutlery == 2) {
-                    boost::this_thread::sleep(
-                            boost::posix_time::milliseconds(500));
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     JustinaManip::laGoTo("dish_grasp", 5000);
                 }
             } else
-                JustinaManip::laGoToCartesian(objToGraspX - 0.13,
-                        objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+                JustinaManip::laGoToCartesian(objToGraspX - 0.13, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
             if (i == 0) {
                 if (typeCutlery != 2) {
                     JustinaManip::laGoTo("put1", 5000);
@@ -5334,13 +5331,16 @@ bool JustinaTasks::setRoi(vision_msgs::VisionFaceObjects faces) {
     return true;
 }
 
-bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid,
-        bool &leftArm) {
+bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::string objectName, bool &leftArm) {
     std::vector<vision_msgs::GestureSkeleton> gestures;
     Eigen::Vector3d nGesture;
 
     JustinaVision::startSkeletonFinding();
     JustinaNavigation::moveDistAngle(-(1.15 - face_centroid.x), 0.0, 4000);
+           
+    std::stringstream ss;
+    ss << "Please put your hand with the " <<  objectName << " in front of me, in midle hight";
+    JustinaHRI::say(ss.str());
 
     if (!JustinaTasks::waitRecognizedGesture(gestures, 5000)) {
         if (!JustinaTasks::waitRecognizedGesture(gestures, 5000)) {
@@ -5350,16 +5350,15 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid,
     }
     JustinaVision::stopSkeletonFinding();
 
-    if (JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot",
-                gestures, 2.5, nGesture, "")
-            || JustinaTasks::getNearestRecognizedGesture(
-                "pointing_left_to_robot", gestures, 2.5, nGesture, "")) {
+    if (JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture, "") || JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.5, nGesture, "")) {
         float armGoalX, armGoalY, armGoalZ;
         bool withLeftArm = false;
         bool usingTorse = true;
         armGoalX = nGesture(0, 0) - 0.10;
         armGoalY = nGesture(1, 0);
-        armGoalZ = nGesture(2, 0) - 0.15;
+        //armGoalZ = nGesture(2, 0) - 0.15;
+        armGoalZ = nGesture(2, 0);
+        
 
         JustinaHRI::waitAfterSay("wait, i will move my hand to the take the bag ", 4000, 0);
 
@@ -5437,8 +5436,7 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid,
         armGoalY -= dyr;
         //armGoalZ += goalTorso - torsoSpine;
 
-        std::string destFrame =
-            withLeftArm ? "left_arm_link0" : "right_arm_link0";
+        std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
         if (!JustinaTools::transformPoint("base_link", armGoalX, armGoalY, armGoalZ, destFrame, armGoalX, armGoalY, armGoalZ)) {
             std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
             return false;
