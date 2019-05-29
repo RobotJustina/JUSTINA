@@ -819,3 +819,25 @@ bool JustinaRepresentation::getOriginAndGoalFromObject(std::string name, int id,
     }
     return false;
 }
+
+std::string JustinaRepresentation::covertLetters(std::string chain){
+   std::cout<<"\n Converted Chain :"<<chain<<std::endl;
+
+   std::string convertedWord=" ";
+   int tam=chain.size();
+   char arrayChain[100]={'\0'};
+   char arrayChainAux[100]={'\0'};
+   for(int i=0; i<chain.size();i++){
+       arrayChain[i]=chain[i];
+   }
+   for (int index = 0 ; arrayChain[index]!= '\0'/* index < chain.size()*/; ++index){
+       arrayChainAux[index] = tolower(arrayChain[index]);    
+   }
+   std::cout<<"\n Converted Array Chain :"<<arrayChainAux<<std::endl;
+   convertedWord=arrayChainAux;
+   std::cout<<"\n Converted String Chain :"<<convertedWord<<std::endl;
+   
+   return convertedWord;
+}
+
+

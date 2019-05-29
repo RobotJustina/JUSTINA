@@ -1,20 +1,90 @@
 
 
 
+#SNACKS
+
+(apple	is_kind_of      item)
+(bag	is_kind_of      item)
+(basket	is_kind_of      item)
+(bowl	is_kind_of      item)
+(cascade_pod	is_kind_of      item)
+(cereal	is_kind_of      item)
+(chocolate_drink	is_kind_of      item)
+(cloth	is_kind_of      item)
+(coke	is_kind_of      item)
+(crackers	is_kind_of      item)
+(cup	is_kind_of      item)
+(dish	is_kind_of      item)
+(fork	is_kind_of      item)
+(grape_juice	is_kind_of      item)
+(knife	is_kind_of      item)
+(noodles	is_kind_of      item)
+(orange	is_kind_of      item)
+(orange_juice	is_kind_of      item)
+(paprika	is_kind_of      item)
+(potato_chips	is_kind_of      item)
+(pringles	is_kind_of      item)
+(sausages	is_kind_of      item)
+(scrubby	is_kind_of      item)
+(sponge	is_kind_of      item)
+(spoon	is_kind_of      item)
+(sprite	is_kind_of      item)
+(tray	is_kind_of      item)
+
+
+#CATEGORIES
+
+(cleaning_stuff	is_kind_of      category)
+(containers	is_kind_of      category)
+(cutlery	is_kind_of      category)
+(drinks	is_kind_of      category)
+(food	is_kind_of      category)
+(fruits	is_kind_of      category)
+(snacks	is_kind_of      category)
+(tableware	is_kind_of      category)
+
+
 #PERSON
 
+(alex	is_kind_of      person)
+(charlie	is_kind_of      person)
+(elizabeth	is_kind_of      person)
+(francis	is_kind_of      person)
+(james	is_kind_of      person)
+(jennifer	is_kind_of      person)
+(john	is_kind_of      person)
+(linda	is_kind_of      person)
+(mary	is_kind_of      person)
+(michael	is_kind_of      person)
+(patricia	is_kind_of      person)
+(robert	is_kind_of      person)
+(robin	is_kind_of      person)
+(skyler	is_kind_of      person)
+(william	is_kind_of      person)
 
 
-(angelica     is_kind_of      person)
+#ROOMS
 
-(cintia     is_kind_of      person)
+(bedroom	is_kind_of      room)
+(corridor	is_kind_of      room)
+(dining_room	is_kind_of      room)
+(kitchen	is_kind_of      room)
+(living_room	is_kind_of      room)
 
-(jaime     is_kind_of      person)
 
-(juan     is_kind_of      person)
+#PLACEMENT
 
-(octavio     is_kind_of      person)
-
-(ramon     is_kind_of      person)
-
-(rodrigo     is_kind_of      person)
+(bed	is_kind_of      place)
+(bookcase	is_kind_of      place)
+(couch	is_kind_of      place)
+(counter	is_kind_of      place)
+(cupboard	is_kind_of      place)
+(desk	is_kind_of      place)
+(dining_table	is_kind_of      place)
+(dishwasher	is_kind_of      place)
+(end_table	is_kind_of      place)
+(entrance	is_kind_of      place)
+(exit	is_kind_of      place)
+(side_table	is_kind_of      place)
+(sink	is_kind_of      place)
+(storage_table	is_kind_of      place)

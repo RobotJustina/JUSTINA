@@ -73,6 +73,8 @@ class JustinaRepresentation {
         static void deletePeoples(std::map<std::string , std::vector<std::string> >& peoples, std::string name);//
         static void deleteCategorys(std::map<std::string , std::vector<std::string> >& categorys, std::string name);//
 
+        static std::string covertLetters(std::string chain);
+        
         static void sendAndRunCLIPS(std::string command);
         static bool speachInterpretation();
         static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
