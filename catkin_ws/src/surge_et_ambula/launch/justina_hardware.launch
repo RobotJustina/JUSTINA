@@ -36,8 +36,8 @@
 			<param name="port" value="/dev/justinaTorso"/>
 		</node -->
 		<node name="torso" pkg="torso" type="torso_node_pololu" output="screen">
-			<param name="simul" value="$(arg simul)"/>
-			<param name="port" value="/dev/serial/by-id/usb-Pololu_Corporation_Pololu_Jrk_12v12_Motor_Controller_00205489-if00"/>
+			<param name="simul" value="false"/>
+			<param name="port" value="/dev/serial/by-id/usb-Pololu_Corporation_Pololu_Jrk_12v12_Motor_Controller_00191339-if00"/>
 			<param name="baud" value="9600"/>
 		</node>
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
