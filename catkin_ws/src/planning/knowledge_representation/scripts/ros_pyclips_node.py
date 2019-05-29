@@ -576,6 +576,13 @@ def clean_up(cmd):
     pubCmdCleanUp.publish(request)
     return cmd._id
 
+def take_out_garbage(cmd):
+    global pubCmdTakeOutGarbage 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTakeOutGarbage.publish(request)
+    return cmd._id
+
 def introduce_person(cmd):
     global pubCmdIntroducePerson
     print "Executing Function: " + cmd.name
@@ -692,7 +699,8 @@ fmap = {
     'introduce_person': introduce_person,
     'make_question': make_question,
     'guide_to_taxi': guide_to_taxi,
-    'clean_up': clean_up
+    'clean_up': clean_up,
+    'take_out_garbage': take_out_garbage
 }
 
 def quit():
@@ -708,7 +716,7 @@ def main():
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
-    global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp  
+    global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp, pubCmdTakeOutGarbage  
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -757,6 +765,7 @@ def main():
     pubCmdMakeQuestion = rospy.Publisher('/planning_clips/make_question', PlanningCmdClips, queue_size=1)
     pubCmdGuideToTaxi = rospy.Publisher('/planning_clips/guide_to_taxi', PlanningCmdClips, queue_size=1)
     pubCmdCleanUp = rospy.Publisher('/planning_clips/clean_up', PlanningCmdClips, queue_size=1)
+    pubCmdTakeOutGarbage = rospy.Publisher('/planning_clips/take_out_garbage', PlanningCmdClips, queue_size=1)
     
     ##topicos de serving drinks
     pubCmdOfferDrink = rospy.Publisher('/planning_clips/cmd_offer_drink', PlanningCmdClips, queue_size=1)

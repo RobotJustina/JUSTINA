@@ -242,6 +242,18 @@
 	(modify ?f1 (status nil))
 )
 
+(defrule task_take_out_the_garbage
+	?f <- (task ?plan take_out_garbage ?garbage ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Take out the garbage")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_taked_out)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task ptake_out_garbage ?garbage ?step))
+	(modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -406,9 +418,19 @@
 	?goal <- (objetive clean_up ?name ?room ?step)
 	=>
 	(retract ?goal)
-	(printout t "Prueba Nuevo PLAN Justina make a question" crlf)
+	(printout t "Prueba Nuevo PLAN Justina clean up" crlf)
 	(assert (plan (name ?name) (number 1)(actions clean_up ?room)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_cleaned)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
+
+(defrule plan_take_out_the_garbage
+	?goal <- (objetive take_out_garbage ?name ?garbage ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Justina take ou the garbage" crlf)
+	(assert (plan (name ?name) (number 1)(actions take_out_garbage ?garbage)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_taked_out)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -545,5 +567,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive clean_up task_clean_up ?room ?step))
+)
+
+(defrule exe_scheduled-take-out-the-garbage
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task ptake_out_garbage ?garbage ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive take_out_garbage task_take_out_garbage ?garbage ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

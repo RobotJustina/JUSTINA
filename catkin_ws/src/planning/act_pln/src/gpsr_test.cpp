@@ -3153,6 +3153,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     std::string obj_name;
     std::string lastReco;
     std::string query;
+    std::string to_speech;
    
     ss.str("");
     ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
@@ -3176,29 +3177,19 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             if(obj_count<1)
                 JustinaHRI::waitAfterSay("Thank you, Please guide me to the first object", 10000);
             else
-                JustinaHRI::waitAfterSay("Thank you, Please guide me to the next object", 10000);
+                JustinaHRI::waitAfterSay("Ready, Please guide me to the next object", 10000);
         
             //follow    
             JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
             JustinaTasks::followAPersonAndRecogStop("stop follow me");
-
-            //grasp object
-            JustinaHRI::waitAfterSay("I cant grasp the object", 5000, 0);
-            ss.str("");
-            ss << "please put the object in my gripper";
-            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-
-            JustinaManip::raGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper("", false, 7000);
-            JustinaHRI::waitAfterSay("thank you", 5000, 0);
             
             count = 0;
             help = false;
             
             //ask object name
-            JustinaHRI::waitAfterSay("I can not recogniize the object", 10000);
+            JustinaHRI::waitAfterSay("I can not recognize the object", 10000);
             while(!help && count < 3){
-                JustinaHRI::waitAfterSay("Please for known objects say for instance, this is the apple", 10000);
+                JustinaHRI::waitAfterSay("Please listen, for known objects say for instance, this is the apple", 10000);
                 JustinaHRI::waitAfterSay("for unknown objects say, this is an unknown object, Please tell me the object's name", 10000);
                 JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
                 if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
@@ -3217,24 +3208,59 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                     count++;
                 }
             }
-            count = 0;
-            help = false;
+            to_speech = obj_name;
+		    boost::replace_all(to_speech, "_", " ");
+
+            //grasp object
+            ss.str("");
+            ss << "I can not grasp the " << to_speech;
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            ss.str("");
+            ss << "please put the " << to_speech << " in my gripper";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+
+            JustinaManip::raGoTo("navigation", 3000);
+            JustinaTasks::detectObjectInGripper(obj_name, false, 7000);
+            JustinaHRI::waitAfterSay("thank you", 5000, 0);
+            
+            //count = 0;
+            //help = false;
             //ss.str("");
             //ss << "(assert (set_object_arm " << obj_name << " false))";
             //JustinaRepresentation::sendAndRunCLIPS(ss.str());
             JustinaHRI::waitAfterSay("thank you", 5000, 0);
-            ss.str("");
-            ss << "please wait for me in the center of the " << tokens[0] << ", I will need your help again";
-
-            JustinaHRI::waitAfterSay(ss.str(), 1000);
-            if(obj_name == "unknown"){
+            to_speech = tokens[0];
+		    boost::replace_all(to_speech, "_", " ");
+            //ss.str("");
+            //ss << "please wait for me in the center of the " << to_speech << ", I will need your help again";
+            //JustinaHRI::waitAfterSay(ss.str(), 1000);
+            if(obj_name == "unknown_object"){
                 //task for put garbage into the bin
-                JustinaHRI::waitAfterSay("I can not put the object into the bin yet", 2000);
+                JustinaHRI::waitAfterSay("I still can not put the unknown object into the bin", 2000);
+                JustinaHRI::waitAfterSay("Please help me", 2000);
+			    JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+			    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			    JustinaTasks::guideAPerson("bed", 120000); //cambiar para guiar a un bin
+			    
+                
+                JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+			    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 JustinaTasks::dropObject("unknown_object", false, 30000);
-                JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
+
+                JustinaHRI::waitAfterSay("Please put the garbage into the bin", 5000);
+               
+                if(obj_count < 2)
+                    JustinaHRI::waitAfterSay("When you are ready we can continue", 5000);
+			    
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
             }
             else{
                 // task for put objects in default location
+                ss.str("");
+                ss << "please wait for me in the center of the " << to_speech << ", I will need your help again";
+                JustinaHRI::waitAfterSay(ss.str(), 1000);
+                
                 ss.str("");
                 ss << "(assert (get_obj_default_loc " << obj_name << " 1))";
                 JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
@@ -3247,13 +3273,95 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 JustinaManip::raGoTo("home", 6000);
 
                 if(count < 2)
-                    JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000); // change location for the real one
+                    JustinaTasks::sayAndSyncNavigateToLoc(tokens[0], 120000);
                 
             }
             obj_count++;
         }// end while
+        responseMsg.successful = 1;
     }// end else
 	
+    JustinaHRI::waitAfterSay("I finish the task, thanks for your help", 5000);
+    //responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Take out the garbage ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+    	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    bool help = false;
+    int count = 0;
+    int bag_count = 0;
+    std::string lastReco;
+    std::vector<std::string> bins;
+
+    //change for the real bin locations
+    bins.push_back("bed");
+    bins.push_back("bed");
+    
+    ss.str("");
+    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    while (!help && count < 3){
+        switchSpeechReco(0, ss.str());
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+        JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+        if(lastReco == "robot yes" || lastReco == "justina yes")
+            help = true;
+        count++;
+    }
+    count = 0;
+    if(!help){
+        JustinaHRI::waitAfterSay("I am sorry if you dont help me I can not do this task", 10000);
+        responseMsg.successful = 0;
+    }
+    else{
+
+        while(bag_count < 2){
+            if (bag_count == 0)
+                JustinaHRI::waitAfterSay("Thank you, go for the first bag", 10000);
+            else 
+                JustinaHRI::waitAfterSay("Ready, go for the next bag", 10000);
+            
+            //guide to the first bin
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::guideAPerson(bins.at(bag_count), 120000); //cambiar para guiar a un bin
+
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                
+            //grasp object
+            ss.str("");
+            ss << "I can not grasp the bag into the bin";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            ss.str("");
+            ss << "please put the bag in my gripper";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+
+            JustinaManip::raGoTo("navigation", 3000);
+            JustinaTasks::detectObjectInGripper("bag", false, 7000);
+            JustinaHRI::waitAfterSay("thank you", 5000, 0);
+
+            bag_count++;
+        }//end while
+        
+    }//end else
+
+    
     responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
 }
@@ -3814,6 +3922,7 @@ int main(int argc, char **argv) {
     ros::Subscriber subCmdMakeQuestion = n.subscribe("/planning_clips/make_question", 1, callbackCmdMakeQuestion);
     ros::Subscriber subCmdGuideToTaxi = n.subscribe("/planning_clips/guide_to_taxi", 1, callbackCmdGuideToTaxi);
     ros::Subscriber subCmdCleanUp = n.subscribe("/planning_clips/clean_up", 1, callbackCmdCleanUp);
+    ros::Subscriber subCmdTakeOutGarbage = n.subscribe("/planning_clips/take_out_garbage", 1, callbackCmdTakeOutGarbage);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
