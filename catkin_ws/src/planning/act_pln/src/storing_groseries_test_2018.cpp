@@ -605,7 +605,8 @@ int main(int argc, char** argv)
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                             geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
                             if(idObjectGrasp.compare("unknown") != 0){
-                                if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
+                                //if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
+                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
                                     if(!withLeftOrRightArm){
                                         objectGrasped[0] = true;
                                         takeRight = false;

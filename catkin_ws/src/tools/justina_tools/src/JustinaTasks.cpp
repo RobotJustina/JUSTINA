@@ -6390,7 +6390,7 @@ bool JustinaTasks::findGenderGesturePerson(std::string gesture, int gender,
 }
 
 bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,
-        std::string name2, std::string location2) {
+        std::string name2, std::string location2, bool first_location) {
     std::cout << "JustinaTasks::introduce two people..." << std::endl;
     std::stringstream dialogue;
     JustinaTasks::POSE pose = NONE;
@@ -6419,6 +6419,11 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,
     int findPersonCount = 0;
     int findPersonAttemps = 0;
     int findPersonRestart = 0;
+
+    if(!first_location){
+        nextState = SM_GUIDE_PERSON;
+        person = 2; 
+    }
 
     while (ros::ok() && !success) {
         switch (nextState) {

@@ -725,6 +725,15 @@ meaning_mapping_patterns_gpsr = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+
+        ##$cmancmd     = $vbtakeout the $garbage
+	{"params": ["Action_take", "Garbage"],
+	"Action_take": [["take", "dump"], [], [], []],
+	"Garbage": [["litter","garbage", "trash", "waste", "debris", "junk"], [], [], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type take_out_garbage) (params -Garbage-) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
         
 
         ######
@@ -974,6 +983,17 @@ meaning_mapping_patterns_gpsr = [
 	"Is": [["is"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"conceptual_dependency": "-Object-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #This is the unknown
+        {"params": ["This", "Is", "Unknown", "Object"],
+	"This": [["this"], [], [], []],
+	"Is": [["is"], [], [], []],
+	"Unknown": [["unknown"], [], [], []],
+        "Object": [["object"],[],[],[]],
+	"conceptual_dependency": "unknown_object",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
