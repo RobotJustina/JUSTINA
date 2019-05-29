@@ -182,14 +182,14 @@
 
 ;;;;;;;;;;;  introduce person to people
 (defrule exe-plan-introduce-person 
-	(plan (name ?name) (number ?num-pln) (status active) (actions introduce-person ?person ?php ?place)(duration ?t))
+	(plan (name ?name) (number ?num-pln) (status active) (actions introduce-person ?p ?person ?php ?place)(duration ?t))
 	=>
-        (bind ?command (str-cat "" ?person " " ?php  " " ?place ""))
+        (bind ?command (str-cat "" ?p " " ?person " " ?php  " " ?place ""))
 	(assert (send-blackboard ACT-PLN introduce_person ?command ?t 4))
 )
 
 (defrule exe-plan-introduced-person 
-        ?f <-  (received ?sender command introduce_person ?person ?php ?place 1)
+        ?f <-  (received ?sender command introduce_person ?p ?person ?php ?place 1)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
         =>
         (retract ?f)
@@ -197,7 +197,7 @@
 )
 
 (defrule exe-plan-no-introduced-person
-        ?f <-  (received ?sender command introduce_person ?person ?php ?place 0)
+        ?f <-  (received ?sender command introduce_person ?p ?person ?php ?place 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions introduce-person $?params))
 	?f3 <- (item (name speech))
         =>

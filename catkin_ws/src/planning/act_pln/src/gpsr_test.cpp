@@ -3106,6 +3106,14 @@ void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
+
+    if(tokens[0] == "person"){
+            std::cout << "Introduce to person" << std::endl;
+            JustinaTasks::introduceTwoPeople(tokens[1], "def_loc", tokens[2], tokens[3], false);
+    }
+    else if (tokens[0] == "people"){
+            std::cout << "Introduce to people" << std::endl;
+    }
 	
     responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
@@ -3334,9 +3342,9 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             if (bag_count == 0)
                 JustinaHRI::waitAfterSay("Thank you, go for the first bag", 10000);
             else 
-                JustinaHRI::waitAfterSay("Ready, go for the next bag", 10000);
+                JustinaHRI::waitAfterSay("Go for the next bag", 10000);
             
-            //guide to the first bin
+            //guide to the bin
             JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             JustinaTasks::guideAPerson(bins.at(bag_count), 120000); //cambiar para guiar a un bin
@@ -3351,15 +3359,41 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             ss.str("");
             ss << "please put the bag in my gripper";
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-
-            JustinaManip::raGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper("bag", false, 7000);
-            JustinaHRI::waitAfterSay("thank you", 5000, 0);
+            if(bag_count == 0){
+                JustinaManip::raGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper("bag", false, 7000);
+            }
+            else{
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper("bag", true, 7000);
+            }
 
             bag_count++;
         }//end while
         
+        JustinaHRI::waitAfterSay("thanks for you help, Now i will take out the garbage", 5000, 0);
+
+        //put bags into collection zone
+        JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000); //change for real collection zone
+        
+        JustinaManip::laGoTo("place_bag_floor", 4000);
+        JustinaManip::startLaOpenGripper(0.7);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        JustinaManip::laGoTo("home", 4000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        JustinaManip::startLaOpenGripper(0);
+        
+        JustinaManip::raGoTo("place_bag_floor", 4000);
+        JustinaManip::startRaOpenGripper(0.7);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        JustinaManip::raGoTo("home", 4000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        JustinaManip::startRaOpenGripper(0);
+
+        
     }//end else
+    
+    JustinaHRI::waitAfterSay("I finish the task", 5000, 0);
 
     
     responseMsg.successful = 1;

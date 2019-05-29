@@ -179,7 +179,7 @@
 	(printout t "Introduce person to people")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_introduced)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task pintroduce_person ?person ?php ?place ?step))
+	(assert (task pintroduce_person people ?person ?php ?place ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 	(modify ?f3 (status nil))
@@ -196,7 +196,7 @@
 	(printout t "Introduce person to people")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_introduced)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task pintroduce_person ?person2 ?person1 ?place ?step))
+	(assert (task pintroduce_person person ?person2 ?person1 ?place ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 	(modify ?f3 (status nil))
@@ -372,18 +372,18 @@
 )
 
 (defrule plan_introduce_person
-	?goal <- (objetive introduce_person ?name ?person ?php ?place ?step)
+	?goal <- (objetive introduce_person ?name ?p ?person ?php ?place ?step)
 	=>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
 	(bind ?speech(str-cat "I am sorry, I could not find " ?person))
 	(assert (plan (name ?name) (number 1)(actions make_task_neg ?name ?person went)(actions_num_params 2 2)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions speech-anything ?speech)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions make_task ?name ?person went)(actions_num_params 4 5)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions introduce-person ?person ?php ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions update_status finish_objetive finaly_introduced)(duration 6000)))
-	(assert (finish-planner ?name 6))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name ?person went)(actions_num_params 4 4)(duration 6000)))
+	;(assert (plan (name ?name) (number 4)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions introduce-person ?p ?person ?php ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions update_status finish_objetive finaly_introduced)(duration 6000)))
+	(assert (finish-planner ?name 5))
 )
 
 (defrule plan_make_question_leave
@@ -533,10 +533,10 @@
 	(state (name ?name) (number ?step) (status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task pintroduce_person ?person ?php ?place ?step)
+	?f1 <- (task pintroduce_person ?p ?person ?php ?place ?step)
 	=>
 	(retract ?f1)
-	(assert (objetive introduce_person task_introduce_person ?person ?php ?place ?step))
+	(assert (objetive introduce_person task_introduce_person ?p ?person ?php ?place ?step))
 )
 
 (defrule exe_scheduled-make-question  
