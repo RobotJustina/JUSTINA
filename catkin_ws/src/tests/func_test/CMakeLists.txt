@@ -441,3 +441,14 @@ target_link_libraries(pointing_to_location
 )
 
 add_dependencies(pointing_to_location ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_lines_test
+  src/find_lines_test.cpp
+)
+
+target_link_libraries(find_lines_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_lines_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
