@@ -114,14 +114,19 @@ cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 
 		int thresh = 100; 
 		cv::Mat edgesIma; 
-		cv::Canny( planeIma, edgesIma, thresh, thresh*2, 3 );
+		//cv::Canny( planeIma, edgesIma, thresh, thresh*2, 3 ); //valores Yisus
+		cv::Canny( planeIma, edgesIma, 50, 200, 3 ); //valores Hugo
+		
 
 		if( DebugMode )
 			cv::imshow( "edgesIma", edgesIma); 
 
 		std::vector<cv::Vec4i> lines;
-		//cv::HoughLinesP( edgesIma, lines, 1+rhoRes, (degRes+1)*CV_PI/180, 1+cntThr, 1+minLen, 1+maxGap );
-		cv::HoughLinesP( edgesIma, lines, 1, CV_PI/180, 80, 30, 10 );
+		//cv::HoughLinesP( edgesIma, lines, 1+rhoRes, (degRes+1)*CV_PI/180, 1+cntThr, 1+minLen, 1+maxGap );//Yisus
+		//cv::HoughLinesP( edgesIma, lines, 1, CV_PI/180, 100, 100, 50 );//valores documentación OpenCV
+		//cv::HoughLinesP( edgesIma, lines, 1, CV_PI/180, cntThr, minLen, maxGap );//conTracebar
+		cv::HoughLinesP( edgesIma, lines, 1, CV_PI/180, 148, 296, 94);//valores obtenidos con tracebar
+		
 
 		totalLines.insert( totalLines.end(), lines.begin(), lines.end() );
 	}
@@ -156,7 +161,8 @@ cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 			cv::line( linesIma, cv::Point(totalLines[i][0], totalLines[i][1]), cv::Point(totalLines[i][2], totalLines[i][3]), cv::Scalar(0, 0, 255), 1, 8 );
 
 		cv::line( linesIma, cv::Point(bestLine[0], bestLine[1]), cv::Point(bestLine[2], bestLine[3]), cv::Scalar(0, 255, 0), 3, 8 );
-		cv::imshow( "linesIma", linesIma ); 		
+		cv::imshow( "linesIma", linesIma ); 
+		cv::imshow("Trackbars", linesIma);		
 	}
 
 	return bestLine; 
