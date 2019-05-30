@@ -21,7 +21,7 @@ exitdoor	0.0930046	0.0683401	-0
 initial_point	2.3	0.022	0
 kitchen	3.74251	-2.01374	2.35
 living_room	-0.475415	-1.00654
-robot_inspection	3	-1.85	-1.5708
+robot_inspection	3.6	-1.85	-1.5708
 side_table	1.8	5.61	3.1416
 sink	3.24848	-0.966732	1.5708
 storage_table	3.2328	-2.20706	-1.56681
