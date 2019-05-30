@@ -211,10 +211,10 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I am going to navigate to the cupboard");
                     //JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
                     //JustinaHRI::asyncSpeech();
-                    JustinaManip::startTorsoGoTo(0.2, 0, 0);
-                    if(!JustinaNavigation::getClose("shelf",200000))
-                        if(!JustinaNavigation::getClose("shelf",200000))
-                            JustinaNavigation::getClose("shelf",200000);
+                    JustinaManip::startTorsoGoTo(0.1, 0, 0);
+                    if(!JustinaNavigation::getClose("cupboard",200000))
+                        if(!JustinaNavigation::getClose("cupboard",200000))
+                            JustinaNavigation::getClose("cupboard",200000);
                     //JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
                     //JustinaHRI::asyncSpeech();
                     if(!findObjCupboard)
@@ -335,11 +335,10 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_NAVIGATION_TO_TABLE" << std::endl;
                     // JustinaHRI::say("I am going to navigate to the dining table");
                     // JustinaHRI::insertAsyncSpeech("I am going to navigate to the table", 500);
+                    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                     JustinaManip::startLaGoTo("navigation");
                     JustinaManip::startRaGoTo("navigation");
                     
-                    JustinaManip::startTorsoGoTo(0.25, 0, 0);
-
                     JustinaNavigation::startGetClose("table_location");
                     //JustinaHRI::asyncSpeech();
                     
@@ -415,6 +414,7 @@ int main(int argc, char** argv)
             case SM_FIND_OBJECTS_ON_TABLE:
                 {
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_TABLE" << std::endl;
+                    JustinaManip::startTorsoGoTo(0.0, 0.0, 0.0);
                     if(attempsFindObjectsTable == 0 && alignWithTable){
                         JustinaHRI::say("I am going to search objects on the table");
                         //Append acction to the plan
@@ -443,7 +443,7 @@ int main(int argc, char** argv)
                         }
 
                         for(int i = 0; i < recoObjForTake.size(); i++){
-                             std::size_t found = recoObjForTake[i].id.find("unkown");
+                             std::size_t found = recoObjForTake[i].id.find("unknown");
                                 if(found == std::string::npos){
                                     recoObjForTake[i].confidence = 0.0;      
                                 }
@@ -565,7 +565,11 @@ int main(int argc, char** argv)
                     if(takeRight || takeLeft){
                         useLastPoseGrasp = true;
                         attempsGraspObject = 0;
-                        alignWithTable = true;
+                        // alignWithTable = true;
+                        /***********************
+                         * This is for not align with the table when grasping
+                         * *********************/
+                        alignWithTable = false;
                         nextState = SM_TAKE_OBJECT;
                     }
                     else{
@@ -584,29 +588,31 @@ int main(int argc, char** argv)
                             JustinaNavigation::moveDistAngle(-0.05, 0, 2000);
                             JustinaTasks::alignWithTable(0.35);
                             JustinaTasks::alignWithTable(0.35);
-                            JustinaTasks::alignWithTable(0.35);
                             alignWithTable = false;
                             break;
                         }
                         else{
                             bool withLeftOrRightArm;
+                            justinaSay.str("");
                             if(takeRight){
                                 withLeftOrRightArm = false;
                                 indexObjectGrasp = indexObjectGraspRight;
                                 if(attempsGraspObject == 0)
-                                    JustinaHRI::say("I am going to take object whit my right arm");
+                                    justinaSay << "I am going to take the " << recoObjForTake[indexObjectGrasp].id << " with my right arm";
                             }else if(takeLeft){
                                 withLeftOrRightArm = true;
                                 indexObjectGrasp = indexObjectGraspLeft;
                                 if(attempsGraspObject == 0)
-                                    JustinaHRI::say("I am going to take object whit my left arm");
+                                    justinaSay << "I am going to take the " << recoObjForTake[indexObjectGrasp].id << " with my left arm";
                             }
+                            
+                            JustinaHRI::say(justinaSay.str());
                                 
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                             geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
                             if(idObjectGrasp.compare("unknown") != 0){
                                 //if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
-                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
+                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp, true)){
                                     if(!withLeftOrRightArm){
                                         objectGrasped[0] = true;
                                         takeRight = false;
@@ -623,7 +629,11 @@ int main(int argc, char** argv)
                                     useLastPoseGrasp = false;
                                 }
                                 else{
-                                    if(!withLeftOrRightArm){
+                                    /**********************
+                                     * This is for skip the grasping object if fail in the first attempt
+                                     * This test in TMR 2019
+                                     * ********************/
+                                    /*if(!withLeftOrRightArm){
                                         objectGrasped[0] = true;
                                         takeRight = false;
                                         nextState = SM_TAKE_OBJECT;
@@ -636,11 +646,23 @@ int main(int argc, char** argv)
                                     attempsGraspObject = 0;
                                     alignWithTable = true;
                                     graspObject = true;
-                                    useLastPoseGrasp = false;
+                                    useLastPoseGrasp = false;*/
+                                    
+                                    /**********************
+                                     * This is for find again a object when fail the first attempt
+                                     *********************/
+                                    std::cout << "I can´t grasp objects in " << attempsGraspObject << " attempt" << std::endl;
+                                    if(JustinaTasks::findObject(idObjectGrasp, pose, leftArm)){
+                                        recoObjForTake[indexObjectGrasp].pose = pose;
+                                        useLastPoseGrasp = true;
+                                    }
+                                    else
+                                        useLastPoseGrasp = false;
+                                    attempsGraspObject++;
                                 }
                             }
                             else{ 
-                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", false)){
+                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true)){
                                     if(!withLeftOrRightArm){
                                         takeRight = false;
                                         nextState = SM_TAKE_OBJECT;
@@ -676,7 +698,7 @@ int main(int argc, char** argv)
                                 withLeftOrRightArm = false;
                             else if(takeLeft)
                                 withLeftOrRightArm = true;
-                            if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", false))
+                            if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true))
                                 graspObject = true;
 
                         }
@@ -711,9 +733,16 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_PUT_OBJECT_ON_CUPBOARD" << std::endl;
                     bool withLeftOrRightArm;
-                    if(objectGrasped[0])
+                    /********************
+                     * This is only for ensure that justina have a object in the hand
+                     * *****************/
+                    /*if(objectGrasped[0])
                         withLeftOrRightArm = false;
                     else if(objectGrasped[1])
+                        withLeftOrRightArm = true;*/
+                    if(objectGrasped[0] && JustinaManip::objOnRightHand())
+                        withLeftOrRightArm = false;
+                    else if(objectGrasped[1] && JustinaManip::objOnLeftHand())
                         withLeftOrRightArm = true;
                     if(objectGrasped[0] || objectGrasped[1]){
                         if(attempsPlaceObj < maxAttempsPlaceObj){
@@ -739,11 +768,19 @@ int main(int argc, char** argv)
                             attempsPlaceObj = 1;
                             std::cout << "I can´t placed objects on cupboard whit right Arm" << std::endl;
                             JustinaHRI::say("I can´t found a free place in the cupboard");
-                            if(objectGrasped[0])
+                            //if(objectGrasped[0])
+                            /********************
+                             * This is only for ensure that justina have a object in the hand
+                             * *****************/
+                            if(objectGrasped[0] && JustinaManip::objOnRightHand())
                                 takeRight = false;
                             else
                                 takeRight = true;
-                            if(objectGrasped[1])
+                            //if(objectGrasped[1])
+                            /********************
+                             * This is only for ensure that justina have a object in the hand
+                             * *****************/
+                            if(objectGrasped[1] && JustinaManip::objOnLeftHand())
                                 takeLeft = false;
                             else
                                 takeLeft = true;
