@@ -3,6 +3,8 @@
 bool ObjExtractor::DebugMode = false; 
 bool ObjExtractor::UseBetterPlanes = false; 
 
+
+//Yisus' values
 int rhoRes = 0; 
 int degRes = 0; 
 int cntThr = 100; 
@@ -118,7 +120,8 @@ cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 			cv::imshow( "edgesIma", edgesIma); 
 
 		std::vector<cv::Vec4i> lines;
-		cv::HoughLinesP( edgesIma, lines, 1+rhoRes, (degRes+1)*CV_PI/180, 1+cntThr, 1+minLen, 1+maxGap );
+		//cv::HoughLinesP( edgesIma, lines, 1+rhoRes, (degRes+1)*CV_PI/180, 1+cntThr, 1+minLen, 1+maxGap );
+		cv::HoughLinesP( edgesIma, lines, 1, CV_PI/180, 80, 30, 10 );
 
 		totalLines.insert( totalLines.end(), lines.begin(), lines.end() );
 	}
@@ -717,6 +720,11 @@ cv::Mat ObjExtractor::CalculateNormals(cv::Mat pointCloud, cv::Mat mask)
 
 			// Normal by cross product (v x h)
 			normal  = normal_2.cross(normal_1);
+
+			//consider the another normal due to the first one it's negative
+			if(normal.z <  0)
+				normal = normal_1.cross(normal_2);
+
 
 			// Make normal unitary and assignin to mat
 			float norm = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
