@@ -281,7 +281,7 @@ int main(int argc, char** argv)
                     }
                     
                     temp.str("");
-                    temp << "/home/biorobotica/objs/cubpoard" << countFindObjectsOnCupboard++ << "/"; 
+                    temp << "/home/rey/objs/cubpoard" << countFindObjectsOnCupboard++ << "/";
                     JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
                    
                     JustinaTools::getCategoriesFromVisionObject(recoObjList, categories_cpbr);
@@ -444,7 +444,7 @@ int main(int argc, char** argv)
 
                         for(int i = 0; i < recoObjForTake.size(); i++){
                              std::size_t found = recoObjForTake[i].id.find("unknown");
-                                if(found == std::string::npos){
+                                if(found != std::string::npos){
                                     recoObjForTake[i].confidence = 0.0;      
                                 }
                         }
@@ -468,7 +468,7 @@ int main(int argc, char** argv)
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
-                        temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
+                        temp << "/home/rey/objs/table" << countFindObjectsOnTable++ << "/";
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
                             
                         //Append acction to the plan
@@ -565,11 +565,11 @@ int main(int argc, char** argv)
                     if(takeRight || takeLeft){
                         useLastPoseGrasp = true;
                         attempsGraspObject = 0;
-                        // alignWithTable = true;
+                        alignWithTable = true;
                         /***********************
                          * This is for not align with the table when grasping
                          * *********************/
-                        alignWithTable = false;
+                        //alignWithTable = false;
                         nextState = SM_TAKE_OBJECT;
                     }
                     else{
@@ -740,10 +740,17 @@ int main(int argc, char** argv)
                         withLeftOrRightArm = false;
                     else if(objectGrasped[1])
                         withLeftOrRightArm = true;*/
-                    if(objectGrasped[0] && JustinaManip::objOnRightHand())
-                        withLeftOrRightArm = false;
-                    else if(objectGrasped[1] && JustinaManip::objOnLeftHand())
-                        withLeftOrRightArm = true;
+                    if(objectGrasped[0]){
+                    	if(JustinaManip::objOnRightHand())
+                        	withLeftOrRightArm = false;
+                    	else
+                    		objectGrasped[0] = false;
+                    }else if(objectGrasped[1]){
+                    	if(JustinaManip::objOnLeftHand())
+                    		withLeftOrRightArm = true;
+                    	else
+                    		objectGrasped[1] = false;
+                    }
                     if(objectGrasped[0] || objectGrasped[1]){
                         if(attempsPlaceObj < maxAttempsPlaceObj){
                             /*if(!JustinaTasks::alignWithTable(0.35)){

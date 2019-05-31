@@ -98,7 +98,8 @@ int main(int argc, char** argv)
             case SM_PARSE_SPOKEN_COMMAND:
                 if(lastRecoSpeech.find("continue") != std::string::npos)
                 {
-                JustinaHRI::say("Please, say robot yes to confirm the command");
+                    JustinaHRI::say("Please, say robot yes to confirm the command");
+                    sleep(1.5);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else
@@ -110,15 +111,18 @@ int main(int argc, char** argv)
                 break;
             case SM_WAIT_FOR_CONFIRMATION:
                 JustinaHRI::say("I am waiting for confirmation");
+                //sleep(2);
                 sleep(2);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     if(lastRecoSpeech.find("yes") != std::string::npos)
 			{
                     JustinaHRI::say("I am going to continue the robot inspection test");
-                    sleep(2);
+                  //  sleep(2);
+                    sleep(0.5);
                     JustinaVision::stopQRReader();
                     nextState = SM_FINAL_STATE;
-                       	sleep(2);
+                //  	sleep(2);
+                    sleep(0.5);
 			}
 				if(lastRecoSpeech.find("no") != std::string::npos)
                  	{
@@ -132,7 +136,8 @@ int main(int argc, char** argv)
                 break;*/
             case SM_FINAL_STATE:
                 JustinaHRI::say("I am going to the exit point");
-                sleep(2);
+                //sleep(2);
+                sleep(0.5);
                 if(!JustinaNavigation::getClose("exitdoor", 180000))
                     if(!JustinaNavigation::getClose("exitdoor", 180000))
                         if(!JustinaNavigation::getClose("exitdoor", 180000))
@@ -140,7 +145,8 @@ int main(int argc, char** argv)
                 	nextState = SM_FINAL_STATE_2;
                 break;
             case SM_FINAL_STATE_2:
-                sleep(5);
+                //sleep(5);
+                sleep(3);
                 JustinaHRI::say("I have finished robot inspection test");
                 fail = true;
                 break;
