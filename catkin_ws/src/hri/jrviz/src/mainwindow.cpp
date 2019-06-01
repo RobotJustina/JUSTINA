@@ -1523,8 +1523,8 @@ void MainWindow::on_addCLIPSobj_clicked(){
 void MainWindow::on_addCLIPSpeoples_clicked(){
 
     std::cout<<"\nName"<<this->ui->nameCLIPSpeople->text().toStdString() <<std::endl;
-    std::cout<<"\nAge"<<this->ui->AgeCLIPSpeople->text().toStdString() <<std::endl;
-    std::cout<<"\nGender"<<this->ui->GenderCLIPSpeople->text().toStdString()<<std::endl;
+    std::cout<<"\tAge"<<this->ui->AgeCLIPSpeople->text().toStdString() <<std::endl;
+    std::cout<<"\tGender"<<this->ui->GenderCLIPSpeople->text().toStdString()<<std::endl;
 
     std::string name=this->ui->nameCLIPSpeople->text().toStdString();
     std::vector<std::string> values;
@@ -1741,8 +1741,7 @@ void MainWindow::on_saveCLIPScategory_clicked(){
         if(file.fail()){
             std::cout<<"\n Fail File "<<std::endl;
         }else{
-             std::cout<<"File ready to save data "<<std::endl;
-        
+             std::cout<<"File ready to save data "<<std::endl;   
         }
         for(std::map<std::string , std::vector<std::string> >::iterator it = categorys.begin() ; it != categorys.end(); it++ ){
                /* std::cout<<"\n Name: "<<it->first;
@@ -1912,22 +1911,22 @@ void MainWindow::on_deleteCLIPSobj_clicked(){
     std::cout<<"\n Se eliminara: "<<name<<std::endl;
     std::map<std::string , std::vector<std::string> >::iterator itx=objects.find(name);
     if(itx != objects.end()){
-        std::cout<<"Si esta contenido en el map "<<std::endl;
+        //std::cout<<"Si esta contenido en el map "<<std::endl;
         JustinaRepresentation::deleteObjects(objects,name);
         objects=objects;
         
-     this->ui->objCLIPStab->setRowCount(0);
+      this->ui->objCLIPStab->setRowCount(0);
     for(std::map<std::string, std::vector<std::string> >::iterator it2 = objects.begin(); it2 != objects.end(); it2++){
-      this->ui->objCLIPStab->insertRow(this->ui->objCLIPStab->rowCount());
-      float row = this->ui->objCLIPStab->rowCount() - 1;
-      this->ui->objCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it2->first)));
-      this->ui->objCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it2->second[0])));
-      this->ui->objCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it2->second[1])));
-      this->ui->objCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it2->second[2])));
-      this->ui->objCLIPStab->setItem(row, C1, new QTableWidgetItem(QString::fromStdString(it2->second[3])));
-      this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it2->second[4])));
-      this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
-      this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
+          this->ui->objCLIPStab->insertRow(this->ui->objCLIPStab->rowCount());
+          float row = this->ui->objCLIPStab->rowCount() - 1;
+          this->ui->objCLIPStab->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it2->first)));
+          this->ui->objCLIPStab->setItem(row, X, new QTableWidgetItem(QString::fromStdString(it2->second[0])));
+          this->ui->objCLIPStab->setItem(row, Y, new QTableWidgetItem(QString::fromStdString(it2->second[1])));
+          this->ui->objCLIPStab->setItem(row, A, new QTableWidgetItem(QString::fromStdString(it2->second[2])));
+          this->ui->objCLIPStab->setItem(row, C1, new QTableWidgetItem(QString::fromStdString(it2->second[3])));
+          this->ui->objCLIPStab->setItem(row, C2, new QTableWidgetItem(QString::fromStdString(it2->second[4])));
+          this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
+          this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
       /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
@@ -1949,7 +1948,7 @@ void MainWindow::on_deleteCLIPSloc_clicked(){
     std::cout<<"\n Se eliminara: "<<name<<std::endl;
     std::map<std::string , std::vector<std::string> >::iterator itx=locations.find(name);
     if(itx != locations.end()){
-        std::cout<<"Si esta contenido en el map "<<std::endl;
+        //std::cout<<"Si esta contenido en el map "<<std::endl;
         JustinaRepresentation::deleteLocations(locations,name);
         locations=locations;
         
@@ -1976,7 +1975,7 @@ void MainWindow::on_deleteCLIPSpeoples_clicked(){
     std::cout<<"\n Se eliminara: "<<name<<std::endl;
     std::map<std::string , std::vector<std::string> >::iterator itx=peoples.find(name);
     if(itx != peoples.end()){
-        std::cout<<"Si esta contenido en el map "<<std::endl;
+        //std::cout<<"Si esta contenido en el map "<<std::endl;
         JustinaRepresentation::deletePeoples(peoples,name);
         peoples=peoples;
     this->ui->peopleCLIPStab->setRowCount(0);
@@ -2006,7 +2005,7 @@ void MainWindow::on_deleteCLIPScategory_clicked(){
     std::cout<<"\n Se eliminara: "<<name<<std::endl;
     std::map<std::string , std::vector<std::string> >::iterator itx=categorys.find(name);
     if(itx != categorys.end()){
-        std::cout<<"Si esta contenido en el map "<<std::endl;
+       //std::cout<<"Si esta contenido en el map "<<std::endl;
         JustinaRepresentation::deleteCategorys(categorys,name);
         categorys=categorys;
         this->ui->categoryCLIPStab->setRowCount(0);
@@ -2148,7 +2147,7 @@ void MainWindow::on_createCLIPSfile_clicked(){
         std::string name=JustinaRepresentation::covertLetters(itl1->first);
         std::string quantity=JustinaRepresentation::covertLetters(itl1->second[1]);
         std::string room=JustinaRepresentation::covertLetters(itl1->second[2]);
-        std::cout<<"\n ===> Locations Type: "<<itl1->second[0]<<std::endl;
+        //std::cout<<"\n ===> Locations Type: "<<itl1->second[0]<<std::endl;
         //std::cout<<"\nName: "<<it->first<<std::endl;
         //std::cout<<"\nQuantity: "<<it->second[1]<<std::endl;
         //std::cout<<"\nRoom: "<<it->second[2]<<std::endl;
@@ -2171,7 +2170,7 @@ void MainWindow::on_createCLIPSfile_clicked(){
         std::string name=JustinaRepresentation::covertLetters(itl2->first);
         std::string quantity=JustinaRepresentation::covertLetters(itl2->second[1]);
         std::string room=JustinaRepresentation::covertLetters(itl2->second[2]);
-        std::cout<<"\n ===> Locations Type: "<<itl2->second[0]<<std::endl;
+       // std::cout<<"\n ===> Locations Type: "<<itl2->second[0]<<std::endl;
         //std::cout<<"\nName: "<<it->first<<std::endl;
         //std::cout<<"\nQuantity: "<<it->second[1]<<std::endl;
         //std::cout<<"\nRoom: "<<it->second[2]<<std::endl;
@@ -2181,7 +2180,6 @@ void MainWindow::on_createCLIPSfile_clicked(){
           ONTOLOGYfile<<"\n("<<name<<"\tis_kind_of      place)";
         }
    }
-
 
    CLIPSfile<<"\n)";
    ONTOLOGYfile<<"\n\n";

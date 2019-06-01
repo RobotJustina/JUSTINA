@@ -26,3 +26,13 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+add_executable(kdb_node
+	src/kdb_node.cpp
+)
+
+add_dependencies(kdb_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(kdb_node
+  ${catkin_LIBRARIES}
+)
