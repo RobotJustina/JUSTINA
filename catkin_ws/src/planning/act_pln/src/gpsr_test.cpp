@@ -321,7 +321,7 @@ void callbackCmdConfirmation(
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
-		JustinaHRI::waitAfterSay(ss.str(), 2500);
+		//JustinaHRI::waitAfterSay(ss.str(), 2500);
 
         switchSpeechReco(0, ss.str());
 
@@ -365,6 +365,7 @@ void callbackCmdConfirmation(
 				<< std::endl;
 		responseMsg.successful = 0;
 	}
+        JustinaHRI::enableSpeechRecognized(false);
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
 }
@@ -580,9 +581,11 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				}
 				else
 					responseMsg.successful = 0;*/
-			JustinaHRI::loadGrammarSpeechRecognized("questions.xml");
+			//JustinaHRI::loadGrammarSpeechRecognized("questions.xml");
 			while(!response_question && count_attemps < 3){
-				JustinaHRI::waitAfterSay("Tell me your question please", 2000);
+				switchSpeechReco(4, "Tell me your question please");
+				//JustinaHRI::waitAfterSay("Tell me your question please", 2000);
+				JustinaHRI::waitForSpeechRecognized(lastReco,400);
 				JustinaHRI::waitForSpeechRecognized(lastReco,10000);
 				if(!JustinaKnowledge::comparePredQuestion(lastReco,answer))
 				{
@@ -1678,7 +1681,10 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			//JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
 			JustinaTasks::POSE poseRecog;
             		poseRecog = JustinaTasks::NONE;
+			JustinaVision::enableDetectObjsYOLO(true);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             		success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
+			JustinaVision::enableDetectObjsYOLO(false);
 			if(poseRecog == JustinaTasks::NONE || poseRecog == JustinaTasks::STANDING)
 				currentName = "standing";
 			else if (poseRecog == JustinaTasks::SITTING)
@@ -3384,7 +3390,10 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
                 
 		count = 0;
 		while (!findUmbrella && count < 3){
+			JustinaVision::enableDetectObjsYOLO(true);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			findUmbrella = JustinaTasks::findAndGuideYolo(idsUmbrella);
+			JustinaVision::enableDetectObjsYOLO(false);
 			count++;
 		}
 
@@ -3929,7 +3938,7 @@ int main(int argc, char **argv) {
         sphinx_grammars[8] = "incomplete_object";
         sphinx_grammars[9] = "order_food";
         /*sphinx_grammars[10] = "description_gesture";
-        sphinx_grammars[11] = "dexcription_pose";
+        sphinx_grammars[11] = "description_pose";
         sphinx_grammars[12] = "description_hight";
         sphinx_grammars[13] = "description_gender";*/
 
@@ -3949,11 +3958,21 @@ int main(int argc, char **argv) {
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::loadGrammarSpeechRecognized("gpsr_grammar", "/grammars/pre_sydney/gpsr/gpsr.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                    JustinaHRI::loadGrammarSpeechRecognized("gpsr_grammar", "/grammars/pre_sydney/gpsr/questions.jsgf");
+                    JustinaHRI::loadGrammarSpeechRecognized("questions", "/grammars/pre_sydney/gpsr/questions.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                }
+                    JustinaHRI::loadGrammarSpeechRecognized("follow_me", "/grammars/pre_sydney/gpsr/follow_me.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("follow_taxi", "/grammars/pre_sydney/gpsr/follow_taxi.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("incomplete_place", "/grammars/pre_sydney/gpsr/incomplete_place.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("incompete_object", "/grammars/pre_sydney/gpsr/incomplete_object.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("order_food", "/grammars/pre_sydney/gpsr/order_food.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::enableSpeechRecognized(false);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }
 				//state = SM_SAY_WAIT_FOR_DOOR;
 				state =  SM_INIT_SPEECH;
 			}

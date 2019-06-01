@@ -413,7 +413,7 @@ def cmd_conf(c):
 	temp1 = temp2.lstrip("[('")
 	print 'Resp ' + temp1
 	
-	if temp1 == 'robot yes':
+	if temp1 == 'robot yes' or temp1 == 'justina yes':
 		steps = q.lenC()
 		plan_name_id = randrange(10000)
 		args = "plan-" + str(plan_name_id) + " " + str(steps)

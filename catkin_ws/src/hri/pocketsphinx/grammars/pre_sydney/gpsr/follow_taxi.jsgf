@@ -1,5 +1,5 @@
 #JSGF V1.0;
-grammar gpsr;
+grammar follow_taxi;
 public <command> = (<confirmation> | <follow>);
 
 <confirmation> = ROBOT (YES | NO);
