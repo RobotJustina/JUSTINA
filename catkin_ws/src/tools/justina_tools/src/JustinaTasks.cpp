@@ -5354,8 +5354,7 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
         float armGoalX, armGoalY, armGoalZ;
         bool withLeftArm = false;
         bool usingTorse = true;
-        //armGoalX = nGesture(0, 0) - 0.10;
-        armGoalX = nGesture(0, 0);
+        armGoalX = nGesture(0, 0) - 0.10;
         armGoalY = nGesture(1, 0);
         //armGoalZ = nGesture(2, 0) - 0.15;
         armGoalZ = nGesture(2, 0);
