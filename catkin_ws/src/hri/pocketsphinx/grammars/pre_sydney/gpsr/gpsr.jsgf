@@ -1,0 +1,193 @@
+#JSGF V1.0;
+grammar gpsr;
+public <command> = (<deliver> | <fndppl> | <fndobj> | <follow> | <guide> | <complexman> | <findobj> | <followout> | <incomplete> | <partyhost>);
+
+<deliver> = (<deliver1> | <deliver2> | <deliver3> | <deliver4> | <deliver5> | <deliver6> | <deliver7> | <deliver8> | <deliver9> | <deliver10> | <deliver11>);
+
+<deliver1> = <take> AND <vbplace> IT ON THE <placement>;
+<deliver2> = <vbplace> THE <gobject> ON THE <placement>;
+<deliver3> = <vbbring> ME THE <gobject>;
+<deliver4> = <vbdeliver> THE <gobject> TO <someone>;
+<deliver5> = <takefrom> AND <vbplace> IT ON THE <placement>;
+<deliver6> = <goplace2> <vbfind> THE <gobject2> AND (<delivme> | <delivat> | <place>);
+
+<fndppl> = (<fndppl1> | <fndppl2> | <fndppl3> | <fndppl4> | <fndppl5>);
+
+<fndppl1> = <talk> TO <whowhere>;
+<fndppl2> = <findp> IN THE <room> AND <talk>;
+<fndppl3> = <goroom2> <findp2> AND <talk>;
+
+<fndobj> = (TELL ME HOW MANY <gobject> THERE ARE ON THE <placement> | <vbfind> THE <gobject> IN THE <room>);
+
+<follow> = (<follow1> | <follow2> | <follow3>);
+
+<follow1> = <vbfollow> <name> FROM THE <beacon> TO THE <room>;
+<follow2> = MEET <name> AT THE <beacon> AND <vbfollow> <pron> <fllwdest>;
+<follow3> = <gobeacon2> MEET <name2> AND <vbfollow> <pron>;
+
+<fllmeet> = (MEET <name> | FIND A PERSON);
+<fllwdest> = [TO THE <room>];
+
+<guide> = (<gdcmd1> | <gdcmd2> | <gdcmd3> | <gdcmd4>);
+
+<gdcmd1> = <vbguide> <name> FROM THE <beacon> TO THE <beacon>;
+<gdcmd2> = MEET <name> AT THE <beacon> AND <guideto>;
+<gdcmd3> = <gobeacon2> MEET <name2> AND <guideto>;
+<gdcmd4> = <vbguide> <name> TO THE <beacon2> <gdwhere>;
+
+<guideto> = <vbguide> <pron> TO THE <beacon>;
+<gdwhere> = YOU (MAY | CAN | WILL) FIND <pron> AT THE <beacon>;
+
+#MANIPULATION
+<deliver7> = <vbtake> THE <aobject> FROM THE <room>  TO THE <placement>;
+<deliver8> = <vbbring> ME THE <aobject> FROM THE <placement>;
+<deliver9> = <takefrom> AND (<delivme> | <delivat>);
+<deliver10> = <takefrom> AND <place>;
+<deliver11> = <vbtake> MY <luggage> TO THE <taxi>;
+
+#COMPLEX MANIPULATION
+
+<complexman> = (<cmancmd1> | <cmancmd2> | <cmancmd3> | <cmancmd4> | <cmancmd5> | <cmancmd6>);
+
+<cmancmd1> = <vbtake> THE <kobject> TO THE <placement>;
+<cmancmd2> = <vbbring> ME THE <abspos> OBJECT <cmanobjsrc>;
+<cmancmd3> = <vbbring> ME THE OBJECT <relpos> THE (<kobject> | <aobject>) <cmanobjsrc>;
+<cmancmd4> = <vbbring> ME THE <oprop> (OBJECT | <category>) <cmanobjsrc>;
+<cmancmd5> = <vbcleanup> THE <room>;
+<cmancmd6> = <vbtakeout> THE <garbage>;
+<cmanobjsrc> = FROM THE <placement>;
+
+#FIND OBJECTS
+
+<findobj> = (<findobj2> | <findobj3> | <findobj4> | <findobj5> | <findobj6> | <findobj7>);
+
+<findobj1> = <vbfind> THE <aobject> IN THE <room>;
+<findobj2> = TELL ME HOW MANY <category> THERE ARE ON THE <placement>;
+<findobj3> = TELL ME WHAT'S THE <oprop> OBJECT ON THE <placement>;
+<findobj4> = TELL ME WHAT'S THE <oprop> <category> ON THE <placement>;
+<findobj5> = <vbfind> THE <category> IN THE <room>;
+<findobj6> = TELL ME WHICH ARE THE THREE <oprop> (OBJECTS | <category>) ON THE <placement>;
+<findobj7> = <vbfind> THREE <category> IN THE <room>;
+
+#FIND PEOPLE
+<fndppl4> = TELL ME THE (NAME | GENDER | POSE) OF THE PERSON (AT THE <beacon> | IN THE <room>);
+<fndppl5> = TELL ME HOW MANY PEOPLE IN THE <room> ARE (<pgenderp> | <pose>);
+
+#FOLLOW [& GUIDE]
+<followout> = MEET <name> AT THE <beacon2> <vbfollow> <pron2> AND (<goroom> | <vbguide> <pron> BACK);
+
+#INCOMPLETE
+
+<incomplete> = (<incomplete1> | <incomplete2> | <incomplete3> | <incomplete4> | <incomplete5> | <incomplete6>);
+
+<incomplete1> = <vbfollow> <name>;
+<incomplete2> = <vbbring> ME THE <category>;
+<incomplete3> = <vbdeliver> <category> TO <someone>;
+<incomplete4> = <vbguide> <name>;
+<incomplete5> = MEET <name> AND <vbguide> <pron>;
+<incomplete6> = <gobeacon2> MEET <name2> AND <vbguide> <pron>;
+
+#PARTY HOST
+
+<partyhost> = (<partyhost1> | <partyhost2> | <partyhost3> | <partyhost4> | <partyhost5>);
+
+<partyhost1> = <vbserve> (DRINKS | SNACKS) TO <phpeopler>;
+<partyhost2> = <vbmeet> <name> AT THE <door> AND INTRODUCE <pron> TO <phpeopler>;
+<partyhost3> = <vbmeet> <name> AT THE <beacon> AND ASK <pron> TO LEAVE;
+<partyhost4> = <vbmeet> <name> AT THE <beacon> AND INTRODUCE <pron> TO <name> AT THE <beacon>;
+<partyhost5> = <vbmeet> <name> AT THE <beacon> AND <vbguide> <pron> TO <pronpos> <taxi>;
+
+<phpeople> = (EVERYONE | ALL THE (PEOPLE | MEN | WOMEN | GUESTS | ELDERS | CHILDREN));
+<phpeopler> = <phpeople> IN THE <room>;
+
+
+#RULES
+<someone> = (ME | <whowhere>);
+
+<place> = <vbplace> IT ON THE <placement>;
+
+<oprop> = (BIGGEST | LARGEST | SMALLEST | HEAVIEST | LIGHTEST | THINNEST);
+
+<goplace> = <vbgopl> TO THE <placement>;
+<goplace2> = <vbgopl> TO THE <placement2>;
+<gobeacon> = <vbgopl> TO THE <beacon>;
+<gobeacon2> = <vbgopl> TO THE <beacon2>;
+<goroom> = <vbgopl> TO THE <room>;
+<goroom2> = <vbgopl> TO THE <room2>;
+
+<take> = <vbtake> THE <gobject>;
+<takefrom> = <take> FROM THE <placement>;
+
+<delivme> = <vbdeliver> IT TO ME;
+<delivto> = <vbdeliver> IT TO <name>;
+<delivat> = <vbdeliver> IT TO <name> AT THE <beacon>;
+
+<talk> = (<answer> | <speak>);
+<answer> = ANSWER A QUESTION ;
+<speak> = <vbspeak> <whattosay>;
+
+<whattosay> = (SOMETHING ABOUT YOURSELF | THE TIME | WHAT DAY IS (TODAY | TOMORROW) | YOUR TEAM'S (NAME | COUNTRY | AFFILATION) | THE DAY OF THE (WEEK | MONTH) | A JOKE);
+
+#RULES
+<gobject> = (<kobject> | <aobject> | BOWL | CLOTH | TRAY);
+<gobject2> = (<kobject2> | <aobject2> | BOWL, | CLOTH, | TRAY,);
+<findp> = (<vbfind> A <pgenders> | <vbfind> A PERSON (<gesture> | <pose>));
+<findp2> = (<vbfind> A <pgenders2> | <vbfind> A PERSON (<gesture2> | <pose2>));
+
+<whowhere> = THE PERSON <gesture> IN THE <room>;
+
+#RULES
+<pgenders> = (MAN | WOMAN | BOY | GIRL | MALE PERSON | FEMALE PERSON);
+<pgenders2> = (MAN, | WOMAN, | BOY, | GIRL, | MALE PERSON, | FEMALE PERSON,);
+<pgenderp> = (MEN | WOMEN | BOYS | GIRLS | MALE | FEMALE);
+<pose> = (SITTING | STANDING | LYING DOWN);
+<pose2> = (SITTING, | STANDING, | LYING DOWN,);
+<abspos> = (LEFT | RIGHT) MOST;
+<relpos> = (AT THE (LEFT | RIGHT) OF | ON TOP OF | ABOVE | BEHIND | UNDER);
+<garbage> = (LITTER | GARBAGE | TRASH | WASTE | DEBRIS | JUNK);
+<luggage> = (BAG | BAGGAGE | VALISE | SUITCASE | TROLLEY);
+<taxi> =  (TAXI | CAB | UBER);
+<door> = (FRONT | BACK | MAIN | REAR) (ENTRANCE | DOOR);
+
+<vbbtake> = (BRING | TAKE);
+<vbplace> = (PUT | PLACE);
+<vbbring> = (BRING | GIVE);
+<vbdeliver> = (<vbbring> | DELIVER);
+<vbtake> = (GET | GRASP | TAKE | PICK UP);
+<vbspeak> = (TELL | SAY);
+<vbgopl> = (GO | NAVIGATE);
+<vbgor> = (<vbgopl> | ENTER);
+<vbfind> = (FIND | LOCATE | LOOK FOR);
+<vbguide> = (GUIDE | ESCORT | TAKE | LEAD | ACCOMPANY);
+<vbfollow> = FOLLOW;
+
+<vbtakeout> = (TAKE OUT | DUMP);
+<vbcleanup> = (CLEAN UP | CLEAN OUT | TIDY OP | NEATEN | ORDER);
+<vbserve> = (SERVE | ARRANGE | DELIVER | DISTRIBUTE | GIVE | PROVIDE);
+<vbmeet> = (CONTACT | FACE | FIND | GREET);
+
+#xml
+<pron> = (HER | HIM | IT);
+<pron2> = (HER, | HIM, | IT,);
+<pronpos> = (HER | HIS | ITS);
+
+<gesture> = (WAVING | RAISING THEIR (LEFT | RIGHT) ARM | POINTING TO THE (LEFT | RIGHT));
+<gesture2> = (WAVING, | RAISING THEIR (LEFT | RIGHT) ARM, | POINTING TO THE (LEFT, | RIGHT,));
+
+<category> = (CLEANING STUFF | CONTAINERS | CUTLERY | DRINKS | FOOD | FRUITS | SNACKS | TABLEWARE);
+
+<kobject> = (CLOTH | SCRUBBY | SPONGE | CASCADE POD | FORK | KNIFE | SPOON | CHOCOLATE DRINK | COKE | GRAPE JUICE | ORANGE JUICE | SPRITE | CEREAL | NOODLES | SAUSAGES | PRINGLES | CRACKERS | POTATO CHIPS | DISH | BOWL | CUP); 
+<kobject2> = (CLOTH, | SCRUBBY, | SPONGE, | CASCADE POD, | FORK, | KNIFE, | SPOON, | CHOCOLATE DRINK, | COKE, | GRAPE JUICE, | ORANGE JUICE, | SPRITE, | CEREAL, | NOODLES, | SAUSAGES, | PRINGLES, | CRACKERS, | POTATO CHIPS, | DISH, | BOWL, | CUP,); 
+<aobject> = (APPLE | ORANGE | PAPRIKA);
+<aobject2> = (APPLE, | ORANGE, | PAPRIKA,);
+<sobject> = (TRAY | BASKET | BAG);
+
+<room> = (CORRIDOR | BEDROOM | DINING ROOM | LIVING ROOM | KITCHEN);
+<room2> = (CORRIDOR, | BEDROOM, | DINING ROOM, | LIVING ROOM, | KITCHEN,);
+<placement> =  (SIDE TABLE | DESK | DINING TABLE | END TABLE | BOOKCASE | CUPBOARD | STORAGE TABLE | SINK | COUNTER);
+<placement2> =  (SIDE TABLE, | DESK, | DINING TABLE, | END TABLE, | BOOKCASE, | CUPBOARD, | STORAGE TABLE, | SINK, | COUNTER,);
+<beacon> = (ENTRANCE | BED | DESK | DINING TABLE | EXIT | COUCH | END TABLE | BOOKCASE | SINK | DISHWASHER);
+<beacon2> = (ENTRANCE, | BED, | DESK, | DINING TABLE, | EXIT, | COUCH, | END TABLE, | BOOKCASE, | SINK, | DISHWASHER,);
+
+<name> = (ALEX | CHARLIE | ELIZABETH | FRANCIS | JENNIFER | LINDA | MARY | PATRICIA | ROBIN | SKYLER | JAMES | JOHN | MICHAEL | ROBERT | ROBIN | WILLIAM);
+<name2> = (ALEX, | CHARLIE, | ELIZABETH, | FRANCIS, | JENNIFER, | LINDA, | MARY, | PATRICIA, | ROBIN, | SKYLER, | JAMES, | JOHN, | MICHAEL, | ROBERT, | ROBIN, | WILLIAM,);
