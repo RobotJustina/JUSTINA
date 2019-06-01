@@ -629,6 +629,8 @@ void JustinaVision::enableDetectObjsYOLO(bool enable){
     std_msgs::Bool msg;
     msg.data = enable;
     pubEnableObjsDetectYOLO.publish(msg);
+    ros::spinOnce();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 }
     
 //Action client for YOLO object recog

@@ -1087,13 +1087,13 @@ bool JustinaTasks::waitRecognizedYolo(std::vector<std::string> ids, std::vector<
     boost::posix_time::time_duration diff;
     bool recognized = false;
     std::vector<vision_msgs::VisionObject> yoloObjectsReco;
-    JustinaVision::detectObjectsYOLO(yoloObjectsReco);
-    JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+    //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+    //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
     yoloObjects.clear();
     yoloObjectsReco.clear();
     do {
-        //JustinaVision::getObjectsYOLO(yoloObjects);
-        JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+        JustinaVision::getObjectsYOLO(yoloObjects);
+        //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
         std::cout << "YoloObject size:" << yoloObjectsReco.size() << std::endl;
         for (std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end(); it++) {
             for (int i = 0; i < ids.size(); i++) {
