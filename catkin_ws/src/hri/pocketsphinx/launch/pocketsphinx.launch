@@ -1,10 +1,10 @@
 <launch>
 
 	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
-	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_guadalajara/8533.dic" />
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/gpsr/6069.dic" />
 	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
-	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_guadalajara/receptionist_names.jsgf"/>
-	<arg name="_stream" value="_stream:=False" />
+	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_sydney/gpsr/order_food.jsgf"/>
+	<arg name="_stream" value="_stream:=True" />
 	<arg name="_wavpath" value="_wavpath:=/home/juliobiorobotics/JUSTINA/catkin_ws/src/hri/pocketsphinx/scripts" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
 

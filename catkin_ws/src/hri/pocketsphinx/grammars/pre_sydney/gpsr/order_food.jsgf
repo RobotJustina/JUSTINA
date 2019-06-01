@@ -1,0 +1,8 @@
+#JSGF V1.0;
+grammar order_food;
+public <command> = (<order>);
+<order> = I WANT (A | AN) <food>;
+<food> = (<aobject> | <kobject>);
+
+<kobject> = (CEREAL | NOODLES | SAUSAGES | PRINGLES | CRACKERS | POTATO CHIPS); 
+<aobject> = (APPLE | ORANGE | PAPRIKA);
