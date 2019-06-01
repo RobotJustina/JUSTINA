@@ -66,6 +66,7 @@ int main(int argc, char **argv){
     ros::NodeHandle nh;
     ros::Rate rate(10);
 
+    bool doorOpenFlag = false;
     bool opened = false;
     bool success = false;
     bool findPerson = false;
@@ -93,7 +94,10 @@ int main(int argc, char **argv){
     std::string grammarNamesID = "receptionistNames";
     std::string recogLoc = "kitchen";
     std::string entranceLoc = "entrance_door";
+    std::string hostDrink = "coke";
+
     Eigen::Vector3d centroid;
+    std::vector<Eigen::Vector3d> centroids;
     
     std::stringstream ss;
     std::stringstream ss2;
@@ -171,7 +175,20 @@ int main(int argc, char **argv){
                     JustinaNavigation::getClose(entranceLoc, 80000);
                 //JustinaHRI::insertAsyncSpeech("I have reached the entrance door", 4000, ros::Time::now().sec, 10);
                 JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
-                state = SM_SAY_OPEN_DOOR;
+                if(doorOpenFlag)
+                {
+                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaManip::hdGoTo(0.0, -0.3, 4000);
+                    state = SM_WAIT_FOR_PERSON_ENTRANCE;
+                    findPersonCount = 0;
+                    findPersonAttemps = 0;
+                    findPersonRestart = 0;
+                }
+                else
+                {   
+                    doorOpenFlag = true;
+                    state = SM_SAY_OPEN_DOOR;
+                }
                 break;
             
             case SM_NAVIGATE_TO_RECO_LOC:
@@ -194,11 +211,16 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_OPEN_DOOR:
                 std::cout << test << ".-> State SM_WAIT_FOR_OPEN_DOOR: Wait for the open the door." << std::endl;
                 opened = JustinaNavigation::doorIsOpen(0.9, 2000);
+                /*
+                if(!JustinaNavigation::obstacleInFront())
+                    nextState = SM_NAVIGATE_TO_INSPECTION;
+                break;
+                */
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
                     //JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
-                    //JustinaVision::enableDetectObjsYOLO(true);
+                    JustinaVision::enableDetectObjsYOLO(true);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -211,15 +233,17 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "entrance");
-                    if(findPerson)
+                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "entrance");
+                    if(findPerson){
+                        centroid = centroids[0];
                         findPersonCount++;
+                    }
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
                         findPersonCount = 0;
                         findPersonAttemps = 0;
                         findPersonRestart = 0;
                     
-                        //JustinaVision::enableDetectObjsYOLO(false);
+                        JustinaVision::enableDetectObjsYOLO(false);
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         goalx = gx_w;
                         goaly = gy_w;
@@ -574,6 +598,7 @@ int main(int argc, char **argv){
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
                 findSeatCount = 0;
+                JustinaVision::enableDetectObjsYOLO(true);
                 state = SM_FIND_EMPTY_SEAT;
                 break;
 
@@ -657,8 +682,8 @@ int main(int argc, char **argv){
                         angleHead = 2 * M_PI + angleHead;
                     if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
-                    JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.45 + torsoSpine), dist_to_head));
-                    JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
+                    JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.52 + torsoSpine), dist_to_head));
+                    //JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);
                     if(JustinaKnowledge::existKnownLocation("guest")){
                         JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
                         JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
@@ -691,7 +716,7 @@ int main(int argc, char **argv){
 
                 }
                 ss.str("");
-                ss << names[names.size() - 1] << " he is John" << std::endl;
+                ss << names[names.size() - 1] << " he is John and his favorite drink is " << hostDrink << std::endl;
                 if(JustinaKnowledge::existKnownLocation("guest")){
                     //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
                     JustinaKnowledge::getKnownLocation("guest", goalx, goaly, goala);
@@ -713,7 +738,7 @@ int main(int argc, char **argv){
                         angleHead = 2 * M_PI + angleHead;
                     if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
-                    JustinaManip::startHdGoTo(angleHead, atan2(guest_z - (1.45 + torsoSpine), dist_to_head));
+                    JustinaManip::startHdGoTo(angleHead, atan2(guest_z - (1.52 + torsoSpine), dist_to_head));
                     if(JustinaKnowledge::existKnownLocation("john")){
                         JustinaKnowledge::getKnownLocation("john", goalx, goaly, goala);
                         JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
@@ -753,11 +778,12 @@ int main(int argc, char **argv){
             case SM_FIND_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
-                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "kitchen");
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                     if(!findSeat){
                         findSeatCount++;
                         break;
                     }
+                    centroid = centroids[0];
                     JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
                     JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -789,6 +815,7 @@ int main(int argc, char **argv){
                 }
                 else
                     state = SM_OFFER_EMPTY_SEAT;
+                JustinaVision::enableDetectObjsYOLO(false);
                 break;
 
             case SM_OFFER_EMPTY_SEAT:
@@ -805,6 +832,11 @@ int main(int argc, char **argv){
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
+                ss.str("");
+                ss << names[names.size() - 1] << ", Please, look at me";
+                JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
+
+
                 //JustinaManip::startLaGoTo("home");
                 //JustinaManip::startRaGoTo("home");
                 findPersonCount = 0;
@@ -818,6 +850,8 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
                 success = true;
+                for(int i = 0; i < names.size(); i++ )
+                    JustinaVision::facClearByID(names[i]);
                 break;
         }
 

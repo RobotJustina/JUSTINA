@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar gpsr;
+public <command> = (<confirmation> | <follow>);
+
+<confirmation> = ROBOT (YES | NO);
+<follow> = (FOLLOW ME | STOP FOLLOW ME);

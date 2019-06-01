@@ -65,8 +65,8 @@ bool fplan = false;
 double maxTime = 180;
 std::string cat_grammar= "gpsr_guadalajara.xml";
 
-std::string microsoft_grammars[3];
-std::string sphinx_grammars[3];
+std::string microsoft_grammars[13];
+std::string sphinx_grammars[13];
 bool alternative_drink = true;
 bool poket_reco = false;
 std::string no_drink;
@@ -110,7 +110,8 @@ void switchSpeechReco(int grammar_id, std::string speech){
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaHRI::waitAfterSay(speech,5000);
+        if(speech != "")
+            JustinaHRI::waitAfterSay(speech,5000);
         JustinaHRI::enableSpeechRecognized(true);
     }
 
@@ -118,7 +119,8 @@ void switchSpeechReco(int grammar_id, std::string speech){
         //use speech recognition of microsoft
         //JustinaHRI::usePocketSphinx = false;
         JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
-        JustinaHRI::waitAfterSay(speech,5000);
+        if(speech != "")
+            JustinaHRI::waitAfterSay(speech,5000);
     }
 }
 
@@ -226,6 +228,9 @@ void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_wait";
 		srv.request.params = "Ready";
+            
+        switchSpeechReco(3, "");
+
 		if (srvCltWaitForCommand.call(srv)) {
 			std::cout << "Response of wait for command:" << std::endl;
 			std::cout << "Success:" << (long int) srv.response.success
@@ -251,6 +256,7 @@ void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		validateAttempsResponse(responseMsg);
 		//command_response_pub.publish(responseMsg);
 	}
+    JustinaHRI::enableSpeechRecognized(false);
 }
 
 void callbackCmdInterpret(
@@ -316,6 +322,8 @@ void callbackCmdConfirmation(
 				<< std::endl;
 
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
+
+        switchSpeechReco(0, ss.str());
 
 		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -740,106 +748,45 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
 			if(numberAttemps == 0){
-    			std::string lastRecoSpeech;
+    			std::string lastReco;
+                std::string name;
 			
 		    	int timeoutspeech = 10000;
     			bool conf = false;
-		    	int intentos = 0;
-			std::vector<std::string> tokens1;
+		    	int count = 0;
+    			//std::vector<std::string> tokens1;
 			
 			JustinaHRI::waitAfterSay("Hello my name is Justina", 10000);
-			//JustinaHRI::waitAfterSay("tell me, my name is, in order to response my question", 10000);}
-			//JustinaHRI::waitAfterSay("Well, tell me what is your name please", 10000);
-			/// codigo para preguntar nombre Se usara un servicio
-			while(intentos < 5 && !conf){
-				JustinaHRI::loadGrammarSpeechRecognized("name_response.xml");
-			    JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
-			if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
-			    //JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
-			    split(tokens1, lastRecoSpeech, is_any_of(" "));
-			    ss.str("");
-			    if(tokens1.size() == 4)
-			       ss << "is " << tokens1[3] << " your name";
-			    else
-				continue;
-
-			    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
-			    JustinaHRI::waitAfterSay(ss.str(), 5000);
-			    
-			    knowledge_msgs::planning_cmd srv;
-			    srv.request.name = "test_confirmation";
-			    srv.request.params = responseMsg.params;
-			    if (srvCltWaitConfirmation.call(srv)) {
-				std::cout << "Response of confirmation:" << std::endl;
-				std::cout << "Success:" << (long int) srv.response.success
-				    << std::endl;
-				std::cout << "Args:" << srv.response.args << std::endl;
-				//responseMsg.params = "conf";
-				//responseMsg.successful = srv.response.success;
-			    } else {
-				std::cout << testPrompt << "Failed to call service of confirmation"
-				    << std::endl;
-				//responseMsg.successful = 0;
-				JustinaHRI::waitAfterSay("Sorry i did not understand you", 1000);
-			    }
-			    
-			    if( (long int) srv.response.success == 1 ){
-				ss.str("");
-				ss << "Hello " << tokens1[3] << " thank you";
-				JustinaHRI::waitAfterSay(ss.str(), 5000);
-				currentName = tokens1[3];
-				conf = true;
-				responseMsg.successful = 1;
-			    }
-			    else{
-				intentos++;
-				currentName = "ask_name_no";
-				JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
-				responseMsg.successful = 1;
-			    }
-
-		       }
-		    else{
-			intentos++;
-			currentName = "ask_name_no";
-			JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
-			responseMsg.successful = 1;
+            while(!conf && count < 5){
+                switchSpeechReco(2, "tell me what is your name please");
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
+                if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+                    if(JustinaRepresentation::stringInterpretation(lastReco, name))
+                        std::cout << "last int: " << name << std::endl;
+                        ss.str("");
+                        ss << "is " << name << " your name";
+                        switchSpeechReco(0, ss.str());
+                        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+                        
+                        JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                        if(lastReco == "robot yes" || lastReco == "justina yes")
+                            conf = true;
+                        count++;
+                }
+            }
+            if(conf){
+                ss.str("");
+                ss << "Hello " << name << " thank you";
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
+                currentName = name;
+                responseMsg.successful = 1;
+            }
+            else{
+                currentName = "ask_name_no";
+                JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
+                responseMsg.successful = 1;
+            }
 		    }
-		    }
-		}
-			/*bool success = ros::service::waitForService("spg_say", 5000);
-			success = success & ros::service::waitForService("/planning_clips/ask_name",5000);
-			if (success) {
-				knowledge_msgs::planning_cmd srv;
-				srv.request.name = "test_ask_name";
-				srv.request.params = responseMsg.params;
-				if (srvCltAskName.call(srv)) {
-					std::cout << "Response of confirmation:" << std::endl;
-					std::cout << "Success:" << (long int) srv.response.success << std::endl;
-					std::cout << "Args:" << srv.response.args << std::endl;
-					currentName = srv.response.args;
-					if (srv.response.success){
-						ss << "Hello " << srv.response.args;
-						JustinaHRI::waitAfterSay(ss.str(), 2000);
-					}
-					else{
-						//success = false;
-						//std::cout << "TEST FOR SUCCES VALUE: " << success << std::endl;
-						JustinaHRI::waitAfterSay("Could you repeat your name please", 10000);
-					}
-
-					//responseMsg.params = srv.response.args;
-					responseMsg.successful = srv.response.success;
-				} else {
-					std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
-					responseMsg.successful = 0;
-					JustinaHRI::waitAfterSay("Repeate the command please", 10000);
-					responseMsg.successful = 0;
-				}
-			} else {
-				std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
-				responseMsg.successful = 0;
-			}*/
 		}
 		else if(param1.compare("tell_name") == 0){
 			ss.str("");
@@ -864,7 +811,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		responseMsg.successful = 0;*/
 
 	std::cout << "TEST FOR SUCCES VALUE: " << success << std::endl;
-	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+	//JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 
 	weekdays.clear();
 	months.clear();
@@ -1111,7 +1058,7 @@ void callbackCmdFindObject(
 		}
 		responseMsg.params = ss.str();
 	}
-	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+	//JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	if (success)
 		responseMsg.successful = 1;
 	else
@@ -1236,7 +1183,7 @@ void callbackCmdFollowToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
         ros::spinOnce();
     }
 	
-    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+    //JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 
     responseMsg.successful = 1;
     command_response_pub.publish(responseMsg);
@@ -1901,55 +1848,9 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
                 count++;
         }
     }
-		
-	/// codigo para preguntar nombre Se usara un servicio
-	/*bool success = ros::service::waitForService("spg_say", 5000);
-	success = success & ros::service::waitForService("/planning_clips/ask_incomplete",5000);
-	if (success) {
-		knowledge_msgs::planning_cmd srv;
-		srv.request.name = "test_ask_place";
-		srv.request.params = responseMsg.params;
-		if (srvCltAskIncomplete.call(srv)) {
-			std::cout << "Response of confirmation:" << std::endl;
-			std::cout << "Success:" << (long int) srv.response.success << std::endl;
-			std::cout << "Args:" << srv.response.args << std::endl;
-			currentName = srv.response.args;
-			if (srv.response.success){
-				if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
-					ss << "Well i will find the person in the " << srv.response.args;
-				else if(tokens[0] == "object")
-					ss << "well i will find the " << srv.response.args;
-				else if(tokens[0] == "place_destiny")
-					ss << "well i will guide the person to the " << srv.response.args;
-				JustinaHRI::waitAfterSay(ss.str(), 2000);
-			}
-			else{
-				if(tokens[0] == "follow_place_origin")
-					JustinaHRI::waitAfterSay("Could you repeat in wich place is the person please", 10000);
-				if(tokens[0] == "object")
-					JustinaHRI::waitAfterSay("Could you repeat what object do you want please", 10000);
-				if(tokens[0] == "place_destiny")
-					JustinaHRI::waitAfterSay("Could you repeat the destiny place please", 10000);
-			}
-			ss.str("");
-			ss << msg->params << " " << srv.response.args;
-			responseMsg.params = ss.str();
-			responseMsg.successful = srv.response.success;
-		} else {
-			std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
-			responseMsg.successful = 0;
-			JustinaHRI::waitAfterSay("Repeate the command please", 10000);
-			responseMsg.successful = 0;
-		}
-	} else {
-		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
-		responseMsg.successful = 0;
-	}*/
-
-
 
 	command_response_pub.publish(responseMsg);
-	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+	//JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 }
 
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
@@ -2421,7 +2322,7 @@ void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
     
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
-	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+	//JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	//command_response_pub.publish(responseMsg);
 }
 
@@ -3903,7 +3804,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
 
 	responseMsg.params = ss1.str();
 	responseMsg.successful = 1;
-    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+    //JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
 }
@@ -3995,13 +3896,43 @@ int main(int argc, char **argv) {
 		fplan = atoi(argv[3]);
 		maxTime = atof(argv[4]);
 		cat_grammar = argv[5];
+        poket_reco = atoi(argv[6]);
 		std::cout << "FPLAN FLAG: " << fplan << std::endl;
 		std::cout << "MAX TIME: " << maxTime << std::endl;
 		std::cout << "Grammar: " << cat_grammar << std::endl;}
+        
+        JustinaHRI::usePocketSphinx = poket_reco;
 
         microsoft_grammars[0] = "confirmation.xml";
         microsoft_grammars[1] = "what_drink.xml";
         microsoft_grammars[2] = "name_response.xml";
+        microsoft_grammars[3] = cat_grammar;
+        microsoft_grammars[4] = "questions.xml";
+        microsoft_grammars[5] = "follow_confirmation.xml";
+        microsoft_grammars[6] = "follow_taxi.xml";
+        microsoft_grammars[7] = "incomplete_place.xml";
+        microsoft_grammars[8] = "incomplete_object.xml";
+        microsoft_grammars[9] = "order_food.xml";
+        /*microsoft_grammars[10] = "description_gesture.xml";
+        microsoft_grammars[11] = "description_pose.xml";
+        microsoft_grammars[12] = "description_hight.xml";
+        microsoft_grammars[12] = "description_gender.xml";*/
+
+        sphinx_grammars[0] = "confirmation";
+        sphinx_grammars[1] = "order_drink";
+        sphinx_grammars[2] = "people_names";
+        sphinx_grammars[3] = "gpsr_grammar";
+        sphinx_grammars[4] = "questions";
+        sphinx_grammars[5] = "follow_me";
+        sphinx_grammars[6] = "follow_taxi";
+        sphinx_grammars[7] = "incomplete_place";
+        sphinx_grammars[8] = "incomplete_object";
+        sphinx_grammars[9] = "order_food";
+        /*sphinx_grammars[10] = "description_gesture";
+        sphinx_grammars[11] = "dexcription_pose";
+        sphinx_grammars[12] = "description_hight";
+        sphinx_grammars[13] = "description_gender";*/
+
 
 	while (ros::ok()) {
 
@@ -4009,6 +3940,20 @@ int main(int argc, char **argv) {
 		case SM_INIT:
 			if (startSignalSM) {
 				JustinaHRI::waitAfterSay("I am ready for the gpsr test", 4000);
+                if(poket_reco){
+                    JustinaHRI::loadGrammarSpeechRecognized("people_names", "/grammars/pre_sydney/people_names.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("order_drink", "/grammars/pre_sydney/order_drink.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("confirmation", "/grammars/pre_sydney/commands.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("gpsr_grammar", "/grammars/pre_sydney/gpsr/gpsr.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("gpsr_grammar", "/grammars/pre_sydney/gpsr/questions.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }
+                    JustinaHRI::enableSpeechRecognized(false);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 				//state = SM_SAY_WAIT_FOR_DOOR;
 				state =  SM_INIT_SPEECH;
 			}

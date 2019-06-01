@@ -1,0 +1,7 @@
+#JSGF V1.0;
+grammar gpsr;
+public <command> = (<confirmation> | <follow>);
+
+<confirmation> = ROBOT (YES | NO);
+<follow> = (FOLLOW ME | HERE IS THE <taxi>);
+<taxi> = (TAXI | UBER | CAB);

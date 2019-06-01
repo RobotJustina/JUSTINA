@@ -37,6 +37,7 @@
 #include "vision_msgs/SRV_DetectPlasticTrayZones.h"
 #include "vision_msgs/SRV_FindDishwasher.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/thread/thread.hpp>
 
 class JustinaVision
 {
