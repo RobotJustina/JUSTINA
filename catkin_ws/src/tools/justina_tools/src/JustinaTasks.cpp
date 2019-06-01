@@ -5371,9 +5371,9 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
             withLeftArm = false;
         }
 
-        float idealX = 0.4;
-        float idealY = withLeftArm ? 0.225 : -0.225; //It is the distance from the center of the robot, to the center of the arm
-        float idealZ = 0.82; //It is the ideal height for taking an object when torso is at zero height.
+        float idealX = 0.475;
+        float idealY = withLeftArm ? 0.235 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+        float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
 
         float torsoSpine, torsoWaist, torsoShoulders;
         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
@@ -5387,8 +5387,8 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
         float goalTorso = torsoSpine + movVertical;
         std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
         int waitTime;
-        if (goalTorso < 0.01)
-            goalTorso = 0.01;
+        if (goalTorso < 0.0)
+            goalTorso = 0.0;
         if (goalTorso > 0.294)
             goalTorso = 0.294;
 
