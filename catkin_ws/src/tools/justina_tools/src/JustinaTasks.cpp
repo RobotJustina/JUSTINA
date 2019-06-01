@@ -1503,6 +1503,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
                     JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
                     moveBase = false;
                 }
+                centroids.clear();
                 JustinaManip::waitForHdGoalReached(3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> yoloObjects;
@@ -1510,7 +1511,8 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
                     if(numrecog == 1){
                         Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
                         recog = getNearestRecognizedYolo(yoloObjects, maxDistance, centroid, location);
-                        centroids.push_back(centroid);
+                        if(recog)
+                            centroids.push_back(centroid);
                     }else{
                         filterObjectByLocation(yoloObjects, maxDistance, centroids, location);
                         if(centroids.size() >= numrecog)
@@ -1528,7 +1530,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
         }
         moveBase = true;
     }
-    if(numrecog == 1)
+    if(numrecog == 1 && centroids.size() > 0)
         std::cout << "JustinaTasks.->turnAndRecognizeYolo.-> centroid person :" << centroids[0](0, 0) << ", " << centroids[0](1, 0) << ", " << centroids[0](2, 0) << std::endl;
     return recog;
 }
