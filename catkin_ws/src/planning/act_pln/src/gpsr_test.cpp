@@ -1683,10 +1683,8 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			//JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
 			JustinaTasks::POSE poseRecog;
             		poseRecog = JustinaTasks::NONE;
-			JustinaVision::enableDetectObjsYOLO(true);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             		success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
-			JustinaVision::enableDetectObjsYOLO(false);
 			if(poseRecog == JustinaTasks::NONE || poseRecog == JustinaTasks::STANDING)
 				currentName = "standing";
 			else if (poseRecog == JustinaTasks::SITTING)
@@ -3359,10 +3357,8 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
                 
 		count = 0;
 		while (!findUmbrella && count < 3){
-			JustinaVision::enableDetectObjsYOLO(true);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			findUmbrella = JustinaTasks::findAndGuideYolo(idsUmbrella);
-			JustinaVision::enableDetectObjsYOLO(false);
 			count++;
 		}
 

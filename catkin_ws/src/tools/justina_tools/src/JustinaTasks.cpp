@@ -1839,8 +1839,7 @@ bool JustinaTasks::findYolo(std::vector<std::string> ids, POSE &poseRecog,
     JustinaManip::waitForHdGoalReached(5000);
 
     std::vector<Eigen::Vector3d> centroids;
-    bool recog = JustinaTasks::turnAndRecognizeYolo(ids, specificPos, -M_PI_4,
-            M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8.0, centroids, location);
+    bool recog = JustinaTasks::turnAndRecognizeYolo(ids, specificPos, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8.0, centroids, location);
 
     if (!recog)
         return false;

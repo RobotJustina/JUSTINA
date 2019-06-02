@@ -220,7 +220,6 @@ int main(int argc, char **argv){
                 if(opened){
                     //JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaVision::enableDetectObjsYOLO(true);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -243,7 +242,6 @@ int main(int argc, char **argv){
                         findPersonAttemps = 0;
                         findPersonRestart = 0;
                     
-                        JustinaVision::enableDetectObjsYOLO(false);
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         goalx = gx_w;
                         goaly = gy_w;
@@ -598,7 +596,6 @@ int main(int argc, char **argv){
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
                 findSeatCount = 0;
-                JustinaVision::enableDetectObjsYOLO(true);
                 state = SM_FIND_EMPTY_SEAT;
                 break;
 
@@ -815,7 +812,6 @@ int main(int argc, char **argv){
                 }
                 else
                     state = SM_OFFER_EMPTY_SEAT;
-                JustinaVision::enableDetectObjsYOLO(false);
                 break;
 
             case SM_OFFER_EMPTY_SEAT:

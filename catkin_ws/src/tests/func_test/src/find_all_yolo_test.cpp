@@ -31,10 +31,9 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "trying find a person yolo " << std::endl;
-            JustinaVision::enableDetectObjsYOLO(true);
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
             centroids.clear();
-            isFound = JustinaTasks::turnAndRecognizeYolo(ids, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 8.0, centroids, "", 0, 1.8);
+            isFound = JustinaTasks::turnAndRecognizeYolo(ids, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.0f, 8.0, centroids, "", 0, 1.8);
             if(isFound){
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 for(int i = 0; i < centroids.size(); i++)
@@ -45,7 +44,6 @@ int main(int argc, char** argv)
                     centroids_loc.push_back(ss_loc.str());
                     JustinaKnowledge::addUpdateKnownLoc(ss_loc.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 }
-                JustinaVision::enableDetectObjsYOLO(false);
             }
             nextState = 2;
             break;
