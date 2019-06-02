@@ -51,21 +51,28 @@ int main(int argc, char ** argv){
                 //std::cout << "distance_min" << distanceMin << std::endl;
                 repulsiveForces[i] = 0;
                 poseRepulsiveForces.poses[i].orientation.z = 0.0;
-                if(laserScan.ranges[i] > 0.18 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                //if(laserScan.ranges[i] > 0.18 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
                 //if(laserScan.ranges[i] > 0.2 && laserScan.ranges[i] < distanceMin){
-                    float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
-                    float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
-                    repulsiveForces[i] = Kr * fRepY;
-                    //std::cout << repulsiveForces[i] << std::endl;
-                    //std::cout << repulsiveForces[i] << std::endl;
-                    poseRepulsiveForces.poses[i].position.x = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
-                    poseRepulsiveForces.poses[i].position.y = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
-                    if(fRepY > 0){
-                        poseRepulsiveForces.poses[i].orientation.z = 1.0;
-                        poseRepulsiveForces.poses[i].orientation.w = 1.0;
-                    }else{
-                        poseRepulsiveForces.poses[i].orientation.z = -1.0;
-                        poseRepulsiveForces.poses[i].orientation.w = 1.0;
+                float laserPosX = 0.0;
+                float laserPosY = 0.0;
+                if(angle >= -M_PI_2 && angle <= M_PI_2){
+                    laserPosX = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    laserPosY = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    if(laserPosX >= 0.08 && laserPosX <= 0.8 && laserPosY >= -0.3 && laserPosY <= 0.3){
+                        float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
+                        float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
+                        repulsiveForces[i] = Kr * fRepY;
+                        //std::cout << repulsiveForces[i] << std::endl;
+                        //std::cout << repulsiveForces[i] << std::endl;
+                        poseRepulsiveForces.poses[i].position.x = laserPosX;
+                        poseRepulsiveForces.poses[i].position.y = laserPosY;
+                        if(fRepY > 0){
+                            poseRepulsiveForces.poses[i].orientation.z = 1.0;
+                            poseRepulsiveForces.poses[i].orientation.w = 1.0;
+                        }else{
+                            poseRepulsiveForces.poses[i].orientation.z = -1.0;
+                            poseRepulsiveForces.poses[i].orientation.w = 1.0;
+                        }
                     }
                 }
             }
