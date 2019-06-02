@@ -6739,15 +6739,22 @@ SM_FINISH: std::cout << "JustinaTasks::finish successfully"
 std::vector<Eigen::Vector3d> JustinaTasks::filterObjectsNearest(std::vector<Eigen::Vector3d> centroids, std::vector<Eigen::Vector3d> centroidsObjects, float thrSamePerson)
 {
     std::cout << "JustinaTasks.->filterObjectsNearest." << std::endl;
-    std::vector<Eigen::Vector3d> newCentroids;
+    std::vector<Eigen::Vector3d> newCentroids = centroids;
+    float gx_w, gy_w, gz_w;
     for(int i = 0; i < centroidsObjects.size(); i++)
     {
         bool found = false;
         Eigen::Vector3d centroidCompare = centroidsObjects[i];
+        JustinaTools::transformPoint("/base_link", centroidCompare(0, 0), centroidCompare(1, 0) , centroidCompare(2, 0), "/map", gx_w, gy_w, gz_w);
+        centroidCompare(0, 0) = gx_w;
+        centroidCompare(1, 0) = gy_w;
         centroidCompare(2, 0) = 0.0;
         for(int j = 0; j < centroids.size() && !found; j++)
         {
             Eigen::Vector3d centroid = centroids[j];
+            JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+            centroid(0, 0) = gx_w;
+            centroid(1, 0) = gy_w;
             centroid(2, 0) = 0.0;
             float d = (centroid - centroidCompare).norm();
             std::cout << "JustinaTasks.->filterObjectsNearest: Distance bettween vectors: " << d << std::endl; 
