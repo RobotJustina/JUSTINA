@@ -70,6 +70,7 @@ bool poket_reco = true;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
+std::vector<Eigen::Vector3d> centroids;
 
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltQueryKDB;
@@ -302,7 +303,21 @@ void callbackCmdFindObject(
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
             poseRecog = JustinaTasks::NONE;
-            success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
+            //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
+            success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 8.0, centroids, tokens[1], 0, 0.8);
+            if(success){
+                float robot_x, robot_y, robot_a;
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                for(int i = 0; i < centroids.size(); i++)
+                {
+                    float gx_w, gy_w, gz_w;
+                    std::stringstream ss_loc; 
+                    Eigen::Vector3d centroid = centroids[i];
+                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    ss_loc << "person_" << i;
+                    JustinaKnowledge::addUpdateKnownLoc(ss_loc.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                }
+            }
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");

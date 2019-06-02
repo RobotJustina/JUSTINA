@@ -271,6 +271,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("I am ready for the carry my luggage test", 2000, minDelayAfterSay);
                 JustinaHRI::loadGrammarSpeechRecognized("CarryMyLuggage.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                JustinaVision::enableDetectObjsYOLO(true);
                 nextState = SM_FIND_PERSON;
                 break;
 
@@ -285,6 +286,7 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("Please take the bag and say, justina continue", 5000, maxDelayAfterSay);
                     attemptsWaitContinue = 0;
                     nextState=SM_WAIT_FOR_THE_BAG;
+                    JustinaVision::enableDetectObjsYOLO(false);
                 }else
                     JustinaHRI::waitAfterSay("I did not find anyone", 3000); 
                 JustinaHRI::enableSpeechRecognized(true);

@@ -378,6 +378,7 @@ int main(int argc, char** argv)
                 JustinaTasks::guideAPerson("corridor", 300000, 1.5);
                 
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
+                JustinaVision::enableDetectObjsYOLO(true);
         		ros::Duration(1.0).sleep();
                 nextState = SM_SearchTaxiDriver;
                 
@@ -398,6 +399,7 @@ int main(int argc, char** argv)
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
 
                     //JustinaHRI::waitAfterSay("I have found the taxi driver", 5000, minDelayAfterSay);
+                    JustinaVision::enableDetectObjsYOLO(false);
                     nextState = SM_CLOSE_TO_TAXI_DRIVER;
                 }else
                     nextState = SM_SearchTaxiDriver;

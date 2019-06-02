@@ -21,6 +21,7 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "trying find a person yolo " << std::endl;
+            JustinaTasks::enableDetectObjsYOLO(true);
             isFound = JustinaTasks::findYolo(ids, poseRecog, JustinaTasks::NONE, "kitchen");
             if(!isFound){
                 std::cout << "Can not find a person with yolo" << std::endl;
@@ -31,6 +32,7 @@ int main(int argc, char** argv)
             break;
         default:
             std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;
+            JustinaTasks::enableDetectObjsYOLO(false);
             fail = true;
             break;
         }

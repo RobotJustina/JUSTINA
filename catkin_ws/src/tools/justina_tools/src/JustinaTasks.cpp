@@ -1087,13 +1087,13 @@ bool JustinaTasks::waitRecognizedYolo(std::vector<std::string> ids, std::vector<
     boost::posix_time::time_duration diff;
     bool recognized = false;
     std::vector<vision_msgs::VisionObject> yoloObjectsReco;
-    //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
-    //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+    JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+    JustinaVision::detectObjectsYOLO(yoloObjectsReco);
     yoloObjects.clear();
     yoloObjectsReco.clear();
     do {
-        JustinaVision::getObjectsYOLO(yoloObjects);
-        //JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+        //JustinaVision::getObjectsYOLO(yoloObjects);
+        JustinaVision::detectObjectsYOLO(yoloObjectsReco);
         std::cout << "YoloObject size:" << yoloObjectsReco.size() << std::endl;
         for (std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end(); it++) {
             for (int i = 0; i < ids.size(); i++) {
@@ -1485,7 +1485,7 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan,
     return recog;
 }
 
-bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, std::vector<Eigen::Vector3d> &centroids, std::string location, int numrecog) {
+bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, std::vector<Eigen::Vector3d> &centroids, std::string location, int numrecog, float thrSamePerson) {
     bool recog = false;
     bool moveBase = false;
     float initTil = initAngTil;
@@ -1503,7 +1503,6 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
                     JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
                     moveBase = false;
                 }
-                centroids.clear();
                 JustinaManip::waitForHdGoalReached(3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> yoloObjects;
@@ -1514,9 +1513,16 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
                         if(recog)
                             centroids.push_back(centroid);
                     }else{
-                        filterObjectByLocation(yoloObjects, maxDistance, centroids, location);
-                        if(centroids.size() >= numrecog)
-                            recog = true;
+                        std::vector<Eigen::Vector3d> centroidsObjects;
+                        filterObjectByLocation(yoloObjects, maxDistance, centroidsObjects, location);
+                        if(numrecog == 0)
+                            centroids = filterObjectsNearest(centroids, centroidsObjects, thrSamePerson);
+                        else{
+                            if(centroids.size() >= numrecog)
+                                recog = true;
+                            else
+                                centroids.clear();
+                        }
                     }
                 }
                 ros::spinOnce();
@@ -1532,6 +1538,10 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
     }
     if(numrecog == 1 && centroids.size() > 0)
         std::cout << "JustinaTasks.->turnAndRecognizeYolo.-> centroid person :" << centroids[0](0, 0) << ", " << centroids[0](1, 0) << ", " << centroids[0](2, 0) << std::endl;
+    if(numrecog == 0 && centroids.size() > 0){
+        recog = true;
+        std::cout << "JustinaTasks.->turnAndRecognizeYolo.->: have been found objects:" << centroids.size() << std::endl;
+    }
     return recog;
 }
 
@@ -6725,4 +6735,30 @@ SM_FINISH: std::cout << "JustinaTasks::finish successfully"
     }
 
     return find;
+}
+
+std::vector<Eigen::Vector3d> JustinaTasks::filterObjectsNearest(std::vector<Eigen::Vector3d> centroids, std::vector<Eigen::Vector3d> centroidsObjects, float thrSamePerson)
+{
+    std::cout << "JustinaTasks.->filterObjectsNearest." << std::endl;
+    std::vector<Eigen::Vector3d> newCentroids;
+    for(int i = 0; i < centroidsObjects.size(); i++)
+    {
+        bool found = false;
+        Eigen::Vector3d centroidCompare = centroidsObjects[i];
+        centroidCompare(2, 0) = 0.0;
+        for(int j = 0; j < centroids.size() && !found; j++)
+        {
+            Eigen::Vector3d centroid = centroids[j];
+            centroid(2, 0) = 0.0;
+            float d = (centroid - centroidCompare).norm();
+            std::cout << "JustinaTasks.->filterObjectsNearest: Distance bettween vectors: " << d << std::endl; 
+            if(d  <= thrSamePerson)
+                found = true;
+            //float d = (centroid.rowwise() - centroidCompare.row(s)).matrix().rowwise().norm();
+
+        }
+        if(!found)
+            newCentroids.push_back(centroidsObjects[i]);
+    }
+    return newCentroids;
 }
