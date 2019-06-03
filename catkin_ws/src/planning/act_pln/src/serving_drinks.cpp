@@ -71,6 +71,14 @@ std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
 std::vector<Eigen::Vector3d> centroids;
+float robot_x, robot_y, robot_a;
+float gx_w, gy_w, gz_w;
+std::stringstream ss_loc; 
+float goalx, goaly, goala;
+float theta = 0, thetaToGoal = 0, angleHead = 0;
+float dist_to_head;
+std::vector<std::string> centroids_loc;
+float torsoSpine, torsoWaist, torsoShoulders;
 
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltQueryKDB;
@@ -302,38 +310,59 @@ void callbackCmdFindObject(
 		ss.str("");
 		if (tokens[0] == "person") {
 			//success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
-            poseRecog = JustinaTasks::NONE;
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
-            success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 8.0, centroids, tokens[1], 0, 0.8);
-            if(success){
-                float robot_x, robot_y, robot_a;
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                for(int i = 0; i < centroids.size(); i++)
-                {
-                    float gx_w, gy_w, gz_w;
-                    std::stringstream ss_loc; 
-                    Eigen::Vector3d centroid = centroids[i];
-                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
-                    ss_loc << "person_" << i;
-                    JustinaKnowledge::addUpdateKnownLoc(ss_loc.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+            if(centroids_loc.size() == 0){
+                poseRecog = JustinaTasks::NONE;
+                success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, tokens[1], 0, 1.0);
+                if(success){
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    for(int i = 0; i < centroids.size(); i++)
+                    {
+                        Eigen::Vector3d centroid = centroids[i];
+                        JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                        ss_loc << "person_" << i;
+                        centroids_loc.push_back(ss_loc.str());
+                        JustinaKnowledge::addUpdateKnownLoc(ss_loc.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                    }
                 }
             }
-			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
-		} else if (tokens[0] == "man") {
-			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
-			if(tokens[1] == "no_location")
-				success = JustinaTasks::followAPersonAndRecogStop("stop follow me");
-			else
-				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
-			ss << responseMsg.params;
-		} else if (tokens[0] == "man_guide") {
-			JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			success = JustinaTasks::guideAPerson(tokens[1], timeout);
-			ss << responseMsg.params;
-		} else if (tokens[0] == "specific") {
-			success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, false, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
-			ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
+            if(success && centroids_loc.size() > 0){
+                JustinaKnowledge::getKnownLocation(centroids_loc[0] ,goalx, goaly, goala);
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+                if (thetaToGoal < 0.0f)
+                    thetaToGoal += 2 * M_PI;
+                theta = thetaToGoal - robot_a;
+                JustinaNavigation::moveDistAngle(0, theta, 3000);
+                dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                if(angleHead < -M_PI)
+                    angleHead = 2 * M_PI + angleHead;
+                if(angleHead > M_PI)
+                    angleHead = 2 * M_PI - angleHead;
+                JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                centroids_loc.erase(centroids_loc.begin());
+                success = true;
+            }
+            ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
+        } else if (tokens[0] == "man") {
+            JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+            if(tokens[1] == "no_location")
+                success = JustinaTasks::followAPersonAndRecogStop("stop follow me");
+            else
+                success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
+            ss << responseMsg.params;
+        } else if (tokens[0] == "man_guide") {
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            success = JustinaTasks::guideAPerson(tokens[1], timeout);
+            ss << responseMsg.params;
+        } else if (tokens[0] == "specific") {
+            success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, false, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
+            ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
         }else if (tokens[0] == "specific_eegpsr"){
             success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, true, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
@@ -377,13 +406,35 @@ void callbackCmdFindObject(
 	
 }
 
-
-void callbackMoveActuator(
-		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
-	std::cout << testPrompt << "--------- Command Move actuator ---------"
-			<< std::endl;
+void callbackGetCloseToPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Get close to person ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	bool armFlag = true;
+	std::stringstream ss;
+
+	ros::Time finishPlan = ros::Time::now();
+	ros::Duration d = finishPlan - beginPlan;
+	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
+
+
+}
+
+void callbackMoveActuator(
+        const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+    std::cout << testPrompt << "--------- Command Move actuator ---------"
+        << std::endl;
+    std::cout << "name:" << msg->name << std::endl;
+    std::cout << "params:" << msg->params << std::endl;
 
 	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
