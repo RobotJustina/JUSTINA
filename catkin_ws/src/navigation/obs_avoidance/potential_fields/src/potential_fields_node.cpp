@@ -74,9 +74,9 @@ int main(int argc, char ** argv){
             for(int i = 0; i < repulsiveForces.size(); i++)
                 meanRepulsionForce += repulsiveForces[i];
 
-            std::cout << "potential_fields_node.->meanRepulsionForce :" << meanRepulsionForce << std::endl;
+            //std::cout << "potential_fields_node.->meanRepulsionForce :" << meanRepulsionForce << std::endl;
             meanRepulsionForce /= repulsiveForces.size();
-            std::cout << "potential_fields_node.->meanRepulsionForce prom:" << meanRepulsionForce << std::endl;
+            //std::cout << "potential_fields_node.->meanRepulsionForce prom:" << meanRepulsionForce << std::endl;
 
             if(meanRepulsionForce > 0){
                 poseRepulsiveForce.poses[0].orientation.z = 1.0;
