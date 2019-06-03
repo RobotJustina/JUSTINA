@@ -92,6 +92,7 @@ ros::ServiceClient JustinaVision::cltCubesSeg;
 ros::ServiceClient JustinaVision::cltCutlerySeg;
 ros::ServiceClient JustinaVision::cltGetTray;
 ros::ServiceClient JustinaVision::cltGetDishwasher;
+ros::ServiceClient JustinaVision::cltLoadObjectCat;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -183,6 +184,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
     JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
     JustinaVision::cltGetDishwasher = nh ->serviceClient<vision_msgs::SRV_FindDishwasher>("/vision/obj_reco/dishwasher");
+    JustinaVision::cltLoadObjectCat = nh ->serviceClient<vision_msgs::SetTrainingDir>("/vision/obj_reco/set_training_dir");
 
     return true;
 }
@@ -629,6 +631,8 @@ void JustinaVision::enableDetectObjsYOLO(bool enable){
     std_msgs::Bool msg;
     msg.data = enable;
     pubEnableObjsDetectYOLO.publish(msg);
+    ros::spinOnce();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 }
     
 //Action client for YOLO object recog
@@ -1004,4 +1008,18 @@ bool JustinaVision::getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher)
     }
     dishwasher = srv.response.dishwasher;
     return true;
+}
+
+bool JustinaVision::loadObjectCat(std::string category)
+{
+    std::cout << "JustinaVision.->Trying to load the especific category" << std::endl;
+    vision_msgs::SetTrainingDir srv;
+    srv.request.category = category;
+
+    if(!JustinaVision::cltLoadObjectCat.call(srv)){
+        std::cout << "JustinaVision.->Error trying to call load Object Category" << std::endl;
+        return false;
+    }
+    else
+        return true;
 }

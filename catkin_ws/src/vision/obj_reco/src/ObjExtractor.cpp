@@ -186,7 +186,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	// PARAMS: Object Extracction
 	double minObjDistToPlane = maxDistToPlane; 
 	double maxObjDistToPlane = 0.25; 
-	double minDistToContour = 0.02; 
+	double minDistToContour = (0.02 / 2.0); 
 	double maxDistBetweenObjs = 0.05; 
 
 	// For removing floor and far far away points 

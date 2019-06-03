@@ -1,0 +1,9 @@
+#JSGF V1.0;
+grammar incmplete_place;
+public <command> = (<incomplete>);
+<incomplete> =(AT THE <place>| IS THE <place>);
+<place> = (<room> | <placement> | <beacon>);
+
+<room> = (CORRIDOR | BEDROOM | DINING ROOM | LIVING ROOM | KITCHEN);
+<placement> =  (SIDE TABLE | DESK | DINING TABLE | END TABLE | BOOKCASE | CUPBOARD | STORAGE TABLE | SINK | COUNTER);
+<beacon> = (ENTRANCE | BED | DESK | DINING TABLE | EXIT | COUCH | END TABLE | BOOKCASE | SINK | DISHWASHER);

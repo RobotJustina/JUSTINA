@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar follow_me;
+public <command> = (<confirmation> | <follow>);
+
+<confirmation> = ROBOT (YES | NO);
+<follow> = (FOLLOW ME | STOP FOLLOW ME);

@@ -34,9 +34,11 @@
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
 #include "vision_msgs/GetCubes.h"
+#include "vision_msgs/SetTrainingDir.h"
 #include "vision_msgs/SRV_DetectPlasticTrayZones.h"
 #include "vision_msgs/SRV_FindDishwasher.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/thread/thread.hpp>
 
 class JustinaVision
 {
@@ -135,6 +137,7 @@ private:
     static ros::ServiceClient cltCutlerySeg;
     static ros::ServiceClient cltGetTray;
     static ros::ServiceClient cltGetDishwasher;
+    static ros::ServiceClient cltLoadObjectCat;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -219,6 +222,7 @@ public:
     static bool isStillOnTable(vision_msgs::Cube my_cube);
     static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
     static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
+    static bool loadObjectCat(std::string category);
 
 private:
     //callbacks for obj recog

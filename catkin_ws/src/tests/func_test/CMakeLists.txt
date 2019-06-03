@@ -452,3 +452,25 @@ target_link_libraries(find_lines_test
 )
 
 add_dependencies(find_lines_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_yolo_test
+  src/find_yolo_test.cpp
+)
+
+target_link_libraries(find_yolo_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_yolo_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_all_yolo_test
+  src/find_all_yolo_test.cpp
+)
+
+target_link_libraries(find_all_yolo_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_all_yolo_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

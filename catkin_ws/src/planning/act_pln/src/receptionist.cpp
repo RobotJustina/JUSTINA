@@ -98,6 +98,7 @@ int main(int argc, char **argv){
     std::string hostDrink = "coke";
 
     Eigen::Vector3d centroid;
+    std::vector<Eigen::Vector3d> centroids;
     
     std::stringstream ss;
     std::stringstream ss2;
@@ -220,7 +221,6 @@ int main(int argc, char **argv){
                 if(opened){
                     //JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
-                    //JustinaVision::enableDetectObjsYOLO(true);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -233,15 +233,16 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "entrance");
-                    if(findPerson)
+                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "entrance");
+                    if(findPerson){
+                        centroid = centroids[0];
                         findPersonCount++;
+                    }
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
                         findPersonCount = 0;
                         findPersonAttemps = 0;
                         findPersonRestart = 0;
                     
-                        //JustinaVision::enableDetectObjsYOLO(false);
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         goalx = gx_w;
                         goaly = gy_w;
@@ -778,11 +779,12 @@ int main(int argc, char **argv){
             case SM_FIND_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
-                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroid, "kitchen");
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                     if(!findSeat){
                         findSeatCount++;
                         break;
                     }
+                    centroid = centroids[0];
                     JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
                     JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);

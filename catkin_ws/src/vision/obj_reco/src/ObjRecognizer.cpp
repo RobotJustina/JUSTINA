@@ -124,17 +124,19 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 	return recoName;
 }
 
-bool ObjRecognizer::LoadTrainingDir()
+bool ObjRecognizer::LoadTrainingDir(std::string trainingFolder)
 {
     try
     {
-        std::cout << "\nObjRecognizer.LoadTrainingDir ->Trying to load training dir: " << this->TrainingDir << std::endl;
+        std::cout << "\nObjRecognizer.LoadTrainingDir ->Trying to load training dir: " << trainingFolder << std::endl;
 
-        if( !boost::filesystem::exists(this->TrainingDir) )
+        if( !boost::filesystem::exists(trainingFolder) )
         {
-            std::cout << "\nObjRecognizer.LoadTrainingDir-> Training dir doesnt exist." << this->TrainingDir << std::endl;
+            std::cout << "\nObjRecognizer.LoadTrainingDir-> Training dir doesnt exist." << trainingFolder << std::endl;
             return false; 
-        }        
+        } 
+		else
+			std::cout << "\nObjRecognizer.LoadTrainingDir-> Loading successfully :) path: " << trainingFolder << std::endl;       
 
         cv::FileStorage fs; 
         std::string nodeName = "obj"; 
@@ -145,7 +147,7 @@ bool ObjRecognizer::LoadTrainingDir()
         std::vector< cv::Mat > trainingHistos; 
         std::vector< std::vector< cv::Point2f > > trainingCont2D; 
 
-        boost::filesystem::path pathTrainDir( this->TrainingDir ); 
+        boost::filesystem::path pathTrainDir( trainingFolder ); 
         boost::filesystem::directory_iterator endIt; 
         for( boost::filesystem::directory_iterator dirIt( pathTrainDir ) ; dirIt != endIt ; ++dirIt )
         {
