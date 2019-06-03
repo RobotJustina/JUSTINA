@@ -406,29 +406,6 @@ void callbackCmdFindObject(
 	
 }
 
-void callbackGetCloseToPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
-	std::cout << testPrompt << "--------- Get close to person ---------" << std::endl;
-	std::cout << "name:" << msg->name << std::endl;
-	std::cout << "params:" << msg->params << std::endl;
-
-	knowledge_msgs::PlanningCmdClips responseMsg;
-	responseMsg.name = msg->name;
-	responseMsg.params = msg->params;
-	responseMsg.id = msg->id;
-	
-    std::vector<std::string> tokens;
-	std::string str = responseMsg.params;
-	split(tokens, str, is_any_of(" "));
-	bool armFlag = true;
-	std::stringstream ss;
-
-	ros::Time finishPlan = ros::Time::now();
-	ros::Duration d = finishPlan - beginPlan;
-	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
-
-
-}
-
 void callbackMoveActuator(
         const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     std::cout << testPrompt << "--------- Command Move actuator ---------"
