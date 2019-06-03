@@ -40,10 +40,9 @@ int main(int argc, char ** argv){
     ros::Publisher pubRepulsionForce = nh.advertise<std_msgs::Float32>("potential_fields/repulsive_force", 1);
     ros::Publisher pubPoseRepulsionForces = nh.advertise<geometry_msgs::PoseArray>("potential_fields/pose_repulsive_forces", 1);
     ros::Publisher pubPoseRepulsionForce = nh.advertise<geometry_msgs::PoseArray>("potential_fields/pose_repulsive_force", 1);
-    
+
 
     while(ros::ok()){
-
         if(initVectorForces){
             for(int i = 0 ; i < laserScan.ranges.size() ; i++){
                 float angle = laserScan.angle_min + ( i * laserScan.angle_increment);
@@ -51,38 +50,33 @@ int main(int argc, char ** argv){
                 //std::cout << "distance_min" << distanceMin << std::endl;
                 repulsiveForces[i] = 0;
                 poseRepulsiveForces.poses[i].orientation.z = 0.0;
-                //if(laserScan.ranges[i] > 0.18 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                poseRepulsiveForces.poses[i].position.x = 0.0;
+                poseRepulsiveForces.poses[i].position.y = 0.0;
                 //if(laserScan.ranges[i] > 0.2 && laserScan.ranges[i] < distanceMin){
-                float laserPosX = 0.0;
-                float laserPosY = 0.0;
-                if(angle >= -M_PI_2 && angle <= M_PI_2){
-                    laserPosX = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
-                    laserPosY = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
-                    if(laserPosX >= 0.08 && laserPosX <= 0.8 && laserPosY >= -0.3 && laserPosY <= 0.3){
-                        float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
-                        float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
-                        repulsiveForces[i] = Kr * fRepY;
-                        //std::cout << repulsiveForces[i] << std::endl;
-                        //std::cout << repulsiveForces[i] << std::endl;
-                        poseRepulsiveForces.poses[i].position.x = laserPosX;
-                        poseRepulsiveForces.poses[i].position.y = laserPosY;
-                        if(fRepY > 0){
-                            poseRepulsiveForces.poses[i].orientation.z = 1.0;
-                            poseRepulsiveForces.poses[i].orientation.w = 1.0;
-                        }else{
-                            poseRepulsiveForces.poses[i].orientation.z = -1.0;
-                            poseRepulsiveForces.poses[i].orientation.w = 1.0;
-                        }
+                if(laserScan.ranges[i] > 0.08 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                    poseRepulsiveForces.poses[i].position.x = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    poseRepulsiveForces.poses[i].position.y = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
+                    float fRepY = -sqrt(sRep) * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
+                    repulsiveForces[i] = Kr * fRepY;
+                    //std::cout << repulsiveForces[i] << std::endl;
+                    //std::cout << repulsiveForces[i] << std::endl;
+                    if(fRepY > 0){
+                        poseRepulsiveForces.poses[i].orientation.z = 1.0;
+                        poseRepulsiveForces.poses[i].orientation.w = 1.0;
+                    }else{
+                        poseRepulsiveForces.poses[i].orientation.z = -1.0;
+                        poseRepulsiveForces.poses[i].orientation.w = 1.0;
                     }
                 }
             }
             float meanRepulsionForce = 0.0;
             for(int i = 0; i < repulsiveForces.size(); i++)
                 meanRepulsionForce += repulsiveForces[i];
-            
-            //std::cout << meanRepulsionForce << std::endl;
+
+            std::cout << "potential_fields_node.->meanRepulsionForce :" << meanRepulsionForce << std::endl;
             meanRepulsionForce /= repulsiveForces.size();
-            //std::cout << meanRepulsionForce << std::endl;
+            std::cout << "potential_fields_node.->meanRepulsionForce prom:" << meanRepulsionForce << std::endl;
 
             if(meanRepulsionForce > 0){
                 poseRepulsiveForce.poses[0].orientation.z = 1.0;
@@ -108,9 +102,7 @@ int main(int argc, char ** argv){
             pubPoseRepulsionForce.publish(poseRepulsiveForce);
             pubRepulsionForce.publish(msgRepulsionForce);
         }
-
         rate.sleep();
         ros::spinOnce();
     }
-
 }
