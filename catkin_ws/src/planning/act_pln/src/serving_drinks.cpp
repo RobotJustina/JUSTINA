@@ -313,11 +313,13 @@ void callbackCmdFindObject(
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
             if(centroids_loc.size() == 0){
                 poseRecog = JustinaTasks::NONE;
+                centroids.clear();
                 success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, tokens[1], 0, 1.0);
                 if(success){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     for(int i = 0; i < centroids.size(); i++)
                     {
+                        ss_loc.str();
                         Eigen::Vector3d centroid = centroids[i];
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         ss_loc << "person_" << i;
@@ -541,8 +543,8 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
         else{
             responseMsg.successful = false;
             JustinaHRI::waitAfterSay("I am at your service",5000);
-			JustinaNavigation::moveDistAngle(0, 1.57, 10000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+			//JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+			//boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
         }
 
     } else {
@@ -721,11 +723,12 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 	std::stringstream ss;
     bool finish_train = false;
     int count = 0;
-    
-	if (poseRecog == JustinaTasks::SITTING || poseRecog == JustinaTasks::LYING)
+   
+    // This determinate the angle of head to look at the person 
+	/*if (poseRecog == JustinaTasks::SITTING || poseRecog == JustinaTasks::LYING)
         JustinaManip::hdGoTo(0.0, -0.6, 5000);
     else
-        JustinaManip::hdGoTo(0.0, 0.0, 5000);
+        JustinaManip::hdGoTo(0.0, 0.0, 5000);*/
 
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaVision::faceTrain(tokens[0], 4);
