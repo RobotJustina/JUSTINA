@@ -85,6 +85,7 @@ int main(int argc, char **argv){
     int attemptsMemorizing = 0;
     float pitchAngle;
     int genderRecog;
+    int numGuests = 1;
     std::string param, typeOrder;
     std::string lastName, lastDrink;
     std::vector<std::string> names;
@@ -768,7 +769,10 @@ int main(int argc, char **argv){
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
-                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                if( numGuests++ < 2 )
+                    state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                else
+                    state = SM_FINISH_TEST;
                 break;
 
             case SM_FIND_EMPTY_SEAT:

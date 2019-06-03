@@ -360,7 +360,7 @@ bool detectDoorInFront2()
         if(theta >= -0.52 && theta <= 0.52)
         {
             totalCount++;
-            if(x >= 0.05 && x <= 2.0 && y >= -0.4 && y <= 0.4)
+            if(x >= 0.05 && x <= 2.5 && y >= -0.4 && y <= 0.4)
                 laserCount++;
         }
     }
