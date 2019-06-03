@@ -349,7 +349,7 @@ bool detectDoorInFront()
 bool detectDoorInFront2()
 {
     float theta = laserScan.angle_min;
-    int laserCount = 0;
+    int laserCount = 0 ;
     int totalCount = 0;
     for(int i = 0; i < laserScan.ranges.size(); i++)
     {

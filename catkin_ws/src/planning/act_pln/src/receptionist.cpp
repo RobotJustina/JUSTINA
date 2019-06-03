@@ -194,7 +194,7 @@ int main(int argc, char **argv){
             
             case SM_NAVIGATE_TO_RECO_LOC:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_RECOG_LOC: Navigate to the recog loc." << std::endl;
-                if(!JustinaNavigation::getClose(recogLoc, 80000))
+                if(!JustinaNavigation::getClose(recogLoc, 80000) )
                     JustinaNavigation::getClose(recogLoc, 80000);
                 findPersonCount = 0;
                 findPersonAttemps = 0;
