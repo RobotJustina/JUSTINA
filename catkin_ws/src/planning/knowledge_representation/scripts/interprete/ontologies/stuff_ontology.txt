@@ -120,6 +120,7 @@
 (sprite			is_kind_of 		item)
 (grape_juice		is_kind_of		item)
 (orange_juice		is_kind_of		item)
+(coke			is_kind_of		item)
 
 #CUTLERY
 (spoon			is_kind_of		item)
@@ -168,7 +169,7 @@
 #(water 			is_kind_of 		drink)
 #(milk 			is_kind_of 		drink)
 #(beer 			is_kind_of 		drink)
-(coke 			is_kind_of 		drink)
+#(coke 			is_kind_of 		drink)
 (juice 			is_kind_of 		drink)
 #(grape juice 		is_kind_of 		drink)
 #(cranberry_juice	is_kind_of 		drink)
