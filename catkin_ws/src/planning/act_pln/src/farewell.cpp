@@ -244,8 +244,8 @@ int main(int argc, char** argv)
                 JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
-                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 180000);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.6, 180000);
+                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 0.6, 180000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
