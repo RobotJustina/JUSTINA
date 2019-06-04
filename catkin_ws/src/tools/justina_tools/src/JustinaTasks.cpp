@@ -3199,7 +3199,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                     << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if (hokuyoRear) {
-                    JustinaHRI::waitAfterSay("Ok, let us go", 2500);
+                    JustinaHRI::waitAfterSay("Ok, follow me", 2500);
                     JustinaNavigation::startGetClose(loc);
                     nextState = SM_GUIDING_PHASE;
                 } else
@@ -3300,7 +3300,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                             JustinaHRI::waitAfterSay(
                                     "Human, please stay close to me", 3000);
                         else {
-                            JustinaHRI::waitAfterSay("Ok, let us go", 2500);
+                            JustinaHRI::waitAfterSay("Ok, follow me", 2500);
                             JustinaNavigation::startGetClose(loc);
                             nextState = SM_GUIDING_PHASE;
                         }
@@ -6210,8 +6210,7 @@ bool JustinaTasks::followVisitor() {
     return success;
 }
 
-bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose,
-        std::string location) {
+bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std::string location) {
     std::stringstream ss;
     std::string gestureSpeech;
     ros::Time time;
