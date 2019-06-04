@@ -563,7 +563,7 @@
         (retract ?f4)
 	;(retract ?f6)
         (assert (delate_no_visited_rooms ?name))
-        ;(modify ?f2 (status accomplished))
+        (modify ?f2 (status accomplished))
         (modify ?f1 (pose ?x ?y ?z) (status finded))
         (assert (finish-planner ?name ?num-pln))
         (assert (visit_places (+ 2 ?n2)))
