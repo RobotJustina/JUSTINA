@@ -14,7 +14,7 @@
 std::vector<float> global_goal_angular ;
 std::vector<float> goal_cartesian_pose ;
 std::vector<float> current_angular_pose;
-std::vector<float> current_angular_speed; //--------
+std::vector<float> current_angular_speed (7); //--------
 bool new_global_goal = false;
 
 
@@ -103,7 +103,6 @@ int main(int argc, char** argv)
                 new_global_goal = false;
                 time_k = 0;
                 msg_la_goal_pose.data.resize(14);
-
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else
@@ -131,11 +130,8 @@ int main(int argc, char** argv)
                 //break;
             }                  //-----------
             else               //----------- 
-            {                  //-----------   
-                new_global_goal = true; //----------
                 state = SM_WAIT_FOR_NEW_POSE;//---------
 
-            }                  //-----------
             break;
         case SM_WAIT_FOR_GOAL_REACHED:
             msg_la_goal_reached.data = true;
