@@ -3935,7 +3935,7 @@ int main(int argc, char **argv) {
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::loadGrammarSpeechRecognized("incomplete_place", "/grammars/pre_sydney/gpsr/incomplete_place.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                    JustinaHRI::loadGrammarSpeechRecognized("incompete_object", "/grammars/pre_sydney/gpsr/incomplete_object.jsgf");
+                    JustinaHRI::loadGrammarSpeechRecognized("incomplete_object", "/grammars/pre_sydney/gpsr/incomplete_object.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::loadGrammarSpeechRecognized("order_food", "/grammars/pre_sydney/gpsr/order_food.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
