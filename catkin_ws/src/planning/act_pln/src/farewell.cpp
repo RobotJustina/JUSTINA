@@ -45,7 +45,7 @@ void switchSpeechReco(bool pocket, std::string grammarPocket, std::string gramma
     if (pocket){
         //use pocket sphinx
         JustinaHRI::usePocketSphinx = true;
-        JustinaHRI::enableGrammarSpeechRecognized(grammarPocket, 2.0);
+        JustinaHRI::enableGrammarSpeechRecognized(grammarPocket, 0);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
