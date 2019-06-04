@@ -3068,7 +3068,8 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 JustinaHRI::waitAfterSay("Ready, Please guide me to the next object", 10000);
         
             //follow    
-            JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
+            switchSpeechReco(5, "");
+            //JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
             JustinaTasks::followAPersonAndRecogStop("stop follow me");
             
             count = 0;
@@ -3909,6 +3910,7 @@ int main(int argc, char **argv) {
         sphinx_grammars[7] = "incomplete_place";
         sphinx_grammars[8] = "incomplete_object";
         sphinx_grammars[9] = "order_food";
+        sphinx_grammars[10] = "this_object";
         /*sphinx_grammars[10] = "description_gesture";
         sphinx_grammars[11] = "description_pose";
         sphinx_grammars[12] = "description_hight";
@@ -3946,6 +3948,8 @@ int main(int argc, char **argv) {
                     JustinaHRI::loadGrammarSpeechRecognized("incomplete_object", "/grammars/pre_sydney/gpsr/incomplete_object.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::loadGrammarSpeechRecognized("order_food", "/grammars/pre_sydney/gpsr/order_food.jsgf");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    JustinaHRI::loadGrammarSpeechRecognized("this_object", "/grammars/pre_sydney/gpsr/this_object.jsgf");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                     JustinaHRI::enableSpeechRecognized(false);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
