@@ -3080,6 +3080,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             while(!help && count < 3){
                 JustinaHRI::waitAfterSay("Please listen, for known objects say for instance, this is the apple", 10000);
                 JustinaHRI::waitAfterSay("for unknown objects say, this is an unknown object, Please tell me the object's name", 10000);
+                switchSpeechReco(10, "");
                 JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
                 if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
                     if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
