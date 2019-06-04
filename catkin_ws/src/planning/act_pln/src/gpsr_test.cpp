@@ -882,6 +882,7 @@ void callbackCmdFindObject(
 			JustinaTasks::alignWithTable(0.42);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
 			ss.str("");
 			if(withLeftOrRightArm)
@@ -1050,6 +1051,7 @@ void callbackCmdFindObject(
 			bool finishMotion = false;
 			float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
 			do{
+                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
 				finishMotion = true;
                 //finishMotion = lateralMov(pos, advance, maxAdvance);
@@ -1949,7 +1951,9 @@ void callbackMoveActuator(
 	//ss << "I try to grasp the " << tokens[0];
 	//JustinaHRI::waitAfterSay(ss.str(), 10000);
 	
-	success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
+	//success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+    success = success && JustinaTasks::graspObject(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
 	else{
