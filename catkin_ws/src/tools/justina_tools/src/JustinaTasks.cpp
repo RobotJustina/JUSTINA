@@ -63,7 +63,7 @@ bool JustinaTasks::alignWithTable(float distToTable) {
         return false;
     }
 
-    if (x1 > 0.6 || x2 > 0.6) {
+    if (x1 > 0.9 || x2 > 0.9) {
         std::cout << "JustinaTasks.->Found line is not confident. "
             << std::endl;
         return false;
