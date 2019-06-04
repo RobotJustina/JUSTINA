@@ -13,6 +13,7 @@ ros::ServiceClient JustinaHRI::cltSprStatus;
 ros::ServiceClient JustinaHRI::cltSprGrammar;
 ros::ServiceClient JustinaHRI::cltSRoiTrack;
 ros::ServiceClient JustinaHRI::cltstopRoiTrack;
+ros::ServiceClient JustinaHRI::srvEnableSphinx;
 //ros::Subscriber JustinaHRI::subRoiTracker;
 
 //Members for operating human_follower node
@@ -74,6 +75,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
     cltSRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
     cltstopRoiTrack = nh->serviceClient<std_srvs::Empty>("/vision/roi_tracker/stop_track_inFront");
+    srvEnableSphinx = nh->serviceClient<knowledge_msgs::sphinxConf>("/pocketsphinx/enable_speech_reco");
     
     pubHybridFollow = nh->advertise<std_msgs::Bool>("/hri/hybrid_following/start_follow", 1);
 
@@ -230,9 +232,15 @@ void JustinaHRI::enableSpeechRecognized(bool enable){
         cltSprStatus.call(srv);
     }
     else{
-        std_msgs::Bool msg;
-        msg.data = enable;
-        pubEnableSpeechPocketSphinx.publish(msg);
+        knowledge_msgs::sphinxConf sp_srv;
+        if(enable)
+            sp_srv.request.flag = true;
+        else
+            sp_srv.request.flag = false;
+        //std_msgs::Bool msg;
+        //msg.data = enable;
+        //pubEnableSpeechPocketSphinx.publish(msg);
+        srvEnableSphinx.call(sp_srv);
     }
 }
     

@@ -84,6 +84,7 @@ ros::ServiceClient srvCltAnswer;
 ros::ServiceClient srvCltAskName;
 ros::ServiceClient srvCltAskIncomplete;
 ros::ServiceClient srvCltQueryKDB;
+ros::ServiceClient srvEnableSphinx;
 
 template <typename T>
 std::pair<bool, int> findInVector( std::vector<T> & vecOfElements, const T & element){
@@ -317,7 +318,7 @@ void callbackCmdConfirmation(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Do you want me " << to_spech;
+		ss << "Do you want me " << to_spech << ", say justina yes or justina no";
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
@@ -2110,6 +2111,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
     }
     else{
         responseMsg.successful = false;
+        responseMsg.params = "conf";
 		JustinaNavigation::moveDistAngle(0, 1.57, 10000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
     }
@@ -3801,6 +3803,7 @@ int main(int argc, char **argv) {
 	srvCltAskName = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_name");
 	srvCltAskIncomplete = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_incomplete");
 	srvCltQueryKDB = n.serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB");
+	srvEnableSphinx = n.serviceClient<knowledge_msgs::sphinxConf>("/pocketsphinx/enable_speech_reco");
 
 	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1, callbackCmdSpeech);
 	ros::Subscriber subCmdInterpret = n.subscribe("/planning_clips/cmd_int", 1, callbackCmdInterpret);
@@ -3911,7 +3914,12 @@ int main(int argc, char **argv) {
         sphinx_grammars[12] = "description_hight";
         sphinx_grammars[13] = "description_gender";*/
 
-
+        if(!poket_reco){
+            knowledge_msgs::sphinxConf sp_srv;
+            sp_srv.request.flag = false;
+            srvEnableSphinx.call(sp_srv);
+        }
+    
 	while (ros::ok()) {
 
 		switch (state) {
@@ -3964,27 +3972,27 @@ int main(int argc, char **argv) {
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 					std::cout << "GPSRTest.->Third try to move" << std::endl;
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
-						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
-						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
+						//JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+						//JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
 						JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 						state = SM_SEND_INIT_CLIPS;
 					}
 				} else {
-					JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
-					JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
+					//JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+					//JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
 					JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 					state = SM_SEND_INIT_CLIPS;
 				}
 			} else {
-				JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
-				JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
+				//JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+				//JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
 				JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
 		case SM_INIT_SPEECH:
-			JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
-			JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
+			//JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+			//JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
 			JustinaHRI::waitAfterSay("I am ready for recieve a command", 10000);
 			state = SM_SEND_INIT_CLIPS;
 		break;

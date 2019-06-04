@@ -16,6 +16,7 @@
 #include "hri_msgs/RecognizedSpeech.h"
 #include "hri_msgs/SphinxSetFile.h"
 #include "hri_msgs/SphinxSetSearch.h"
+#include "knowledge_msgs/sphinxConf.h"
 
 class JustinaHRI
 {
@@ -32,6 +33,7 @@ private:
     static ros::ServiceClient cltSprGrammar;
     static ros::ServiceClient cltSRoiTrack;
     static ros::ServiceClient cltstopRoiTrack;
+    static ros::ServiceClient srvEnableSphinx;
     //Members for operating human_follower node
     static ros::Publisher pubHybridFollow;
     static ros::Publisher pubFollowStartStop;

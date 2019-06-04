@@ -33,7 +33,8 @@ add_service_files(
   IsPointInKnownArea.srv
   GetVisitLocationsPath.srv
   GetRoomOfPoint.srv
-  kdbFilePath.srv 
+  kdbFilePath.srv
+  sphinxConf.srv 
 )
 
 add_message_files(
