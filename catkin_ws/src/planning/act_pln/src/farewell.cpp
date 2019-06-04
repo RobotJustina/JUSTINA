@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 					} 
 				}
                 //JustinaHRI::waitAfterSay("I'm ready for the farewell test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
-                //JustinaHRI::enableSpeechRecognized(true);
+                JustinaHRI::enableSpeechRecognized(false);
                 JustinaVision::startSkeletonFinding();
                 nextState = SM_SEARCH_WAVING;
                 break;
@@ -275,7 +275,7 @@ int main(int argc, char** argv)
                 attemptsSpeechInt = 0;
 
 
-                switchSpeechReco(true, GRAMMAR_POCKET_COMMANDS, GRAMMAR_COMMANDS, "Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no");
+                switchSpeechReco(true, grammarCommandsID, GRAMMAR_COMMANDS, "Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no");
                 
 
                 
