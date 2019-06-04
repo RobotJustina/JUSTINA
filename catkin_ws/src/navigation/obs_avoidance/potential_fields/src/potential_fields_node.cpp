@@ -53,7 +53,7 @@ int main(int argc, char ** argv){
                 poseRepulsiveForces.poses[i].position.x = 0.0;
                 poseRepulsiveForces.poses[i].position.y = 0.0;
                 //if(laserScan.ranges[i] > 0.2 && laserScan.ranges[i] < distanceMin){
-                if(laserScan.ranges[i] > 0.08 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 && angle <= M_PI_2){
+                if(laserScan.ranges[i] > 0.08 && laserScan.ranges[i] < distanceMin && angle >= -M_PI_2 - 0.52 && angle <= M_PI_2 + 0.52){
                     poseRepulsiveForces.poses[i].position.x = laserScan.ranges[i] * cos(laserScan.angle_min + ( i * laserScan.angle_increment));
                     poseRepulsiveForces.poses[i].position.y = laserScan.ranges[i] * sin(laserScan.angle_min + ( i * laserScan.angle_increment));
                     float sRep = 1.0 / laserScan.ranges[i] - 1.0 / distanceMin;
