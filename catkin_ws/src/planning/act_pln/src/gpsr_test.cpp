@@ -107,7 +107,7 @@ void switchSpeechReco(int grammar_id, std::string speech){
     if (poket_reco){
         //use pocket sphinx
         //JustinaHRI::usePocketSphinx = true;
-        JustinaHRI::enableGrammarSpeechRecognized(sphinx_grammars[grammar_id], 2.0);
+        JustinaHRI::enableGrammarSpeechRecognized(sphinx_grammars[grammar_id], 5.0);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         JustinaHRI::enableSpeechRecognized(false);
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
