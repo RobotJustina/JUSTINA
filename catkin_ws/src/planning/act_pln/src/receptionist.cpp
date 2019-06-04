@@ -822,19 +822,25 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_OFFER_EMPTY_SEAT: Offer empty seat" << std::endl;
                 ss.str("");
                 ss << names[names.size() - 1] << ", could you sit in this place, please";
-                JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
+                //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
+                
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
+
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 JustinaManip::waitForLaGoalReached(4000);
+
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
                 ss.str("");
-                ss << names[names.size() - 1] << ", Please, look at me";
-                JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
+                ss << names[names.size() - 1] << "Please, look at me";
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                
+                //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
 
 
                 //JustinaManip::startLaGoTo("home");
