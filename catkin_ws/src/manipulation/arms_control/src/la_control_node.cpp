@@ -14,7 +14,9 @@
 std::vector<float> global_goal_angular ;
 std::vector<float> goal_cartesian_pose ;
 std::vector<float> current_angular_pose;
+std::vector<float> current_angular_speed; //--------
 bool new_global_goal = false;
+
 
 void callback_la_goto_angles(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
@@ -51,6 +53,7 @@ bool get_speed_profiles(ros::ServiceClient& clt, std::vector<std::vector<float> 
     {
         srv.request.p0 = current_angular_pose[i];
         srv.request.pf = global_goal_angular [i];
+        srv.request.w0 = current_angular_speed[i];//-------
         if(clt.call(srv))
         {
             positions[i] = srv.response.positions.data;
@@ -100,6 +103,7 @@ int main(int argc, char** argv)
                 new_global_goal = false;
                 time_k = 0;
                 msg_la_goal_pose.data.resize(14);
+
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else
@@ -107,20 +111,31 @@ int main(int argc, char** argv)
             }
             break;
         case SM_SENDING_PROFILES:
-            for(int i=0; i < 7; i++)
-            {
-                msg_la_goal_pose.data[i  ] = profile_positions[i][time_k];
-                msg_la_goal_pose.data[i+7] = profile_speeds   [i][time_k];
-            }
-            pub_la_goal_pose.publish(msg_la_goal_pose);
-            if(time_k++ >= profile_positions[0].size())
-            {
-            	msg_la_goal_pose .data.resize(7);
-            	for(int i=0; i < 7; i++)
-            		msg_la_goal_pose.data[i] = profile_positions[i][profile_positions[i].size()-1];
-            	pub_la_goal_pose.publish(msg_la_goal_pose);	
-                state = SM_WAIT_FOR_GOAL_REACHED;
-            }
+            if(new_global_goal == false)  //----------
+            {                             //---------- 
+                for(int i=0; i < 7; i++)
+                {
+                    msg_la_goal_pose.data[i  ] = profile_positions[i][time_k];
+                    msg_la_goal_pose.data[i+7] = profile_speeds   [i][time_k];
+                    current_angular_speed[i] = profile_speeds[i][time_k];//----------
+                }
+                pub_la_goal_pose.publish(msg_la_goal_pose);
+                if(time_k++ >= profile_positions[0].size())
+                {
+                	msg_la_goal_pose .data.resize(7);
+                	for(int i=0; i < 7; i++)
+                		msg_la_goal_pose.data[i] = profile_positions[i][profile_positions[i].size()-1];
+                	pub_la_goal_pose.publish(msg_la_goal_pose);	
+                    state = SM_WAIT_FOR_GOAL_REACHED;
+                }
+                //break;
+            }                  //-----------
+            else               //----------- 
+            {                  //-----------   
+                new_global_goal = true; //----------
+                state = SM_WAIT_FOR_NEW_POSE;//---------
+
+            }                  //-----------
             break;
         case SM_WAIT_FOR_GOAL_REACHED:
             msg_la_goal_reached.data = true;
