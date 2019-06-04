@@ -946,6 +946,7 @@ int main(int argc, char **argv) {
                 JustinaHRI::loadGrammarSpeechRecognized("confirmation", "/grammars/pre_sydney/commands.jsgf");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
+                JustinaVision::loadObjectCat("drinks");
 				state = SM_SCRIPT;
 			}
 			break;
