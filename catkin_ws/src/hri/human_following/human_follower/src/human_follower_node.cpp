@@ -35,17 +35,16 @@ bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
 {
     //Control constants
-    //float alpha = 0.6548;
-    float alpha =1.2;//= 0.9;
+    float alpha =0.9;// 0.6548 ;//= 0.9; // = 1.2
     float beta = 0.3;
-    float max_angular = 0.8;//0.7
+    float max_angular = 0.7;//0.7 // 0.8
 
     //Error calculation
     float angle_error = atan2(goal_y, goal_x);
     float distance    = sqrt(goal_x*goal_x + goal_y*goal_y);
     distance -= 0.7;
     if(distance <   0) distance = 0; //Robot will stop at 0.8 m from walker
-    if(distance > 0.35) distance = 0.35; //Distance is used as speed, so, robot will move at 0.5 max
+    if(distance > 0.25) distance = 0.25; //Distance is used as speed, so, robot will move at 0.5 max
     geometry_msgs::Twist result;
     if(distance > 0)
     {
