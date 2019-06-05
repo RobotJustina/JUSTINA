@@ -386,9 +386,10 @@ int main(int argc, char **argv){
                     if(attemptsSpeechInt < MAX_ATTEMPTS_SPEECH_INT){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName)
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
                         else
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                            //JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
                         attemptsSpeechInt++;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
@@ -569,7 +570,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_MEMORIZING_OPERATOR: Memorizing operator." << std::endl;
                 if(attemptsMemorizing < MAX_ATTEMPTS_MEMORIZING){
                     JustinaManip::hdGoTo(0, 0, 2000);
-                    JustinaHRI::waitAfterSay("Human, please put in front of me", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaHRI::waitAfterSay("please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::faceTrain(names[names.size() - 1], 4);
                     // TODO Get service of the face and gender
@@ -583,6 +584,8 @@ int main(int argc, char **argv){
 
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
+                JustinaHRI::waitAfterSay("I'm memorizing your face", 6000, MIN_DELAY_AFTER_SAY);
+                    
                 state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
                     memorizingOperators.push_back(true);
@@ -593,6 +596,9 @@ int main(int argc, char **argv){
             
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
+                ss.str("");
+                ss << "I will guide you to the " << recogLoc.str() ;
+                JustinaHRI::waitAfterSay(ss.srt(), 4000, MAX_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
@@ -830,9 +836,9 @@ int main(int argc, char **argv){
 
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
-                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 JustinaManip::waitForLaGoalReached(4000);
-
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
