@@ -597,7 +597,6 @@ int main(int argc, char **argv){
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
                 ss.str("");
-                ss << "I will guide you to the " << recogLoc ;
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MAX_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
@@ -829,6 +828,7 @@ int main(int argc, char **argv){
                 ss.str("");
                 ss << names[names.size() - 1] << ", could you sit in this place, please";
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
@@ -837,7 +837,7 @@ int main(int argc, char **argv){
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
                 JustinaManip::waitForLaGoalReached(4000);
-                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                
                 
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
@@ -862,7 +862,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
                 success = true;
-                for(int i = 0; i < names.size(); i++ )
+                for(int i = 0; i <= names.size(); i++ )
                     JustinaVision::facClearByID(names[i]);
                 break;
         }
