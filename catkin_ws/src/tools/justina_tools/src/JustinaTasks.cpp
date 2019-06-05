@@ -284,7 +284,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
     std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal << " lateral=" << movLateral << " and vertical=" << movVertical << std::endl;
     float lastRobotX, lastRobotY, lastRobotTheta;
-    JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
     JustinaNavigation::moveLateral(movLateral, 2000);
     JustinaNavigation::moveDist(movFrontal, 2000);
 
@@ -4729,7 +4730,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 
     std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal << " lateral=" << movLateral << " and vertical=" << movVertical << std::endl;
     float lastRobotX, lastRobotY, lastRobotTheta;
-    JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
     if (usingTorse)
         JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
     JustinaNavigation::moveLateral(movLateral, 3000);
@@ -5416,7 +5418,8 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
         std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal << " lateral=" << movLateral << " and vertical=" << movVertical << std::endl;
 
         float lastRobotX, lastRobotY, lastRobotTheta;
-        JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+        //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+        JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
         if (usingTorse)
             JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
         if(withLeftArm){
@@ -5441,6 +5444,7 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
             JustinaManip::waitForTorsoGoalReached(waitTime);
 
         float robotX, robotY, robotTheta;
+        //JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
         JustinaNavigation::getRobotPoseFromOdom(robotX, robotY, robotTheta);
         //Adjust the object position according to the new robot pose
         //I don't request again the object position due to the possibility of not recognizing it again
