@@ -597,8 +597,8 @@ int main(int argc, char **argv){
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
                 ss.str("");
-                ss << "I will guide you to the " << recogLoc.str() ;
-                JustinaHRI::waitAfterSay(ss.srt(), 4000, MAX_DELAY_AFTER_SAY);
+                ss << "I will guide you to the " << recogLoc ;
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MAX_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
