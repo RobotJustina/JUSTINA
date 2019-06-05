@@ -885,6 +885,7 @@ void callbackCmdFindObject(
 			JustinaHRI::waitAfterSay(ss.str(), 2500);
             JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
+            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
 			ss.str("");
 			if(withLeftOrRightArm)
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
@@ -1054,6 +1055,7 @@ void callbackCmdFindObject(
 			do{
                 JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
 				finishMotion = true;
                 //finishMotion = lateralMov(pos, advance, maxAdvance);
 			}while(!finishMotion && !success);
@@ -1949,11 +1951,12 @@ void callbackMoveActuator(
 	if(tokens[4] == "false")
 			armFlag = false;
 
-	//ss << "I try to grasp the " << tokens[0];
+	ss << "I'm going to grasp the " << tokens[0];
 	//JustinaHRI::waitAfterSay(ss.str(), 10000);
 	
 	//success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
     JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
     success = success && JustinaTasks::graspObject(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
