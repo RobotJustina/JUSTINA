@@ -221,6 +221,7 @@ void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	if (!runSMCLIPS)
 		success = false;
+    JustinaManip::hdGoTo(0, 0.0, 5000);
 
 	success = success
 			& ros::service::waitForService("/planning_clips/wait_command",
