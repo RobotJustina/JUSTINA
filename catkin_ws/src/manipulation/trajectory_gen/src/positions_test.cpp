@@ -11,12 +11,26 @@ int main(int argc, char **argv)
 
     ros::Publisher pubPoses = n.advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1000);
     std_msgs::Float32MultiArray poses_msg;
-    ros::Rate loop(0.33);
+    ros::Rate loop(1);
 
     while(ros::ok())
     {
     	poses_msg.data.resize(7);
-    	//navigation -1.40    0.0    0.0    2.07    0.0    0.9   0.0
+
+    	//home 0.0    0.0    0.0    0.0     0.0    0.0  1.5707
+    	poses_msg.data[0] = 0.0;
+		poses_msg.data[1] = 0.0;
+    	poses_msg.data[2] = 0.0;
+		poses_msg.data[3] = 0.0;
+    	poses_msg.data[4] = 0.0;
+		poses_msg.data[5] = 0.0;
+    	poses_msg.data[6] = 1.5707;
+   		pubPoses.publish(poses_msg);
+    	loop.sleep();
+    	ros::spinOnce();
+
+
+        //navigation -1.40    0.0    0.0    2.07    0.0    0.9   0.0
     	poses_msg.data[0] = -1.4;
 		poses_msg.data[1] = 0.0;
     	poses_msg.data[2] = 0.0;

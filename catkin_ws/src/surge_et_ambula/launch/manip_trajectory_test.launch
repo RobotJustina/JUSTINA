@@ -14,7 +14,7 @@
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
 	<arg name="calculate_diagonal_paths" default="false"/>
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xacro" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
