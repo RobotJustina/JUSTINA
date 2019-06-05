@@ -886,7 +886,8 @@ void callbackCmdFindObject(
 			JustinaHRI::waitAfterSay(ss.str(), 2500);
             JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
-            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
+            if(!success)
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
 			ss.str("");
 			if(withLeftOrRightArm)
 				ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left only_find";
