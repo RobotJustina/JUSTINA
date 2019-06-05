@@ -1793,7 +1793,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	std::string name;
 	responseMsg.successful = 0;
 
-    JustinaHRI::waitAfterSay("I have incomplete information, I need your help please");    
+    JustinaHRI::waitAfterSay("I have incomplete information, I need your help please", 10000);    
 	ss.str("");
 	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
