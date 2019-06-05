@@ -2,12 +2,12 @@
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/String.h"
 #include "geometry_msgs/Pose.h"
-#include "manip_msgs/SpeedProfile.h"
 #include "std_msgs/Bool.h"
+#include "manip_msgs/SpeedProfile.h"
 #include "ros/ros.h"
 
 #define SAMPLING_FREQ 50
-#define SM_WAIT_FOR_NEW_POSE     0
+#define SM_WAIT_FOR_NEW_POSE      0
 #define SM_SENDING_PROFILES      10
 #define SM_WAIT_FOR_GOAL_REACHED 20
 
@@ -82,7 +82,6 @@ int main(int argc, char** argv)
     ros::Subscriber    sub_go_to_angles  = n.subscribe("/manipulation/manip_pln/la_goto_angles", 1, callback_la_goto_angles);
     ros::Subscriber    sub_la_current    = n.subscribe("/hardware/left_arm/current_pose", 1, callback_la_current_pose);
     ros::Publisher     pub_la_goal_pose  = n.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
-//    ros::Publisher     pub_la_current_speed = n.advertise<std_msgs::Float32MultiArray>("/test/current_speed",1000); //-----------------X
     ros::Publisher  pub_la_goal_reached  = n.advertise<std_msgs::Bool>("/manipulation/la_goal_reached", 1000);    
     ros::ServiceClient clt_speed_profile = n.serviceClient<manip_msgs::SpeedProfile>("/manipulation/get_speed_profile");
     ros::Rate loop(SAMPLING_FREQ);
@@ -92,7 +91,6 @@ int main(int argc, char** argv)
     std::vector<std::vector<float> > profile_positions  ;
     std::vector<std::vector<float> > profile_speeds     ;
     std_msgs::Float32MultiArray      msg_la_goal_pose   ;
-//    std_msgs::Float32MultiArray      msg_la_current_speed;//--------------X
     std_msgs::Bool                   msg_la_goal_reached;
 
     while(ros::ok())
@@ -119,10 +117,8 @@ int main(int argc, char** argv)
                     msg_la_goal_pose.data[i  ] = profile_positions[i][time_k];
                     msg_la_goal_pose.data[i+7] = profile_speeds   [i][time_k];
                     current_angular_speed[i] = profile_speeds[i][time_k];//----------
-      //              msg_la_current_speed.data[i]  = profile_speeds[i][time_k]; //----------X
                 }
                 pub_la_goal_pose.publish(msg_la_goal_pose);
-    //            pub_la_current_speed.publish(msg_la_current_speed);//-----------X
                 if(time_k++ >= profile_positions[0].size())
                 {
                 	msg_la_goal_pose .data.resize(7);
@@ -131,7 +127,6 @@ int main(int argc, char** argv)
                 	pub_la_goal_pose.publish(msg_la_goal_pose);	
                     state = SM_WAIT_FOR_GOAL_REACHED;
                 }
-                //break;
             }                  //-----------
             else               //----------- 
                 state = SM_WAIT_FOR_NEW_POSE;//---------

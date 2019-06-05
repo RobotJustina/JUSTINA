@@ -16,6 +16,7 @@ using namespace ros;
 
 vector<float> global_goal_angular ;
 vector<float> current_angular_pose;
+std::vector<float> current_angular_speed (7); //--------
 bool new_global_goal = false;
 
 
@@ -53,6 +54,7 @@ bool get_speed_profile(ServiceClient& clt, vector<vector<float> >& positions, ve
     {
     	srv.request.p0 = current_angular_pose[i];
     	srv.request.pf = global_goal_angular [i];
+//        srv.request.w0 = current_angular_speed[i];//-------
     	if(clt.call(srv))
     	{
     		positions[i] = srv.response.positions.data;
@@ -111,21 +113,26 @@ int main(int argc, char** argv)
     			}
 				break;    			
     		case SM_SENDING_PROFILES:
-    			for(int i = 0 ; i < 7 ; i++)
-    			{
-    				msg_ra_goal_pose.data[i  ] = profile_positions[i][time_k];
-    				msg_ra_goal_pose.data[i+7] = profile_speeds   [i][time_k];
-    			}
-    			pub_ra_goal_pose.publish(msg_ra_goal_pose);
-    			if(time_k++ >= profile_positions[0].size())
-    			{
-    				msg_ra_goal_pose.data.resize(7);
-    				for(int i = 0 ; i < 7 ; i++)    				
-    					msg_ra_goal_pose.data[i] = profile_positions[i][profile_positions[i].size()-1];
-    				pub_ra_goal_pose.publish(msg_ra_goal_pose);
-    				state = SM_WAIT_FOR_GOAL_REACHED;
-    				
-    			}
+                if(new_global_goal == false)  //----------
+                {                             //----------             
+        			for(int i = 0 ; i < 7 ; i++)
+        			{
+        				msg_ra_goal_pose.data[i  ] = profile_positions[i][time_k];
+        				msg_ra_goal_pose.data[i+7] = profile_speeds   [i][time_k];
+        			}
+        			pub_ra_goal_pose.publish(msg_ra_goal_pose);
+        			if(time_k++ >= profile_positions[0].size())
+        			{
+        				msg_ra_goal_pose.data.resize(7);
+        				for(int i = 0 ; i < 7 ; i++)    				
+        					msg_ra_goal_pose.data[i] = profile_positions[i][profile_positions[i].size()-1];
+        				pub_ra_goal_pose.publish(msg_ra_goal_pose);
+        				state = SM_WAIT_FOR_GOAL_REACHED;
+        				
+        			}
+                }                  //-----------
+                else               //----------- 
+                    state = SM_WAIT_FOR_NEW_POSE;//---------
     			break;
     		case SM_WAIT_FOR_GOAL_REACHED:
     		    msg_ra_goal_reached.data = true;
