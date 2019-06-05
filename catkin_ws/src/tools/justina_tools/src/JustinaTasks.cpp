@@ -5373,8 +5373,8 @@ bool JustinaTasks::graspObjectFromHand(geometry_msgs::Point face_centroid, std::
         bool usingTorse = true;
         armGoalX = nGesture(0, 0) - 0.10;
         armGoalY = nGesture(1, 0);
-        //armGoalZ = nGesture(2, 0) - 0.15;
-        armGoalZ = nGesture(2, 0);
+        armGoalZ = nGesture(2, 0) - 0.15;
+        //armGoalZ = nGesture(2, 0);
         
 
         JustinaHRI::waitAfterSay("wait, i will move my hand to the take the bag ", 4000, 0);
@@ -6227,9 +6227,8 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
     JustinaManip::waitForHdGoalReached(5000);
 
     std::vector<Eigen::Vector3d> centroids;
-    bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4,
-            M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8.0, centroids,
-            location);
+    //bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8.0, centroids, location);
+    bool recog = JustinaTasks::turnAndRecognizeYolo(ids, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0.0, 0.0, 0.0, M_PI_2, 2 * M_PI, 8.0, centroids, location);
 
     if (!recog)
         return false;
