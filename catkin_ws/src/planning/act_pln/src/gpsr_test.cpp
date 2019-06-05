@@ -2995,6 +2995,7 @@ void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 
     if(tokens[0] == "person"){
             std::cout << "Introduce to person" << std::endl;
+            switchSpeechReco(0, "");
             JustinaTasks::introduceTwoPeople(tokens[1], "def_loc", tokens[2], tokens[3], false);
     }
     else if (tokens[0] == "people"){
@@ -3364,7 +3365,7 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 		JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-		JustinaTasks::guideAPerson("afuera", 300000, 1.5);
+		JustinaTasks::guideAPerson("exitdoor", 300000, 1.5);
 
 		JustinaHRI::say("wait here with me I am looking for the taxi driver");
 		ros::Duration(1.0).sleep();
