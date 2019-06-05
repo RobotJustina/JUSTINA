@@ -3166,6 +3166,8 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
     std::vector<std::string> tokens;
     bool hokuyoRear;
     bool success = false;
+    float robot_x, robot_y, robot_a;
+    float goal_x, goal_y, goal_a;
     ros::Rate rate(10);
     std_msgs::String msg;
 
@@ -3185,6 +3187,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                         boost::algorithm::is_any_of("_"));
                 for (int i = 0; i < tokens.size(); i++)
                     ss << tokens[i] << " ";
+                JustinaKnowledge::getKnownLocation(loc, goal_x, goal_y, goal_a);
                 JustinaHRI::waitAfterSay(ss.str(), 4000);
                 nextState = SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 break;
@@ -3212,13 +3215,17 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                     float legX, legY, legZ;
                     float legWX, legWY, legWZ;
                     JustinaHRI::getLatestLegsPosesRear(legX, legY);
-                    hokuyoRear = JustinaHRI::rearLegsFound();
-                    if (!hokuyoRear)
-                        nextState = SM_GUIDING_STOP;
-                    else {
-                        float distance = sqrt(legX * legX + legY * legY);
-                        if (distance > thr)
-                            nextState = SM_HUMAN_MOVES_AWAY;
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    float dis = sqrt(pow(goal_x - robot_x, 2) +  pow(goal_y - robot_y, 2));
+                    if(dis > 0.7){
+                        hokuyoRear = JustinaHRI::rearLegsFound();
+                        if (!hokuyoRear)
+                            nextState = SM_GUIDING_STOP;
+                        else {
+                            float distance = sqrt(legX * legX + legY * legY);
+                            if (distance > thr)
+                                nextState = SM_HUMAN_MOVES_AWAY;
+                        }
                     }
                     if (JustinaNavigation::isGlobalGoalReached())
                         nextState = SM_GUIDING_FINISHED;
