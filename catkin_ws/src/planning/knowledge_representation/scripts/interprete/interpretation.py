@@ -2589,6 +2589,13 @@ meaning_mapping_patterns_receptionist = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+        #Only the name
+	{"params": ["Person_name"],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (params name -Person_name-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
         #My favorite drink is
         #is
 	{"params": ["Receptionist_drink", "Favorite_drink"],
@@ -2597,7 +2604,14 @@ meaning_mapping_patterns_receptionist = [
 	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
+	"planner_not_confirmed": ''},
+        #Only the drink
+	{"params": ["Favorite_drink"],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
         ]
 
 meaning_mapping_patterns_servingdrinks = [

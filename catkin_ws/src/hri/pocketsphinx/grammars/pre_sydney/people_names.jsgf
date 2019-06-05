@@ -1,5 +1,6 @@
 #JSGF V1.0;
 grammar people_names;
 public <command> = <responsename>;
-<responsename> = (MY NAME IS | I AM | I'M) <name>;
-<name> = (ALEX | CHARLIE | ELIZABETH | FRANCIS | JENNIFER | LINDA | MARY | PATRICIA | ROBIN | SKYLER | JAMES | JOHN | MICHAEL | ROBERT | ROBIN | WILLIAM);
+<responsename> = <commandsName> <names>;
+<commandsName> = [MY NAME IS | I AM | I'M];
+<names> = (ALEX | CHARLIE | ELIZABETH | FRANCIS | JENNIFER | LINDA | MARY | PATRICIA | ROBIN | SKYLER | JAMES | JOHN | MICHAEL | ROBERT | ROBIN | WILLIAM);
