@@ -1792,7 +1792,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	std::string lastReco;
 	std::string name;
 	responseMsg.successful = 0;
-	
+
+    JustinaHRI::waitAfterSay("I have incomplete information, I need your help please");    
 	ss.str("");
 	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
@@ -1850,7 +1851,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			else if(tokens[0] == "object")
 				ss << "well i try to find the " << name << " in its default location";
 			else if(tokens[0] == "place_destiny")
-				ss << "well i will guide you to the " << name;
+				ss << "well i will guide her to the " << name;
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			ss.str("");
 			ss << msg->params << " " << name;
