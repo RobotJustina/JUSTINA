@@ -429,9 +429,9 @@ int main(int argc, char **argv){
                     if(attemptsSpeechReco < MAX_ATTEMPTS_SPEECH_RECO){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName)
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
                         else
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
                         attemptsSpeechReco++;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
@@ -597,7 +597,12 @@ int main(int argc, char **argv){
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
                 ss.str("");
+<<<<<<< HEAD
+                ss << "I will guide you to the " << recogLoc ;
+                JustinaHRI::waitAfterSay(ss.srt(), 4000, MAX_DELAY_AFTER_SAY);
+=======
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MAX_DELAY_AFTER_SAY);
+>>>>>>> 0fd7e1de03c1a8e3f00d7e78db4f0bd561b6d534
                 JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
@@ -861,13 +866,16 @@ int main(int argc, char **argv){
             case SM_FINISH_TEST:
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
+                
                 success = true;
+                
                 for(int i = 0; i < names.size(); i++ )
                 {
                     
                     std::cout << test << names[i] << std::endl;
                     JustinaVision::facClearByID(names[i]);
                 }
+
                 break;
         }
 
