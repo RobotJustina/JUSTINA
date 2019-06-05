@@ -829,7 +829,7 @@ int main(int argc, char **argv){
                 ss << names[names.size() - 1] << ", could you sit in this place, please";
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
-                
+
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
                 JustinaManip::waitForLaGoalReached(2000);
@@ -862,8 +862,12 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
                 success = true;
-                for(int i = 0; i <= names.size(); i++ )
+                for(int i = 0; i < names.size(); i++ )
+                {
+                    
+                    std::cout << test << names[i] << std::endl;
                     JustinaVision::facClearByID(names[i]);
+                }
                 break;
         }
 
