@@ -345,7 +345,7 @@ void callbackCmdFindObject(
                     angleHead = 2 * M_PI + angleHead;
                 if(angleHead > M_PI)
                     angleHead = 2 * M_PI - angleHead;
-                JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.53 + torsoSpine), dist_to_head));
                 centroids_loc.erase(centroids_loc.begin());
                 success = true;
             }
