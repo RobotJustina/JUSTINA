@@ -10,7 +10,7 @@ from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
 import pyaudio
 
-from std_msgs.msg import String, Bool 
+from std_msgs.msg import String, Bool, Empty 
 from std_srvs.srv import *
 from hri_msgs.msg import SphinxSetFile, SphinxSetSearch
 from hri_msgs.msg import RecognizedSpeech
@@ -30,20 +30,29 @@ class recognizer(object):
 
     def callbackSetSearch(self, data):
         print "SET the SEARCH TYPE"
-        self.decoder.end_utt()
-        self.decoder.set_search(data.data)
-        self.decoder.start_utt()
+        if data.data != self.decoder.get_search():
+            self.decoder.end_utt()
+            self.decoder.set_search(data.data)
+            self.decoder.start_utt()
+        else:
+            print data.data + " IS THE CURENT SEARCH"
 
     def callbackSetSearchAndTime(self, data):
         print "Set SEARCH TYPE and TIME of recognition"
         global reco_time
-        if self.enable_mic:
-            self.decoder.end_utt()
-        self.decoder.set_search(data.search_id)
-        reco_time = rospy.Duration.from_sec(data.recognitionTime)
-        self.decoder.start_utt()
-        self.enable_mic = True
+        if data.search_id != self.decoder.get_search():
+            if self.enable_mic:
+                self.decoder.end_utt()
+            self.decoder.set_search(data.search_id)
+            reco_time = rospy.Duration.from_sec(data.recognitionTime)
+            self.decoder.start_utt()
+            self.enable_mic = True
+        else:
+            print data.search_id + " IS THE CURENT SEARCH"
 
+    def callbackGetSearch(self, data):
+        print "Get current search"
+        print self.decoder.get_search()
 
     def callbackSetMic(self, data):
         if self.enable_mic == data.data:
@@ -85,6 +94,7 @@ class recognizer(object):
         rospy.Subscriber("/pocketsphinx/set_jsgf", SphinxSetFile, self.callbackSetJsgf)
         rospy.Subscriber("/pocketsphinx/set_search", SphinxSetSearch, self.callbackSetSearchAndTime)
         rospy.Subscriber("/pocketsphinx/mic", Bool, self.callbackSetMic)
+        rospy.Subscriber("/pocketsphinx/get_search", Bool, self.callbackGetSearch)
     
         rospy.Service('/pocketsphinx/enable_speech_reco', sphinxConf, self.enableSpeechReco)
 
