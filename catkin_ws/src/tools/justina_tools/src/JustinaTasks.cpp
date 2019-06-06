@@ -3172,9 +3172,10 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
     ros::Rate rate(10);
     std_msgs::String msg;
 
-    boost::posix_time::ptime prev =
-        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
+    boost::posix_time::ptime initLost;
+    boost::posix_time::ptime currLost;
 
     while (ros::ok() && !success
             && ((curr - prev).total_milliseconds() < timeout || timeout == 0)) {
@@ -3211,8 +3212,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                 break;
             case SM_GUIDING_PHASE:
                 std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
-                if (!JustinaTasks::tasksStop()
-                        && !JustinaNavigation::getStopWaitGlobalGoalReached()) {
+                if (!JustinaTasks::tasksStop() && !JustinaNavigation::getStopWaitGlobalGoalReached()) {
                     float legX, legY, legZ;
                     float legWX, legWY, legWZ;
                     JustinaHRI::getLatestLegsPosesRear(legX, legY);
@@ -3220,9 +3220,10 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                     float dis = sqrt(pow(goal_x - robot_x, 2) +  pow(goal_y - robot_y, 2));
                     if(dis > 0.7){
                         hokuyoRear = JustinaHRI::rearLegsFound();
-                        if (!hokuyoRear)
+                        if (!hokuyoRear){
+                            initLost = boost::posix_time::second_clock::local_time(); 
                             nextState = SM_GUIDING_STOP;
-                        else {
+                        }else {
                             float distance = sqrt(legX * legX + legY * legY);
                             if (distance > thr)
                                 nextState = SM_HUMAN_MOVES_AWAY;
@@ -3234,15 +3235,10 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                         bool isInRestrictedArea = false;
                         std::stringstream ss;
                         legZ = 0;
-                        JustinaTools::transformPoint("/base_link", legX, legY, legZ,
-                                "/map", legWX, legWY, legWZ);
-                        for (int i = 0;
-                                i < zonesNotAllowed.size() && !isInRestrictedArea;
-                                i++) {
-                            if (JustinaKnowledge::isPointInKnownArea(legWX, legWY,
-                                        zonesNotAllowed[i])) {
-                                ss << "The visitor was in " << zonesNotAllowed[i]
-                                    << " and is an area not allowed";
+                        JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
+                        for (int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++) {
+                            if (JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])) {
+                                ss << "The visitor was in " << zonesNotAllowed[i] << " and is an area not allowed";
                                 isInRestrictedArea = true;
                             }
                         }
@@ -3259,11 +3255,16 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                 break;
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-                JustinaHardware::stopRobot();
-                ros::spinOnce();
-                JustinaHRI::waitAfterSay("I lost you", 1500);
-                JustinaHRI::enableLegFinderRear(false);
-                nextState = SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+                currLost = boost::posix_time::second_clock::local_time();
+                if((currLost - initLost).total_milliseconds() < 1500)
+                    nextState = SM_GUIDING_PHASE;
+                else{
+                    JustinaHardware::stopRobot();
+                    ros::spinOnce();
+                    JustinaHRI::waitAfterSay("I lost you", 1500);
+                    JustinaHRI::enableLegFinderRear(false);
+                    nextState = SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+                }
                 break;
             case SM_HUMAN_MOVES_AWAY:
                 std::cout << "State machine: SM_HUMAN_MOVES_AWAY" << std::endl;
@@ -3281,9 +3282,10 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                 isInRestrictedArea = false;
                 JustinaHRI::getLatestLegsPosesRear(legX, legY);
                 hokuyoRear = JustinaHRI::rearLegsFound();
-                if (!hokuyoRear)
+                if (!hokuyoRear){
+                    initLost = boost::posix_time::second_clock::local_time(); 
                     nextState = SM_GUIDING_STOP;
-                else {
+                }else {
                     JustinaTools::transformPoint("/base_link", legX, legY, legZ,
                             "/map", legWX, legWY, legWZ);
                     for (int i = 0;
