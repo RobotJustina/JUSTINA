@@ -6439,6 +6439,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,
     int findPersonCount = 0;
     int findPersonAttemps = 0;
     int findPersonRestart = 0;
+    std::string lastReco;
 
     if(!first_location){
         nextState = SM_GUIDE_PERSON;
@@ -6510,16 +6511,17 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,
                     << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, "
                     << name;
 
-                JustinaHRI::usePocketSphinx = true;
-                //JustinaHRI::enableGrammarSpeechRecognized(
-                //        "grammars/pre_sydney/commands.jsgf", 2.0);
+                /*JustinaHRI::usePocketSphinx = true;
+                JustinaHRI::enableGrammarSpeechRecognized(
+                        "grammars/pre_sydney/commands.jsgf", 2.0);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
-                JustinaHRI::enableSpeechRecognized(true);
-                if (JustinaHRI::waitForSpecificSentence("justina yes", 15000)) {
-                    JustinaHRI::enableSpeechRecognized(false);
+                //JustinaHRI::enableSpeechRecognized(true);
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes" || lastReco == "justina yes"){
+                    //JustinaHRI::enableSpeechRecognized(false);
                     if (person == 1)
                         nextState = SM_GUIDE_PERSON;
                     else {
