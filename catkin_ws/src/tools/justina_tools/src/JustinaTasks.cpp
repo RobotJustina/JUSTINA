@@ -2438,19 +2438,19 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm,
         ss << "I am going to give you the " << id;
         JustinaHRI::waitAfterSay(ss.str(), 2000);
     }
-    JustinaHRI::waitAfterSay("please wait", 2000);
     JustinaManip::hdGoTo(0, -0.9, 5000);
 
     // If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
     if (!withLeftOrRightArm) {
-        JustinaManip::raGoTo("take", 10000);
+        JustinaManip::startRaGoTo("take");
         //This is for get gripper with the pose of servos
         //JustinaManip::getRightHandPosition(x, y, z);
     } else {
-        JustinaManip::laGoTo("take", 10000);
+        JustinaManip::startLaGoTo("take");
         //This is for get gripper with the pose of servos
         //JustinaManip::getLeftHandPosition(x, y, z);
     }
+    JustinaHRI::waitAfterSay("please wait to put your hand", 5000);
     if (JustinaVision::getGripperPos(gripperPose)) {
         x = gripperPose.x;
         y = gripperPose.y;
@@ -2463,7 +2463,7 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm,
     }
 
     JustinaVision::startHandFrontDetectBB(x, y, z);
-    JustinaHRI::waitAfterSay("please put your hand", 2000);
+    JustinaHRI::waitAfterSay("ok, please put your hand on top of my gripper", 5000);
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     //JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);

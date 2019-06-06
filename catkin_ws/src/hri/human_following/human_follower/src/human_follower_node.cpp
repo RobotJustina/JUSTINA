@@ -78,10 +78,18 @@ void callback_legs_pose(const geometry_msgs::PointStamped::ConstPtr& msg)
     pub_cmd_vel.publish(calculate_speeds(msg->point.x, msg->point.y));
     if(move_head)
     {
-        std_msgs::Float32MultiArray head_poses;
-        head_poses.data.push_back(atan2(msg->point.y, msg->point.x));
-        head_poses.data.push_back(-0.9);
-        pub_head_pose.publish(head_poses);
+        if(sqrt(msg->point.x * msg->point.x + msg->point.y * msg->point.y) > 0.25){
+            std_msgs::Float32MultiArray head_poses;
+            head_poses.data.push_back(atan2(msg->point.y, msg->point.x));
+            head_poses.data.push_back(-0.9);
+            pub_head_pose.publish(head_poses);
+        }
+        else{
+            std_msgs::Float32MultiArray head_poses;
+            head_poses.data.push_back(0.0);
+            head_poses.data.push_back(0.0);
+            pub_head_pose.publish(head_poses);
+        }
     }
 }
 
