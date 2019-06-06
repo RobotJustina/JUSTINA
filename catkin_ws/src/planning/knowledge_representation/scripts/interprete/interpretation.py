@@ -2633,11 +2633,25 @@ meaning_mapping_patterns_servingdrinks = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+	#Only the name
+	{"params": ["Person_name"],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
         #I want drink
 	{"params": ["Person", "Want", "Favorite_drink"],
 	"Person": [["i"], [], [], []],
 	"Want": [["want"], [], [], []],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "-Favorite_drink-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        #Only drink
+	{"params": ["Favorite_drink"],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "-Favorite_drink-",
 	"verbal_confirmation": '',
