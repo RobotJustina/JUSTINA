@@ -6505,14 +6505,14 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,
                     name = name1;
                 else
                     name = name2;
-
+                dialogue.str("");
                 dialogue
                     << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, "
                     << name;
 
                 JustinaHRI::usePocketSphinx = true;
-                JustinaHRI::enableGrammarSpeechRecognized(
-                        "grammars/pre_sydney/commands.jsgf", 2.0);
+                //JustinaHRI::enableGrammarSpeechRecognized(
+                //        "grammars/pre_sydney/commands.jsgf", 2.0);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));

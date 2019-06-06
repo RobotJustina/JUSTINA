@@ -2995,7 +2995,7 @@ void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 
     if(tokens[0] == "person"){
             std::cout << "Introduce to person" << std::endl;
-            switchSpeechReco(0, "");
+            //switchSpeechReco(0, "");
             JustinaTasks::introduceTwoPeople(tokens[1], "def_loc", tokens[2], tokens[3], false);
     }
     else if (tokens[0] == "people"){
