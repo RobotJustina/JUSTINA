@@ -170,15 +170,16 @@ int main(int argc, char **argv){
 
             case SM_NAVIGATE_TO_ENTRANCE_DOOR:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_ENTRANCE_DOOR: Navigate to the entrance door." << std::endl;
-                //JustinaHRI::insertAsyncSpeech("I will navigate to the entrance door", 4000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay("I will navigate to the entrance door", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("I will navigate to the entrance door", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("I will navigate to the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 if(!JustinaNavigation::getClose(entranceLoc, 80000))
                     JustinaNavigation::getClose(entranceLoc, 80000);
-                //JustinaHRI::insertAsyncSpeech("I have reached the entrance door", 4000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("I have reached the entrance door", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 if(doorOpenFlag)
                 {
-                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -199,13 +200,15 @@ int main(int argc, char **argv){
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
+                //JustinaHRI::waitAfterSay("John, I'm going to find you", 5000);
+                JustinaHRI::insertAsyncSpeech("John, I'm going to find you", 5000, ros::Time::now().sec, 10);
                 state = SM_FIND_TO_HOST;
                 break;
 
             case SM_SAY_OPEN_DOOR:
                 std::cout << test << ".-> State SM_SAY_OPEN_DOOR: Saying open the door." << std::endl;
-                //JustinaHRI::insertAsyncSpeech("Human, can you open the door please", 4000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::insertAsyncSpeech("Human, please open the door", 4000, ros::Time::now().sec, 10);
+                //JustinaHRI::waitAfterSay("Human, please open the door", 6000, MIN_DELAY_AFTER_SAY);
                 state = SM_WAIT_FOR_OPEN_DOOR;
                 break;
 
@@ -219,8 +222,8 @@ int main(int argc, char **argv){
                 */
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
-                    //JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
-                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -263,8 +266,8 @@ int main(int argc, char **argv){
                             angleHead = 2 * M_PI + angleHead;
                         if(angleHead > M_PI)
                             angleHead = 2 * M_PI - angleHead;
-                        JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
-                        //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                        //JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
+                        JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
                         recogName = true;
                         findPersonCount = 0;
                         findPersonAttemps = 0;
@@ -276,8 +279,8 @@ int main(int argc, char **argv){
                             findPersonCount = 0;
                             findPersonRestart = 0;
                             findPersonAttemps++;
-                            JustinaHRI::insertAsyncSpeech("Hello human, can you entrance in the house please", 6000, ros::Time::now().sec, 10);
-                            //JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                            JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                            //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                         }
                         else
                             findPersonRestart++;
@@ -571,7 +574,7 @@ int main(int argc, char **argv){
                 if(attemptsMemorizing < MAX_ATTEMPTS_MEMORIZING){
                     JustinaManip::hdGoTo(0, 0, 2000);
                     JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaHRI::waitAfterSay("please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("please not move, and look at me", 8000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::faceTrain(names[names.size() - 1], 4);
                     // TODO Get service of the face and gender
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
@@ -596,13 +599,14 @@ int main(int argc, char **argv){
             
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
-                ss.str("");
-
-                JustinaHRI::waitAfterSay(ss.str(), 4000, MAX_DELAY_AFTER_SAY);
+                //ss.str("");
+                //JustinaHRI::waitAfterSay(ss.str(), 4000, MAX_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson(recogLoc, 90000, 1.75);
                 attemptsMemorizing = 0;
                 findSeatCount = 0;
+                //JustinaHRI::waitAfterSay("I'm going to find a empty seat for you", 5000);
+                JustinaHRI::insertAsyncSpeech("I'm going to find a empty seat for you", 5000, ros::Time::now().sec, 10);
                 state = SM_FIND_EMPTY_SEAT;
                 break;
 
@@ -611,6 +615,8 @@ int main(int argc, char **argv){
                 theta = 0;
                 findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "kitchen");
                 if(findPerson){
+                    //JustinaHRI::waitAfterSay("John, I found you", 5000);
+                    JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
                     findPersonCount = 0;
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
@@ -629,6 +635,8 @@ int main(int argc, char **argv){
                     }
                     else
                         findPersonAttemps++;
+                    //JustinaHRI::waitAfterSay("John, I'm going to find you again", 5000);
+                    JustinaHRI::insertAsyncSpeech("John, I'm going to find you again", 5000, ros::Time::now().sec, 10);
                 }
                 
                 break;
@@ -788,6 +796,8 @@ int main(int argc, char **argv){
                     findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                     if(!findSeat){
                         findSeatCount++;
+                        //JustinaHRI::waitAfterSay("I'm going to find a empty seat for you again", 5000);
+                        JustinaHRI::insertAsyncSpeech("I'm going to find a empty seat for you again", 5000, ros::Time::now().sec, 10);
                         break;
                     }
                     centroid = centroids[0];
