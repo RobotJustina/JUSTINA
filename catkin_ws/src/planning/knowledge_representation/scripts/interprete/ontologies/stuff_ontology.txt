@@ -288,6 +288,7 @@
 (youngest			is_kind_of		property)
 (slimmest			is_kind_of		property)
 (fattest			is_kind_of		property)
+(largest			is_kind_of		property)
 
 ## outfit
 (t_shirt			is_kind_of		outfit)

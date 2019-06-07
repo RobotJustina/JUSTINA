@@ -713,12 +713,36 @@
 	(printout t "" ?s "")
 )
 
-(defrule get_height_value
+(defrule get_wide_value
 	?f <- (cmd_get_prop_value ?obj ?large&:(or (eq ?large largest) (eq ?large thinnest)) 1)
+	(item (name ?obj) (wide ?s))
+	=>
+	(retract ?f)
+	(printout t "" ?s "")
+)
+
+(defrule get_height_value
+	?f <- (cmd_get_prop_value ?obj tallest 1)
 	(item (name ?obj) (height ?s))
 	=>
 	(retract ?f)
 	(printout t "" ?s "")
+)
+
+(defrule compare_object_color 
+	?f <- (cmd_compare_color ?obj ?color 1)
+	(item (name ?obj) (color ?color))
+	=>
+	(retract ?f)
+	(printout t "true")
+)
+
+(defrule compare_object_color_false
+	?f <- (cmd_compare_color ?obj ?color 1)
+	(not (item (name ?obj) (color ?color)))
+	=>
+	(retract ?f)
+	(printout t "false")
 )
 ;;;;;;;
 (defrule get_speech
