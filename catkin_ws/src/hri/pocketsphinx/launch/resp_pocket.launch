@@ -1,16 +1,17 @@
 <launch>
+  <node name="respeaker_node" pkg="resp_test" type="respeaker_node.py"
+	output="screen"/>
 
-	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
-	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_guadalajara/8533.dic" />
+  <node name="static_transformer" pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 map respeaker_base 100"/>
+
+  	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/gpsr/6069.dic" />
 	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
-	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_guadalajara/receptionist_names.jsgf"/>
+	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_sydney/people_names.jsgf"/>
 	<arg name="_stream" value="_stream:=true" />
-	<arg name="_wavpath" value="_wavpath:=none" />
+	<arg name="_wavpath" value="_wavpath:=/home/juliobiorobotics/JUSTINA/catkin_ws/src/hri/pocketsphinx/scripts/stream.wav" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
 
-	<node name="recognizer_with_respeaker" pkg="pocketsphinx" type="recognizer_with_respeaker.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
-
-	<!-- doa from respeaker -->
-	<node name="doa_test" pkg="resp_test" type="resp_test_node.py" output="screen"/>
-
+	<node name="recognizer_with_audio_capture" pkg="pocketsphinx" type="recognizer_with_audio_capture.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
 </launch>
