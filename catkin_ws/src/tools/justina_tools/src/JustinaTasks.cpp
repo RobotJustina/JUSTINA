@@ -1494,6 +1494,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
     bool direction = false;
     bool taskStop = false;
 
+    centroid.clear();
     for (float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn += incAngleTurn) {
         for (float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn += incAngPan) {
             float currTil;
