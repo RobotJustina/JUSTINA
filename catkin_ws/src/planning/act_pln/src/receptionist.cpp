@@ -571,8 +571,8 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_MEMORIZING_OPERATOR: Memorizing operator." << std::endl;
                 if(attemptsMemorizing < MAX_ATTEMPTS_MEMORIZING){
                     JustinaManip::hdGoTo(0, 0, 2000);
-                    JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaHRI::waitAfterSay("please not move, and look at me", 8000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Human, please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::faceTrain(names[names.size() - 1], 4);
                     // TODO Get service of the face and gender
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
@@ -613,7 +613,7 @@ int main(int argc, char **argv){
                 theta = 0;
                 findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "kitchen");
                 if(findPerson){
-                    JustinaHRI::waitAfterSay("John, I found you", 5000);
+                    JustinaHRI::waitAfterSay("John, I found you", 3000);
                     //JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
                     findPersonCount = 0;
                     findPersonAttemps = 0;
@@ -791,6 +791,7 @@ int main(int argc, char **argv){
             case SM_FIND_EMPTY_SEAT:
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
+                    centroids.clear();
                     findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                     if(!findSeat){
                         findSeatCount++;
@@ -798,16 +799,18 @@ int main(int argc, char **argv){
                         //JustinaHRI::insertAsyncSpeech("I'm going to find a empty seat for you again", 5000, ros::Time::now().sec, 10);
                         break;
                     }
+
                     centroid = centroids[0];
-                    JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Please wait", 3000, MIN_DELAY_AFTER_SAY);
                     JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
                     JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                     goalx = gx_w;
                     goaly = gy_w;
                     guest_z = gz_w;
-
-                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
+                    std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
+                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.6, 30000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
@@ -837,20 +840,20 @@ int main(int argc, char **argv){
                 ss.str("");
                 ss << names[names.size() - 1] << ", could you sit in this place, please";
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
-                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
 
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
-                JustinaManip::waitForLaGoalReached(2000);
+                JustinaManip::waitForLaGoalReached(8000);
 
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
-                JustinaManip::waitForLaGoalReached(4000);
+                JustinaManip::waitForLaGoalReached(8000);
                 
                 
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
-                JustinaManip::waitForLaGoalReached(2000);
+                JustinaManip::waitForLaGoalReached(8000);
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
                 ss.str("");
                 ss << names[names.size() - 1] << "Please, look at me";
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
