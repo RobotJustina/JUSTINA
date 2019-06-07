@@ -124,6 +124,15 @@ class Tuning:
     def is_voice(self):
         return self.read('VOICEACTIVITY')
 
+    def set_automatic_gain_control(self, value):
+        return self.write('AGCONOFF',value)
+	
+    def set_Current_AGC_gain_factor(self, value):
+        return self.write('AGCGAIN',value)
+
+    def set_AGC_power_level(self, value):
+        return self.write('AGCDESIREDLEVEL',value)
+
     @property
     def direction(self):
         return self.read('DOAANGLE')
