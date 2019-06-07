@@ -1,0 +1,3 @@
+vision_msgs/VisionObjectList objects_input
+---
+vision_msgs/VisionObjectList objects_output
