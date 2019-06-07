@@ -752,7 +752,6 @@ int main(int argc, char** argv)
                                 withLeftOrRightArm = true;
                             if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true))
                                 graspObject = true;
-
                         }
 
                         if(takeRight && takeLeft){
@@ -825,8 +824,7 @@ int main(int argc, char** argv)
                             //Me quede aqui
                             attempsGraspLeft++;
                             if(attempsGraspLeft >= maxAttempsGraspLeft){
-                                if(objectGrasped[1]){
-                                    objectGrasped[1] = true;
+                                if(objectGrasped[0]){
                                     takeLeft = false;
                                     nextState = SM_GOTO_CUPBOARD;
                                 }

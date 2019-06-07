@@ -13,7 +13,7 @@
 			<param name="port" value="/dev/justinaRightArm"/>
 			<param name="baud" value="1000000"/>
 			<param name="bulk_enable" value="true"/>
-			<param name="sync_write_enable" value="true"/>
+			<param name="sync_write_enable" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
 		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="false">
