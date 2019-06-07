@@ -217,6 +217,10 @@ add_executable(eegpsr_test
   src/eegpsr_test.cpp
 )
 
+add_executable(serve_the_breakfast
+  src/serve_the_breakfast.cpp
+)
+
 #add_executable(storing_groseries_test
 #  src/storing_groseries_test.cpp
 #)
@@ -348,6 +352,8 @@ add_dependencies(carry_my_luggage ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(getting_to_know_my_home ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(serve_the_breakfast ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -512,3 +518,7 @@ target_link_libraries(welcoming_visitor_test
 #target_link_libraries(getting_to_know_my_home
 # ${catkin_LIBRARIES}
 #)
+
+target_link_libraries(serve_the_breakfast
+ ${catkin_LIBRARIES}
+)
