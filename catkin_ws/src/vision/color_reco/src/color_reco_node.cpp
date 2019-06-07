@@ -20,9 +20,11 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 
-#include "vision_msgs/Cube.h"
-#include "vision_msgs/CubesSegmented.h"
-#include "vision_msgs/GetCubes.h"
+
+#include "vision_msgs/VisionObject.h"
+#include "vision_msgs/VisionObjectList.h"
+#include "vision_msgs/GetObjectsColor.h"
+
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/DetectObjects.h"
 
@@ -338,7 +340,8 @@ void on_mouse(int event, int x, int y, int flags, void* param)
 	}
 }
 
-void loadValuesFromFile(string color, bool test)
+
+void loadValuesFromFile(std::map<std::string, Data> &data, bool test)
 {
 	std::string configDir = ros::package::getPath("color_reco") + "/ConfigDir";
 	std::string configFile;
@@ -348,46 +351,6 @@ void loadValuesFromFile(string color, bool test)
 		configFile = configDir + "/Cubes_config.xml";
 	else
 		configFile = configDir + "/Cutlery_config.xml";
-	cv::FileStorage fs;
-
-
-	Huemin << "H_min" << color;
-    Huemax << "H_max" << color;
-    Satmin << "S_min" << color;
-    Satmax << "S_max" << color;
-    Valmin << "V_min" << color;
-    Valmax << "V_max" << color;
-
-	fs.open(configFile, fs.READ );
-    
-	Hmin = (int)fs[Huemin.str()]; 
-	Smin = (int)fs[Satmin.str()]; 
-	Vmin = (int)fs[Valmin.str()]; 
-	Hmax = (int)fs[Huemax.str()]; 
-	Smax = (int)fs[Satmax.str()]; 
-	Vmax = (int)fs[Valmax.str()]; 
-		
-	fs.release();
-
-	Huemin.str(std::string());
-	Huemax.str(std::string());
-	Satmin.str(std::string());
-	Satmax.str(std::string());
-	Valmin.str(std::string());
-	Valmax.str(std::string());
-
-}
-
-void loadValuesFromFile2(std::map<std::string, Data> &data, bool test)
-{
-	std::string configDir = ros::package::getPath("color_reco") + "/ConfigDir";
-	std::string configFile;
-	if( !boost::filesystem::exists(configDir ) )
-		boost::filesystem::create_directory(configDir); 
-	if (test)
-		configFile = configDir + "/Cubes_config2.xml";
-	else
-		configFile = configDir + "/Cutlery_config2.xml";
 	cv::FileStorage fs;
 	fs.open(configFile, fs.READ );
     FileNode n = fs["trainning_ids"];
@@ -439,7 +402,7 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 }
 
 
-void callbackCalibrateV3(const std_msgs::String::ConstPtr& msg){
+void callbackCalibrateCubes(const std_msgs::String::ConstPtr& msg){
     std::cout << "ColorReco.->Calibrate colour cubes" << std::endl;
     bool init = false;
     std::string id = msg->data;
@@ -454,7 +417,7 @@ void callbackCalibrateV3(const std_msgs::String::ConstPtr& msg){
     
 
     std::map<std::string, Data> data;
-    loadValuesFromFile2(data, true);
+    loadValuesFromFile(data, true);
 
     std::map<std::string, Data>::iterator it = data.find(id);
     if(it != data.end()){
@@ -476,7 +439,7 @@ void callbackCalibrateV3(const std_msgs::String::ConstPtr& msg){
     if( !boost::filesystem::exists(configDir ) )
         boost::filesystem::create_directory(configDir); 
 
-    std::string configFile =configDir + "/Cubes_config2.xml";
+    std::string configFile =configDir + "/Cubes_config.xml";
     cv::FileStorage fs;
 
     if(!boost::filesystem::exists(configFile))
@@ -689,7 +652,7 @@ void callbackCalibrateV3(const std_msgs::String::ConstPtr& msg){
 }
 
 
-void callbackCalibrateCutlery2(const std_msgs::String::ConstPtr& msg)
+void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 {
 	std::cout << "ColorReco.->Calibrate colour cutlery" << std::endl;
     bool init = false;
@@ -705,7 +668,7 @@ void callbackCalibrateCutlery2(const std_msgs::String::ConstPtr& msg)
     double minArea, maxArea;
 
     std::map<std::string, Data> data;
-    loadValuesFromFile2(data, false);
+    loadValuesFromFile(data, false);
 
     std::map<std::string, Data>::iterator it = data.find(id);
     if(it != data.end()){
@@ -731,7 +694,7 @@ void callbackCalibrateCutlery2(const std_msgs::String::ConstPtr& msg)
 	if( !boost::filesystem::exists(configDir ) )
 		boost::filesystem::create_directory(configDir); 
 
-	std::string configFile =configDir + "/Cutlery_config2.xml";
+	std::string configFile =configDir + "/Cutlery_config.xml";
 	cv::FileStorage fs;
 
 	if(!boost::filesystem::exists(configFile))
@@ -961,92 +924,6 @@ void callbackCalibrateCutlery2(const std_msgs::String::ConstPtr& msg)
 }
 
 
-
-void callbackStartCalibrate(const std_msgs::String::ConstPtr& msg)
-{
-	std::cout << "ColorReco.->Calibrate colour" << std::endl;
-    colour = msg->data;
-    cv::Mat bgrImg;
-    cv::Mat xyzCloud;
-    cv::Mat imageHSV;
-    cv::Mat imageSegmentada;
-    cv::Mat maskRange;
-
-    Huemin << "H_min" << colour;
-    Huemax << "H_max" << colour;
-    Satmin << "S_min" << colour;
-    Satmax << "S_max" << colour;
-    Valmin << "V_min" << colour;
-    Valmax << "V_max" << colour;
-
-    
-    
-    std::string configDir = ros::package::getPath("color_reco") + "/ConfigDir";
-	if( !boost::filesystem::exists(configDir ) )
-		boost::filesystem::create_directory(configDir); 
-
-	std::string configFile =configDir + "/Cubes_config.xml";
-	cv::FileStorage fs;
-
-	if(!boost::filesystem::exists(configFile))
-	{
-		fs.open(configFile, fs.WRITE);
-		fs.release();	
-	}
-	
-    ros::Rate loop(30);
-
-	while(ros::ok() && cv::waitKey(1) != 'q')
-	{
-    	GetImagesFromJustina(bgrImg,xyzCloud);
-    	imshow("calibrate", bgrImg);
-    	createTrackbar("HMIN", "calibrate", &Hmin, 255, on_trackbar);
-		createTrackbar("HMAX", "calibrate", &Hmax, 255, on_trackbar);
-		createTrackbar("SMIN", "calibrate", &Smin, 255, on_trackbar);
-		createTrackbar("SMAX", "calibrate", &Smax, 255, on_trackbar);
-		createTrackbar("VMIN", "calibrate", &Vmin, 255, on_trackbar);
-		createTrackbar("VMAX", "calibrate", &Vmax, 255, on_trackbar);
-
-
-		cvtColor(bgrImg, imageHSV, CV_BGR2HSV);
-		inRange(imageHSV, Scalar(Hmin, Smin, Vmin),Scalar(Hmax, Smax, Vmax), imageSegmentada);
-		erode(imageSegmentada, maskRange, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate(maskRange, maskRange,getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		
-		imshow("Color mask", maskRange);
-		cv::Mat maskedImage;
-		bgrImg.copyTo(maskedImage, maskRange);
-		imshow("Image with mask", maskedImage);
-
-		if(cv::waitKey(1)=='s')
-		{
-			fs.open(configFile, fs.APPEND );
-
-			fs<< Huemin.str() << Hmin;
-			fs<< Huemax.str() << Hmax;
-			fs<< Satmin.str() << Smin;
-			fs<< Satmax.str() << Smax;
-			fs<< Valmin.str() << Vmin;
-			fs<< Valmax.str() << Vmax;
-			
-			fs.release();
-
-			std::cout << colour << " Calibration Completed..." << std::endl;
-
-			Huemin.str(std::string());
-			Huemax.str(std::string());
-			Satmin.str(std::string());
-			Satmax.str(std::string());
-			Valmin.str(std::string());
-			Valmax.str(std::string());
-			
-		}
-
-		ros::spinOnce();
-        loop.sleep();
-	}
-}
-
 bool setDeepthWindow()
 {
 	std::cout << "ColorReco.->Trying to find a plane" << std::endl;
@@ -1084,7 +961,7 @@ bool setDeepthWindow()
 } 
 
 
-bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCubes::Response &resp)
+bool callback_srvCubeSeg(vision_msgs::GetObjectsColor::Request &req, vision_msgs::GetObjectsColor::Response &resp)
 {
 
 	cv::Vec3f aux (0.0, 0.0, 0.0);
@@ -1104,7 +981,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
     cv::bitwise_not(globalmask,globalmask);
 
-    vision_msgs::CubesSegmented cubes = req.cubes_input;
+    vision_msgs::VisionObjectList cubes = req.objects_input;
         
 
     vector <cv::Point> centroidList;
@@ -1125,9 +1002,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     bgrImg.copyTo(bgrImgCopy);
     
     std::map<std::string, Data> data;
-    loadValuesFromFile2(data, true);
+    loadValuesFromFile(data, true);
 
-    for(int i = 0; i < cubes.recog_cubes.size(); i++)
+    for(int i = 0; i < cubes.ObjectList.size(); i++)
     {
 
     	minP.x=10.0;
@@ -1138,9 +1015,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     	maxP.z=0.3;
 
     	cv::Mat maskHSV;
-    	vision_msgs::Cube cube = cubes.recog_cubes[i];
+    	vision_msgs::VisionObject cube = cubes.ObjectList[i];
 
-        std::map<std::string, Data>::iterator it = data.find(cubes.recog_cubes[i].color);
+        std::map<std::string, Data>::iterator it = data.find(cubes.ObjectList[i].id);
 
         if(it == data.end())
             continue;
@@ -1166,11 +1043,11 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		mask.copyTo(canny_output);
 		cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 		if (contours.size() == 0){
-			cube.detected_cube  = false;
-			cube.cube_centroid.x = 0.0;
-			cube.cube_centroid.y = 0.0;
-			cube.cube_centroid.z = 0.0;
-            resp.cubes_output.recog_cubes.push_back(cube);	
+			cube.graspable  = false;
+			cube.pose.position.x = 0.0;
+			cube.pose.position.y = 0.0;
+			cube.pose.position.z = 0.0;
+            resp.objects_output.ObjectList.push_back(cube);	
             continue;
         }
 
@@ -1248,10 +1125,10 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		if (numPoints == 0)
 		{
 			std::cout << "ColorReco.->Cannot get centroid " << std::endl;
-			cube.detected_cube  = false;
-			cube.cube_centroid.x = 0.0;
-			cube.cube_centroid.y = 0.0;
-			cube.cube_centroid.z = 0.0;
+			cube.graspable  = false;
+			cube.pose.position.x = 0.0;
+			cube.pose.position.y = 0.0;
+			cube.pose.position.z = 0.0;
 		}
 		else
 		{
@@ -1262,10 +1139,10 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			std::cout << "ColorReco.->Centroid:" << centroid << std::endl;
 			std::cout << "ColorReco.->MinP:[" << minP << "]" << std::endl;
 			std::cout << "ColorReco.->MaxP:[" << maxP << "]" << std::endl;
-			cube.detected_cube = true;
-			cube.cube_centroid.x = centroid[0];
-			cube.cube_centroid.y = centroid[1];
-			cube.cube_centroid.z = centroid[2];
+			cube.graspable = true;
+			cube.pose.position.x = centroid[0];
+			cube.pose.position.y = centroid[1];
+			cube.pose.position.z = centroid[2];
 
 			cube.minPoint = minP;
 			cube.maxPoint = maxP;
@@ -1289,7 +1166,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
             cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
             cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
  
-            std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
+            std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.id);
             if(cubeIt == cubesMapMarker.end()){
                 visualization_msgs::Marker marker;
                 marker.header.frame_id = "map";
@@ -1312,7 +1189,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
                 marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
                 marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
                 marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-                cubesMapMarker[cube.color] = marker; 
+                cubesMapMarker[cube.id] = marker; 
             }
             else{
                 visualization_msgs::Marker marker = cubeIt->second;
@@ -1322,7 +1199,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
                 marker.scale.x = fabs(minP.x - maxP.x);
                 marker.scale.y = fabs(minP.y - maxP.y);
                 marker.scale.z = fabs(minP.z - maxP.z);
-                cubesMapMarker[cube.color] = marker; 
+                cubesMapMarker[cube.id] = marker; 
             }
 		}
 
@@ -1330,7 +1207,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
         cv::bitwise_and(boundingMask,globalmask,globalmask);
 		//imshow("mask", mask);
 		
-		resp.cubes_output.recog_cubes.push_back(cube);	
+		resp.objects_output.ObjectList.push_back(cube);	
 		//mask.copyTo(globalmask, globalmask);
     }
     cv::bitwise_not(globalmask,globalmask);
@@ -1347,7 +1224,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     return true;
 }
 
-bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCubes::Response &resp)
+bool callback_srvCutlerySeg(vision_msgs::GetObjectsColor::Request &req, vision_msgs::GetObjectsColor::Response &resp)
 {
 	cv::Vec3f aux (0.0, 0.0, 0.0);
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
@@ -1365,7 +1242,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
     cv::bitwise_not(globalmask,globalmask);
 
-    vision_msgs::CubesSegmented cubes = req.cubes_input;
+    vision_msgs::VisionObjectList cutleries = req.objects_input;
         
     //inRange(imageHSV,Scalar(0,70,50), Scalar(0,255,255),maskHSV);
 
@@ -1387,9 +1264,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     bgrImg.copyTo(bgrImgCopy);
     
     std::map<std::string, Data> data;
-    loadValuesFromFile2(data, false);
+    loadValuesFromFile(data, false);
 
-    for(int i = 0; i < cubes.recog_cubes.size(); i++)
+    for(int i = 0; i < cutleries.ObjectList.size(); i++)
     {
 
     	minP.x=10.0;
@@ -1400,9 +1277,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     	maxP.z=0.3;
 
     	cv::Mat maskHSV;
-    	vision_msgs::Cube cube = cubes.recog_cubes[i];
+    	vision_msgs::VisionObject cutlery = cutleries.ObjectList[i];
 
-        std::map<std::string, Data>::iterator it = data.find(cubes.recog_cubes[i].color);
+        std::map<std::string, Data>::iterator it = data.find(cutleries.ObjectList[i].id);
 
         if(it == data.end())
             continue;
@@ -1428,11 +1305,11 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 		mask.copyTo(canny_output);
 		cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 		if (contours.size() == 0){
-			cube.detected_cube  = false;
-			cube.cube_centroid.x = 0.0;
-			cube.cube_centroid.y = 0.0;
-			cube.cube_centroid.z = 0.0;
-            resp.cubes_output.recog_cubes.push_back(cube);	
+			cutlery.graspable  = false;
+			cutlery.pose.position.x = 0.0;
+			cutlery.pose.position.y = 0.0;
+			cutlery.pose.position.z = 0.0;
+            resp.objects_output.ObjectList.push_back(cutlery);	
             continue;
         }
 
@@ -1510,10 +1387,10 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 		if (!isGlass && numPoints <= 200 || numPoints == 0)
 		{
 			std::cout << "CutlerySegmentation.->Cannot get centroid " << std::endl;
-			cube.detected_cube  = false;
-			cube.cube_centroid.x = 0.0;
-			cube.cube_centroid.y = 0.0;
-			cube.cube_centroid.z = 0.0;
+			cutlery.graspable  = false;
+			cutlery.pose.position.x = 0.0;
+			cutlery.pose.position.y = 0.0;
+			cutlery.pose.position.z = 0.0;
 		}
 		else
 		{
@@ -1522,13 +1399,13 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 			centroidList.push_back(imgCentroid);
             contoursRec.push_back(contour_poly);
 			
-			cube.detected_cube = true;
-			cube.cube_centroid.x = centroid[0];
-			cube.cube_centroid.y = centroid[1];
-			cube.cube_centroid.z = centroid[2];
+			cutlery.graspable = true;
+			cutlery.pose.position.x = centroid[0];
+			cutlery.pose.position.y = centroid[1];
+			cutlery.pose.position.z = centroid[2];
 
-			cube.minPoint = minP;
-			cube.maxPoint = maxP;
+			cutlery.minPoint = minP;
+			cutlery.maxPoint = maxP;
 
             cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
             cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
@@ -1553,9 +1430,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             }
             else
                 comparePCA(mask, xyzCloud, typeCutlery, roll, pitch, yaw);
-            cube.roll = roll;
-            cube.pitch = pitch;
-            cube.yaw = yaw;
+            cutlery.roll = roll;
+            cutlery.pitch = pitch;
+            cutlery.yaw = yaw;
 			cv::boundingRect(contour_poly);
 			cv::rectangle(bgrImgCopy, cv::boundingRect(contour_poly).tl(),cv::boundingRect(contour_poly).br(), CV_RGB(colorBGR.at<cv::Vec3b>(0, 0)[2], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[0]), 2, 8, 0);
             std::stringstream ss;
@@ -1582,12 +1459,12 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             }
             cv::putText(bgrImgCopy, ss.str(), cv::Point(cv::boundingRect(contour_poly).tl().x, cv::boundingRect(contour_poly).br().y + 20), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
-            cube.type_object = typeCutlery;
+            cutlery.type_object = typeCutlery;
 
-            cube.priority = (priorityFlag) ? (cube.cube_centroid.x * rate) : (cube.cube_centroid.x * 1.0); 
+            cutlery.confidence = (priorityFlag) ? (cutlery.pose.position.x * rate) : (cutlery.pose.position.x * 1.0); 
 		}
 		
-		resp.cubes_output.recog_cubes.push_back(cube);	
+		resp.objects_output.ObjectList.push_back(cutlery);	
     }
     cv::bitwise_not(globalmask,globalmask);
 	//imshow("globalmask", globalmask);
@@ -1618,9 +1495,8 @@ int main(int argc, char** argv)
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
     cltExtObj = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_above_planes");
     cltExtCut = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_with_planes");
-    ros::Subscriber subStartCalib = n.subscribe("/vision/color_reco/start_calib", 1, callbackStartCalibrate);
-    ros::Subscriber subCalibV2 = n.subscribe("/vision/color_reco/calibv2", 1, callbackCalibrateV3);
-    ros::Subscriber subCalibCutlery = n.subscribe("/vision/color_reco/calibCutlery", 1, callbackCalibrateCutlery2);
+    ros::Subscriber subCalibV2 = n.subscribe("/vision/color_reco/calibCubes", 1, callbackCalibrateCubes);
+    ros::Subscriber subCalibCutlery = n.subscribe("/vision/color_reco/calibCutlery", 1, callbackCalibrateCutlery);
     ros::Publisher pubCubesMarker = n.advertise<visualization_msgs::MarkerArray>("/vision/color_reco/cubes_markers", 1);
 
     ros::Rate loop(30);
