@@ -1,24 +1,11 @@
 #!/usr/bin/env python
+
 from tuning import Tuning
 from std_msgs.msg import Int16, Bool
 import rospy
 import usb.core
 import usb.util
 import time
-import pyaudio
-import wave
-import numpy as np
-#import scipy.signal
-
-
-RESPEAKER_RATE = 16000
-RESPEAKER_CHANNELS = 6 # change base on firmwares, 1_channel_firmware.bin as 1 or 6_channels_firmware.bin as 6
-RESPEAKER_WIDTH = 2
-# run getDeviceInfo.py to get index
-RESPEAKER_INDEX = 2  # refer to input device id
-CHUNK = 1024
-RECORD_SECONDS = 3
-
 
 
 class Tuning_respeaker(object):
@@ -34,7 +21,19 @@ class Tuning_respeaker(object):
 	def set_vad(self):
 		mic_tuning = Tuning(self.dev)
 		mic_tuning.set_vad_threshold(50)
-		
+
+	def set_agc(self):
+		mic_tuning = Tuning(self.dev)
+		mic_tuning.set_automatic_gain_control(0)	
+
+	def set_agc_gain(self):
+		mic_tuning = Tuning(self.dev)
+		mic_tuning.set_Current_AGC_gain_factor(10)	
+
+	def set_agc_power_level(self):
+		mic_tuning = Tuning(self.dev)
+		mic_tuning.set_AGC_power_level(0.00000001)
+
 
 	def get_doa_value(self):
 		if self.dev:
@@ -54,6 +53,9 @@ class Tuning_respeaker(object):
 def doa_publish():
 	tuner_resp = Tuning_respeaker()
 	tuner_resp.set_vad()
+	tuner_resp.set_agc()
+        tuner_resp.set_agc_gain()
+        tuner_resp.set_agc_power_level()
 	pub_doa = rospy.Publisher('sound_direction', Int16, queue_size=1)
 	pub_vad = rospy.Publisher('vad_sound', Bool, queue_size=1)
 	rospy.init_node('doa_test', anonymous=True)

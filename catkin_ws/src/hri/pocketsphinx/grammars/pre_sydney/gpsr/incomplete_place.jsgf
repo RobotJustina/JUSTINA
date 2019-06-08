@@ -1,7 +1,7 @@
 #JSGF V1.0;
 grammar incmplete_place;
 public <command> = (<incomplete>);
-<incomplete> =(AT THE <place>| IS THE <place>);
+<incomplete> =(AT THE <place>);
 <place> = (<room> | <placement> | <beacon>);
 
 <room> = (CORRIDOR | BEDROOM | DINING ROOM | LIVING ROOM | KITCHEN);

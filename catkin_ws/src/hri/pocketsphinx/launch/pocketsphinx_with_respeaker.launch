@@ -1,12 +1,17 @@
 <launch>
 
 	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
-	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_guadalajara/8533.dic" />
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/gpsr/6069.dic" />
 	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
-	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_guadalajara/receptionist_names.jsgf"/>
-	<arg name="_stream" value="_stream:=false" />
+	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_sydney/people_names.jsgf"/>
+	<arg name="_stream" value="_stream:=true" />
 	<arg name="_wavpath" value="_wavpath:=/home/juliobiorobotics/JUSTINA/catkin_ws/src/hri/pocketsphinx/scripts/stream.wav" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
+        <arg name="_rate" value="_rate:=16000"/>
+        <arg name="_channel" value="_channel:=1"/>
+        <arg name="_width" value="_width:=2L"/>
+        <arg name="_index" value="_index:=2"/>
+        <arg name="_chunk" value="_chunk:=2048"/>
 
 	<node name="recognizer_with_respeaker" pkg="pocketsphinx" type="recognizer_with_respeaker.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
 

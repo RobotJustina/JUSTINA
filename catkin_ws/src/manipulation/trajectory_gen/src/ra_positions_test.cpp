@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     ros::Publisher pubPoses = n.advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_goto_angles", 1000);
     std_msgs::Float32MultiArray poses_msg;
-    ros::Rate loop(1);
+    ros::Rate loop(0.5);
 
     while(ros::ok())
     {
