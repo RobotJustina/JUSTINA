@@ -108,6 +108,7 @@
 (eat 			tag			vrb)
 (eats			tag			vrb)
 (drink			tag			vrb)
+(fruits			tag			vrb)
 (drinks			tag			vrb)
 (ingest			tag			vrb)
 (releases 		tag 		vrb)

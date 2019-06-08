@@ -476,6 +476,7 @@ void callbackCmdNavigation(
 	if (tokens[1] == "person") {
 		success = true;
 	} else {
+        JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
 		if (nfp)
 			success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000);
 	}
@@ -913,7 +914,8 @@ void callbackCmdFindObject(
 
             ss.str("");
 			ss <<"object 2 2 2 left";
-
+        
+            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
             do{
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -943,6 +945,9 @@ void callbackCmdFindObject(
             } while( numObj<3 && contador < 10);
             
             success = (numObj == 0)?false:true;
+
+            if(!success)
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
 		    
             responseMsg.params = ss.str();
 
@@ -963,6 +968,7 @@ void callbackCmdFindObject(
             ss.str("");
 			ss <<"object 2 2 2 left";
 
+            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
             do{
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -1050,6 +1056,9 @@ void callbackCmdFindObject(
                     }
                     contador++;
             } while(!ref_obj && contador < 10);
+
+            if(!ref_obj)
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
             
             success = ref_obj;
             responseMsg.params = ss.str();
@@ -1242,6 +1251,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::string query;
 	std::vector<std::string> objects;
 
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -1270,6 +1280,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		finishMotion = true;
         //finishMotion = lateralMov(pos, advance, maxAdvance);
 	}while(!finishMotion && numObj<1);
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
 
 	ss.str("");
 	currentName = tokens[0];
@@ -1341,6 +1352,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
 
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -1364,6 +1376,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		finishMotion = true;
         //finishMotion = lateralMov(pos, advance, maxAdvance);
 	}while (!finishMotion);
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
 
 	ss.str("");
 	currentName = tokens[0];
@@ -1437,6 +1450,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	JustinaTasks::alignWithTable(0.42);
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
     	
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
 	do{	
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		std::cout << "Find a object " << std::endl;
@@ -1575,6 +1589,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
     if(tokens[0] == "find_three_obj"){
         int i = 0;
+        JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
         while (i < 3 && i < prop_obj.size()){
                 if (i == 2)
                     ss << "and_the_" << prop_obj.at(i).obj;
@@ -1589,6 +1604,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
     if(tokens[0] == "for_grasp" || tokens[0] == "abspose" || tokens[0] == "color" || tokens[0] == "property"){
         if (objectName == "none"){
+            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
             ss.str("");
 			ss <<"object 2 2 2 left";
             responseMsg.params = ss.str();
@@ -1997,6 +2013,7 @@ void callbackMoveActuator(
     JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
     success = success && JustinaTasks::graspObject(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
+    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
 	if (success)
 		responseMsg.successful = 1;
 	else{
@@ -2911,6 +2928,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     bool ra = false;
 
     while(!success && attemps<4){
+        JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
         attemps++;
     }
@@ -2974,6 +2992,7 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
     bool armFlag = false;
     
     while(!success && attemps<4){
+        JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size()-1], 120000);
         attemps++;
     }
@@ -3198,6 +3217,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 ss << "(assert (get_obj_default_loc " << obj_name << " 1))";
                 JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
 
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                 JustinaTasks::sayAndSyncNavigateToLoc(query, 120000);
                 ss.str("");
                 ss << "I am going to deliver the " << obj_name;
@@ -3299,6 +3319,7 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         JustinaHRI::waitAfterSay("thanks for you help, Now i will take out the garbage", 5000, 0);
 
         //put bags into collection zone
+        JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
         JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000); //change for real collection zone
         
         JustinaManip::laGoTo("place_bag_floor", 4000);
@@ -4015,6 +4036,7 @@ int main(int argc, char **argv) {
 			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 			std::cout << "GPSRTest.->First try to move" << std::endl;
             JustinaNavigation::moveDist(1.0, 4000);
+            JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
 			if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 				std::cout << "GPSRTest.->Second try to move" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
