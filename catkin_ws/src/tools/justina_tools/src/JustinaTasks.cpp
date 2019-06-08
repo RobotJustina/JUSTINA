@@ -6524,22 +6524,20 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
 
 
 
-                JustinaHRI::enableGrammarSpeechRecognized("grammars/pre_sydney/commands.jsgf", 5.0);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::enableSpeechRecognized(false);
-	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         
-                JustinaHRI::enableSpeechRecognized(true);
-
                 /*JustinaHRI::usePocketSphinx = true;
                 JustinaHRI::enableGrammarSpeechRecognized(
                         "grammars/pre_sydney/commands.jsgf", 2.0);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::enableSpeechRecognized(false);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
+                JustinaHRI::enableSpeechRecognized(false);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
+                JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
                 //JustinaHRI::enableSpeechRecognized(true);
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes" || lastReco == "justina yes"){
                     //JustinaHRI::enableSpeechRecognized(false);
