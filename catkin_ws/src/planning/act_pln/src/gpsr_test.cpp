@@ -130,6 +130,12 @@ struct propObj{
     int value;
 };
 
+struct poseObj{
+    float x;
+    float y;
+    float z;
+};
+
 bool compareUpward(propObj obj1, propObj obj2){
     return (obj1.value < obj2.value);
 }
@@ -1409,24 +1415,14 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::vector<std::string> objects;
     std::vector<int> obj_index;
     std::vector<propObj> prop_obj;
+    std::vector<poseObj> pose_obj;
 	currentName = tokens[1];
 	categoryName = tokens[2];
+    int obj_ind = 0;
+    std::pair<bool, int> element_index;
 
 	bool finishMotion = false;
 	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
-
-	/*if(tokens[1] == "biggest")
-		prop = "bigger";
-	else if (tokens[1] == "smallest")
-		prop = "smaller";
-	else if (tokens[1] == "heaviest")
-		prop = "heavier";
-	else if (tokens[1] == "lightest")
-		prop = "lighter";
-	else if (tokens[1] == "largest")
-		prop = "larger";
-	else if (tokens[1] == "thinnest")
-		prop = "thinner";*/
 
     std::string query;
     std::string category;
@@ -1452,11 +1448,16 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				found = false;
 				for (int i = 0; i < recognizedObjects.size(); i++) {
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
+                    poseObj pObj;
+                    pObj.x = vObject.pose.position.x;
+                    pObj.y = vObject.pose.position.y;
+                    pObj.z = vObject.pose.position.z;
 					std::cout << "object:  " << vObject.id << std::endl;
                     std::pair<bool, int> element_in_vector = findInVector<std::string>(objects, vObject.id); 
 					if (tokens[2] == "nil" && !element_in_vector.first){
 						objects.push_back(vObject.id);
-                        obj_index.push_back(i); 
+                        obj_index.push_back(i);
+                        pose_obj.push_back(pObj); 
 						std::cout << "OBJETO: " << vObject.id << std::endl;
 					}
 					if (tokens[2] != "nil" && !element_in_vector.first){
@@ -1466,6 +1467,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                         if(query == tokens[2]){
     						objects.push_back(vObject.id);
                             obj_index.push_back(i);
+                            pose_obj.push_back(pObj); 
 					    	std::cout << "OBJETO: " << vObject.id << std::endl;
                         }
 					}
@@ -1497,31 +1499,10 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         obj_aux.obj = objects.at(0);
         obj_aux.value = 1;
         prop_obj.push_back(obj_aux);
+        obj_ind = 0;
 	}
 
-	/*bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
-	if (tokens[0] == "only_find" && success && objects.size() > 1) {
-		knowledge_msgs::StrQueryKDB srv;
-		objectName = objects.at(0);
-		for(int i=1; i<objects.size(); i++){
-			ss.str("");
-			ss << "(assert (cmd_compare " << prop << " " << objectName << " " << objects.at(i) << " 1))";
-			srv.request.query = ss.str();
-			if (srvCltQueryKDB.call(srv)) {
-				std::cout << "Response of KBD Query:" << std::endl;
-				std::cout << "TEST QUERY Args:" << srv.response.result << std::endl;
-				str = srv.response.result;
-				split(tokens, str, is_any_of(" "));
-				objectName = tokens[1];
-				responseMsg.successful = 1;
-			} else {
-				std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
-				responseMsg.successful = 0;
-			}
-		}
-	}*/
-
-    if (objects.size() > 1){
+    if (objects.size() > 1 && tokens[0] != "color" && tokens[0] != "abspose"){
         propObj obj_aux;
         for(int i = 0; i < objects.size(); i++){
             ss.str("");
@@ -1531,17 +1512,65 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             obj_aux.value = std::atoi(query.c_str());
             prop_obj.push_back(obj_aux);
         }
-        if(tokens[1] == "biggest" || tokens[1] == "heaviest" || tokens[1] == "largest"){
+        if(tokens[1] == "biggest" || tokens[1] == "heaviest" || tokens[1] == "largest" || tokens[1] == "tallest"){
             std::sort(prop_obj.begin(), prop_obj.end(), compareDownward);
         }
         else{
             std::sort(prop_obj.begin(), prop_obj.end(), compareUpward);
         }
         objectName = prop_obj.at(0).obj;
+        element_index = findInVector<std::string>(objects, objectName);
+        obj_ind = element_index.second;
         responseMsg.successful = 1;
         ss.str("");
         ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " 
             << "The_" << tokens[1] << "_"<< category <<"_that_i_found_are_";
+    }
+
+    if (objects.size() > 0 && tokens[0] == "color"){
+        int i = 0;
+        bool fcolor = false;
+        while( !fcolor && i < objects.size()){
+            ss.str("");
+            ss << "(assert (cmd_compare_color " << objects.at(i) << " " << tokens[1] << " 1))";
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+            if(query == "true")
+                fcolor = true;
+            i++;
+        }
+
+        if(fcolor){
+            objectName = objects.at(i-1);
+            obj_ind = i-1;
+            responseMsg.successful = 1;
+
+        }
+        else
+            objectName = "none";
+
+    }
+
+    if (objects.size() > 1 && tokens[0] == "abspose"){
+            //std::pair<bool, int> element_index = findInVector<std::string>(objects, objects.at(0));
+            //int index = obj_index.at(0);
+            //vision_msgs::VisionObject aux_vObject = recognizedObjects[index];
+            std::string aux_obj;
+            aux_obj = objects.at(0);
+            obj_ind = 0;
+            for(int i = 1; i < objects.size(); i++){
+                //element_index = findInVector<std::string>(objects, objects.at(i));
+                //index = obj_index.at(i);
+                if(tokens[1] == "right_most" && pose_obj[i-1].y > pose_obj[i].y && pose_obj[i].x < 1.0){
+                    aux_obj = objects[i];
+                    obj_ind = i;
+                }
+                if(tokens[1] == "left_most" && pose_obj[i-1].y < pose_obj[i].y && pose_obj[i].x < 1.0){
+                    aux_obj = objects[i];
+                    obj_ind = i;
+                }
+            }
+            objectName = aux_obj;
+            responseMsg.successful = 1;
     }
 
     if(tokens[0] == "find_three_obj"){
@@ -1558,29 +1587,36 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         responseMsg.params = ss.str();
     }
 
-    if(tokens[0] == "for_grasp"){
-        if (objects.size() == 0){
+    if(tokens[0] == "for_grasp" || tokens[0] == "abspose" || tokens[0] == "color" || tokens[0] == "property"){
+        if (objectName == "none"){
             ss.str("");
 			ss <<"object 2 2 2 left";
             responseMsg.params = ss.str();
             responseMsg.successful = 0;
         }
         else{
-            std::pair<bool, int> element_index = findInVector<std::string>(objects, objectName);
+            //std::pair<bool, int> element_index = findInVector<std::string>(objects, objectName);
+            //int ind = obj_index.at(element_index.second);
             ss.str("");
-            if(recognizedObjects[element_index.second].pose.position.y > 0){
-                ss << objectName << " " << recognizedObjects[element_index.second].pose.position.x << " " 
-                    << recognizedObjects[element_index.second].pose.position.y << " " << recognizedObjects[element_index.second].pose.position.z << " left";
+            std::cout << "objectName: " << objectName << " recoObject: " << objects[obj_ind] << std::endl;
+            if(pose_obj[obj_ind].y > 0){
+                ss << objectName << " " << pose_obj[obj_ind].x << " " 
+                    << pose_obj[obj_ind].y << " " << pose_obj[obj_ind].z << " left";
             }
             else{
-                ss << objectName << " " << recognizedObjects[element_index.second].pose.position.x << " " 
-                    << recognizedObjects[element_index.second].pose.position.y << " " << recognizedObjects[element_index.second].pose.position.z << " right";
+                ss << objectName << " " << pose_obj[obj_ind].x << " " 
+                    << pose_obj[obj_ind].y << " " << pose_obj[obj_ind].z << " right";
                 
             }
             responseMsg.params = ss.str();
             responseMsg.successful = 1;
         }
     }
+
+    objects.clear();
+    pose_obj.clear();
+    obj_index.clear();
+    prop_obj.clear();
 
 	command_response_pub.publish(responseMsg);
 }
