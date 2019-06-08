@@ -34,6 +34,7 @@
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
 #include "vision_msgs/GetCubes.h"
+#include "vision_msgs/GetObjectsColor.h"
 #include "vision_msgs/SetTrainingDir.h"
 #include "vision_msgs/SRV_DetectPlasticTrayZones.h"
 #include "vision_msgs/SRV_FindDishwasher.h"
@@ -135,6 +136,7 @@ private:
     //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
     static ros::ServiceClient cltCutlerySeg;
+    static ros::ServiceClient cltObjectSeg;
     static ros::ServiceClient cltGetTray;
     static ros::ServiceClient cltGetDishwasher;
     static ros::ServiceClient cltLoadObjectCat;
@@ -219,7 +221,9 @@ public:
     //Methods for segment objects by color
     static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
     static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
+    static bool getObjectSeg(vision_msgs::VisionObjectList& objects);
     static bool isStillOnTable(vision_msgs::Cube my_cube);
+    static bool isStillOnTable(vision_msgs::VisionObject object);
     static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
     static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
     static bool loadObjectCat(std::string category);
