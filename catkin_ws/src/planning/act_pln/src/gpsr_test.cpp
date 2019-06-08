@@ -2013,7 +2013,7 @@ void callbackMoveActuator(
     JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
     success = success && JustinaTasks::graspObject(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
-    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
 	if (success)
 		responseMsg.successful = 1;
 	else{
