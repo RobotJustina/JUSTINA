@@ -6522,6 +6522,15 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 dialogue.str("");
                 dialogue << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, " << name;
 
+
+
+                JustinaHRI::enableGrammarSpeechRecognized("grammars/pre_sydney/commands.jsgf", 5.0);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::enableSpeechRecognized(false);
+	            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        
+                JustinaHRI::enableSpeechRecognized(true);
+
                 /*JustinaHRI::usePocketSphinx = true;
                 JustinaHRI::enableGrammarSpeechRecognized(
                         "grammars/pre_sydney/commands.jsgf", 2.0);
@@ -6565,24 +6574,24 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
 
             case SM_GUIDE_PERSON:
                 dialogue.str(std::string()); // Clear the buffer
-                dialogue << "Hello " << name1 << " I am going to introduce you to "<< name2 << " at the " << location2;
+                dialogue << "Hello " << name1 << " I am going to introduce you to "<< name2 << " at the " << location2 <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
 
                 JustinaTasks::guideAPerson(location2, 300000, 1.5);
                 dialogue.str(std::string()); // Clear the buffer
-                dialogue << "we have arrived to " << location2 << " please wait while i am looking for "<< name2;
+                dialogue << "we have arrived to " << location2 << " please wait while i am looking for "<< name2 <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
 
                 nextState = SM_FIND_PERSON;
                 break;
 
             case SM_INTRODUCE:
-                std::cout<< ".-> State SM_INTRODUCING: Introducing person to another person."<< std::endl;
+                std::cout << ".-> State SM_INTRODUCING: Introducing person to Jhon." << std::endl;
                 dialogue.str("");
-                dialogue << name2 << " you have a visitor, his name is " << name1;
+                dialogue << name2 <<" you have a visitor, his name is " << name1 <<std::endl;
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
-                if (JustinaKnowledge::existKnownLocation("person2")) {
-                    JustinaKnowledge::getKnownLocation("person2", goalx, goaly,goala);
+                if(JustinaKnowledge::existKnownLocation("person2")){
+                    JustinaKnowledge::getKnownLocation("person2", goalx, goaly, goala);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
@@ -6592,44 +6601,40 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     JustinaManip::startHdGoTo(0, -0.3);
                     JustinaNavigation::moveDistAngle(0, theta, 4000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                    dist_to_head = sqrt(pow(goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                    dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
                     float torsoSpine, torsoWaist, torsoShoulders;
-                    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,torsoShoulders);
+                    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                     //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
-                    float angleHead = atan2(goaly - robot_y, goalx - robot_x)- robot_a;
-                    if (angleHead < -M_PI)
+                    float angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                    if(angleHead < -M_PI)
                         angleHead = 2 * M_PI + angleHead;
-                    if (angleHead > M_PI)
+                    if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
-                    JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.45 + torsoSpine), dist_to_head));
-                    //JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
-                    if (JustinaKnowledge::existKnownLocation("person1")) {
+                    JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.52 + torsoSpine), dist_to_head));
+                    if(JustinaKnowledge::existKnownLocation("person1")){
                         JustinaKnowledge::getKnownLocation("person1", goalx, goaly, goala);
-                        JustinaTools::transformPoint("/map", goalx, goaly, guest_z,"/base_link", pointingArmX, pointingArmY, pointingArmZ);
-                        if (pointingArmY > 0) {
+                        JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
+                        if(pointingArmY > 0){
                             usePointArmLeft = true;
-                            JustinaTools::transformPoint("/map", goalx, goaly, guest_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
-                        } 
-                        else {
+                            JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
+                        }else{
                             usePointArmLeft = false;
-                            JustinaTools::transformPoint("/map", goalx, goaly, guest_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
+                            JustinaTools::transformPoint("/map", goalx, goaly , guest_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                         }
                         pointingNormal = sqrt(pointingArmX * pointingArmX + pointingArmY * pointingArmY + pointingArmZ * pointingArmZ);
                         pointingDirX = pointingArmX / pointingNormal;
                         pointingDirY = pointingArmY / pointingNormal;
                         pointingDirZ = pointingArmZ / pointingNormal;
-                        pitchAngle = atan2(goaly - robot_y, goalx - robot_x)- robot_a;
-                        if (pitchAngle <= -M_PI)
+                        pitchAngle = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                        if(pitchAngle <= -M_PI)
                             pitchAngle += 2 * M_PI;
-                        else if (pitchAngle >= M_PI)
+                        else if(pitchAngle >= M_PI)
                             pitchAngle -= 2 * M_PI;
-
-                        if (usePointArmLeft) {
-                            JustinaManip::laGoToCartesian(distanceArm * pointingDirX,distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
+                        if(usePointArmLeft){
+                            JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                             JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
                             JustinaManip::startLaGoTo("home");
-                        } 
-                        else {
+                        }else{
                             JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                             JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
                             JustinaManip::startRaGoTo("home");
@@ -6639,9 +6644,9 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 }
                 dialogue.str("");
                 dialogue << name1 << " he is " << name2 << std::endl;
-                if (JustinaKnowledge::existKnownLocation("person1")) {
+                if(JustinaKnowledge::existKnownLocation("person1")){
                     //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
-                    JustinaKnowledge::getKnownLocation("person1", goalx, goaly,goala);
+                    JustinaKnowledge::getKnownLocation("person1", goalx, goaly, goala);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
@@ -6651,42 +6656,40 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     JustinaManip::startHdGoTo(0, -0.3);
                     JustinaNavigation::moveDistAngle(0, theta, 4000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                    dist_to_head = sqrt(pow(goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                    dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
                     float torsoSpine, torsoWaist, torsoShoulders;
                     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                     //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                     angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                    if (angleHead < -M_PI)
+                    if(angleHead < -M_PI)
                         angleHead = 2 * M_PI + angleHead;
-                    if (angleHead > M_PI)
+                    if(angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
-                    JustinaManip::startHdGoTo(angleHead, atan2(guest_z - (1.45 + torsoSpine), dist_to_head));
-                    if (JustinaKnowledge::existKnownLocation("person2")) {
-                        JustinaKnowledge::getKnownLocation("person2", goalx, goaly,goala);
-                        JustinaTools::transformPoint("/map", goalx, goaly, host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
-                        if (pointingArmY > 0) {
+                    JustinaManip::startHdGoTo(angleHead, atan2(guest_z - (1.52 + torsoSpine), dist_to_head));
+                    if(JustinaKnowledge::existKnownLocation("person2")){
+                        JustinaKnowledge::getKnownLocation("person2", goalx, goaly, goala);
+                        JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/base_link", pointingArmX, pointingArmY, pointingArmZ);
+                        if(pointingArmY > 0){
                             usePointArmLeft = true;
-                            JustinaTools::transformPoint("/map", goalx, goaly, host_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
-                        } 
-                        else {
+                            JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/left_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
+                        }else{
                             usePointArmLeft = false;
-                            JustinaTools::transformPoint("/map", goalx, goaly, host_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
+                            JustinaTools::transformPoint("/map", goalx, goaly , host_z, "/right_arm_link0", pointingArmX, pointingArmY, pointingArmZ);
                         }
                         pointingNormal = sqrt(pointingArmX * pointingArmX + pointingArmY * pointingArmY + pointingArmZ * pointingArmZ);
                         pointingDirX = pointingArmX / pointingNormal;
                         pointingDirY = pointingArmY / pointingNormal;
                         pointingDirZ = pointingArmZ / pointingNormal;
                         pitchAngle = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
-                        if (pitchAngle <= -M_PI)
+                        if(pitchAngle <= -M_PI)
                             pitchAngle += 2 * M_PI;
-                        else if (pitchAngle >= M_PI)
+                        else if(pitchAngle >= M_PI)
                             pitchAngle -= 2 * M_PI;
-                        if (usePointArmLeft) {
+                        if(usePointArmLeft){
                             JustinaManip::laGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                             JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
                             JustinaManip::startLaGoTo("home");
-                        } 
-                        else {
+                        }else{
                             JustinaManip::raGoToCartesian(distanceArm * pointingDirX, distanceArm * pointingDirY, distanceArm * pointingDirZ, 0, pitchAngle, 1.5708, 3000);
                             JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
                             JustinaManip::startRaGoTo("home");
