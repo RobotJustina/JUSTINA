@@ -1589,8 +1589,14 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
             ss << "I did not find you " << person :
             ss << "I did not find a person";
         //JustinaHRI::waitAfterSay(ss.str(), 2000);
-        time = ros::Time::now();
-        JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+
+        if(guide)
+            JustinaHRI::waitAfterSay(ss.str(), 1500);
+        else{
+            time = ros::Time::now();
+            JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+        }
+        
         return false;
     }
 
@@ -1598,10 +1604,18 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
     //ss << person << ", I found you";
     (recogByID) ? ss << person << ", I found you" : ss << ", I find a person";
     //JustinaHRI::waitAfterSay(ss.str(), 2000);
-    time = ros::Time::now();
-    JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
-    JustinaHRI::insertAsyncSpeech("I am getting close to you", 500, time.sec,
-            10);
+
+    if(guide){
+        JustinaHRI::waitAfterSay(ss.str(), 1500);
+        JustinaHRI::waitAfterSay("I am getting close to you", 1500);
+
+    }
+    else{
+        time = ros::Time::now();
+        JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
+        JustinaHRI::insertAsyncSpeech("I am getting close to you", 500, time.sec,10);
+    }
+    
 
     float cx, cy, cz;
     cx = centroidFace(0, 0);
