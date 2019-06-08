@@ -6534,7 +6534,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     name = name2;
 
                 dialogue.str("");
-                dialogue << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, " << name;
+                dialogue << "Hello, Is your name, " << name << ", say justina yes or justina no";
 
 
 
