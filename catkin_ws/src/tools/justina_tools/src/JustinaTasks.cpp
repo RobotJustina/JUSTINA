@@ -6528,6 +6528,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 JustinaHRI::enableSpeechRecognized(false);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
+                dialogue.str("");
                 //JustinaHRI::enableSpeechRecognized(true);
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes" || lastReco == "justina yes"){
@@ -6537,8 +6538,12 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     else {
 
                         JustinaHRI::getLatestLegsPosesRear(legX, legY);
-                        legZ = 0;
-                        JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
+                        legX+=0.5;
+                        legY+=0.4;
+                        legZ = 0.0;
+                        dialogue << "hey " << name1 << " stay in my left side in order to introduce to " << name;
+                        JustinaHRI::waitAfterSay(dialogue.str(), 5000);
+                        JustinaTools::transformPoint("/base_link", legX, legY , legZ, "/map", legX, legY, legZ);
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                         JustinaKnowledge::addUpdateKnownLoc("person1", legX, legY, atan2(legY - robot_y, legX - robot_x) - robot_a);
                         JustinaKnowledge::getKnownLocation("person1", goalx, goaly, goala);
@@ -6563,6 +6568,10 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
 
                 JustinaTasks::guideAPerson(location2, 300000, 1.5);
+                dialogue.str(std::string()); // Clear the buffer
+                dialogue << "we have arrived to " << location2 << " please wait while i am looking for "<< name2;
+                JustinaHRI::waitAfterSay(dialogue.str(), 10000);
+
                 nextState = SM_FIND_PERSON;
                 break;
 
