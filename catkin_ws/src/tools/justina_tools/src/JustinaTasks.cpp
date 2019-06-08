@@ -4708,7 +4708,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
     bool objectInHand = false;
     float idealX = 0.475;
     float idealY = withLeftArm ? 0.225 : -0.255; //It is the distance from the center of the robot, to the center of the arm
-    float idealZ = 0.57; //It is the ideal height for taking an object when torso is at zero height.
+    float idealZ = 0.67; //It is the ideal height for taking an object when torso is at zero height.
 
     float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
@@ -4728,8 +4728,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
-    if (goalTorso < 0.1)
-        goalTorso = 0.1;
+    if (goalTorso < 0.07)
+        goalTorso = 0.07;
     if (goalTorso > 0.294)
         goalTorso = 0.294;
 
@@ -4868,13 +4868,14 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         if (typeCutlery != 3) {
             JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
             JustinaManip::startLaOpenGripper(0.3);
-            //JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 5000);
-            //for (int i = maxIteration - 1; i > 0; i--) {
-            //    float deltaObjToGraspX = objToGraspX + dz / i;
-            //    JustinaManip::laGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 600);
-            //}
-            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            JustinaManip::torsoGoTo(torsoSpine - 0.1, 0.0, 0.0, 4000);
+            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 5000);
+            for (int i = maxIteration - 1; i > 0; i--) {
+                float deltaObjToGraspX = objToGraspX + dz / i;
+                JustinaManip::laGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 600);
+            }
+            //JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 3000);
+            //JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+            //JustinaManip::torsoGoTo(torsoSpine - 0.07, 0.0, 0.0, 4000);
         } else {
             JustinaManip::startLaOpenGripper(0.8);
             JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
