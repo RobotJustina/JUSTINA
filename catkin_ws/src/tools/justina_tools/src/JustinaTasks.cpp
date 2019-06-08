@@ -1607,7 +1607,6 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
 
     if(guide){
         JustinaHRI::waitAfterSay(ss.str(), 1500);
-        JustinaHRI::waitAfterSay("I am getting close to you", 1500);
 
     }
     else{
@@ -6575,6 +6574,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     person++;
                 } 
                 else {
+                    JustinaKnowledge::deleteKnownLoc("person2");
                     JustinaHRI::waitAfterSay("sorry, I will try to find you again",1500);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     JustinaNavigation::moveDistAngle(0, 1.57, 10000);
@@ -6591,7 +6591,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
 
                 JustinaTasks::guideAPerson(location2, 300000, 1.5);
                 dialogue.str(std::string()); // Clear the buffer
-                dialogue << "we have arrived to " << location2 << " please wait while i am looking for "<< name2 <<std::endl;
+                dialogue << "we have arrived to " << location2 << " please wait, i am looking for "<< name2 <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
 
                 nextState = SM_FIND_PERSON;
