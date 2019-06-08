@@ -6541,7 +6541,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                         legX+=0.5;
                         legY+=0.4;
                         legZ = 0.0;
-                        dialogue << "hey " << name1 << " stay in my left side in order to introduce to " << name;
+                        dialogue << "hey " << name1 << " stay in my left side in order to introduce to " << name2;
                         JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                         JustinaTools::transformPoint("/base_link", legX, legY , legZ, "/map", legX, legY, legZ);
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -6601,7 +6601,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     if (angleHead > M_PI)
                         angleHead = 2 * M_PI - angleHead;
                     JustinaManip::startHdGoTo(angleHead, atan2(host_z - (1.45 + torsoSpine), dist_to_head));
-                    JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
+                    //JustinaHRI::waitAfterSay(dialogue.str(), 6000, 300);
                     if (JustinaKnowledge::existKnownLocation("person1")) {
                         JustinaKnowledge::getKnownLocation("person1", goalx, goaly, goala);
                         JustinaTools::transformPoint("/map", goalx, goaly, guest_z,"/base_link", pointingArmX, pointingArmY, pointingArmZ);
