@@ -96,7 +96,7 @@ class JustinaTasks
         static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
         static bool detectObjectInGripper(std::string object, bool withLeftOrRightArm = false, int timeout = 30000);
         static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
-        static bool guideAPerson(std::string loc, int timeout = 0, float thr = 1.2, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
+        static bool guideAPerson(std::string loc, int timeout = 0, float thr = 1.2, bool onlyGetClose = false, float thrClose = 0.0, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
         static bool followAPersonAndRecogStop(std::string stopRecog, int timeout = 0, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
         static bool findTable(std::string &ss, bool hdMotion = 0);
         static bool findAndAlignTable();

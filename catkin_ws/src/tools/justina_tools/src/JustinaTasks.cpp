@@ -3177,7 +3177,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm) {
     return true;
 }
 
-bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
+bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr, bool onlyGetClose, float thrClose,
         bool zoneValidation, const std::vector<std::string>& zonesNotAllowed) {
 
     STATE nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
@@ -3250,6 +3250,11 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr,
                                 nextState = SM_HUMAN_MOVES_AWAY;
                         }
                     }
+                    if(dis < thrClose && onlyGetClose){
+                        nextState = SM_GUIDING_FINISHED;
+                        break;
+                    }
+
                     if (JustinaNavigation::isGlobalGoalReached())
                         nextState = SM_GUIDING_FINISHED;
                     else if (zoneValidation) {
@@ -6623,8 +6628,7 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
 
     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-    JustinaKnowledge::addUpdateKnownLoc("taxi", cx, cy,
-            atan2(cy - robot_y, cx - robot_x) - robot_a);
+    JustinaKnowledge::addUpdateKnownLoc("taxi", cx, cy, atan2(cy - robot_y, cx - robot_x));
     JustinaKnowledge::getKnownLocation("taxi", goalx, goaly, goala);
     std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly
         << "," << goala << std::endl;
@@ -6637,7 +6641,14 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
 
     //closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
 
-    JustinaTasks::guideAPerson("taxi", 300000);
+    JustinaTasks::guideAPerson("taxi", 120000, 1.5, true, 0.8);
+                    
+    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+    float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+    if (thetaToGoal < 0.0f)
+        thetaToGoal += 2 * M_PI;
+    float theta = thetaToGoal - robot_a;
+    JustinaNavigation::moveDistAngle(0, theta, 3000);
 
     float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
@@ -6651,8 +6662,7 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
         angleHead = 2 * M_PI + angleHead;
     if (angleHead > M_PI)
         angleHead = 2 * M_PI - angleHead;
-    JustinaManip::hdGoTo(angleHead,
-            atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+    JustinaManip::hdGoTo(angleHead, atan2(wgc.z() - (1.53 + torsoSpine), dist_to_head), 5000);
 
     return true;
 }
