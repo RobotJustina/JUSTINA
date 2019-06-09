@@ -550,10 +550,11 @@ meaning_mapping_patterns_gpsr = [
 	"planner_not_confirmed": ''},
 
 	#$fndobj   = Tell me what's the $oprop object on the {placement}
-	{"params": ["Action_talk", "Person", "Property", "Location"],
+	{"params": ["Action_talk", "Person", "Property", "Object", "Location"],
 	"Action_talk": [["tell"], [], [], []],
 	"Person": [["me"], [], [], []],
 	"Property": [["biggest", "smallest", "heaviest", "lightest", "largest", "thinnest"], [], [], []],
+	"Object": [["object"], [], [], []],
 	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
 				"(task (plan user_speech) (action_type find_prop_object) (params -Property- nil) (step ))" +
@@ -2139,9 +2140,9 @@ meaning_mapping_patterns_eegpsr2 = [
         "Rpos": [["left", "right", "center", "middle_bottom", "top"],[],[],[]],
 	"Category": [[], [], ["category"], []],
 	"Place": [[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object -Place- -Rpos- -Category-) (step )) " +
+	"conceptual_dependency":"(task (plan user_speech) (action_type get_rpose_object) (params object -Place- -Rpos- -Category-) (step )) " +
 	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+				"(task (plan user_speech) (action_type handover_object) (params object) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2166,8 +2167,8 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Origin_place": [[], [], ["place"], []],
         "Rpos": [["left", "right", "center", "middle_bottom", "top"],[],[],[]],
 	"Destiny_place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Origin_place- -Rpos- -Category-) (step )) " +
-				"(task (plan user_speech) (action_type deliver_in_position) (params -Destiny_place-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_rpose_object) (params object -Origin_place- -Rpos- -Category-) (step )) " +
+				"(task (plan user_speech) (action_type deliver_in_position) (params object -Destiny_place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
