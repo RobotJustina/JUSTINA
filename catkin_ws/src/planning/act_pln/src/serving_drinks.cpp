@@ -263,7 +263,7 @@ void callbackCmdNavigation(
     bool nfp = true;	
     if (tokens[1] != "arena" && tokens[1] != "exitdoor")
         nfp = validateContinuePlan(d.toSec(), fplan);
-    if (tokens[1] != location)
+    if (tokens[1] == location)
         centroids.clear();
 
     if (tokens[1] == "person") {
