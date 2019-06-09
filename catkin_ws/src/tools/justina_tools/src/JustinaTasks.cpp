@@ -3251,6 +3251,11 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr, bool on
                         }
                     }
                     if(dis < thrClose && onlyGetClose){
+                        JustinaHardware::stopRobot();
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                        ros::spinOnce();
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                        ros::spinOnce();
                         nextState = SM_GUIDING_FINISHED;
                         break;
                     }
