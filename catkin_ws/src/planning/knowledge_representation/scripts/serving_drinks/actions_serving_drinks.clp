@@ -38,7 +38,7 @@
         (assert (plan (name ?name) (number 6) (actions make_task ?name person went)(actions_num_params 7 11) (duration 6000)))
         (assert (plan (name ?name) (number 7) (actions confirmation ?confirmation) (duration 6000)))
         (assert (plan (name ?name) (number 8) (actions make_task ?name) (actions_num_params 9 11)))
-        (assert (plan (name ?name) (number 9) (actions offer_drink drinks) (actions_num_params 1) (duration 6000)));;offer one drink
+        (assert (plan (name ?name) (number 9) (actions offer_drink drinks) (actions_num_params 2) (duration 6000)));;offer one drink
         (assert (plan (name ?name) (number 10) (actions make_task ?name offer offered)(actions_num_params 11 11)(duration 6000)))
         (assert (plan (name ?name) (number 11) (actions train_person)(duration 6000)))
         (assert (plan (name ?name) (number 12) (actions repeat_task ?name people last_offer) (actions_num_params 5 11 1 5) (duration 6000)))
