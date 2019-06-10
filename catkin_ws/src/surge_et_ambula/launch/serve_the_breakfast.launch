@@ -1,7 +1,4 @@
 <launch>
-	<arg name="initial_pose_x" default="0.0"/>
-	<arg name="initial_pose_y" default="0.0"/>
-	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
 	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/0607.dic" />
 	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
@@ -10,13 +7,18 @@
 	<arg name="_wavpath" value="_wavpath:=none" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="initial_pose_x" value="3.405"/>
-		<arg name="initial_pose_y" value="-2.367"/>
-		<arg name="initial_pose_a" value="1.4629"/>
+		<arg name="initial_pose_x" default="0.0"/>
+		<arg name="initial_pose_y" default="0.0"/>
+		<arg name="initial_pose_a" default="0.0"/>
 	</include>
 	<group ns="knowledge">
-		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping receptionist"/>
+		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping serve_the_breakfast"/>
 	</group>
-
+	<group ns="vision">
+		<node name="color_reco" pkg="color_reco" type="color_reco_node" output="screen" />
+		<node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" />
+		<node name="obj_reco_plastic_tray" pkg="obj_reco_plastic_tray" type="obj_reco_plastic_tray" output="screen" />
+		<node name="obj_reco_dishwasher" pkg="obj_reco_dishwasher" type="obj_reco_dishwasher" output="screen" />
+	</group>
 	<node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
 </launch>

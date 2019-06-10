@@ -25,7 +25,8 @@
 #define MAX_ATTEMPTS_MEMORIZING 2
 #define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
-#define BOWL 1
+
+enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS};
 
 enum STATE{
     SM_INIT,
@@ -69,7 +70,7 @@ int main(int argc, char **argv){
     std::string grammarCommandsID = "serve_the_breakfastCommands";
     std::string grammarDrinksID = "serve_the_breakfastDrinks";
     std::string grammarNamesID = "receptionistNames";
-    std::string recogLoc = "kitchen";
+    std::string recogLoc = "table_location";
     std::string entranceLoc = "entrance_door";
 
     Eigen::Vector3d centroid;
@@ -117,7 +118,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_INIT;
+    STATE state = SM_FIND_OBJECTS_ON_TABLE; //SM_INIT;
 
 
     vision_msgs::CubesSegmented my_cutlery;
@@ -138,7 +139,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay("I am ready for the serve the breakfast test", 6000, MIN_DELAY_AFTER_SAY);
-                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                state = SM_WAIT_FOR_OPEN;
                 
                 break;
 
@@ -148,8 +149,8 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
                 if( JustinaNavigation::doorIsOpen(0.9, 2000) || attempsDoorOpend >= MAX_ATTEMPTS_DOOR )
                 {
-                    state = SM_GO_TO_TABLEWARE;
-                    JustinaHRI::waitAfterSay("Thank you, I will navegate to the kitchen", 4000, MIN_DELAY_AFTER_SAY);
+                    state = SM_NAVIGATE_TO_TABLEWARE;
+                    JustinaHRI::waitAfterSay("Thank you, I will navigate to the kitchen table", 4000, MIN_DELAY_AFTER_SAY);
                 }
                 else
                     attempsDoorOpend++;
@@ -186,7 +187,6 @@ int main(int argc, char **argv){
                 else
                 {
                     std::cout << ".-> sorting the objects" << std::endl;
-
                         if(!JustinaTasks::sortCutleries(my_cutlery))
                             if(!JustinaTasks::sortCutleries(my_cutlery)) 
 
@@ -194,7 +194,7 @@ int main(int argc, char **argv){
 
                         for(int i=0; i < my_cutlery.recog_cubes.size(); i ++)
                         {
-                            if(my_cutlery.recog_cubes[i].detected_cube == true && my_cutlery.recog_cubes[i].type_object == BOWL )
+                            if(my_cutlery.recog_cubes[i].detected_cube == true && my_cutlery.recog_cubes[i].type_object == CUTLERY )
                             {
                                 std::cout << ".-> detect the " << my_cutlery.recog_cubes[i].color << " object" << std::endl;
                                 pose.position.x = my_cutlery.recog_cubes[i].cube_centroid.x;
@@ -215,7 +215,7 @@ int main(int argc, char **argv){
                     std::cout << ".-> cannot take the object" << std::endl;
                     std::cout << ".-> trying again" << std::endl;
                 }
-                state= SM_FINISH_TEST;
+                state= SM_FIND_OBJECTS_ON_TABLE;//SM_FINISH_TEST;
                 break;
             case SM_FINISH_TEST:
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
