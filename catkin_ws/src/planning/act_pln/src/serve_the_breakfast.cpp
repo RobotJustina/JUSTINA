@@ -36,7 +36,9 @@ enum STATE{
     SM_GO_TO_TABLEWARE,
     SM_FIND_OBJECTS_ON_TABLE,
     SM_InspectTheObjetcs,
-    SM_TAKE_OBJECT
+    SM_TAKE_OBJECT,
+    SM_GO_TO_KITCHEN,
+    SM_LOOK_FOR_TABLE
 };
 
 std::string lastRecoSpeech;
@@ -50,10 +52,12 @@ int main(int argc, char **argv){
     ros::NodeHandle nh;
     ros::Rate rate(10);
 
+    bool findSeat = false;
     bool doorOpenFlag = false;
     bool success = false;
     bool withLeft = false;
     int attempsDoorOpend = 10;
+    int findSeatCount = 0;
     geometry_msgs::Pose pose;
     std::string id_cutlery;
     int type;
@@ -167,7 +171,6 @@ int main(int argc, char **argv){
                     std::cout << ".-> Can not align with table." << std::endl;
                 }
                 
-
                 std::cout << ".-> trying to detect the objects" << std::endl;
                 JustinaHRI::say("I am going to search a bowl on the table");
                 ros::Duration(2.0).sleep();
@@ -206,9 +209,6 @@ int main(int argc, char **argv){
                             }
                         } 
                     }
-                
-
-
                 break;
             case SM_TAKE_OBJECT:
                 if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
@@ -224,6 +224,33 @@ int main(int argc, char **argv){
                 success = true;
 
                 break;
+            case SM_GO_TO_KITCHEN:
+                std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
+                if(!JustinaNavigation::getClose(recogLoc, 80000) )
+                    JustinaNavigation::getClose(recogLoc, 80000); 
+                JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
+                state = SM_FIND_OBJECTS_ON_TABLE;       
+                break;
+            break;
+            case SM_LOOK_FOR_TABLE:
+                findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
+                if(!findSeat)
+                {
+                    findSeatCount++;
+                    JustinaHRI::waitAfterSay("I'm going to find the table", 5000);
+                }
+                centroid = centroids[0];
+                    JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
+                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                    goalx = gx_w;
+                    goaly = gy_w;
+                    guest_z = gz_w;
+
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
+                    
+            break;
         }
 
         rate.sleep();
