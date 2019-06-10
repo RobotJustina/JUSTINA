@@ -217,7 +217,9 @@ int main(int argc, char **argv){
                                 pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
                                 id_cutlery = my_cutlery.ObjectList[i].id;
                                 type = my_cutlery.ObjectList[i].type_object;
-                                JustinaHRI::say("I've found a bolw on the table");
+                                ss.str("");
+                                ss << "I've found a" << graspObject << "on the table";
+                                JustinaHRI::say(ss.str());
                                 ros::Duration(2.0).sleep();
                                 state = SM_TAKE_OBJECT;
                                 break;
@@ -254,12 +256,13 @@ int main(int argc, char **argv){
 
             case SM_LOOK_FOR_TABLE:
                 JustinaHRI::waitAfterSay("I'm looking for the table", 4000, MIN_DELAY_AFTER_SAY);
-                
-                findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
+                centroids.clear();
+                findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                 if(!findSeat)
                 {
                     findSeatCount++;
                     JustinaHRI::waitAfterSay("I'm going to find the table", 5000);
+                    break;
                 }
                 centroid = centroids[0];
                 JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
@@ -283,7 +286,7 @@ int main(int argc, char **argv){
                     std::cout << ".-> Can not align with table." << std::endl;
                 }
 
-                if(!JustinaTasks::placeObject(withLeft, 0.35, true))
+                if(!JustinaTasks::placeObject(withLeft))
                     state = SM_PLACE_BOWL;
                 else
                 {
@@ -301,7 +304,7 @@ int main(int argc, char **argv){
                     std::cout << ".-> Can not align with table." << std::endl;
                 }
 
-                if(!JustinaTasks::placeObject(withLeft, 0.35, true))
+                if(!JustinaTasks::placeObject(withLeft))
                     state = SM_PLACE_SPOON;
                 else
                 {
