@@ -43,7 +43,7 @@ find_package(serial REQUIRED)
 
 catkin_package(
 	INCLUDE_DIRS include/
-	LIBRARIES DynamixelManager JrkManager
+	LIBRARIES DynamixelManager JrkManager RoboClaw
 	CATKIN_DEPENDS roscpp rospy dynamixel_sdk serial
 	#  DEPENDS system_lib
 	)
@@ -65,3 +65,9 @@ target_link_libraries(JrkManager
 	${catkin_LIBRARIES}
 	)
 add_dependencies(JrkManager hardware_tools_gencpp)
+
+add_library(RoboClaw src/roboclaw.cpp)
+target_link_libraries(RoboClaw
+	${catkin_LIBRARIES}
+	)
+add_dependencies(RoboClaw hardware_tools_gencpp)

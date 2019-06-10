@@ -79,6 +79,7 @@ float theta = 0, thetaToGoal = 0, angleHead = 0;
 float dist_to_head;
 std::vector<std::string> centroids_loc;
 float torsoSpine, torsoWaist, torsoShoulders;
+std::string location = "kitchen";
 
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltQueryKDB;
@@ -262,6 +263,8 @@ void callbackCmdNavigation(
     bool nfp = true;	
     if (tokens[1] != "arena" && tokens[1] != "exitdoor")
         nfp = validateContinuePlan(d.toSec(), fplan);
+    if (tokens[1] == location)
+        centroids.clear();
 
     if (tokens[1] == "person") {
         success = true;
@@ -906,6 +909,8 @@ int main(int argc, char **argv) {
 
     pubStartTime = n.advertise<std_msgs::Int32>("/planning/start_time", 1); 
     pubResetTime = n.advertise<std_msgs::Empty>("/planning/restart_time", 1);
+        
+    std::stringstream ss;
 
     JustinaHRI::setNodeHandle(&n);
     JustinaHardware::setNodeHandle(&n);
@@ -967,8 +972,10 @@ int main(int argc, char **argv) {
                 command_response_pub.publish(initSpeech);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 ros::spinOnce();
-
-                initSpeech.params = "robot serving_drinks bar kitchen 1";
+            
+                ss.str("");
+                ss << "robot serving_drinks bar " << location << " 1" ;
+                initSpeech.params = ss.str();
                 initSpeech.successful = true;
                 command_response_pub.publish(initSpeech);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));

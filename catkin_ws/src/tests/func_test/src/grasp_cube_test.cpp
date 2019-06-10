@@ -16,15 +16,17 @@ int main(int argc, char** argv)
 
     geometry_msgs::Pose pose;
 
-    std::vector<vision_msgs::VisionObject> recognizedObjects;
+    
     bool found;
     int indexFound = 0;
     std::string idCube = "purple";
-    vision_msgs::CubesSegmented cubes;
-    vision_msgs::Cube cube_aux;
+    vision_msgs::VisionObjectList objects;
+    vision_msgs::VisionObject object;
+    //vision_msgs::CubesSegmented cubes;
+    //vision_msgs::Cube cube_aux;
     bool withLeftOrRightArm;
-    cube_aux.color = idCube;
-    cubes.recog_cubes.push_back(cube_aux);
+    object.id = idCube;
+    objects.ObjectList.push_back(object);
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
@@ -39,16 +41,16 @@ int main(int argc, char** argv)
                 nextState = 2;
             break;
         case 2:
-            found = JustinaVision::getCutlerySeg(cubes);
+            found = JustinaVision::getObjectSeg(objects);
             withLeftOrRightArm = true; 
             if(!found){
                 std::cout << "Not found a object" << std::endl;
                 nextState = 2;
             }
             else{
-                pose.position.x = cubes.recog_cubes[0].cube_centroid.x;
-                pose.position.y = cubes.recog_cubes[0].cube_centroid.y;
-                pose.position.z = cubes.recog_cubes[0].cube_centroid.z;
+                pose.position.x = objects.ObjectList[0].pose.position.x;
+                pose.position.y = objects.ObjectList[0].pose.position.y;
+                pose.position.z = objects.ObjectList[0].pose.position.z;
 		if(pose.position.y > 0)
 			withLeftOrRightArm = true;
 		else
@@ -60,7 +62,7 @@ int main(int argc, char** argv)
         case 3:
             //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
             //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
-            JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idCube, true);
+            JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idCube, true);
             nextState = -1;
             break;
         default:

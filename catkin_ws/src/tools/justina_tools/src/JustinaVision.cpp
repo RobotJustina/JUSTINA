@@ -90,6 +90,7 @@ ros::Publisher JustinaVision::pubMove_base_train_vision;
 ros::ServiceClient JustinaVision::cltGripperPos;
 ros::ServiceClient JustinaVision::cltCubesSeg;
 ros::ServiceClient JustinaVision::cltCutlerySeg;
+ros::ServiceClient JustinaVision::cltObjectSeg;
 ros::ServiceClient JustinaVision::cltGetTray;
 ros::ServiceClient JustinaVision::cltGetDishwasher;
 ros::ServiceClient JustinaVision::cltLoadObjectCat;
@@ -182,6 +183,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
     //Services for segment cutlery
     JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
+    JustinaVision::cltObjectSeg = nh->serviceClient<vision_msgs::GetObjectsColor>("/vision/color_reco/cutlery_seg");
     JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
     JustinaVision::cltGetDishwasher = nh ->serviceClient<vision_msgs::SRV_FindDishwasher>("/vision/obj_reco/dishwasher");
     JustinaVision::cltLoadObjectCat = nh ->serviceClient<vision_msgs::SetTrainingDir>("/vision/obj_reco/set_training_dir");
@@ -943,6 +945,23 @@ bool JustinaVision::getCutlerySeg(vision_msgs::CubesSegmented& cutleries)
     return true;
 }
 
+bool JustinaVision::getObjectSeg(vision_msgs::VisionObjectList& objects)
+{
+    std::cout << "JustinaVision.-> Trying to get objects Segmented" << std::endl;
+    vision_msgs::GetObjectsColor srvSegmentedObjects;
+    srvSegmentedObjects.request.objects_input=objects;
+
+    if(!JustinaVision::cltObjectSeg.call(srvSegmentedObjects))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment objects service" << std::endl;
+        return false;
+    }
+
+    objects = srvSegmentedObjects.response.objects_output;
+
+    return true;
+}
+
 bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
 {
     std::cout << "JustinaVision.-> Trying to state if the object is still on the table" << std::endl;
@@ -968,6 +987,45 @@ bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
        cutleries.recog_cubes[0].cube_centroid.x <= my_cutlery.maxPoint.x && cutleries.recog_cubes[0].cube_centroid.x >= my_cutlery.minPoint.x &&
        cutleries.recog_cubes[0].cube_centroid.y <= my_cutlery.maxPoint.y && cutleries.recog_cubes[0].cube_centroid.y >= my_cutlery.minPoint.y &&
        cutleries.recog_cubes[0].cube_centroid.z <= my_cutlery.maxPoint.z && cutleries.recog_cubes[0].cube_centroid.z >= my_cutlery.minPoint.z){
+       
+        std::cout << "JustinaVision.-> the object is still on the table" <<std::endl;
+        stillontable = true; 
+    }
+
+    else{
+        std::cout << "JustinaVision.-> the object is NOT on the table anymore" <<std::endl;
+        stillontable = false;     
+    }
+
+    return stillontable;
+
+}
+
+bool JustinaVision::isStillOnTable(vision_msgs::VisionObject object)
+{
+    std::cout << "JustinaVision.-> Trying to state if the object is still on the table" << std::endl;
+    vision_msgs::VisionObjectList objects;
+    objects.ObjectList.resize(1);
+    objects.ObjectList[0].id = object.id;
+
+    vision_msgs::GetObjectsColor srvSegmentedObjects;
+    srvSegmentedObjects.request.objects_input=objects;
+    bool stillontable = false;
+
+    if(!JustinaVision::cltObjectSeg.call(srvSegmentedObjects))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment objects service" << std::endl;
+        return false;
+    }
+
+    objects = srvSegmentedObjects.response.objects_output;
+
+
+    std::cout << "JustinaVision.-> searching the object on the table...." <<std::endl;
+    if(objects.ObjectList[0].graspable == true && objects.ObjectList[0].id == object.id &&
+       objects.ObjectList[0].pose.position.x <= object.maxPoint.x && objects.ObjectList[0].pose.position.x >= object.minPoint.x &&
+       objects.ObjectList[0].pose.position.y <= object.maxPoint.y && objects.ObjectList[0].pose.position.y >= object.minPoint.y &&
+       objects.ObjectList[0].pose.position.z <= object.maxPoint.z && objects.ObjectList[0].pose.position.z >= object.minPoint.z){
        
         std::cout << "JustinaVision.-> the object is still on the table" <<std::endl;
         stillontable = true; 

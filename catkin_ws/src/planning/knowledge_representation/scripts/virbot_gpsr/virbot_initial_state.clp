@@ -35,11 +35,11 @@
 	(item (type Objects) (name potato_chips) (zone bookcase) (image cream) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 3)(grasp 4)(size 6)(height 8)(wide 3)(color brown))
 
 	;;; DRINKS
-	(item (type Objects) (name chocolate_drink)(zone counter)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color pink)(grasp 9)(size 1) (wide 1) (height 1) (weight 1)(smallest yes))
+	(item (type Objects) (name chocolate_drink)(zone counter)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 9)(size 1) (wide 1) (height 1) (weight 1)(smallest yes))
 	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 2) (wide 2) (height 2) (weight 2))
-	(item (type Objects) (name grape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 3) (wide 3) (height 3) (weight 3))
-	(item (type Objects) (name orange_juice)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 4) (wide 5) (height 5) (weight 5)(heaviest yes))
-	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 6) (wide 6) (height 6) (weight 6)(heaviest yes))
+	(item (type Objects) (name grape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 7)(size 3) (wide 3) (height 3) (weight 3))
+	(item (type Objects) (name orange_juice)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color orange)(grasp 3)(size 4) (wide 5) (height 5) (weight 5)(heaviest yes))
+	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color gray)(grasp 3)(size 6) (wide 6) (height 6) (weight 6)(heaviest yes))
 
 	;;; FOOD
 	;(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
@@ -63,7 +63,7 @@
 
 	;;;;; FRUITS
 	;(item (type Objects) (name apple)  (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (grasp 22)(weight 14)(size 5)(height 10)(wide 7)(color red))
-	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 7)(size 7)(height 7)(wide 7)(color orange))
+	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 7)(size 7)(height 7)(wide 7)(color yellow))
 	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 13)(size 4)(height 9)(wide 6)(color orange))
 	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 13)(size 4)(height 9)(wide 6)(color orange))
 
@@ -109,6 +109,7 @@
         (item (type Property) (name lightest) (zone bookcase))
         (item (type Property) (name largest) (zone bookcase))
         (item (type Property) (name thinnest) (zone bookcase))
+        (item (type Property) (name tallest) (zone bookcase))
 
 	;;;;; Abspos
         (item (type Abspos) (name left_most))

@@ -22,7 +22,7 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "Guiding a person " << std::endl;
-            isGuide = JustinaTasks::guideAPerson("kitchen", 240000, 1.2, true, zonesRes);
+            isGuide = JustinaTasks::guideAPerson("kitchen", 240000, false, 0.0, 1.2, true, zonesRes);
             if(!isGuide){
                 std::cout << "Can not guide a person " << std::endl;
                 nextState = 1;
