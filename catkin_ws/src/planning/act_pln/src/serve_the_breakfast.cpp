@@ -57,7 +57,7 @@ int main(int argc, char **argv){
     bool doorOpenFlag = false;
     bool success = false;
     bool withLeft = false;
-    int attempsDoorOpend = 10;
+    int attempsDoorOpend = 0;
     int findSeatCount = 0;
     geometry_msgs::Pose pose;
     std::string id_cutlery;
@@ -163,6 +163,7 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
                 state = SM_FIND_OBJECTS_ON_TABLE;       
                 break;
+
             case SM_FIND_OBJECTS_ON_TABLE:
 
                 std::cout << ".-> inspecting the objets on the table" << std::endl;
@@ -215,15 +216,17 @@ int main(int argc, char **argv){
                     std::cout << ".-> cannot take the object" << std::endl;
                     std::cout << ".-> trying again" << std::endl;
                 }
-                state= SM_FIND_OBJECTS_ON_TABLE;//SM_FINISH_TEST;
-                break;
-            case SM_FINISH_TEST:
-                std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
-                JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
-                
-                success = true;
+                if( !withLeft )
+                {
+                    state = SM_FIND_OBJECTS_ON_TABLE;
+                    withLeft = true;
 
+                }
+                else
+                    state= SM_FINISH_TEST;
+                
                 break;
+        
             case SM_GO_TO_KITCHEN:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
                 if(!JustinaNavigation::getClose(recogLoc, 80000) )
@@ -232,6 +235,7 @@ int main(int argc, char **argv){
                 state = SM_FIND_OBJECTS_ON_TABLE;       
                 break;
             break;
+
             case SM_LOOK_FOR_TABLE:
                 findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
                 if(!findSeat)
@@ -250,6 +254,13 @@ int main(int argc, char **argv){
 
                 JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
                     
+            break;
+
+            case SM_FINISH_TEST:
+                std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
+                JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
+                
+                success = true;
             break;
         }
 
