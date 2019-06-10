@@ -72,7 +72,7 @@ int main(int argc, char **argv){
     std::string grammarNamesID = "receptionistNames";
     
     std::string recogLoc = "kitchen";
-    std::string cutleryLoc = "entrance_door";
+    std::string cutleryLoc = "table_location";
     std::string graspObject = " bowl ";
 
     int graspObjectID = BOWL;
@@ -123,7 +123,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_FIND_OBJECTS_ON_TABLE; //SM_INIT;
+    STATE state = SM_INIT;
 
 
     vision_msgs::CubesSegmented my_cutlery;
@@ -243,7 +243,7 @@ int main(int argc, char **argv){
                 if(!JustinaNavigation::getClose(recogLoc, 80000) )
                     JustinaNavigation::getClose(recogLoc, 80000); 
                 JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
-                state = SM_FIND_OBJECTS_ON_TABLE;       
+                state = SM_LOOK_FOR_TABLE;       
                 break;
             break;
 
