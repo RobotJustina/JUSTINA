@@ -107,11 +107,11 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
 							nextState = SM_InspectTheObjetcs;
 						}
@@ -153,11 +153,11 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
 							nextState = SM_InspectTheObjetcs;
 						}
 					} 
