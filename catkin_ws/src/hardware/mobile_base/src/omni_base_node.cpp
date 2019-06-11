@@ -8,14 +8,14 @@
 
 bool newData = false;
 int noNewDataCounter = 5;
-long lastSetSpeedTime;
+ros::Time lastSetSpeedTime;
     
 Roboclaw * rcFrontal;
 Roboclaw * rcLateral;
 
 uint8_t rcAddressFrontal =  128;
 uint8_t rcAddressLateral =  128;
-    
+   
 float QPPS_LEFT;
 float QPPS_RIGHT;
 float QPPS_FRONT;
@@ -25,6 +25,78 @@ float leftSpeed;
 float rightSpeed;
 float frontSpeed;
 float rearSpeed;
+
+class EncoderOdom
+{
+    public:
+        
+        EncoderOdom(float ticksPerMeterFrontal, float ticksPerMeterLateral, float base_width, ros::Publisher &odomPub)
+        {
+            this->ticksPerMeterFrontal = ticksPerMeterFrontal;
+            this->ticksPerMeterLateral = ticksPerMeterLateral;
+            this->base_width = base_width;
+            this->odomPub = odomPub;
+            this->robotX = 0.0;
+            this->robotY = 0.0;
+            this->robotT = 0.0;
+            this->velX = 0.0;
+            this->velY = 0.0;
+            this->velTheta = 0.0;
+            this->lastEncLeft = 0.0;
+            this->lastEncRight = 0.0;
+            this->lastEncFront = 0.0;
+            this->lastEncRear = 0.0;
+            lastEncTime = ros::Time::now();
+        }
+
+        void update(float encLeft, float encRight, float encFront, float encRear)
+        {
+            float leftTicks     = encLeft   - lastEncLeft;
+            float rightTicks    = encRight  - lastEncRight;
+            float frontTicks    = encFront  - lastEncFront;
+            float rearTicks     = encRear   - lastEncRear;
+            lastEncLeft     = encLeft;
+            lastEncRight    = encRight;
+            lastEncFront    = encFront;
+            lastEncRear     = encRear;
+            float distLeft  = leftTicks     / ticksPerMeterFrontal;
+            float distRight = leftTicks     / ticksPerMeterFrontal;
+            float distFront = frontTicks    / ticksPerMeterLateral;
+            float distRear  = rearTicks     / ticksPerMeterLateral;
+
+            ros::Time currentTime = ros::Time::now();
+            double dTime = (currentTime - lastEncTime).toSec();
+            lastEncTime = currentTime;
+
+            float distX = (distRight    + distLeft)     / 2.0;
+            float distY = (distFront    + distRear)    / 2.0; 
+            float deltaTheta = (distRight - distLeft + distFront - distRear) / base_width / 2.0;
+
+            if(fabs(deltaTheta) > 0.00001)
+            {
+            }
+        }
+
+        static float normalizeAngle(float angle){
+            while(angle > M_PI){
+                angle -= 2.0 * M_PI;
+            }
+            while(angle < -M_PI){
+                angle += 2.0 * M_PI;
+            }
+            return angle;
+        } 
+
+    private:
+        float ticksPerMeterFrontal;
+        float ticksPerMeterLateral;
+        float base_width;
+        ros::Publisher odomPub;
+        float robotX, robotY, robotT;
+        float velX, velY, velTheta;
+        float lastEncLeft, lastEncRight, lastEncFront, lastEncRear;
+        ros::Time lastEncTime;
+};
 
 void checkSpeedRanges(float &sLeft, float &sRight, float &sFront, float &sRear)
 {
@@ -45,7 +117,6 @@ void checkSpeedRanges(float &sLeft, float &sRight, float &sFront, float &sRear)
 void callbackCmdVel(const geometry_msgs::Twist::ConstPtr &msg)
 {
     std::cout << "Reciving cmd vel." << std::endl;
-    lastSetSpeedTime = ros::Time::now().toSec();
     float linearX   = msg->linear.x;
     float linearY   = msg->linear.y;
     float angularZ  = msg->angular.z;
@@ -56,7 +127,33 @@ void callbackCmdVel(const geometry_msgs::Twist::ConstPtr &msg)
     rearSpeed     = linearY - angularZ * BASE_WIDTH / 2.0;
     
     checkSpeedRanges(leftSpeed, rightSpeed, frontSpeed, rearSpeed);
+            
+	leftSpeed   = (leftSpeed    * QPPS_LEFT * 16.0 / 35.0);
+	rightSpeed  = (rightSpeed   * QPPS_RIGHT * 16.0 / 35.0);
+	frontSpeed  = -(frontSpeed   * QPPS_FRONT * 16.0 / 35.0);
+	rearSpeed   = -(rearSpeed    * QPPS_REAR * 16.0 / 35.0);
+
+	try
+	{
+		rcFrontal->SpeedM1M2(rcAddressFrontal, leftSpeed, rightSpeed); 
+	}
+	catch(std::exception &e)
+	{
+		ROS_ERROR("Mobile base.-> Error while writing speeds to roboclaw frontal:");
+		ROS_DEBUG("%s", e.what());
+	}
+	try
+	{
+		rcLateral->SpeedM1M2(rcAddressLateral, frontSpeed, rearSpeed); 
+	}
+	catch(std::exception &e)
+	{
+		ROS_ERROR("Mobile base.-> Error while writing speeds to roboclaw frontal:");
+		ROS_DEBUG("%s", e.what());
+	}
     
+	lastSetSpeedTime = ros::Time::now();
+	
     newData = true;
     noNewDataCounter = 5.0;
 
@@ -99,8 +196,8 @@ int main(int argc, char ** argv)
     std::cout << "Port frontal:" << portFrontal << std::endl;
     std::cout << "Port lateral:" << portLateral << std::endl;
 
-    char frontalVersion;
-    char lateralVersion;
+    std::string frontalVersion;
+    std::string lateralVersion;
 
     float posPIDLeftF[3] = {0.0, 0.0, 0.0}; 
     uint32_t posPIDLeftI[4] = {0, 0, 0, 0}; 
@@ -155,7 +252,7 @@ int main(int argc, char ** argv)
 
         try
         {
-            frontalVersion = rcFrontal->ReadVersion(rcAddressFrontal, &frontalVersion);
+            frontalVersion = rcFrontal->ReadVersion(rcAddressFrontal, frontalVersion);
         }
         catch(std::exception &e)
         {
@@ -164,7 +261,7 @@ int main(int argc, char ** argv)
         }
         try
         {
-            lateralVersion = rcFrontal->ReadVersion(rcAddressFrontal, &lateralVersion);
+            lateralVersion = rcFrontal->ReadVersion(rcAddressFrontal, lateralVersion);
         }
         catch(std::exception &e)
         {
@@ -172,21 +269,21 @@ int main(int argc, char ** argv)
             ROS_DEBUG("%s", e.what());
         }
 
-        if(!frontalVersion)
+        if(frontalVersion == "")
         {
             ROS_WARN("Could not get version from frontal roboclaw");
         }
         else
         {
-            ROS_DEBUG("%c", frontalVersion);
+            ROS_DEBUG("%s", frontalVersion.c_str());
         }
-        if(!lateralVersion)
+        if(lateralVersion == "")
         {
             ROS_WARN("Could not get version from lateral roboclaw");
         }
         else
         {
-            ROS_DEBUG("%c", lateralVersion);
+            ROS_DEBUG("%s", lateralVersion.c_str());
         }
 
         try
@@ -294,10 +391,14 @@ print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
     }
 
     ros::Subscriber subCmdVel = nh.subscribe("/hardware/mobile_base/cmd_vel", 1, callbackCmdVel);
+		
+	uint8_t statusEncLeft, statusEncRight, statusEncFront, statusEncRear;
+	bool validLeft, validRight, validFront, validRear;
+	uint32_t encoderLeft, encoderRight, encoderFront, encoderRear;
 
     while(ros::ok())
     {
-        if(newData)
+        /*if(newData)
         {
             leftSpeed   = (leftSpeed    * QPPS_LEFT * 16.0 / 35.0);
             rightSpeed  = (rightSpeed   * QPPS_RIGHT * 16.0 / 35.0);
@@ -323,7 +424,74 @@ print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
                 ROS_DEBUG("%s", e.what());
             }
             newData = false;
-        }
+        }*/
+	
+		try{
+			encoderLeft = rcFrontal->ReadEncM1(rcAddressFrontal, &statusEncLeft, &validLeft);
+		}
+		catch(std::exception &e){
+            ROS_WARN("ReadEncM1 left error: ");
+            ROS_DEBUG("%s", e.what());
+		}
+		
+		try{
+			encoderRight = rcFrontal->ReadEncM2(rcAddressFrontal, &statusEncRight, &validRight);
+		}
+		catch(std::exception &e){
+            ROS_WARN("ReadEncM2 right error: ");
+            ROS_DEBUG("%s", e.what());
+		}
+		
+		try{
+			encoderFront = rcLateral->ReadEncM1(rcAddressLateral, &statusEncFront, &validFront);
+		}
+		catch(std::exception &e){
+            ROS_WARN("ReadEncM1 front error: ");
+            ROS_DEBUG("%s", e.what());
+		}
+		
+		try{
+			encoderRear = rcLateral->ReadEncM2(rcAddressLateral, &statusEncRear, &validRear);
+		}
+		catch(std::exception &e){
+            ROS_WARN("ReadEncM2 front error: ");
+            ROS_DEBUG("%s", e.what());
+		}
+        double timeSec = ros::Time::now().toSec() - lastSetSpeedTime.toSec();
+        std::cout << "TimeSec" << timeSec << std::endl;
+		if(timeSec > 0.1)
+		{
+            std::cout << "Entro" << std::endl;
+            noNewDataCounter -= 1;
+            if(noNewDataCounter == 0)
+            {
+                try
+                {
+                    rcFrontal->ForwardM1(rcAddressFrontal, 0);
+                    rcFrontal->ForwardM2(rcAddressFrontal, 0);
+                }
+                catch(std::exception &e)
+                {
+                    ROS_ERROR("Could not stop");
+                    ROS_DEBUG("%s", e.what());
+                }
+                try
+                {
+                    rcLateral->ForwardM1(rcAddressLateral, 0);
+                    rcLateral->ForwardM2(rcAddressLateral, 0);
+                }
+                catch(std::exception &e)
+                {
+                    ROS_ERROR("Could not stop");
+                    ROS_DEBUG("%s", e.what());
+                }
+            }
+            if(noNewDataCounter < -1) 
+                noNewDataCounter = -1;    
+		}
+        else if(timeSec > 10.0)
+            lastSetSpeedTime = ros::Time::now();
+		
         rate.sleep();
         ros::spinOnce();
     }
