@@ -244,8 +244,8 @@ int main(int argc, char** argv)
                 JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.6, 180000);
-                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 0.6, 180000);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
+                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 0.9, 120000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -342,7 +342,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("arena", 300000, 1.5);
+                JustinaTasks::guideAPerson("arena", 120000, 1.5);
 
                 
                 if(numberGuest<maxNumberGuest){
@@ -375,7 +375,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("corridor", 300000, 1.5);
+                JustinaTasks::guideAPerson("corridor", 120000, 1.5);
                 
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
         		ros::Duration(1.0).sleep();
