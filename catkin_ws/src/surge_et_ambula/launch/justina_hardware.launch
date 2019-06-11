@@ -4,7 +4,7 @@
 	<arg name="dynamic_map" default="false"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
-		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
+		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port1" value="/dev/justinaRC30"/>
 			<param name="port2" value="/dev/justinaRC15"/>

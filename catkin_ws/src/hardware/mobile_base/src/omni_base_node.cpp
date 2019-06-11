@@ -100,7 +100,7 @@ class EncoderOdom
                 float rgX = (distRight  + distLeft)     / (2.0 * deltaTheta);
                 float rgY = (distRear   + distFront)    / (2.0 * deltaTheta);
                 deltaX = rgX * sin(deltaTheta)          +    rgY * (1.0 - cos(deltaTheta));
-                deltaY = rgY * (1.0 - cos(deltaTheta))  +    rgY * sin(deltaTheta);
+                deltaY = rgX * (1.0 - cos(deltaTheta))  +    rgY * sin(deltaTheta);
             }
             else
             {
@@ -108,8 +108,8 @@ class EncoderOdom
                 deltaY = distY;
             }
             this->robotT = normalizeAngle(this->robotT + deltaTheta);
-            this->robotX += deltaX * cos(deltaTheta) - deltaY * sin(deltaTheta);
-            this->robotY += deltaX * sin(deltaTheta) + deltaY * cos(deltaTheta);
+            this->robotX += deltaX * cos(this->robotT) - deltaY * sin(this->robotT);
+            this->robotY += deltaX * sin(this->robotT) + deltaY * cos(this->robotT);
             if(abs(dTime))
             {
                 this->velX = 0.0;
@@ -564,6 +564,7 @@ print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
 
             try{
                 encoderFront = rcLateral->ReadEncM1(rcAddressLateral, &statusEncFront, &validFront);
+                encoderFront = encoderFront *-1;
             }
             catch(std::exception &e){
                 ROS_WARN("ReadEncM1 front error: ");
@@ -572,6 +573,7 @@ print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
 
             try{
                 encoderRear = rcLateral->ReadEncM2(rcAddressLateral, &statusEncRear, &validRear);
+                encoderRear = encoderRear * -1;
             }
             catch(std::exception &e){
                 ROS_WARN("ReadEncM2 rear error: ");
