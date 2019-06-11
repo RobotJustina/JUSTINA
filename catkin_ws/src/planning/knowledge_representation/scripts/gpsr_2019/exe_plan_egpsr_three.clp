@@ -37,7 +37,7 @@
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-rpose-object ?place ?rpose ?category)(duration ?t))
 	;(item (type Property) (name ?oprop))
 	=>
-	(bind ?command (str-cat "rpose " ?rpose " " ?category ""))
+	(bind ?command (str-cat "rpose " ?place " "?rpose " " ?category ""))
 	(assert (send-blackboard ACT-PLN rpose_obj ?command ?t 4))
 )
 
@@ -60,7 +60,7 @@
 (defrule exe-plan-no-geted-rpose-object 
         ?f <-  (received ?sender command ?find_object ?object ?x ?y ?z ?arm 0)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-pos-object $?params))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-rpose-object $?params))
 	?f3 <- (Arm (name ?arm))
         =>
         (retract ?f)
@@ -69,3 +69,27 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-pourin-obj 
+	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?canpourin)(duration ?t))
+	;(item (type Property) (name ?oprop))
+	=>
+	(bind ?command (str-cat "" ?canpourin ""))
+	(assert (send-blackboard ACT-PLN pourin_obj ?command ?t 4))
+)
+
+(defrule exe-plan-pourined-obj 
+        ?f <-  (received ?sender command pourin_obj ?canpourin 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-pourined-obj 
+        ?f <-  (received ?sender command pourin_obj ?canpourin 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
