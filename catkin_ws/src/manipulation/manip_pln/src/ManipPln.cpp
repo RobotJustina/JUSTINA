@@ -53,8 +53,10 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subLaCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &ManipPln::callbackLaCurrentPose, this);
     this->subRaCurrentPose = nh->subscribe("/hardware/right_arm/current_pose", 1, &ManipPln::callbackRaCurrentPose, this);
     this->subHdCurrentPose = nh->subscribe("/hardware/head/current_pose", 1, &ManipPln::callbackHdCurrentPose, this);
-    this->pubLaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
-    this->pubRaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
+//    this->pubLaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1); //-------------
+//    this->pubRaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1); //------------
+    this->pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);//----------
+    this->pubRaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_goto_angles", 1);//----------
     this->pubHdGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     this->pubLaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_torque", 1);
     this->pubRaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
@@ -194,7 +196,7 @@ void ManipPln::spin()
             {
                 msgLaGoalPose.data = this->laGoalPose;
                 msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), this->laGoalSpeeds.begin(), this->laGoalSpeeds.end());
-                pubLaGoalPose.publish(msgLaGoalPose);
+//                pubLaGoalPose.publish(msgLaGoalPose);//----------
             }
         }
         if(this->raNewGoal)
@@ -210,7 +212,7 @@ void ManipPln::spin()
             {
                 msgRaGoalPose.data = this->raGoalPose;
                 msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), this->raGoalSpeeds.begin(), this->raGoalSpeeds.end());
-                pubRaGoalPose.publish(msgRaGoalPose);
+//                pubRaGoalPose.publish(msgRaGoalPose); //-----------
             }
         }
         if(this->hdNewGoal)
@@ -298,7 +300,7 @@ void ManipPln::spin()
                     this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->laCurrentPose, laGoalPose, laGoalSpeeds);
                     msgLaGoalPose.data = laGoalPose;
                     msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
-                    pubLaGoalPose.publish(msgLaGoalPose);
+//                    pubLaGoalPose.publish(msgLaGoalPose);//------------
                     visualization_msgs::Marker marker;
                     marker.header.frame_id = "left_arm_link0";
                     marker.header.stamp = ros::Time();
@@ -396,7 +398,7 @@ void ManipPln::spin()
                     this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->raCurrentPose, raGoalPose, raGoalSpeeds);
                     msgRaGoalPose.data = raGoalPose;
                     msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), raGoalSpeeds.begin(), raGoalSpeeds.end());
-                    pubRaGoalPose.publish(msgRaGoalPose);
+//                    pubRaGoalPose.publish(msgRaGoalPose);//----------
                     visualization_msgs::Marker marker;
                     marker.header.frame_id = "right_arm_link0";
                     marker.header.stamp = ros::Time();
@@ -452,7 +454,7 @@ void ManipPln::spin()
                     this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, newGoalCartesian[0], newGoalCartesian[1], newGoalCartesian[2], this->laCurrentPose, newGoalArticular, laGoalSpeeds);
                     msgLaGoalPose.data = newGoalArticular;
                     msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
-                    pubLaGoalPose.publish(msgLaGoalPose);
+//                    pubLaGoalPose.publish(msgLaGoalPose);//-----------
                 }
             }
         }
@@ -486,7 +488,7 @@ void ManipPln::spin()
                     this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, newGoalCartesian[0], newGoalCartesian[1], newGoalCartesian[2], this->raCurrentPose, newGoalArticular, raGoalSpeeds);
                     msgRaGoalPose.data = newGoalArticular;
                     msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), raGoalSpeeds.begin(), raGoalSpeeds.end());
-                    pubRaGoalPose.publish(msgRaGoalPose);
+//                    pubRaGoalPose.publish(msgRaGoalPose);//----------
                 }
             }
         }
@@ -1255,14 +1257,19 @@ void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
         return;
     }
 
+    std_msgs::Float32MultiArray msgLaGoToAngles;//------------
+    msgLaGoToAngles.data.resize(7);//----------
     std::cout << "ManipPln.->Left Arm goal pose: " << msg->data << " = ";
     for(int i=0; i< this->laPredefPoses[msg->data].size(); i++)
+    { //---------------
         std::cout << this->laPredefPoses[msg->data][i] << " ";
+        msgLaGoToAngles.data[i] = this->laPredefPoses[msg->data][i];//-------------
+    }//----------------
     std::cout << std::endl;
-
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubLaGoalReached.publish(msgGoalReached);
+    this->pubLaGoToAngles.publish(msgLaGoToAngles);//--------------------
     this->laGoalPose = this->laPredefPoses[msg->data];
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
@@ -1276,14 +1283,20 @@ void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
         return;
     }
 
+    std_msgs::Float32MultiArray msgRaGoToAngles;//------------
+    msgRaGoToAngles.data.resize(7);//----------
     std::cout << "ManipPln.->Right Arm goal pose: " << msg->data << " = ";
     for(int i=0; i< this->raPredefPoses[msg->data].size(); i++)
+    { //--------------
         std::cout << this->raPredefPoses[msg->data][i] << " ";
+        msgRaGoToAngles.data[i] = this->raPredefPoses[msg->data][i];//-------------        
+    } //--------------
     std::cout << std::endl;
 
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubRaGoalReached.publish(msgGoalReached);
+    this->pubRaGoToAngles.publish(msgRaGoToAngles);//--------------------
     this->raGoalPose = this->raPredefPoses[msg->data];
     this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
