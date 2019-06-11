@@ -2153,9 +2153,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Person": [["me"], [], [], []],
 	"Something": [["something"], [], [], []],
 	"Canpourin": [[], [], ["item"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params object default_location canpourin -Canpourin-) (step )) " +
-	                        "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type pourin_object) (param -Canpourin-) (step )) ",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

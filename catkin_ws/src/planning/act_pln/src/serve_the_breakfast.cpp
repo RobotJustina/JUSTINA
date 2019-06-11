@@ -25,7 +25,8 @@
 #define MAX_ATTEMPTS_MEMORIZING 2
 #define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
-#define BOWL 1
+
+enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS};
 
 enum STATE{
     SM_INIT,
@@ -36,7 +37,12 @@ enum STATE{
     SM_GO_TO_TABLEWARE,
     SM_FIND_OBJECTS_ON_TABLE,
     SM_InspectTheObjetcs,
-    SM_TAKE_OBJECT
+    SM_TAKE_OBJECT,
+    SM_GO_TO_KITCHEN,
+    SM_LOOK_FOR_TABLE,
+    SM_PLACE_BOWL,
+    SM_PLACE_SPOON,
+    SM_GO_FOR_CEREAL
 };
 
 std::string lastRecoSpeech;
@@ -50,10 +56,12 @@ int main(int argc, char **argv){
     ros::NodeHandle nh;
     ros::Rate rate(10);
 
+    bool findSeat = false;
     bool doorOpenFlag = false;
     bool success = false;
     bool withLeft = false;
-    int attempsDoorOpend = 10;
+    int attempsDoorOpend = 0;
+    int findSeatCount = 0;
     geometry_msgs::Pose pose;
     std::string id_cutlery;
     int type;
@@ -65,14 +73,17 @@ int main(int argc, char **argv){
     std::string grammarCommandsID = "serve_the_breakfastCommands";
     std::string grammarDrinksID = "serve_the_breakfastDrinks";
     std::string grammarNamesID = "receptionistNames";
+    
     std::string recogLoc = "kitchen";
-    std::string entranceLoc = "entrance_door";
+    std::string cutleryLoc = "table_location";
+    std::string graspObject = " bowl ";
+
+    int graspObjectID = BOWL;
 
     Eigen::Vector3d centroid;
     std::vector<Eigen::Vector3d> centroids;
     
     std::stringstream ss;
-    std::stringstream ss2;
     
     float robot_y, robot_x, robot_a;    
     float torsoSpine, torsoWaist, torsoShoulders;
@@ -84,6 +95,8 @@ int main(int argc, char **argv){
     float pointingDirX, pointingDirY, pointingDirZ, pointingNormal;
     float distanceArm = 0.6;
     bool usePointArmLeft = false;
+
+
     
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
@@ -116,15 +129,16 @@ int main(int argc, char **argv){
     STATE state = SM_INIT;
 
 
-    vision_msgs::CubesSegmented my_cutlery;
-    my_cutlery.recog_cubes.resize(6);
 
-    my_cutlery.recog_cubes[0].color="red";
-    my_cutlery.recog_cubes[1].color="green";
-    my_cutlery.recog_cubes[2].color="blue";
-    my_cutlery.recog_cubes[3].color="purple";
-    my_cutlery.recog_cubes[4].color="yellow";
-    my_cutlery.recog_cubes[5].color="orange";
+    vision_msgs::VisionObjectList my_cutlery;     
+    my_cutlery.ObjectList.resize(6);  
+
+    my_cutlery.ObjectList[0].id="red";
+    my_cutlery.ObjectList[1].id="green";
+    my_cutlery.ObjectList[2].id="blue";
+    my_cutlery.ObjectList[3].id="purple";
+    my_cutlery.ObjectList[4].id="yellow";
+    my_cutlery.ObjectList[5].id="orange";
 
     while(ros::ok() && !success){
 
@@ -134,7 +148,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay("I am ready for the serve the breakfast test", 6000, MIN_DELAY_AFTER_SAY);
-                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                state = SM_WAIT_FOR_OPEN;
                 
                 break;
 
@@ -144,8 +158,8 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
                 if( JustinaNavigation::doorIsOpen(0.9, 2000) || attempsDoorOpend >= MAX_ATTEMPTS_DOOR )
                 {
-                    state = SM_GO_TO_TABLEWARE;
-                    JustinaHRI::waitAfterSay("Thank you, I will navegate to the kitchen", 4000, MIN_DELAY_AFTER_SAY);
+                    state = SM_NAVIGATE_TO_TABLEWARE;
+                    JustinaHRI::waitAfterSay("Thank you, I will navigate to the kitchen table", 4000, MIN_DELAY_AFTER_SAY);
                 }
                 else
                     attempsDoorOpend++;
@@ -153,11 +167,12 @@ int main(int argc, char **argv){
                 break;
             case SM_NAVIGATE_TO_TABLEWARE:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
-                if(!JustinaNavigation::getClose(recogLoc, 80000) )
-                    JustinaNavigation::getClose(recogLoc, 80000); 
+                if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
+                    JustinaNavigation::getClose(cutleryLoc, 80000); 
                 JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
                 state = SM_FIND_OBJECTS_ON_TABLE;       
                 break;
+
             case SM_FIND_OBJECTS_ON_TABLE:
 
                 std::cout << ".-> inspecting the objets on the table" << std::endl;
@@ -167,13 +182,17 @@ int main(int argc, char **argv){
                     std::cout << ".-> Can not align with table." << std::endl;
                 }
                 
-
                 std::cout << ".-> trying to detect the objects" << std::endl;
-                JustinaHRI::say("I am going to search a bowl on the table");
+
+                ss.str("");
+                ss << "I'm looking for a" << graspObject << "on the table";
+                JustinaHRI::say(ss.str());
+
                 ros::Duration(2.0).sleep();
-                if(!JustinaVision::getCutlerySeg(my_cutlery))
+
+                if(!JustinaVision::getObjectSeg(my_cutlery))
                 {
-                    if(!JustinaVision::getCutlerySeg(my_cutlery))
+                    if(!JustinaVision::getObjectSeg(my_cutlery))
                     {
                         std::cout << ".-> Can not detect any object" << std::endl;
                         state = SM_InspectTheObjetcs;
@@ -183,47 +202,132 @@ int main(int argc, char **argv){
                 else
                 {
                     std::cout << ".-> sorting the objects" << std::endl;
-
-                        if(!JustinaTasks::sortCutleries(my_cutlery))
-                            if(!JustinaTasks::sortCutleries(my_cutlery)) 
+                        if(!JustinaTasks::sortObjectColor(my_cutlery))
+                            if(!JustinaTasks::sortObjectColor(my_cutlery)) 
 
                         std::cout << ".-> selecting one object" << std::endl;
 
-                        for(int i=0; i < my_cutlery.recog_cubes.size(); i ++)
+                        for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
                         {
-                            if(my_cutlery.recog_cubes[i].detected_cube == true && my_cutlery.recog_cubes[i].type_object == BOWL )
+                            if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == graspObjectID )
                             {
-                                std::cout << ".-> detect the " << my_cutlery.recog_cubes[i].color << " object" << std::endl;
-                                pose.position.x = my_cutlery.recog_cubes[i].cube_centroid.x;
-                                pose.position.y = my_cutlery.recog_cubes[i].cube_centroid.y;
-                                pose.position.z = my_cutlery.recog_cubes[i].cube_centroid.z;
-                                id_cutlery = my_cutlery.recog_cubes[i].color;
-                                type = my_cutlery.recog_cubes[i].type_object;
-                                JustinaHRI::say("I've found a bolw on the table");
+                                std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                                pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                                pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                                id_cutlery = my_cutlery.ObjectList[i].id;
+                                type = my_cutlery.ObjectList[i].type_object;
+                                ss.str("");
+                                ss << "I've found a" << graspObject << "on the table";
+                                JustinaHRI::say(ss.str());
                                 ros::Duration(2.0).sleep();
                                 state = SM_TAKE_OBJECT;
                                 break;
                             }
                         } 
                     }
-                
-
-
                 break;
             case SM_TAKE_OBJECT:
-                if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
+                if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
                     std::cout << ".-> cannot take the object" << std::endl;
                     std::cout << ".-> trying again" << std::endl;
                 }
-                state= SM_FINISH_TEST;
+                if( !withLeft )
+                {
+                    state = SM_FIND_OBJECTS_ON_TABLE;
+                    graspObjectID = CUTLERY;
+                    graspObject = " spoon ";
+                    withLeft = true;
+
+                }
+                else
+                    state= SM_GO_TO_KITCHEN;
+                
                 break;
+        
+            case SM_GO_TO_KITCHEN:
+                std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
+                if(!JustinaNavigation::getClose(recogLoc, 80000) )
+                    JustinaNavigation::getClose(recogLoc, 80000); 
+                JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
+                state = SM_LOOK_FOR_TABLE;       
+                break;
+            break;
+
+            case SM_LOOK_FOR_TABLE:
+                JustinaHRI::waitAfterSay("I'm looking for the table", 4000, MIN_DELAY_AFTER_SAY);
+                centroids.clear();
+                findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
+                if(!findSeat)
+                {
+                    findSeatCount++;
+                    JustinaHRI::waitAfterSay("I'm going to find the table", 5000);
+                    break;
+                }
+                centroid = centroids[0];
+                JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                goalx = gx_w;
+                goaly = gy_w;
+                guest_z = gz_w;
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.3, 30000);
+                withLeft = true;
+                state = SM_PLACE_BOWL;
+                    
+            break;
+
+            case SM_PLACE_BOWL:
+                JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
+                
+                while(!JustinaTasks::alignWithTable(0.42))
+                {
+                    std::cout << ".-> Can not align with table." << std::endl;
+                }
+
+                if(!JustinaTasks::placeObject(withLeft))
+                    state = SM_PLACE_BOWL;
+                else
+                {
+                    state = SM_PLACE_SPOON;
+                    withLeft = false;
+                }
+                
+            break;
+
+            case SM_PLACE_SPOON:
+                JustinaHRI::waitAfterSay("I'm going to place the spoon", 4000, MIN_DELAY_AFTER_SAY);
+                
+                while(!JustinaTasks::alignWithTable(0.42))
+                {
+                    std::cout << ".-> Can not align with table." << std::endl;
+                }
+
+                if(!JustinaTasks::placeObject(withLeft))
+                    state = SM_PLACE_SPOON;
+                else
+                {
+                    state = SM_GO_FOR_CEREAL;
+                    withLeft = false;
+                }
+
+            break;
+
+            case SM_GO_FOR_CEREAL:
+
+                state = SM_FINISH_TEST;
+
+            break;
+
+
             case SM_FINISH_TEST:
+
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
                 
                 success = true;
-
-                break;
+            break;
         }
 
         rate.sleep();

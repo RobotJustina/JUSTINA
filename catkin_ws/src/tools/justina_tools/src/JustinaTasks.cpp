@@ -1635,7 +1635,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
     if (guide)
-        JustinaTasks::guideAPerson("person2", 300000);
+        JustinaTasks::guideAPerson("person2", 120000, 1.5, true, 0.8);
     else {
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
@@ -6948,7 +6948,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 dialogue << "Hello " << name1 << " I am going to introduce you to "<< name2 << " at the " << location2 <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
 
-                JustinaTasks::guideAPerson(location2, 300000, 1.5);
+                JustinaTasks::guideAPerson(location2, 120000, 1.5, true, 0.8);
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "we have arrived to " << location2 << " please wait, i am looking for "<< name2 <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
