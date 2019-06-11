@@ -1,10 +1,10 @@
 #USB2Dynamixel
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A105HOK1", MODE="0666", SYMLINK+="justinaHead"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZRT", MODE="0666", SYMLINK+="justinaHead"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A5052R8H", MODE="0666", SYMLINK+="justinaHead"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A9E5XNR3", MODE="0666", SYMLINK+="justinaObjTrainBase"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A900fDgq", MODE="0666", SYMLINK+="justinaRightArm"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A105HOK1", MODE="0666", SYMLINK+="justinaHead", RUN+="echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB2/latency_timer"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZRT", MODE="0666", SYMLINK+="justinaHead", RUN+="echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB2/latency_timer"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A5052R8H", MODE="0666", SYMLINK+="justinaHead", RUN+="echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB2/latency_timer"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A9E5XNR3", MODE="0666", SYMLINK+="justinaObjTrainBase", 
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm", RUN+="echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB0/latency_timer"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A900fDgq", MODE="0666", SYMLINK+="justinaRightArm", RUN+="echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB1/latency_timer"
 #Hokuyo
 SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="c0", MODE="0666", SYMLINK+="justinaHokuyo_H1009463"
 #SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="a0", MODE="0666", SYMLINK+="justinaHokuyoRear"
