@@ -66,8 +66,6 @@ private:
     ros::Subscriber subHdCurrentPose;
     ros::Publisher pubLaGoalPose;
     ros::Publisher pubRaGoalPose;
-    ros::Publisher pubLaGoToAngles;//---------------
-    ros::Publisher pubRaGoToAngles;
     ros::Publisher pubHdGoalPose;
     ros::Publisher pubLaGoalTorque;
     ros::Publisher pubRaGoalTorque;
