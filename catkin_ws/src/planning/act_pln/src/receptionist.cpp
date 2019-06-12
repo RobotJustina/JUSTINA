@@ -178,8 +178,8 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 if(doorOpenFlag)
                 {
-                    JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
-                    //JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
+                    JustinaHRI::waitAfterSay("Hello human, please enter to the house", 6000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -222,8 +222,8 @@ int main(int argc, char **argv){
                 */
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
-                    JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
-                    //JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
+                    JustinaHRI::waitAfterSay("Hello human, please enter to the house", 6000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -277,8 +277,8 @@ int main(int argc, char **argv){
                             findPersonCount = 0;
                             findPersonRestart = 0;
                             findPersonAttemps++;
-                            JustinaHRI::waitAfterSay("Hello human, please pass to the house", 6000, MIN_DELAY_AFTER_SAY);
-                            //JustinaHRI::insertAsyncSpeech("Hello human, please pass to the house", 5000, ros::Time::now().sec, 10);
+                            JustinaHRI::waitAfterSay("Hello human, please enter to the house", 6000, MIN_DELAY_AFTER_SAY);
+                            //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
                         }
                         else
                             findPersonRestart++;
