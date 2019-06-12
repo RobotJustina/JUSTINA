@@ -101,6 +101,7 @@ public:
     //Methods for calculating inverse kinematics
     static bool inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular);
     static bool inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular);
+    static bool inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, float elbow, std::vector<float>& articular);
     static bool inverseKinematics(float x, float y, float z, std::vector<float>& articular);
     static bool inverseKinematics(std::vector<float>& cartesian, std::string frame_id, std::vector<float>& articular);
     static bool inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::string frame_id, std::vector<float>& articular);

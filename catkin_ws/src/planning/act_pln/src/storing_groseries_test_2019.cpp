@@ -141,6 +141,8 @@ int main(int argc, char** argv)
     int maxAttempsGraspRight = 3;
     // This is for the max attemps to place a object in the shelft
     int maxAttempsPlaceObj = 3;
+    // This is for the number of the objects knowns
+    int countKnownObjects = 0;
 
     //This flag is for the behavior of the take object
     // 0 is to find and tale, 1 is for only find one attempt
@@ -473,9 +475,11 @@ int main(int argc, char** argv)
                             confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
                             
                             std::size_t found = recoObjForTake[i].id.find("unknown");
+                            countKnownObjects = 0;
                             if(found == std::string::npos){
                                 JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, i, confidence, category, 0);
                                 recoObjForTake[i].category = category;
+                                countKnownObjects++;
                             }
                         }
                     
@@ -521,7 +525,23 @@ int main(int argc, char** argv)
                     // Here is to the inference to take a object.
                     int index1, index2;
                     if(recoObjForTake.size() > 1 && !objectGrasped[0] && !objectGrasped[1]){
-                        JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
+                        
+                        if(countKnownObjects > 1)
+                            JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
+                        else{
+                            if(countKnownObjects == 1){
+                                JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
+                                for(int i = 0; i < recoObjForTake.size(); i++){
+                                    if(i != index1)
+                                        index2 = i;
+                                }
+                            }
+                            else{
+                                index1 = 0;
+                                index2 = 1;
+                            }
+                        }
+
                         std::cout << stateMachine << "Obj1:" << recoObjForTake[index1].id << ", Obj2:" << recoObjForTake[index2].id << std::endl;
 
                         // Here is to get wich of the two objects is optimal to grasp with left or right arm
@@ -598,7 +618,7 @@ int main(int argc, char** argv)
                         }
                     }
                     else{
-                        if(recoObjForTake.size() > 1)
+                        if(recoObjForTake.size() >= 1 && countKnownObjects >= 1)
                             JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
                         else
                             index1 = 0;

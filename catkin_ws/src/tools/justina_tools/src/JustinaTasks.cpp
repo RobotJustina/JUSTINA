@@ -375,18 +375,47 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::laGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.04, objToGraspZ - 0.0, 2000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         } else {
-            JustinaManip::laGoToCartesian(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, 2500);
+            // --------------  Calculate the next ik inverse point ----------------
+            std::vector<float> articular;
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+                JustinaManip::startLaGoToArticular(articular);
+            else
+                std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
+            /*JustinaManip::laGoToCartesian(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, 2500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
 
             JustinaManip::startLaOpenGripper(0.8);
             //Move the manipulator to objectOB
+            
+            // --------------  Calculate the next ik inverse point ----------------
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(2500);
+                JustinaManip::startLaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
 
-            JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
+            /*JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
 
             //JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.035, objToGraspZ, 2500); // This is the old offset to grasp
-            JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, 2500);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            
+            // --------------  Calculate the next ik inverse point ----------------
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(2500);
+                JustinaManip::startLaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
+            JustinaManip::waitForLaGoalReached(2500);
+
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
+            /*JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, 2500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
 
             // JustinaNavigation::moveDist(0.08, 1000);
             // This comment to reduce the time of manipulation
@@ -454,18 +483,46 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::raGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.04, objToGraspZ - 0.0, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         } else {
-            JustinaManip::raGoToCartesian(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, 2500);
+            // --------------  Calculate the next ik inverse point ----------------
+            std::vector<float> articular;
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+                JustinaManip::startRaGoToArticular(articular);
+            else
+                std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
+            /*JustinaManip::raGoToCartesian(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, 2500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
+
+            // --------------  Calculate the next ik inverse point ----------------
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+                JustinaManip::waitForRaGoalReached(2500);
+                JustinaManip::startRaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
 
             JustinaManip::startRaOpenGripper(0.8);
             //Move the manipulator to objectOB
 
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
             JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
             //JustinaManip::raGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.035, objToGraspZ, 2500); // This the old grasp offset
-            JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, 2500);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            
+            // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
+            /*JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, 2500);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
+            
+            // --------------  Calculate the next ik inverse point ----------------
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+                JustinaManip::waitForRaGoalReached(2500);
+                JustinaManip::startRaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
 
             // JustinaNavigation::moveDist(0.08, 1000);
             // This comment to reduce the time of manipulation

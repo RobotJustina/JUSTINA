@@ -224,12 +224,45 @@ bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<
 
 bool JustinaManip::inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular)
 {
-    return false;
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    srv.request.cartesian_pose.data.push_back(roll);
+    srv.request.cartesian_pose.data.push_back(pitch);
+    srv.request.cartesian_pose.data.push_back(yaw);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
+}
+    
+bool JustinaManip::inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, float elbow, std::vector<float>& articular)
+{
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    srv.request.cartesian_pose.data.push_back(roll);
+    srv.request.cartesian_pose.data.push_back(pitch);
+    srv.request.cartesian_pose.data.push_back(yaw);
+    srv.request.cartesian_pose.data.push_back(elbow);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
 }
 
 bool JustinaManip::inverseKinematics(float x, float y, float z, std::vector<float>& articular)
 {
-    return false;
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
 }
 
 bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::string frame_id, std::vector<float>& articular)
