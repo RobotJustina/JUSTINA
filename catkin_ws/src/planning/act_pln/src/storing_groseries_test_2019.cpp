@@ -286,7 +286,7 @@ int main(int argc, char** argv)
                     }
                     
                     temp.str("");
-                    temp << "/home/rey/objs/cubpoard" << countFindObjectsOnCupboard++ << "/";
+                    temp << "/home/biorobotica/objs/cubpoard" << countFindObjectsOnCupboard++ << "/";
                     JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
                    
                     JustinaTools::getCategoriesFromVisionObject(recoObjList, categories_cpbr);
@@ -477,7 +477,7 @@ int main(int argc, char** argv)
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
-                        temp << "/home/rey/objs/table" << countFindObjectsOnTable++ << "/";
+                        temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/";
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
                             
                         //Append acction to the plan
