@@ -266,11 +266,17 @@ int main(int argc, char** argv)
 					objTaken ++;
 				}
 
-				if(chances == 4 && objTaken == 1)
+				if(chances == 4 && objTaken == 1){
+					JustinaManip::startTorsoGoTo(0.1, 0, 0);
+					JustinaManip::waitForTorsoGoalReached(0.5);
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+				}
 				else{
-					if(objTaken==2)
+					if(objTaken==2){
       					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+						JustinaManip::startTorsoGoTo(0.1, 0, 0);
+						JustinaManip::waitForTorsoGoalReached(0.5);
+					}
       				else
       					nextState = SM_InspectTheObjetcs;
 				}
@@ -337,6 +343,8 @@ int main(int argc, char** argv)
 					JustinaHRI::say("human close the diswasher, please");
 					ros::Duration(0.5).sleep();
 					attempts = 0;
+					JustinaManip::startTorsoGoTo(0.1, 0, 0);
+					JustinaManip::waitForTorsoGoalReached(0.5);
 				}
 
       			else if(objTaken==0 && chances== 4){
@@ -344,6 +352,8 @@ int main(int argc, char** argv)
 					JustinaHRI::say("human, please, keep the diswasher open for me");
 					ros::Duration(0.5).sleep();
 					attempts = 0;
+					JustinaManip::startTorsoGoTo(0.1, 0, 0);
+					JustinaManip::waitForTorsoGoalReached(0.5);
 				}
 
 				else if(objTaken==0 && chances ==2){
@@ -351,6 +361,8 @@ int main(int argc, char** argv)
 					JustinaHRI::say("human, please, keep the diswasher open for me");
 					ros::Duration(0.5).sleep();
 					attempts = 0;
+					JustinaManip::startTorsoGoTo(0.1, 0, 0);
+					JustinaManip::waitForTorsoGoalReached(0.5);
 				}
 
       			else
