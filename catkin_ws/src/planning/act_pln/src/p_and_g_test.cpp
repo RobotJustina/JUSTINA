@@ -71,6 +71,7 @@ int main(int argc, char** argv)
 	std::string id_cutlery;
 	int objTaken = 0;
 	int chances =0;
+	int attempts = 0;
 	int maxDelayAfterSay = 300;
 	int cont_z;
 	int type;
@@ -172,48 +173,58 @@ int main(int argc, char** argv)
 
 
       		case SM_InspectTheObjetcs:
-      			std::cout << "P & G Test...-> inspecting the objets on the table" << std::endl;
-      			if(!JustinaTasks::alignWithTable(0.42)){
-      				if(!JustinaTasks::alignWithTable(0.42)){
-      					std::cout << "P & G Test...-> Can not align with table." << std::endl;
-      					nextState = SM_InspectTheObjetcs;
-      				}
-      			}
-      			else{
-      				std::cout << "P & G Test...-> trying to detect the objects" << std::endl;
-      				JustinaHRI::say("I am looking for an object on the table");
+
+				if((objTaken == 1 && attempts >3) || (objTaken==3 && attempts >3)){
+					JustinaHRI::say("Sorry I could not grasp another object now");
         			ros::Duration(2.0).sleep();
-      				if(!JustinaVision::getObjectSeg(my_cutlery)){
-      					if(!JustinaVision::getObjectSeg(my_cutlery)){
-      						std::cout << "P & G Test...-> Can not detect any object" << std::endl;
+					chances ++;
+					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+					break;
+				}
+				else{
+      				std::cout << "P & G Test...-> inspecting the objets on the table" << std::endl;
+      				if(!JustinaTasks::alignWithTable(0.42)){
+      					if(!JustinaTasks::alignWithTable(0.42)){
+      						std::cout << "P & G Test...-> Can not align with table." << std::endl;
       						nextState = SM_InspectTheObjetcs;
       					}
       				}
-
       				else{
-      					std::cout << "P & G Test...-> sorting the objects" << std::endl;
-
-      					if(!JustinaTasks::sortObjectColor(my_cutlery))
-      						if(!JustinaTasks::sortObjectColor(my_cutlery)) 
-
-      					std::cout << "P & G Test...-> selecting one object" << std::endl;
-
-      					for(int i=0; i < my_cutlery.ObjectList.size(); i ++){
-      						if(my_cutlery.ObjectList[i].graspable == true){
-      							std::cout << "P & G Test...-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
-      							pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
-                				pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
-                				pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
-                				id_cutlery = my_cutlery.ObjectList[i].id;
-                				type = my_cutlery.ObjectList[i].type_object;
-                				JustinaHRI::say("I've found an object on the table");
-        						ros::Duration(2.0).sleep();
-                				nextState = SM_TakeObject;
-                				break;
+      					std::cout << "P & G Test...-> trying to detect the objects" << std::endl;
+      					JustinaHRI::say("I am looking for an object on the table");
+        				ros::Duration(2.0).sleep();
+      					if(!JustinaVision::getObjectSeg(my_cutlery)){
+      						if(!JustinaVision::getObjectSeg(my_cutlery)){
+      							std::cout << "P & G Test...-> Can not detect any object" << std::endl;
+      							nextState = SM_InspectTheObjetcs;
       						}
-						} 
+      					}
+
+      					else{
+      						std::cout << "P & G Test...-> sorting the objects" << std::endl;
+
+      						if(!JustinaTasks::sortObjectColor(my_cutlery))
+      							if(!JustinaTasks::sortObjectColor(my_cutlery)) 
+
+      						std::cout << "P & G Test...-> selecting one object" << std::endl;
+
+      						for(int i=0; i < my_cutlery.ObjectList.size(); i ++){
+      							if(my_cutlery.ObjectList[i].graspable == true){
+      								std::cout << "P & G Test...-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+      								pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                					pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                					pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                					id_cutlery = my_cutlery.ObjectList[i].id;
+                					type = my_cutlery.ObjectList[i].type_object;
+                					JustinaHRI::say("I've found an object on the table");
+        							ros::Duration(2.0).sleep();
+                					nextState = SM_TakeObject;
+                					break;
+      							}
+							} 
+      					}
       				}
-      			}
+				}
 
       		break;
 
@@ -239,6 +250,7 @@ int main(int argc, char** argv)
 						std::cout << "P & G Test...-> using  left arm" << std::endl;
       				}
       			}
+				
       			
 
 				if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
@@ -246,7 +258,7 @@ int main(int argc, char** argv)
       				std::cout << "P & G Test...-> trying again" << std::endl;
 				}
 				else{
-					if(!withLeft)
+					if(!withLeft && chances != 4)
 						withLeft=true;
 					else
 						withLeft=false;
@@ -262,6 +274,8 @@ int main(int argc, char** argv)
       				else
       					nextState = SM_InspectTheObjetcs;
 				}
+
+				attempts ++;
 
       		break;
 
@@ -322,18 +336,21 @@ int main(int argc, char** argv)
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
 					JustinaHRI::say("human close the diswasher, please");
 					ros::Duration(0.5).sleep();
+					attempts = 0;
 				}
 
       			else if(objTaken==0 && chances== 4){
 					nextState = SM_NAVIGATE_TO_THE_TABLE;
 					JustinaHRI::say("human, please, keep the diswasher open for me");
 					ros::Duration(0.5).sleep();
+					attempts = 0;
 				}
 
 				else if(objTaken==0 && chances ==2){
       				nextState = SM_NAVIGATE_TO_THE_TABLE;
 					JustinaHRI::say("human, please, keep the diswasher open for me");
 					ros::Duration(0.5).sleep();
+					attempts = 0;
 				}
 
       			else
@@ -343,11 +360,11 @@ int main(int argc, char** argv)
 
       		case SM_NAVIGATE_TO_THE_EXIT:
 				std::cout << "P & G Test...->moving to the exit" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
 							nextState = SM_FinalState;
 						}
 					} 
