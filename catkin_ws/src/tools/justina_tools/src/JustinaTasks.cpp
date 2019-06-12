@@ -384,7 +384,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
-            JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.035, objToGraspZ, 2500);
+            //JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.035, objToGraspZ, 2500); // This is the old offset to grasp
+            JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.035, objToGraspZ, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
             // JustinaNavigation::moveDist(0.08, 1000);
@@ -462,7 +463,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
-            JustinaManip::raGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.035, objToGraspZ, 2500);
+            //JustinaManip::raGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.035, objToGraspZ, 2500); // This the old grasp offset
+            JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.035, objToGraspZ, 2500);
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
             // JustinaNavigation::moveDist(0.08, 1000);
