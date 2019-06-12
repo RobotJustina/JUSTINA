@@ -607,8 +607,8 @@ int main(int argc, char** argv)
 
                         if(!objectGrasped[0] && !objectGrasped[1]){
                             if(y1 > 0){
-                                takeLeft = false;
-                                takeRight = true;
+                                takeLeft = true;
+                                takeRight = false;
                                 indexObjectGraspRight = 0;
                             }
                             else{
@@ -619,23 +619,23 @@ int main(int argc, char** argv)
                         }
                         else{
                             if(y1 > 0 && !objectGrasped[1]){
-                                takeLeft = false;
-                                takeRight = true;
+                                takeLeft = true;
+                                takeRight = false;
                                 indexObjectGraspLeft = 0;
                             }
                             else if(y1 > 0 && objectGrasped[1]){
-                                takeLeft = true;
-                                takeRight = false;
+                                takeLeft = false;
+                                takeRight = true;
                                 indexObjectGraspRight = 0;
                             }
                             if(y1 <= 0 && !objectGrasped[0]){
-                                takeLeft = true;
-                                takeRight = false;
+                                takeLeft = false;
+                                takeRight = true;
                                 indexObjectGraspRight = 0;
                             }
                             else if(y1 <= 0 && objectGrasped[0]){
-                                takeLeft = false;
-                                takeRight = true;
+                                takeLeft = true;
+                                takeRight = false;
                                 indexObjectGraspLeft = 0;
                             }
                         }
