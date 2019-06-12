@@ -513,7 +513,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_INF_TAKE_OBJECT" << std::endl;
                     // Here is to the inference to take a object.
                     int index1, index2;
-                    if(recoObjForTake.size() > 1){
+                    if(recoObjForTake.size() > 1 || (!objectGrasped[0] && !objectGrasped[1])){
                         JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
                         std::cout << stateMachine << "Obj1:" << recoObjForTake[index1].id << ", Obj2:" << recoObjForTake[index2].id << std::endl;
 
