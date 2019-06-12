@@ -518,7 +518,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
