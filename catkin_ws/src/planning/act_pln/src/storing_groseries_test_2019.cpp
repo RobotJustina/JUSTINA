@@ -184,7 +184,8 @@ int main(int argc, char** argv)
     fnd_tbl       =  "I am trying to find a nearest table.";
     fnd_objs_tbl  =  "I am going to find objects on the table.";
 
-    JustinaTools::pdfStart(name_test);
+    // This is for generate PDF
+    /*JustinaTools::pdfStart(name_test);
     JustinaTools::pdfAppend(name_test, "");
     JustinaTools::pdfAppend(name_test, "Attempt:  3");
     JustinaTools::pdfAppend(name_test, "");
@@ -193,7 +194,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, nv_cpb);
     JustinaTools::pdfAppend(name_test, cnt_od);
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
-    JustinaTools::pdfAppend(name_test, srch_obj_cpb);
+    JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
@@ -317,19 +318,21 @@ int main(int argc, char** argv)
 
                     nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
 
-                    JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
+                    // This is for generate PDF
+                    /*JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
                     JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
                     for(int i = 0; i < categories_cpbr.size(); i++){
                         std::cout << "Category_" << i << ":  " << categories_cpbr[i] << std::endl;
                         temp.str( std::string() );
                         temp << "      - " << categories_cpbr[i];
                         JustinaTools::pdfAppend(name_test, temp.str());
-                    }
+                    }*/
 
                     findObjCupboard = true;
                     attempsPlaceObj = 1;
 
-                    JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
+                    // This is for generate PDF
+                    //JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
 
                     nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                 }
@@ -423,7 +426,8 @@ int main(int argc, char** argv)
                     if(attempsFindObjectsTable == 0 && alignWithTable){
                         JustinaHRI::say("I am going to search objects on the table");
                         //Append acction to the plan
-                        JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
+                        // This is for generate PDF
+                        // JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
                         JustinaTasks::alignWithTable(0.35);
                     }
 
@@ -481,15 +485,17 @@ int main(int argc, char** argv)
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
                             
                         //Append acction to the plan
-                        JustinaTools::pdfAppend(name_test, justinaSay.str());
+                        // This is for generate PDF
+                        //JustinaTools::pdfAppend(name_test, justinaSay.str());
                         JustinaTools::getCategoriesFromVisionObject(recoObjForTake, categories_tabl);
-                        JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
+                        // This is for generate PDF
+                        /*JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
                         for(int i = 0; i < categories_tabl.size(); i++){
                             std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
                             temp.str( std::string() );
                             temp << "      - " << categories_tabl[i];
                             JustinaTools::pdfAppend(name_test, temp.str());
-                        }
+                        }*/
 
                         justinaSay.str( std::string() );
                         justinaSay << "The objects of the table belong to categories...";
@@ -502,7 +508,8 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                         }*/
-                        JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
+                        // This is for generate PDF
+                        // JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
                         nextState = SM_INF_TAKE_OBJECT;
                     }
                 }
@@ -513,7 +520,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_INF_TAKE_OBJECT" << std::endl;
                     // Here is to the inference to take a object.
                     int index1, index2;
-                    if(recoObjForTake.size() > 1 || (!objectGrasped[0] && !objectGrasped[1])){
+                    if(recoObjForTake.size() > 1 && !objectGrasped[0] && !objectGrasped[1]){
                         JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
                         std::cout << stateMachine << "Obj1:" << recoObjForTake[index1].id << ", Obj2:" << recoObjForTake[index2].id << std::endl;
 
@@ -591,7 +598,12 @@ int main(int argc, char** argv)
                         }
                     }
                     else{
-                        float y1 = recoObjForTake[0].pose.position.y;
+                        if(recoObjForTake.size() > 1)
+                            JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
+                        else
+                            index1 = 0;
+
+                        float y1 = recoObjForTake[index1].pose.position.y;
 
                         if(!objectGrasped[0] && !objectGrasped[1]){
                             if(y1 > 0){
@@ -627,6 +639,7 @@ int main(int argc, char** argv)
                                 indexObjectGraspLeft = 0;
                             }
                         }
+                        nextState = SM_TAKE_OBJECT;
                     }
                 }
                 break;
