@@ -3945,8 +3945,175 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
+    
+    int count = 0;
+    int obj_count = 0;
+    bool help = false;
+	bool armFlag;
+    std::string obj_name;
+    std::string lastReco;
+    std::string query;
+    std::string to_speech;
+   
+    ss.str("");
+    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    while (!help && count < 3){
+        switchSpeechReco(0, ss.str());
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
 
-    responseMsg.successful = 0;
+        JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+        if(lastReco == "robot yes" || lastReco == "justina yes")
+            help = true;
+        count++;
+    }
+    count = 0;
+    if(!help){
+        JustinaHRI::waitAfterSay("I am sorry If you dont help me I can not do this task", 100000);
+        responseMsg.successful = 0;
+    }
+    else{
+        //ask object name
+        //JustinaHRI::waitAfterSay("I can not recognize the object", 10000);
+        help =false;
+        while(!help && count < 3){
+            ss.str("");
+            ss << "Tell me what you want I pourin in the " << tokens[0];
+            switchSpeechReco(11, ss.str());
+            JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
+            if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
+                if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
+                    std::cout << "last int: " << obj_name << std::endl;
+                    ss.str("");
+                    ss << "You want I pourin the " << obj_name << " in the " << tokens[0];
+                    JustinaHRI::waitAfterSay(ss.str(), 10000);
+                    switchSpeechReco(0, "say justina yes or justina no");
+                    JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes" || lastReco == "justina yes"){
+                    help = true;
+                }
+                count++;
+            }
+        }
+        if(help){
+            to_speech = obj_name;
+            boost::replace_all(to_speech, "_", " ");
+            ss.str("");
+            ss << "Ok, go for the  " << to_speech;
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+            
+            //get default location
+            ss.str("");
+            ss << "(assert (get_obj_default_loc " << obj_name << " 1))";
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+
+            //guide to the bin
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+            JustinaHRI::waitAfterSay("please wait", 2500);
+
+            //JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            
+            //try to grasp object
+			geometry_msgs::Pose pose;
+			bool grasp = false;
+            ss.str("");
+            ss << "I am looking for the" << to_speech;
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::alignWithTable(0.42);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            
+            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+			grasp = JustinaTasks::findObject(obj_name, pose, armFlag);
+            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
+
+            if(grasp){
+                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                grasp = JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, armFlag, obj_name, true);
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+            }
+            if(!grasp){
+                armFlag = false;
+                //grasp object
+                ss.str("");
+                ss << "I can not grasp the " << to_speech;
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                ss.str("");
+                ss << "please put the " << to_speech << " in my gripper";
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+
+                JustinaManip::raGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper(obj_name, armFlag, 7000);
+                JustinaHRI::waitAfterSay("thank you", 5000, 0);
+            }
+            
+            ss.str("");
+            ss << "Now go for the  " << tokens[0];
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+            
+            //get default location
+            ss.str("");
+            ss << "(assert (get_obj_default_loc " << tokens[0] << " 1))";
+            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+
+            //guide to the bin
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            
+            ss.str("");
+            ss << "Here we can take the " << tokens[0] << ", but I need your help";
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+            ss.str("");
+            ss << "I can not pour the " << to_speech << " into the" << tokens[0];
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+            ss.str("");
+            ss << "I will give you the " << to_speech;
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaTasks::dropObject(obj_name, false, 30000);
+            ss.str("");
+            ss << "Please pour the " << to_speech << " into the" << tokens[0];
+            JustinaHRI::waitAfterSay(ss.str(), 100000);
+            
+            JustinaHRI::waitAfterSay("Enjoy", 100000);
+            JustinaTasks::dropObject(obj_name, false, 30000);
+            JustinaHRI::waitAfterSay("If you are ready we can continue", 100000);
+
+            help = false;
+            count  = 0;
+
+            while(!help && count < 3){
+                    JustinaHRI::waitAfterSay("are your ready", 10000);
+                    switchSpeechReco(0, "say justina yes or justina no");
+                    JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+                     JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                     if(lastReco == "robot yes" || lastReco == "justina yes")
+                         help = true;
+                     count++;
+            }
+            
+            JustinaHRI::waitAfterSay("I will return to the initial point, Thanks for your help ", 100000);
+
+        }
+        else{
+            JustinaHRI::waitAfterSay("I am sorry, I did not understand you", 100000);
+        }
+
+
+    }
+
+
+    responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
 }
 
@@ -4057,6 +4224,8 @@ int main(int argc, char **argv) {
         microsoft_grammars[7] = "incomplete_place.xml";
         microsoft_grammars[8] = "incomplete_object.xml";
         microsoft_grammars[9] = "order_food.xml";
+        microsoft_grammars[10] = "this_object.xml";
+        microsoft_grammars[11] = "obj_pour.xml";
         /*microsoft_grammars[10] = "description_gesture.xml";
         microsoft_grammars[11] = "description_pose.xml";
         microsoft_grammars[12] = "description_hight.xml";
@@ -4073,6 +4242,7 @@ int main(int argc, char **argv) {
         sphinx_grammars[8] = "incomplete_object";
         sphinx_grammars[9] = "order_food";
         sphinx_grammars[10] = "this_object";
+        sphinx_grammars[11] = "obj_pour";
         /*sphinx_grammars[10] = "description_gesture";
         sphinx_grammars[11] = "description_pose";
         sphinx_grammars[12] = "description_hight";
