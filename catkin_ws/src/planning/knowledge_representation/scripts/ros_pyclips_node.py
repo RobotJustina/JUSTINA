@@ -653,6 +653,13 @@ def pourin_obj(cmd):
     pubCmdPourinObj.publish(request)
     return cmd._id
 
+def storage_obj(cmd):
+    global pubCmdStorageObj 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdStorageObj.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -716,7 +723,8 @@ fmap = {
     'clean_up': clean_up,
     'take_out_garbage': take_out_garbage,
     'rpose_obj': rpose_obj,
-    'pourin_obj': pourin_obj
+    'pourin_obj': pourin_obj,
+    'storage_obj': storage_obj
 }
 
 def quit():
@@ -733,7 +741,7 @@ def main():
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp, pubCmdTakeOutGarbage  
-    global pubCmdRPoseObj, pubCmdPourinObj  
+    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -818,6 +826,7 @@ def main():
     pubGetPersonDescription = rospy.Publisher('/planning_clips/cmd_get_person_description', PlanningCmdClips, queue_size=1)
     pubCmdRPoseObj = rospy.Publisher('/planning_clips/rpose_obj', PlanningCmdClips, queue_size=1)
     pubCmdPourinObj = rospy.Publisher('/planning_clips/pourin_obj', PlanningCmdClips, queue_size=1)
+    pubCmdStorageObj = rospy.Publisher('/planning_clips/storage_obj', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

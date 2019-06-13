@@ -93,3 +93,55 @@
 	(modify ?f1 (status accomplished)) ;performance for IROS
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-task-storage-obj 
+	(plan (name ?name) (number ?num-pln) (status active) (actions storage_object ?object ?loc ?storage ?sp_obj)(duration ?t))
+	;(item (type Property) (name ?oprop))
+	=>
+	(bind ?command (str-cat "" ?object " " ?loc " " ?storage " " ?sp_obj ""))
+	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
+)
+
+(defrule exe-plan-task-storage-category 
+	(plan (name ?name) (number ?num-pln) (status active) (actions storage_object)(duration ?t))
+	;(item (type Property) (name ?oprop))
+	?f <- (set_category_state ?category ?loc ?storage ?sp_obj)
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "" ?category " " ?loc " " ?storage " " ?sp_obj ""))
+	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
+)
+
+(defrule exe-plan-storage-obj 
+        ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-storage-obj 
+        ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-set-category-state
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_category_state ?obj ?loc))
+	=>
+	(assert (set_category_state ?obj ?loc))
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-get-category-state
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions get_category_state ?storage ?sp_obj))
+	?f1 <- (set_category_state ?obj ?loc)
+	=>
+	(retract ?f1)
+	(assert (set_category_state ?obj ?loc ?storage ?sp_obj))
+	(modify ?f (status accomplished))
+)
+;;;;;;;;;;;;;;;;;;
