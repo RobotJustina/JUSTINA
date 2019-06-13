@@ -257,6 +257,16 @@ target_link_libraries(place_object_test
 
 add_dependencies(place_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+############
+add_executable(place_object_shelf_test
+  src/place_object_shelf_test.cpp
+)
+
+target_link_libraries(place_object_shelf_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_object_shelf_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ############
 add_executable(follow_person_test
