@@ -255,6 +255,7 @@ int main(int argc, char** argv)
 
             break;
         case SM_WAIT_FOR_GOAL_REACHED:
+            node.setParam("/manipulation/ra_control/trajectory_time", 1.5); 
             msg_ra_goal_reached.data = true;
             pub_ra_goal_reached.publish(msg_ra_goal_reached);
             state = SM_WAIT_FOR_NEW_POSE;
