@@ -15,7 +15,7 @@
 #include "ros/ros.h"
 
 
-#define SAMPLING_FREQ 50
+#define SAMPLING_FREQ            50
 #define SM_WAIT_FOR_NEW_POSE      0
 #define SM_SENDING_PROFILES      10
 #define SM_WAIT_FOR_GOAL_REACHED 20
@@ -23,14 +23,15 @@
 std::vector<float> global_goal_angular ;
 std::vector<float> goal_cartesian_pose ;
 std::vector<float> current_angular_pose;
-std::vector<float> current_angular_speed (7); //--------
-bool new_global_goal = false;
+std::vector<float> current_angular_speed (7); 
 std::map<std::string, std::vector<float> > laPredefPoses;
 std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
 
 ros::Publisher pub_go_to_angles;
 std_msgs::Float32MultiArray msg_go_to_angles;
 
+bool new_global_goal = false;
+double trajectory_time;
 
 
 std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path)
@@ -108,7 +109,7 @@ void callback_la_go_to_loc(const std_msgs::String::ConstPtr& msg)
     if(laPredefPoses.find(msg->data) == laPredefPoses.end())
     {
         std::cout << "ManipPln.->Cannot find left arm predefined position: " << msg->data << std::endl;
-       // return;
+        return;
     }
     std::cout << "ManipPln.->Left Arm goal pose: " << msg->data << " = ";
     msg_go_to_angles.data.resize(7);
@@ -146,7 +147,7 @@ bool get_speed_profiles(ros::ServiceClient& clt, std::vector<std::vector<float> 
     manip_msgs::SpeedProfile srv;
     srv.request.dt = 1.0/SAMPLING_FREQ;
     srv.request.t0 = 0;
-    srv.request.tf = 1.3;
+    srv.request.tf = trajectory_time;
     srv.request.p0 = 0;
     srv.request.pf = 1;
     srv.request.w0 = 0;
@@ -184,14 +185,14 @@ int main(int argc, char** argv)
 {
     std::cout << "INITIALIZING LEFT ARM LOW LEVEL CONTROL BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "la_control");
-    ros::NodeHandle n;
-    ros::Subscriber    sub_go_to_angles  = n.subscribe("/manipulation/manip_pln/la_goto_angles", 1, callback_la_goto_angles);
-    ros::Subscriber    sub_la_current    = n.subscribe("/hardware/left_arm/current_pose", 1, callback_la_current_pose);
-    ros::Subscriber    sub_la_go_to_loc  = n.subscribe("/manipulation/manip_pln/la_goto_loc", 1, callback_la_go_to_loc);    
-    ros::Publisher     pub_la_goal_pose  = n.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
-    ros::Publisher  pub_la_goal_reached  = n.advertise<std_msgs::Bool>("/manipulation/la_goal_reached", 1000);    
-    ros::ServiceClient clt_speed_profile = n.serviceClient<manip_msgs::SpeedProfile>("/manipulation/get_speed_profile");
-                       pub_go_to_angles  = n.advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1000);
+    ros::NodeHandle node("~");
+                       pub_go_to_angles  = node.advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1000);    
+    ros::Subscriber    sub_go_to_angles  = node.subscribe("/manipulation/manip_pln/la_goto_angles", 1, callback_la_goto_angles);
+    ros::Subscriber    sub_la_current    = node.subscribe("/hardware/left_arm/current_pose", 1, callback_la_current_pose);
+    ros::Subscriber    sub_la_go_to_loc  = node.subscribe("/manipulation/manip_pln/la_goto_loc", 1, callback_la_go_to_loc);    
+    ros::Publisher     pub_la_goal_pose  = node.advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1000);
+    ros::Publisher  pub_la_goal_reached  = node.advertise<std_msgs::Bool>("/manipulation/la_goal_reached", 1000);    
+    ros::ServiceClient clt_speed_profile = node.serviceClient<manip_msgs::SpeedProfile>("/manipulation/get_speed_profile");
     ros::Rate loop(SAMPLING_FREQ);
 
     int time_k = 0;
@@ -201,11 +202,8 @@ int main(int argc, char** argv)
     std_msgs::Float32MultiArray      msg_la_goal_pose   ;
     std_msgs::Bool                   msg_la_goal_reached;
 
-
-    /*system("echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB0/latency_timer"); 
-    system("echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB1/latency_timer");
-    system("echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB2/latency_timer");*/
-
+    node.param("trajectory_time", trajectory_time, 1.5);
+    
     std::string folder = "";
     for(int i=0; i < argc; i++)
     {
@@ -226,6 +224,7 @@ int main(int argc, char** argv)
                 new_global_goal = false;
                 time_k = 0;
                 msg_la_goal_pose.data.resize(14);
+                node.param("trajectory_time", trajectory_time, 1.5);
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else

@@ -26,7 +26,7 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubStartGetGripperPosition = nh->advertise<std_msgs::Bool>("/vision/obj_reco/start_gripper_position", 1);
     //Subscribers for the commands executed by this node
 //    this->subLaGoToAngles = nh->subscribe("/manipulation/manip_pln/la_goto_angles", 1, &ManipPln::callbackLaGoToAngles, this);
-    this->subRaGoToAngles = nh->subscribe("/manipulation/manip_pln/ra_goto_angles", 1, &ManipPln::callbackRaGoToAngles, this);
+//    this->subRaGoToAngles = nh->subscribe("/manipulation/manip_pln/ra_goto_angles", 1, &ManipPln::callbackRaGoToAngles, this);
     this->subHdGoToAngles = nh->subscribe("/manipulation/manip_pln/hd_goto_angles", 1, &ManipPln::callbackHdGoToAngles, this);
     this->subLaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm", 1, &ManipPln::callbackLaGoToPoseWrtArm, this);
     this->subRaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm", 1, &ManipPln::callbackRaGoToPoseWrtArm, this);
@@ -43,7 +43,7 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subLaGoToPoseWrtRobotTraj = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot_traj", 1, &ManipPln::callbackLaGoToPoseWrtRobotTraj, this);
     this->subRaGoToPoseWrtRobotTraj = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot_traj", 1, &ManipPln::callbackRaGoToPoseWrtRobotTraj, this);
 //    this->subLaGoToLoc = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
-    this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
+//    this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
     this->subHdGoToLoc = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
     this->subLaMove = nh->subscribe("/manipulation/manip_pln/la_move", 1, &ManipPln::callbackLaMove, this);
     this->subRaMove = nh->subscribe("/manipulation/manip_pln/ra_move", 1, &ManipPln::callbackRaMove, this);
@@ -573,7 +573,7 @@ void ManipPln::callbackLaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
 }
-//*/
+//
 void ManipPln::callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
 {
     std::cout << "ManipPln.->Received Right Arm goal pose: ";
@@ -597,7 +597,7 @@ void ManipPln::callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
     this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
 }
-
+//*/
 void ManipPln::callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
     if(msg->data.size() != 2)
@@ -1267,7 +1267,7 @@ void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
 }
-//*/
+//
 void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
     if(this->raPredefPoses.find(msg->data) == this->raPredefPoses.end())
@@ -1288,7 +1288,7 @@ void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
     this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
 }
-
+//*/
 void ManipPln::callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
     std::cout << "ManipPln.->JE SUIS DESOLÉ. THIS COMMAND IS STILL NOT IMPLEMENTED" << std::endl;

@@ -40,8 +40,12 @@
 		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
 		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
 		<node name="speed_profiles" pkg="trajectory_gen" type="SpeedProfile_Server.py"/>
-		<node name="la_control" pkg="arms_control" type="la_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
-		<node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="la_control" pkg="arms_control" type="la_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/">
+			<param name="trajectory_time" value="1.3"/>
+		</node>	
+		<node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/">
+			<param name="trajectory_time" value="1.3"/>
+		</node>
 	</group>
 
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
