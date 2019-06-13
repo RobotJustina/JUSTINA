@@ -30,45 +30,45 @@ int main(int argc, char** argv)
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
-        case 1:
-            isAlign = JustinaTasks::alignWithTable(0.42);
-            std::cout << "Align With table " << std::endl;
-            if(!isAlign){
-                std::cout << "Can not align with table." << std::endl;
-                nextState = 1;
-            }
-            else
-                nextState = 2;
-            break;
-        case 2:
-            found = JustinaVision::getObjectSeg(objects);
-            withLeftOrRightArm = true; 
-            if(!found){
-                std::cout << "Not found a object" << std::endl;
-                nextState = 2;
-            }
-            else{
-                pose.position.x = objects.ObjectList[0].pose.position.x;
-                pose.position.y = objects.ObjectList[0].pose.position.y;
-                pose.position.z = objects.ObjectList[0].pose.position.z;
-		if(pose.position.y > 0)
-			withLeftOrRightArm = true;
-		else
-			withLeftOrRightArm = false;
-                std::cout << "Found a object" << std::endl;
-                nextState = 3;
-            }
-            break;
-        case 3:
-            //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
-            //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
-            JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idCube, true);
-            nextState = -1;
-            break;
-        default:
-            std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;
-            fail = true;
-            break;
+            case 1:
+                isAlign = JustinaTasks::alignWithTable(0.42);
+                std::cout << "Align With table " << std::endl;
+                if(!isAlign){
+                    std::cout << "Can not align with table." << std::endl;
+                    nextState = 1;
+                }
+                else
+                    nextState = 2;
+                break;
+            case 2:
+                found = JustinaVision::getObjectSeg(objects);
+                withLeftOrRightArm = true; 
+                if(!found){
+                    std::cout << "Not found a object" << std::endl;
+                    nextState = 2;
+                }
+                else{
+                    pose.position.x = objects.ObjectList[0].pose.position.x;
+                    pose.position.y = objects.ObjectList[0].pose.position.y;
+                    pose.position.z = objects.ObjectList[0].pose.position.z;
+                    if(pose.position.y > 0)
+                        withLeftOrRightArm = true;
+                    else
+                        withLeftOrRightArm = false;
+                    std::cout << "Found a object" << std::endl;
+                    nextState = 3;
+                }
+                break;
+            case 3:
+                //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+                //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+                JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idCube, true);
+                nextState = -1;
+                break;
+            default:
+                std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;
+                fail = true;
+                break;
         }
         ros::spinOnce();
         loop.sleep();
