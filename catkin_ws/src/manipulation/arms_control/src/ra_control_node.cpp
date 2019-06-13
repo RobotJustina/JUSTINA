@@ -202,7 +202,7 @@ int main(int argc, char** argv)
     std_msgs::Float32MultiArray      msg_ra_goal_pose   ;
     std_msgs::Bool                   msg_ra_goal_reached;
 
-    node.param("trajectory_time", trajectory_time, 1.5);
+    node.setParam("/manipulation/ra_control/trajectory_time", 1.5);    
 
     std::string folder = "";
     for(int i=0; i < argc; i++)

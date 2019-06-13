@@ -83,6 +83,7 @@ private:
     static bool _stopReceived;
     static bool _isObjOnRightHand;
     static bool _isObjOnLeftHand;
+    static ros::NodeHandle * _nh;
 
 public:
     static std::vector<float> _laCurrentPos;
@@ -199,6 +200,8 @@ public:
     static void getLaCurrentPos(std::vector<float>& pos);
     static void getRaCurrentPos(std::vector<float>& pos);
     static void getTorsoCurrentPos(std::vector<float>& pos);
+    static void setLaTrajectoryTime(float time);
+    static void setRaTrajectoryTime(float time);    
     static bool isLaInPredefPos(std::string id);
     static bool isRaInPredefPos(std::string id);
     //Methods for moving torso up or down

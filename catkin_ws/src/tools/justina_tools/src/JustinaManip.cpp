@@ -58,6 +58,7 @@ bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_isObjOnRightHand = false;
 bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
+ros::NodeHandle * JustinaManip::_nh;
 
 std::vector<float> JustinaManip::_laCurrentPos;
 std::vector<float> JustinaManip::_raCurrentPos;
@@ -125,7 +126,8 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     //For moving up and down torso
     JustinaManip::pubTorsoUp   = nh->advertise<std_msgs::String>("/hardware/torso/torso_up", 1);
     JustinaManip::pubTorsoDown = nh->advertise<std_msgs::String>("/hardware/torso/torso_down", 1);
-
+    JustinaManip::_nh = nh;
+    
     return true;
 }
 
@@ -1138,6 +1140,19 @@ void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 void JustinaManip::getTorsoCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_torsoCurrentPos;
+}
+
+void JustinaManip::setLaTrajectoryTime(float time)
+{
+    std::cout<<"New trajectory time established for left arm"<<std::endl;
+    _nh->setParam("/manipulation/la_control/trajectory_time", time);
+}
+
+void JustinaManip::setRaTrajectoryTime(float time)
+{
+    std::cout<<"New trajectory time established for right arm"<<std::endl;
+    _nh->setParam("/manipulation/ra_control/trajectory_time", time);
+
 }
 
 bool JustinaManip::isLaInPredefPos(std::string id)
