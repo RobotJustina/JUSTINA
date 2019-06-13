@@ -484,3 +484,14 @@ target_link_libraries(find_all_yolo_test
 )
 
 add_dependencies(find_all_yolo_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(findGenderGesturePerson
+  src/findGenderGesturePerson.cpp
+)
+
+target_link_libraries(findGenderGesturePerson
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(findGenderGesturePerson ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

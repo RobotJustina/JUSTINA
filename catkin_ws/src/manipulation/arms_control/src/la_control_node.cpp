@@ -31,7 +31,7 @@ ros::Publisher pub_go_to_angles;
 std_msgs::Float32MultiArray msg_go_to_angles;
 
 bool new_global_goal = false;
-double new_tf;
+double trajectory_time;
 
 
 std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path)
@@ -147,7 +147,7 @@ bool get_speed_profiles(ros::ServiceClient& clt, std::vector<std::vector<float> 
     manip_msgs::SpeedProfile srv;
     srv.request.dt = 1.0/SAMPLING_FREQ;
     srv.request.t0 = 0;
-    srv.request.tf = new_tf;
+    srv.request.tf = trajectory_time;
     srv.request.p0 = 0;
     srv.request.pf = 1;
     srv.request.w0 = 0;
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
     std_msgs::Float32MultiArray      msg_la_goal_pose   ;
     std_msgs::Bool                   msg_la_goal_reached;
 
-    node.param("new_tf", new_tf, 1.3);
+    node.param("trajectory_time", trajectory_time, 1.5);
     
     std::string folder = "";
     for(int i=0; i < argc; i++)
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
                 new_global_goal = false;
                 time_k = 0;
                 msg_la_goal_pose.data.resize(14);
-                //node.param("new_tf", new_tf, 1.3);
+                node.param("trajectory_time", trajectory_time, 1.5);
                 if(get_speed_profiles(clt_speed_profile, profile_positions, profile_speeds))
                     state = SM_SENDING_PROFILES;
                 else
