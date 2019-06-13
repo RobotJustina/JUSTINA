@@ -3055,6 +3055,7 @@ void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
     }
     else if (tokens[0] == "people"){
             std::cout << "Introduce to people" << std::endl;
+            JustinaTasks::introduceOneToPeople(tokens[1], tokens[3]);
     }
 	
     responseMsg.successful = 1;
@@ -4193,7 +4194,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 			geometry_msgs::Pose pose;
 			bool grasp = false;
             ss.str("");
-            ss << "I am looking for the" << to_speech;
+            ss << "I am looking for the " << to_speech;
             JustinaHRI::waitAfterSay(ss.str(), 2500);
             JustinaManip::hdGoTo(0, -0.9, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -4257,7 +4258,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 
             if(grasp){
                 JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
-                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                //JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                 grasp = JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, armFlag, obj_name, true);
                 JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
             }
@@ -4281,7 +4282,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
             //guide to the bin
-            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            //JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             JustinaTasks::guideAPerson(tokens[2], 120000); //guiar al objeto
             JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
@@ -4292,9 +4293,9 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             ss.str("");
             if(tokens[3] != "nil")
-                ss << "I can not put the " << to_speech << " into the" << tokens[2];
+                ss << "I can not put the " << to_speech << " into the " << tokens[3];
             else
-                ss << "I can not put the " << to_speech << " into the" << tokens[3];
+                ss << "I can not put the " << to_speech << " into the " << tokens[2];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             ss.str("");
             ss << "I will give you the " << to_speech;
@@ -4303,9 +4304,9 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
             JustinaTasks::dropObject(obj_name, armFlag, 30000);
             ss.str("");
             if(tokens[3] != "nil")
-                ss << "Please put the " << to_speech << " into the" << tokens[2];
+                ss << "Please put the " << to_speech << " into the " << tokens[3];
             else
-                ss << "Please put the " << to_speech << " into the" << tokens[3];
+                ss << "Please put the " << to_speech << " into the " << tokens[2];
 
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
