@@ -121,7 +121,8 @@ int main(int argc, char** argv)
     idsUmbrella.push_back("umbrella");
     
 
-    Eigen::Vector3d centroidGesture;
+    std::vector<Eigen::Vector3d> centroidGestures;
+    std::vector<std::string> centroids_loc;
     float gx_w, gy_w, gz_w; 
     float goalx, goaly, goala, angleError;
     float robot_y, robot_x, robot_a;
@@ -204,8 +205,9 @@ int main(int argc, char** argv)
                 nextState = SM_SEARCH_WAVING;
                 
                 break;
-            
-            case SM_SEARCH_WAVING:
+           
+            // This case is the old by HUGO 
+            /*case SM_SEARCH_WAVING:
                 std::cout << "Farewell Test...->SM_SEARCH_WAVING" << std::endl;
                 JustinaHRI::waitAfterSay("I will search the guests", 3500, minDelayAfterSay);
                 findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
@@ -231,6 +233,39 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("I am going to approach to you for confirmation", 5000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);
+                    nextState = SM_CLOSE_TO_GUEST;
+                }else
+                    nextState = SM_SEARCH_WAVING;
+                break;*/
+            
+            // This case is the new by Rey
+            case SM_SEARCH_WAVING:
+                std::cout << "Farewell Test...->SM_SEARCH_WAVING" << std::endl;
+                JustinaHRI::waitAfterSay("I will search the guests", 3500, minDelayAfterSay);
+                centroidGestures = std::vector<Eigen::Vector3d>();
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGestures, "", true, 0, 0.7);
+                //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
+                if(findGesture){
+                    JustinaVision::stopSkeletonFinding();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    ros::spinOnce();
+
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    for(int i = 0; i < centroidGestures.size(); i++)
+                    {
+                        Eigen::Vector3d centroid = centroidGestures[i];
+                        JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                        ss << "person_" << i;
+                        centroids_loc.push_back(ss.str());
+                        JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                    }
+
+                    JustinaManip::hdGoTo(0.0, 0.0, 1000);
+                    ss.str("");
+                    ss << "I noticed that somebody are calling me " << std::endl;
+
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);
+                    JustinaHRI::waitAfterSay("I am going to approach to you for confirmation", 5000, maxDelayAfterSay);
                     nextState = SM_CLOSE_TO_GUEST;
                 }else
                     nextState = SM_SEARCH_WAVING;

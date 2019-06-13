@@ -33,6 +33,7 @@ int main(int argc, char** argv)
             std::cout << "trying find a person yolo " << std::endl;
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
             centroids.clear();
+            //isFound = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroids, "", true, 0, 0.7);
             isFound = JustinaTasks::turnAndRecognizeYolo(ids, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, "", 0, 1.0);
             if(isFound){
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
