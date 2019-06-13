@@ -523,6 +523,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
+            JustinaManip::waitForRaGoalReached(2500);
 
             // JustinaNavigation::moveDist(0.08, 1000);
             // This comment to reduce the time of manipulation
@@ -3165,31 +3166,45 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h, float zmin,
     return true;
 }
 
-bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm) {
+bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
     std::cout << "-- JustinaTasks::placeObjectOnShelf..." << std::endl;
-    std::vector<float> vacantPlane;
-    std::vector<int> inliers;
-    std::vector<float> x;
-    std::vector<float> y;
-    std::vector<float> z;
-    std::vector<float> distance;
-    float maximunInliers = 0;
-    float XtoPlace;
-    float YtoPlace;
-    float ZtoPlace;
 
-    bool isFreeSpace = false;
+    if(withLeftArm){
+        JustinaManip::laGoTo("navigation", 3000);
+        if(level == 1)
+        {
+            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 2000);
+            JustinaManip::laGoTo("put_storing_L1_P1", 3000);
+            JustinaNavigation::moveDist(0.2, 2500);
+            JustinaManip::laGoTo("put_storing_L1_P2", 3000);
+        }
+        else if(level == 2)
+        {
+            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 2000);
+            JustinaManip::laGoTo("put_storing_L2_P1", 3000);
+            JustinaNavigation::moveDist(0.2, 2500);
+            JustinaManip::laGoTo("put_storing_L2_P2", 3000);
+        }
+        else if(level == 3)
+        {
+            JustinaManip::torsoGoTo(0.2, 0.0, 0.0, 4000);
+            JustinaManip::laGoTo("put_storing_L3_P1", 3000);
+            JustinaNavigation::moveDist(0.2, 2500);
+            JustinaManip::laGoTo("put_storing_L3_P2", 3000);
+        }
+        else if(level == 4)
+        {
+            JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 8000);
+            JustinaManip::laGoTo("put_storing_L4_P1", 3000);
+            JustinaNavigation::moveDist(0.2, 2500);
+            JustinaManip::laGoTo("put_storing_L4_P2", 3000);
+        }
+    }
+    JustinaNavigation::moveDist(0.3, 2500);
+    
 
-    int maxInliersIndex;
 
-    JustinaManip::hdGoTo(0, -0.7, 5000);
-    //JustinaHardware::goalTorso(0.45, 4000);
-    /*if(!JustinaTasks::alignWithTable(0.35))
-      if(!JustinaTasks::alignWithTable(0.35))
-      if(!JustinaTasks::alignWithTable(0.35))
-      if(!JustinaTasks::alignWithTable(0.35))
-      JustinaTasks::alignWithTable(0.35);*/
-
+    /*
     if (withLeftArm) {
         JustinaManip::laGoTo("navigation", 3000);
 
@@ -3207,8 +3222,9 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm) {
 
         JustinaNavigation::moveDist(-0.4, 5000);
 
-        JustinaManip::startLaGoTo("navigation");
         JustinaManip::startHdGoTo(0.0, 0.0);
+        JustinaManip::laGoTo("navigation", 2500);
+        //JustinaManip::startLaGoTo("navigation");
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(300));
     } else {
@@ -3228,11 +3244,13 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm) {
 
         JustinaNavigation::moveDist(-0.4, 5000);
 
-        JustinaManip::startRaGoTo("navigation");
         JustinaManip::startHdGoTo(0.0, 0.0);
-        ros::spinOnce();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(300));
-    }
+        //JustinaManip::startRaGoTo("navigation");
+        JustinaManip::raGoTo("navigation", 2500);
+        //ros::spinOnce();
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+    }*/
+
     return true;
 }
 

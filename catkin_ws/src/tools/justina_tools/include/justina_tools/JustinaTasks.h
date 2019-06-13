@@ -70,7 +70,7 @@ class JustinaTasks
         static bool graspObjectFeedback(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
         static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
         static bool placeObjectOnShelf(bool withLeftArm, float h = 0, float zmin = 0, float zmax = 1.6);
-        static bool placeObjectOnShelfHC(bool withLeftArm);
+        static bool placeObjectOnShelfHC(bool withLeftArm, int level);
         static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
         static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
         static bool waitRecognizedFace(float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
