@@ -13,6 +13,7 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaRepresentation.h"
 
 class JustinaTasks
 {
@@ -133,6 +134,7 @@ class JustinaTasks
         static bool waitRecognizedFaceGesture(float timeout, std::string id, int gender, std::string gesture, std::vector<vision_msgs::VisionFaceObject> &facesRecog, Eigen::Vector3d &centroidFace, std::string location = "");
         static bool findGenderGesturePerson(std::string gesture, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidFace, POSE pose = NONE, std::string location = "", bool fWaitSpecificGesture= true);
         static bool introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2, bool first_location=true);
+        static bool introduceOneToPeople(std::string name_person, std::string location_people);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeSkeleton(POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidSkeleton, std::string location);
