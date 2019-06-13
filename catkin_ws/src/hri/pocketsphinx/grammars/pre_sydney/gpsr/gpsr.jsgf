@@ -83,7 +83,7 @@ public <command> = (<deliver> | <fndppl> | <fndobj> | <follow> | <guide> | <comp
 <incomplete1> = <vbfollow> <name>;
 <incomplete2> = <vbbring> ME THE <category>;
 <incomplete3> = <vbdeliver> <category> TO <someone>;
-<incomplete4> = <vbguide> <name>;
+<incomplete4> = <vbguide> <name> TO THE <beacon>;
 <incomplete5> = MEET <name> AND <vbguide> <pron>;
 <incomplete6> = <gobeacon2> MEET <name2> AND <vbguide> <pron>;
 
