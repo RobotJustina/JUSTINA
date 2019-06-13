@@ -30,10 +30,10 @@ int main(int argc, char** argv)
     while(ros::ok() && !fail && !success){
         switch(nextState){
         case 1:
-
+            JustinaVision::startSkeletonFinding();
             std::cout << "Farewell Test...->SM_SEARCH_WAVING" << std::endl;
             JustinaHRI::waitAfterSay("I will search the guests", 3500, minDelayAfterSay);
-            findGesture = JustinaTasks::findGenderGesturePerson("waving", 0, -M_PI_4, M_PI_4 / 2.0, -M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0, 9.0, centroidGesture);
+            findGesture = JustinaTasks::findGenderGesturePerson("waving", 0, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0, 9.0, centroidGesture);
             if(findGesture){
                 JustinaVision::stopSkeletonFinding();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
