@@ -74,6 +74,8 @@ int main(int argc, char** argv)
     bool graspObject = false;
 
     bool objectGrasped[2] = {false, false};
+    std::string objectGraspedObj[2] = {"", ""};
+    std::string objectGraspedCat[2] = {"", ""};
 
     int nextState =           0;
     int itemsOnCupboard =     0;
@@ -242,7 +244,8 @@ int main(int argc, char** argv)
                     }
                     else{
                         JustinaHRI::say("I'm trying to open the cupboard door");
-                        JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
+                        // This is for generate PDF
+                        // JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
                         if(JustinaTasks::openDoor(false))
                             nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                         else{
@@ -832,15 +835,24 @@ int main(int argc, char** argv)
 
                     JustinaHRI::say(justinaSay.str());
                     std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
+                    std::string catObjectGrasp;
+                    if(idObjectGrasp.find("unknown") != std::string::npos)
+                        catObjectGrasp = categories_tabl[indexObjectGrasp];
+                    else
+                        catObjectGrasp = "unknown";
                     geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
                     if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true)){
                         if(!withLeftOrRightArm){
                             objectGrasped[0] = true;
+                            objectGraspedObj[0] = idObjectGrasp;
+                            objectGraspedCat[0] = catObjectGrasp;
                             takeRight = false;
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
                         else{
                             objectGrasped[1] = true;
+                            objectGraspedObj[1] = idObjectGrasp;
+                            objectGraspedCat[1] = catObjectGrasp;
                             takeLeft = false;
                             nextState = SM_GOTO_CUPBOARD;
                         }
@@ -854,7 +866,6 @@ int main(int argc, char** argv)
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
                         else{
-                            //Me quede aqui
                             attempsGraspLeft++;
                             if(attempsGraspLeft >= maxAttempsGraspLeft){
                                 if(objectGrasped[0]){
@@ -900,16 +911,16 @@ int main(int argc, char** argv)
                     }
                     if(objectGrasped[0] || objectGrasped[1]){
                         if(attempsPlaceObj < maxAttempsPlaceObj){
-                            /*if(!JustinaTasks::alignWithTable(0.35)){
+                            /******  This is for the aligin with the table *****/
+                            if(!JustinaTasks::alignWithTable(0.35)){
                                 JustinaNavigation::moveDist(-0.10, 3000);
-                                boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                                 if(!JustinaTasks::alignWithTable(0.35)){
                                     JustinaNavigation::moveDist(0.15, 3000);
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                                     JustinaTasks::alignWithTable(0.35);
                                 }
-                            }*/
-                            if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm)){
+                            }
+
+                            if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm, 1)){
                                 if(!withLeftOrRightArm)
                                     objectGrasped[0] = false;
                                 else
