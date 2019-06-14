@@ -266,7 +266,7 @@ int main(int argc, char** argv)
                 std::cout << "Farewell Test...->SM_SEARCH_WAVING" << std::endl;
                 JustinaHRI::waitAfterSay("I will search the guests", 3500, minDelayAfterSay);
                 centroidGestures = std::vector<Eigen::Vector3d>();
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGestures, "", true, 0, 0.7);
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.1, 0.1f, 9.0, centroidGestures, "", true, 0, 0.7);
                 //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
                 if(findGesture){
                     JustinaVision::stopSkeletonFinding();
