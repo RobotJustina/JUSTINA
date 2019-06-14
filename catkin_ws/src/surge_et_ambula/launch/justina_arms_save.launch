@@ -1,0 +1,5 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
+		<arg name="enable_torque" value="false"/>
+	</include>
+</launch>

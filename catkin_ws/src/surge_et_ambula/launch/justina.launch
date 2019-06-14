@@ -14,6 +14,7 @@
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="enable_torque" default="true"/>
 	<arg name="calculate_diagonal_paths" default="false"/>
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
 	<!-- param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" /-->
@@ -23,6 +24,7 @@
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="enable_torque" value="$(arg enable_torque)"/>
 	</include>	
 	<group ns="hri">
 		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>

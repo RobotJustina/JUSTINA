@@ -2,6 +2,7 @@
 	<arg name="simul" default="false"/>
 	<arg name="simul_pcl" default="false"/>
 	<arg name="dynamic_map" default="false"/>
+	<arg name="enable_torque" default="true"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
@@ -22,6 +23,7 @@
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="enable_torque" value="$(arg enable_torque)"/>
 		</node>
 		<node name="head" pkg="head" type="head_node" output="screen">
 			<param name="port" value="/dev/justinaHead"/>
