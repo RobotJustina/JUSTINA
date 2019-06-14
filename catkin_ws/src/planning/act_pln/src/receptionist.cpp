@@ -611,7 +611,7 @@ int main(int argc, char **argv){
             case SM_FIND_TO_HOST:
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
                 theta = 0;
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "kitchen");
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "kitchen");
                 if(findPerson){
                     JustinaHRI::waitAfterSay("John, I found you", 3000);
                     //JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
@@ -642,7 +642,7 @@ int main(int argc, char **argv){
             case SM_FIND_TO_GUEST:
                 std::cout << test << ".-> State SM_FIND_TO_GUEST: Finding to ." << std::endl;
                 theta = 0;
-                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, centroid, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, centroid, genderRecog, "living_room");
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;

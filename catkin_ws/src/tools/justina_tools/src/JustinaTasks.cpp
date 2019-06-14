@@ -995,7 +995,7 @@ bool JustinaTasks::sayAndSyncNavigateToLoc(std::string location, int timeout,
     return reachedLocation;
 }
 
-bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
+bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender, int ages,
         POSE pose, std::vector<vision_msgs::VisionFaceObject> &facesRecog) {
     boost::posix_time::ptime curr;
     boost::posix_time::ptime prev =
@@ -1007,8 +1007,12 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
         if (id.compare("") != 0)
             lastRecognizedFaces =
                 JustinaVision::getFaceRecognition(id).recog_faces;
-        else
-            lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
+        else{
+            if(gender == -1 && ages == -1)
+                lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
+            else
+                lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition().recog_faces;
+        }
         curr = boost::posix_time::second_clock::local_time();
         for (std::vector<vision_msgs::VisionFaceObject>::iterator lastRecognizedFacesIt =
                 lastRecognizedFaces.begin();
@@ -1039,12 +1043,23 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
         facesRecog.clear();
     }
 
-    if (gender != -1) {
+    if (gender != -1 && ages == -1) {
         for (int i = 0; i < lastRecognizedFaces.size(); i++) {
             if (lastRecognizedFaces[i].gender == gender)
                 facesRecog.push_back(lastRecognizedFaces[i]);
         }
-    } else
+    } else if (gender == -1 && ages != -1) {
+        for (int i = 0; i < lastRecognizedFaces.size(); i++) {
+            if (lastRecognizedFaces[i].ages == ages)
+                facesRecog.push_back(lastRecognizedFaces[i]);
+        }
+    } else if(gender != -1 && ages  != -1){
+        for (int i = 0; i < lastRecognizedFaces.size(); i++) {
+            if (lastRecognizedFaces[i].ages == ages && lastRecognizedFaces[i].gender == gender)
+                facesRecog.push_back(lastRecognizedFaces[i]);
+        }
+    }
+    else
         facesRecog = lastRecognizedFaces;
 
     if (facesRecog.size() > 0)
@@ -1239,7 +1254,7 @@ bool JustinaTasks::getNearestRecognizedFace(
     return found;
 }
 
-bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose,
+bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POSE pose,
         float initAngPan, float incAngPan, float maxAngPan, float initAngTil,
         float incAngTil, float maxAngTil, float incAngleTurn,
         float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog,
@@ -1277,7 +1292,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose,
                 JustinaManip::waitForHdGoalReached(3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionFaceObject> facesObject;
-                recog = waitRecognizedFace(2000, id, gender, pose, facesObject);
+                recog = waitRecognizedFace(2000, id, gender, ages, pose, facesObject);
                 if (recog)
                     recog = getNearestRecognizedFace(facesObject, 4.5,
                             centroidFace, genderRecog, location);
@@ -1635,7 +1650,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose,
 }
 
 bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
-        bool recogByID, std::string location, bool guide) {
+        bool recogByID, std::string location, bool guide, int ages) {
 
     std::vector<int> facesDistances;
     std::stringstream ss;
@@ -1657,7 +1672,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
     int genderRecog;
     if (recogByID)
         personID = person;
-    bool recog = turnAndRecognizeFace(personID, gender, pose, -M_PI_4,
+    bool recog = turnAndRecognizeFace(personID, gender, ages, pose, -M_PI_4,
             M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace,
             genderRecog, location);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
@@ -2264,7 +2279,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location) {
     Eigen::Vector3d centroidFace;
     int genderRecog;
     // The second parametter is -1 for all gender person
-    bool recog = turnAndRecognizeFace("", -1, NONE, -M_PI_4, M_PI_4 / 2.0,
+    bool recog = turnAndRecognizeFace("", -1, -1, NONE, -M_PI_4, M_PI_4 / 2.0,
             M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog,
             location);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
@@ -2311,7 +2326,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location) {
     //JustinaHRI::waitAfterSay("I have verified the information", 4000);
     std::vector<vision_msgs::VisionFaceObject> facesObject;
     // -1 is for all gender person
-    recog = waitRecognizedFace(2000, "", -1, NONE, facesObject);
+    recog = waitRecognizedFace(2000, "", -1, -1, NONE, facesObject);
     if (recog) {
         int genderRecogConfirm;
         Eigen::Vector3d centroidFaceConfirm;
@@ -2583,16 +2598,16 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm,
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         JustinaManip::startRaOpenGripper(0.0);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-        JustinaManip::raGoTo("navigation", 10000);
-        JustinaManip::raGoTo("home", 10000);
+        JustinaManip::raGoTo("navigation", 3500);
+        JustinaManip::raGoTo("home", 3500);
     } else {
         JustinaManip::startLaOpenGripper(0.6);
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         JustinaManip::startLaOpenGripper(0.0);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-        JustinaManip::laGoTo("navigation", 10000);
-        JustinaManip::laGoTo("home", 10000);
+        JustinaManip::laGoTo("navigation", 3500);
+        JustinaManip::laGoTo("home", 3500);
     }
     return true;
 }
@@ -3825,7 +3840,7 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing,
     Eigen::Vector3d centroidFace;
     int genderRecog;
 
-    bool recog = turnAndRecognizeFace(personID, -1, NONE, -M_PI_4, M_PI_4 / 2.0,
+    bool recog = turnAndRecognizeFace(personID, -1, -1, NONE, -M_PI_4, M_PI_4 / 2.0,
             M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog,
             location);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
