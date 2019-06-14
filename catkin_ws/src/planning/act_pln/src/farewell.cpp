@@ -28,6 +28,7 @@
 #define SM_CONFIRMATION_TO_GO 110
 #define SM_WAIT_NAME 120
 #define SM_COMFIRMATION_NAME 130
+#define SM_Recognize_Gender 140
 
 #define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
@@ -62,6 +63,24 @@ void switchSpeechReco(bool pocket, std::string grammarPocket, std::string gramma
     }
 }
 
+
+int nearestFace(vision_msgs::VisionFaceObjects faces){
+	float distanceAux;
+	float distance = 100.0;
+	int auxIndex;
+	int giro = 0;
+
+	for(int i=0; i<faces.recog_faces.size(); i++){
+		distanceAux=sqrt((faces.recog_faces[i].face_centroid.x * faces.recog_faces[i].face_centroid.x) +
+						(faces.recog_faces[i].face_centroid.y * faces.recog_faces[i].face_centroid.y));
+		if(distanceAux <= distance){
+			distance=distanceAux;
+			auxIndex=i;
+		}
+	}
+		
+	return faces.recog_faces[auxIndex].gender;
+}
 
 
 
@@ -104,6 +123,7 @@ int main(int argc, char** argv)
     int attemptsWaitConfirmation = 0;
     int attemptsConfirmation = 0;
     int maxAttempsWaitConfirmation = 3;
+    int attemptsFindLady =0;
 
     int minDelayAfterSay = 0;
     int maxDelayAfterSay = 300;
@@ -131,6 +151,8 @@ int main(int argc, char** argv)
     int numberGuest = 1;
     int maxNumberGuest = 2;
     int numberTaxi = 0;
+    int attemptsGender =0;
+    int gender = 2;
 
     std::string idGuest;
     float posGuestX, posGuestY, posGuestZ,confidenceGuest;
@@ -151,6 +173,7 @@ int main(int argc, char** argv)
   	vision_msgs::VisionFaceObjects faces;
   	//alamcena los gestos detectados
   	std::vector<vision_msgs::GestureSkeleton> gestures;
+    vision_msgs::VisionFaceObjects lastRecognizedFaces;
     
     
     ros::Rate loop(10);
@@ -265,7 +288,7 @@ int main(int argc, char** argv)
                     ss << "I noticed that somebody are calling me " << std::endl;
 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);
-                    JustinaHRI::waitAfterSay("I am going to approach to you for confirmation", 5000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("I am going to approach to you", 5000, maxDelayAfterSay);
                     nextState = SM_CLOSE_TO_GUEST;
                 }else
                     nextState = SM_SEARCH_WAVING;
@@ -273,13 +296,16 @@ int main(int argc, char** argv)
             
             case SM_CLOSE_TO_GUEST:
                 std::cout << "Farewell Test...-> SM_CLOSE_TO_GUEST" << std::endl;
-                ss.str("");
-                ss << "guest_" << numberGuest;
+                //ss.str("");
+                //ss << "guest_" << numberGuest;
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
-                JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
+                //JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                //JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
+                JustinaKnowledge::addUpdateKnownLoc(centroids_loc[0], gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                JustinaKnowledge::getKnownLocation(centroids_loc[0], goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
+                //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 0.9, 120000);
                 JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 0.9, 120000);
                 reachedGoal = true;
                 
@@ -287,7 +313,8 @@ int main(int argc, char** argv)
                 dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
 
                 if(reachedGoal)
-                    JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
+                    JustinaKnowledge::addUpdateKnownLoc(centroids_loc[0], robot_a);
+                    //JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
 
 
                 float torsoSpine, torsoWaist, torsoShoulders;
@@ -301,42 +328,68 @@ int main(int argc, char** argv)
                 JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 
                 attemptsWaitConfirmation=0;
-                nextState = SM_CONFIRMATION_TO_GO;
+                nextState = SM_Recognize_Gender;
+                attemptsFindLady++;
                 break;
             
+            case SM_Recognize_Gender:
+                std::cout << "Farewell Test...-> SM_CONFIRMATION_TO_GO" << std::endl;
+                if(attemptsFindLady<2){
+                    JustinaHRI::waitAfterSay("Hello, my name is Justina, look at me to state your gender", 5000, minDelayAfterSay);
+                    ros::Duration(1.0).sleep();
+                    while (lastRecognizedFaces.recog_faces.size()>0 || attemptsGender > 2){
+                        lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition();
+                        attemptsGender++;
+                    }
+                
+                    gender = nearestFace(lastRecognizedFaces);
+                    }
+                else
+                    gender = 0;
+                
+                lastRecognizedFaces.recog_faces.clear();
+                nextState = SM_CONFIRMATION_TO_GO;  
+                JustinaHRI::waitAfterSay("Ready", 5000, minDelayAfterSay);  
+                break;
+
+
             case SM_CONFIRMATION_TO_GO:
                 std::cout << "Farewell Test...-> SM_CONFIRMATION_TO_GO" << std::endl;
                 attemptsSpeechReco = 0;
                 attemptsSpeechInt = 0;
 
+                if (gender == 0){
+                    switchSpeechReco(true, grammarCommandsID, GRAMMAR_COMMANDS, "I think that you want to go, is that correct, tell me justina yes or justina no");
 
-                switchSpeechReco(true, grammarCommandsID, GRAMMAR_COMMANDS, "Hello my name is Justina, and I think that you want to go, is that correct, tell me justina yes or justina no");
-                
+                    if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
+                        if(lastRecoSpeech.find("yes") != std::string::npos){
 
-                
-                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
-                    if(lastRecoSpeech.find("yes") != std::string::npos){
-                        
-                        nextState = SM_GoCoatRack;
+                            nextState = SM_GoCoatRack;
+                        }
+
+                        else
+                            nextState = SM_ReturnSearchWaving;
                     }
 
-                    else
-                        nextState = SM_ReturnSearchWaving;
+                    else {
+                        if(attemptsWaitConfirmation < maxAttempsWaitConfirmation){
+                            attemptsWaitConfirmation++;
+                            nextState = SM_CONFIRMATION_TO_GO;
+                        }
+                        else{
+                            JustinaHRI::enableSpeechRecognized(false);
+                            JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
+                            ros::Duration(1.0).sleep();
+                            nextState = SM_ReturnSearchWaving;
+                        }
+                    }
                 }
-
-                else {
-                    if(attemptsWaitConfirmation < maxAttempsWaitConfirmation){
-                        attemptsWaitConfirmation++;
-                        nextState = SM_CONFIRMATION_TO_GO;
-                    }
-                    else{
-                        JustinaHRI::enableSpeechRecognized(false);
-                        JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
-                        ros::Duration(1.0).sleep();
-                        nextState = SM_ReturnSearchWaving;
-                    }
+                if(gender == 1){
+                    JustinaHRI::waitAfterSay("Sorry, but ladies first, in a moment i will back for you", 5000, minDelayAfterSay);
+                    centroids_loc.erase(centroids_loc.begin());
+                    JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                    nextState=SM_CLOSE_TO_GUEST; 
                 }
-
                 break;
 
             
