@@ -328,13 +328,6 @@ int main(int argc, char ** argv){
             if(!readData)
                 std::cout << "left_arm_node.->Read data not found." << std::endl;
 
-            if(!enableTorque){
-            	std::cout << "left_arm_node.-> ";
-            	for(int i = 0; i < 9; i++)
-            		std::cout << curr_position[i] << " ";
-            	std::cout << std::endl;
-            }
-
             jointStates.header.stamp = ros::Time::now();
             jointStates.position[0] = -((float) (zero_arm[0]-curr_position[0]))/bitsPerRadian;
             jointStates.position[1] = -((float) (zero_arm[1]-curr_position[1]))/bitsPerRadian;
@@ -346,6 +339,13 @@ int main(int argc, char ** argv){
             jointStates.position[7] = -((float) (zero_gripper[0]-curr_position[7]))/bitsPerRadian;
             jointStates.position[8] =  ((float) (zero_gripper[1]-curr_position[8]))/bitsPerRadian;
             // std::cout << "left_arm_node.->curr_position[7]:" << curr_position[7] << std::endl;
+            
+            if(!enableTorque){
+            	std::cout << "left_arm_node.-> ";
+            	for(int i = 0; i < 9; i++)
+            		std::cout << jointStates.position[i] << " ";
+            	std::cout << std::endl;
+            }
 
             if(gripperTorqueActive){
                 dynamixelManager.getPresentLoad(7, currentLoadD21);
@@ -427,23 +427,25 @@ int main(int argc, char ** argv){
     int countValidate = 0;
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
-    do{
-        for(int i = 0; i < 6; i++){
-            if(!validatePosition[i]){
-                unsigned short position;
-                if(bulkEnable)
-                    dynamixelManager.readBulkData();
-                dynamixelManager.getPresentPosition(i, position);
-                float error = fabs(position - zero_arm[i]);
-                //std::cout << "left_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
-                if(error < 10){
-                    validatePosition[i] = true;
-                    countValidate++;
+    if(enableTorque){
+        do{
+            for(int i = 0; i < 6; i++){
+                if(!validatePosition[i]){
+                    unsigned short position;
+                    if(bulkEnable)
+                        dynamixelManager.readBulkData();
+                    dynamixelManager.getPresentPosition(i, position);
+                    float error = fabs(position - zero_arm[i]);
+                    //std::cout << "left_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
+                    if(error < 10){
+                        validatePosition[i] = true;
+                        countValidate++;
+                    }
                 }
             }
-        }
-        curr = boost::posix_time::second_clock::local_time();
-    }while(countValidate < 6 && (curr - prev).total_milliseconds() < 7500);
+            curr = boost::posix_time::second_clock::local_time();
+        }while(countValidate < 6 && (curr - prev).total_milliseconds() < 7500);
+    }
 
     std::cout << "left_arm_node.->The arm have reached the init pose" << std::endl;
 
