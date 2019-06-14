@@ -339,9 +339,8 @@ int main(int argc, char** argv)
                     ros::Duration(1.0).sleep();
 
                     std::cout<<"rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
-                    while (lastRecognizedFaces.recog_faces.size()>0 || attemptsGender > 2){
+                    while (lastRecognizedFaces.recog_faces.size() < 0 || attemptsGender++ < 2){
                         lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition();
-                        attemptsGender++;
                         std::cout<<"entro a while, rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
                     }
                     std::cout<<"sali del while" << std::endl;
