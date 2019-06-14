@@ -35,7 +35,7 @@
 	(assert (condition (conditional if) (arguments robot zone ?param2)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd ptrans) (actor robot)(obj robot)(from frontexit)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
-	(modify ?f1 (status nil))
+	(modify ?f1 (status nil) (image current_place))
 	;(modify ?f3 (status asked))
 	;(modify ?f2 (zone frontexit))
 )
@@ -58,8 +58,9 @@
 
 (defrule task_deliver_in_position
 	?f <- (task ?plan deliver_in_position ?param1 ?param2 ?step)
-	?f1 <- (item (name ?patam1))
+	?f1 <- (item (name ?param1))
 	?f2 <- (item (name finish_objetive))
+	(item (name ?param2))
 	=>
 	(retract ?f)
 	(printout t "Deliver in position" crlf)

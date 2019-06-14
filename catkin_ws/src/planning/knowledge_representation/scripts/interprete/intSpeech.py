@@ -46,6 +46,7 @@ def separaTask(cadena):
         ask_info_index = 0;
         origin_place = False;
 	no_man_guide = True
+        obj_inc = False
 	for i in spc:
 		temp  = i.split("(")
 		temp.remove(' ')
@@ -79,6 +80,9 @@ def separaTask(cadena):
 					if paramTam > 3:
 						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
+                                        obj_inc = False 
+                                        if(firstparam[2] == 'object' or firstparam[2] == 'object_place'):
+                                            obj_inc = True  
                                 elif firstparam[1] == 'ask_info':
                                         ask_info = True;
                                         ask_info_index = ask_info_index + 1
@@ -138,7 +142,7 @@ def separaTask(cadena):
 			q.pushC(s)
 			planQ.pushC(s)
                 elif ask_info:
-                        if  origin_place:
+                        if  origin_place and not obj_inc:
                             origin_place = False
                             step = step - 1
                             ask_info_index = ask_info_index - 1
@@ -148,6 +152,7 @@ def separaTask(cadena):
                             q.insertElement(s, ask_info_index)
                             planQ.insertElement(s, ask_info_index)
                             ask_info = False
+                            obj_inc = False
 		fpush = True
 		s = []
         q.showQueue();

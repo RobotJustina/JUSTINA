@@ -2233,7 +2233,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_find": [["find", "look_for", "locate", "spot", "pinpoint"], [], [], []],
 	"Category": [[], [], ["category"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
-				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))",
+                                "(task (plan user_speech) (action_type get_object) (params default_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

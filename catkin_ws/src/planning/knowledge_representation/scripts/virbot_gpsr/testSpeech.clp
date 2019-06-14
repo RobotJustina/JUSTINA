@@ -148,6 +148,8 @@
         (printout t "Inicia modulo crear PLAN" crlf)
 	(assert (num_steps (+ ?steps 1)))
 	(assert (plan_name ?plan))
+	(assert (delate current_person))
+	(assert (delate current_place))
 )
 
 (defrule no_conf_command
@@ -263,7 +265,6 @@
 	(modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento (+ ?intento 1)))
-	(assert (delate current_person))
 )
 
 (defrule no_task_command_exitdoor
@@ -288,7 +289,6 @@
         (modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento 1))
-	(assert (delate current_person))
 )
 
 (defrule no_task_command_cero_steps
@@ -380,10 +380,25 @@
 
 (defrule delate_not_status_current_person
 	?f <- (delate current_person)
-	?f1 <- (not (item (name ?name) (status current_person)))
+	(not (item (name ?name) (status current_person)))
 	=>
 	(retract ?f)
 )
 
 ;;;;;;;;;;;;;
+(defrule delate_current_place 
+	?f <- (delate current_place)
+	?f1 <- (item (name ?name) (image current_place))
+	=>
+	(retract ?f)
+	(modify ?f1 (image nil))
+	(assert (delate current_place))
+)
 
+(defrule delate_not_status_current_place
+	?f <- (delate current_place)
+	(not (item (name ?name) (image current_place)))
+	=>
+	(retract ?f)
+)
+;;;;;;;;;;;;;;
