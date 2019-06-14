@@ -1508,6 +1508,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
                 }
                 else if(recog){
                     std::vector<Eigen::Vector3d> centroidGestures;
+                    recog = false;
                     filterObjectByLocation(gestures, centroidGestures, location);
                     if(numrecog == 0)
                         gesturesPos = filterObjectsNearest(gesturesPos, centroidGestures, thrSamePerson);
@@ -7204,7 +7205,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
 std::vector<Eigen::Vector3d> JustinaTasks::filterObjectsNearest(std::vector<Eigen::Vector3d> centroids, std::vector<Eigen::Vector3d> centroidsObjects, float thrSamePerson)
 {
     std::cout << "JustinaTasks.->filterObjectsNearest." << std::endl;
-    std::vector<Eigen::Vector3d> newCentroids = centroids;
+    std::vector<Eigen::Vector3d> newCentroids;
     float gx_w, gy_w, gz_w;
     for(int i = 0; i < centroidsObjects.size(); i++)
     {
