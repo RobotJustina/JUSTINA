@@ -301,7 +301,7 @@ int main(int argc, char** argv)
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 //JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 //JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
-                JustinaKnowledge::addUpdateKnownLoc(centroids_loc[0], gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                //JustinaKnowledge::addUpdateKnownLoc(centroids_loc[0], gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 JustinaKnowledge::getKnownLocation(centroids_loc[0], goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
@@ -372,7 +372,7 @@ int main(int argc, char** argv)
                         }
 
                         else
-                            nextState = SM_ReturnSearchWaving;
+                            nextState = SM_CLOSE_TO_GUEST;
                     }
 
                     else {
@@ -384,7 +384,7 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
                             ros::Duration(1.0).sleep();
-                            nextState = SM_ReturnSearchWaving;
+                            nextState = SM_CLOSE_TO_GUEST;
                         }
                     }
                 }
