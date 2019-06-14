@@ -127,6 +127,7 @@ int main(int argc, char ** argv){
     bool bulkEnable = false;
     bool syncWriteEnable = false;
     bool correctParams = false;
+    bool enableTorque = true;
     simul = false;
 
     if(ros::param::has("~port")){
@@ -139,6 +140,9 @@ int main(int argc, char ** argv){
     }
     else
         correctParams &= true;
+
+    if(ros::param::has("~enable_torque"))
+    	ros::param::get("~enable_torque", enableTorque);
 
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
@@ -195,7 +199,7 @@ int main(int argc, char ** argv){
     jointStates.position.insert(jointStates.position.begin(), positions, positions + 9);
 
     // Setup features for init the servos of left arm
-    if(!simul){
+    if(!simul && enableTorque){
         for(int i = 0; i < 9; i++){
             dynamixelManager.enableTorque(i);
             dynamixelManager.setPGain(i, 32);
@@ -245,7 +249,7 @@ int main(int argc, char ** argv){
 
     while(ros::ok()){
         if(!simul){
-            if(newGoalPose){
+            if(newGoalPose && enableTorque){
                 //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
                 for(int i = 0; i < 7; i++){
                     dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
@@ -258,7 +262,7 @@ int main(int argc, char ** argv){
                 newGoalPose = false;
             }
 
-            if(newGoalGripper){
+            if(newGoalGripper && enableTorque){
                 std::cout << "left_arm_node.->Proccessing the new goal gripper." << std::endl; 
                 int countValidLimit, countValid = 0;
                 if(gripperTorqueActive){
@@ -323,6 +327,13 @@ int main(int argc, char ** argv){
                 readData = dynamixelManager.getPresentPosition(i, curr_position[i]);
             if(!readData)
                 std::cout << "left_arm_node.->Read data not found." << std::endl;
+
+            if(!enableTorque){
+            	std::cout << "left_arm_node.-> ";
+            	for(int i = 0; i < 9; i++)
+            		std::cout << curr_position[i] << " ";
+            	std::cout << std::endl;
+            }
 
             jointStates.header.stamp = ros::Time::now();
             jointStates.position[0] = -((float) (zero_arm[0]-curr_position[0]))/bitsPerRadian;
