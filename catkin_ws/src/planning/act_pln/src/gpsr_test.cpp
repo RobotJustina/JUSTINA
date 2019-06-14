@@ -1847,7 +1847,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 
     JustinaHRI::waitAfterSay("I have incomplete information, I need your help please", 10000);    
 	ss.str("");
-	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny")
+	if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin" || tokens[0] == "place_destiny" || tokens [0] == "object_place")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 	if(tokens[0] == "object")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, i want pringles", 10000);
@@ -1856,24 +1856,19 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	
 	ss.str("");
 	if(tokens[0] == "follow_place_origin"){
-		//JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
-		ss << "Well, tell me where can i find " << tokens[2]; 
-		//JustinaHRI::waitAfterSay(ss.str(), 10000);}	
+		ss << "tell me where can i find " << tokens[2]; 
         switchSpeechReco(7, ss.str());}
 	if(tokens[0] == "gesture_place_origin"){
-		//JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
-		ss << "Well, tell me where can i find a " << tokens[2] << " person"; 
-		//JustinaHRI::waitAfterSay(ss.str(), 10000);}	
+		ss << "tell me where can i find a " << tokens[2] << " person"; 
         switchSpeechReco(7, ss.str());}
 	if(tokens[0] == "object"){
-		//JustinaHRI::loadGrammarSpeechRecognized("incomplete_object.xml");
-		ss << "Well, tell me what " << tokens[2] << " do you want me to look for";
-		//JustinaHRI::waitAfterSay(ss.str(), 10000);}
+		ss << "tell me what " << tokens[2] << " do you want me to look for";
         switchSpeechReco(8, ss.str());}
 	if(tokens[0] == "place_destiny"){
-		//JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
-        ss << "Well, tell me what place you want me to guide " << tokens[2];
-		//JustinaHRI::waitAfterSay(ss.str(), 10000);}
+        ss << "tell me what place you want me to guide " << tokens[2];
+        switchSpeechReco(7, ss.str());}
+	if(tokens[0] == "object_place"){
+        ss << "in wich place of the " << tokens[2] << " you want me to put the object";
         switchSpeechReco(7, ss.str());}
 	ss.str("");
 
@@ -1883,11 +1878,13 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
                 std::cout << "last int: " << name << std::endl;
                 ss.str("");
 		if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
-			ss << "can i find " << tokens[2] << " in the " << name << ", say robot yes or robot no";
+			ss << "can i find " << tokens[2] << " in the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "object")
-			ss << "Do you want i look for the " << name << ", say robot yes or robot no";
+			ss << "Do you want i look for the " << name << ", say justina yes or robot no";
 		else if(tokens[0] == "place_destiny")
-			ss << "Do you want i guide " << tokens[2] << " to the " << name << ", say robot yes or robot no";
+			ss << "Do you want i guide " << tokens[2] << " to the " << name << ", say justina yes or justina no";
+		else if(tokens[0] == "object_place")
+			ss << "Do you want i put the object on the " << name << ", say justina yes or justina no";
 		//JustinaHRI::waitAfterSay(ss.str(), 2000);
 		//change grammar
         switchSpeechReco(0, ss.str());
@@ -1899,11 +1896,13 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			conf = true;
 			ss.str("");
 			if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
-				ss << "Well i will find the person in the " << name;
+				ss << "Ok i will find the person in the " << name;
 			else if(tokens[0] == "object")
-				ss << "well i try to find the " << name << " in its default location";
+				ss << "Ok i try to find the " << name << " in its default location";
 			else if(tokens[0] == "place_destiny")
-				ss << "well i will guide her to the " << name;
+				ss << "Ok i will guide her to the " << name;
+			else if(tokens[0] == "object_place")
+				ss << "Ok i will put the object on the " << name;
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			ss.str("");
 			ss << msg->params << " " << name;
