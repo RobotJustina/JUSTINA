@@ -152,7 +152,7 @@ int main(int argc, char** argv)
     int maxNumberGuest = 2;
     int numberTaxi = 0;
     int attemptsGender =0;
-    int gender = 2;
+    int gender = 0;
 
     std::string idGuest;
     float posGuestX, posGuestY, posGuestZ,confidenceGuest;
@@ -337,12 +337,17 @@ int main(int argc, char** argv)
                 if(attemptsFindLady<2){
                     JustinaHRI::waitAfterSay("Hello, my name is Justina, look at me to state your gender", 5000, minDelayAfterSay);
                     ros::Duration(1.0).sleep();
+
+                    std::cout<<"rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
                     while (lastRecognizedFaces.recog_faces.size()>0 || attemptsGender > 2){
                         lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition();
                         attemptsGender++;
+                        std::cout<<"entro a while, rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
                     }
+                    std::cout<<"sali del while" << std::endl;
                 
                     gender = nearestFace(lastRecognizedFaces);
+                    std::cout <<"genero: " << gender << std::endl;
                     }
                 else
                     gender = 0;
