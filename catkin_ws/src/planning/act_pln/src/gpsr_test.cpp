@@ -1880,7 +1880,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
 			ss << "can i find " << tokens[2] << " in the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "object")
-			ss << "Do you want i look for the " << name << ", say justina yes or robot no";
+			ss << "Do you want i look for the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "place_destiny")
 			ss << "Do you want i guide " << tokens[2] << " to the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "object_place")
@@ -2109,7 +2109,7 @@ void callbackAskPerson(
     std::string to_spech = responseMsg.params;
     boost::replace_all(to_spech, "_", " ");
     std::stringstream ss;
-    ss << "Hello, I am Justina, Well, Is your name, " << to_spech << ", say robot yes or robot no";
+    ss << "Hello, I am Justina, Is your name, " << to_spech << ", say justina yes or justina no";
     //JustinaHRI::waitAfterSay(ss.str(), 1500);
     //ss << "Well, " << to_spech << " is your name";
     std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
@@ -3106,7 +3106,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     std::string to_speech;
    
     ss.str("");
-    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
     while (!help && count < 3){
         switchSpeechReco(0, ss.str());
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -3148,7 +3148,7 @@ void callbackCmdCleanUp(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                     if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
                         std::cout << "last int: " << obj_name << std::endl;
                         ss.str("");
-                        ss << "This object is the " << obj_name << ", say robot yes o robot no";
+                        ss << "This object is the " << obj_name << ", say justina yes o justina no";
                         switchSpeechReco(0, ss.str());
                         JustinaHRI::waitForSpeechRecognized(lastReco,400);
 
@@ -3266,7 +3266,7 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     bins.push_back("bed");
     
     ss.str("");
-    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
     while (!help && count < 3){
         switchSpeechReco(0, ss.str());
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -3376,7 +3376,7 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
     
 	while(!leave_conf && count < 3){
 		ss.str("");
-		ss << "Do you want to go, tell me robot yes o robot no";
+		ss << "Do you want to go, tell me justina yes o justina no";
 		switchSpeechReco(0, ss.str());
 		JustinaHRI::waitForSpeechRecognized(lastReco,400);
 		
@@ -3956,7 +3956,7 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
     std::string to_speech;
    
     ss.str("");
-    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
     while (!help && count < 3){
         switchSpeechReco(0, ss.str());
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -4144,7 +4144,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     std::vector<poseObj> pose_obj;
    
     ss.str("");
-    ss << "For this task I need your help, Do you want to help me, say robot yes or robot no";
+    ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
     while (!help && count < 3){
         switchSpeechReco(0, ss.str());
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
