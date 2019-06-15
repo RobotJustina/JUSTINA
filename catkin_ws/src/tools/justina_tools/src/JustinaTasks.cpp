@@ -7302,7 +7302,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                         for(int i = 0; i < centroids.size(); i++)
                         {
-                            ss_loc.str();
+                            ss_loc.str("");
                             Eigen::Vector3d centroid = centroids[i];
                             JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                             ss_loc << "person_" << i;
@@ -7509,6 +7509,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
 
                 JustinaKnowledge::deleteKnownLoc(name_person);
                 JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                centroids_loc.erase(centroids_loc.begin());
 
                 if(find && centroids_loc.size() > 0)
                     nextState = SM_GUIDE_PERSON;
