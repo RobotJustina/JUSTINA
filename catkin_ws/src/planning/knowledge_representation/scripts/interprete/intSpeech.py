@@ -81,7 +81,7 @@ def separaTask(cadena):
 						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
                                         obj_inc = False 
-                                        if(firstparam[2] == 'object' or firstparam[2] == 'object_place'):
+                                        if(firstparam[2] == 'object' or firstparam[2] == 'object_place' or firstparam[2] == 'place_destiny'):
                                             obj_inc = True  
                                 elif firstparam[1] == 'ask_info':
                                         ask_info = True;

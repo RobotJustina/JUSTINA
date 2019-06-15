@@ -57,26 +57,28 @@
 )
 
 (defrule task_how_many_obj
-        ?f <- (task ?plan find_how_many_objects ?object ?place ?step)
+        ?f <- (task ?plan find_how_many_objects ?object ?place ?param ?step)
         ?f1<- (item (name ?object))
         =>
         (retract ?f)
         (printout t "How many objects in some place" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?object status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pmany_obj) (actor robot)(obj robot)(from ?place)(to ?object)(name-scheduled ?plan)(state-number ?step)))
+        ;(assert (cd-task (cd pmany_obj) (actor robot)(obj robot)(from ?place)(to ?object)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pmany_obj ?place ?object ?param ?step))
         (modify ?f1 (status nil))
 )
 
 (defrule task_how_many_cat
-        ?f <- (task ?plan find_how_many_category ?category ?place ?step)
+        ?f <- (task ?plan find_how_many_category ?category ?place ?param ?step)
         ?f1<- (item (name ?category))
         =>
         (retract ?f)
         (printout t "How many category there are on the place" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?category status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pmany_cat) (actor robot)(obj robot)(from ?place)(to ?category)(name-scheduled ?plan)(state-number ?step)))
+        ;(assert (cd-task (cd pmany_cat) (actor robot)(obj robot)(from ?place)(to ?category)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pmany_cat ?place ?category ?param ?step))
         (modify ?f1 (status nil))
 )
 
@@ -189,24 +191,24 @@
 )
 
 (defrule plan_how_many_obj
-        ?goal <- (objetive how_many_obj ?name ?object ?place ?step)
+        ?goal <- (objetive how_many_obj ?name ?object ?place ?param ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN How many Objects Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?object ?place)(duration 6000)))
         (assert (plan (name ?name) (number 2)(actions go_to ?object)(duration 6000)))
-        (assert (plan (name ?name) (number 3)(actions how_many_obj ?object)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions how_many_obj ?object ?param)(duration 6000)))
         (assert (finish-planner ?name 3))
 )
 
 (defrule plan_how_many_cat
-        ?goal <- (objetive how_many_cat ?name ?category ?place ?step)
+        ?goal <- (objetive how_many_cat ?name ?category ?place ?param ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN How many CAtegory task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?category ?place)(duration 6000)))
         (assert (plan (name ?name) (number 2)(actions go_to ?category)(duration 6000)))
-        (assert (plan (name ?name) (number 3)(actions how_many_cat ?category ?place)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions how_many_cat ?category ?param)(duration 6000)))
         (assert (finish-planner ?name 3))
 )
 
@@ -296,20 +298,22 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
         (item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pmany_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?object)(name-scheduled ?name)(state-number ?step))
+        ;?f1 <- (cd-task (cd pmany_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?object)(name-scheduled ?name)(state-number ?step))
+	?f1 <- (task pmany_obj ?place ?object ?param ?step)
         =>
         (retract ?f1)
-        (assert (objetive how_many_obj task_how_many_obj ?object ?place ?step))
+        (assert (objetive how_many_obj task_how_many_obj ?object ?place ?param ?step))
 )
 
 (defrule exe_scheduled-how-many-cat
         (state (name ?name) (number ?step)(status active)(duration ?time))
         (item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pmany_cat) (actor ?robot)(obj ?robot)(from ?place)(to ?category)(name-scheduled ?name)(state-number ?step))
+        ;?f1 <- (cd-task (cd pmany_cat) (actor ?robot)(obj ?robot)(from ?place)(to ?category)(name-scheduled ?name)(state-number ?step))
+	?f1 <- (task pmany_cat ?place ?category ?param ?step)
         =>
         (retract ?f1)
-        (assert (objetive how_many_cat task_how_many_cat ?category ?place ?step))
+        (assert (objetive how_many_cat task_how_many_cat ?category ?place ?param ?step))
 )
 
 (defrule exe_scheduled-prop-object
@@ -776,18 +780,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-how-many-obj
-        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj ?param)(duration ?t))
         ?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?obj ""))
+        (bind ?command (str-cat "" ?obj " " ?param ""))
         (assert (send-blackboard ACT-PLN many_obj ?command ?t 4))
         ;(assert (num_places (- ?num 2)))
 )
 
 (defrule exe-plan-af-many-obj
-        ?f <-  (received ?sender command many_obj ?obj ?cantidad 1)
+        ?f <-  (received ?sender command many_obj ?obj ?param ?cantidad 1)
         ?f1 <- (item (name ?obj))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj ?param))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -795,8 +799,8 @@
 )
 
 (defrule exe-plan-neg-many-obj
-        ?f <-  (received ?sender command many_obj ?obj ?cantidad 0)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj))
+        ?f <-  (received ?sender command many_obj ?obj ?param ?cantidad 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj ?param))
         ?f3 <- (item (name robot))
         =>
         (retract ?f)
@@ -807,10 +811,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-how-many-cat
-        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category ?place)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category ?param)(duration ?t))
         ?f1 <- (item (name ?category)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?category " " ?place ""))
+        (bind ?command (str-cat "" ?category " " ?param ""))
         (assert (send-blackboard ACT-PLN find_category ?command ?t 4))
         ;(assert (num_places (- ?num 2)))
 )
@@ -818,7 +822,7 @@
 (defrule exe-plan-af-many-cat
         ?f <-  (received ?sender command find_category ?category ?param ?cantidad 1)
         ?f1 <- (item (name ?category))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category ?param))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -828,7 +832,7 @@
 (defrule exe-plan-neg-many-cat
         ?f <-  (received ?sender command find_category ?category ?param ?cantidad 0)
         ?f1 <- (item (name ?category))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category ?param))
         ?f3 <- (item (name robot))
         =>
         (retract ?f)
