@@ -10,14 +10,14 @@
 (location		is_kind_of 		attribute)
 
 
-(black 			is_object_of 	color)
-(orange 		is_object_of 	color)
-(yellow 		is_object_of 	color)
-(blue 			is_object_of 	color)
-(white 			is_object_of 	color)
-(red 			is_object_of 	color)
-(brown 			is_object_of 	color)
-(gray			is_object_of	color)
+#(black 			is_object_of 	color)
+#(orange 		is_object_of 	color)
+#(yellow 		is_object_of 	color)
+#(blue 			is_object_of 	color)
+#(white 			is_object_of 	color)
+#(red 			is_object_of 	color)
+#(brown 			is_object_of 	color)
+#(gray			is_object_of	color)
 
 
 

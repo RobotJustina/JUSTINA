@@ -423,7 +423,7 @@ meaning_mapping_patterns_gpsr = [
 	"Many":[["many"],[],[],[]],
 	"Object": [[], [], ["item"], []],
 	"Location_second":[[],[],["place", "room"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location_second-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location_second- nil) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
@@ -542,7 +542,7 @@ meaning_mapping_patterns_gpsr = [
 	"Many":[["many"],[],[],[]],
 	"Category": [["snacks", "cutlery", "food", "drinks", "tableware", "containers", "fruits", "cleaning_stuff"], [], [], []],
 	"Location_second":[[], [], ["place", "room"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location_second-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location_second- nil) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
@@ -1728,7 +1728,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Many":[["many"],[],[],[]],
 	"Object": [[], [], ["item"], []],
 	"Location_second":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location_second-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location_second- nil) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
@@ -2302,7 +2302,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Many":[["many"],[],[],[]],
 	"Category": [["snacks", "cutlery", "food", "drinks", "tableware", "containers", "fruits", "cleaning_stuff"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location- nil) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
@@ -2330,7 +2330,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
 	"Category": [[], [], ["category"], []],
 	"Location":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Category- -Location- -Color-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location- -Color-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
@@ -2342,7 +2342,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_count": [["count"], [], [], []],
 	"Category": [["snacks", "cutlery", "food", "drinks", "tableware", "containers", "fruits", "cleaning_stuff"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location-) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location- nil) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2498,7 +2498,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	###
 	{"params": ["At", "Place"],
 	"At": [["at", "in"], [], [], []],
-	"Place": [[], [], ["place"], []],
+	"Place": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "-Place-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
