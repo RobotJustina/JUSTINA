@@ -1240,7 +1240,10 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 	
 	ss.str("");
-	ss << "I am looking for " << tokens[0] << " on the " << tokens[1];
+    if(tokens[1] == "nil")
+    	ss << "I am looking for " << tokens[0];
+    else
+    	ss << "I am looking for " << tokens[1] << " "<< tokens[0];
 	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -1370,7 +1373,10 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 	
 	ss.str("");
-	ss << "I am looking for the " << tokens[0];
+    if(tokens[1] == "nil")
+    	ss << "I am looking for the " << tokens[0];
+    else
+    	ss << "I am looking for the " << tokens[1] << " " << tokens[0];
 	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	
 	JustinaManip::hdGoTo(0, -0.9, 5000);
@@ -1400,6 +1406,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
                                 ss.str("");
                                 ss << "(assert (cmd_compare_color " << vObject.id << " " << tokens[1] << " 1))";
                                 JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                                if(query == "true")
                                     numObj++;
                            }
                     }
@@ -1943,7 +1950,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
 				ss << "Ok i will find the person in the " << name;
 			else if(tokens[0] == "object")
-				ss << "Ok i try to find the " << name << " in its default location";
+				ss << "Ok i try to find the " << name;
 			else if(tokens[0] == "place_destiny")
 				ss << "Ok i will guide her to the " << name;
 			else if(tokens[0] == "object_place")

@@ -10,5 +10,10 @@
 			<param name="configFile" value="$(find env_des)/config/bioroboanexo_config.yaml"/>
 			<param name="modelsPath" value="$(find env_des)/models/"/>
 		</node>
+		<node name="kdb_node" pkg="knowledge_representation" type="kdb_node" output="screen"
+			args="-l $(find knowledge_representation)/scripts/base_data/Locations_Data_Base/locations_pre_sydney_2019.txt 
+			-o $(find knowledge_representation)/scripts/base_data/Objects_Data_Base/objects_pre_sydney_2019.txt 
+			-c $(find knowledge_representation)/scripts/base_data/Categorys_Data_Base/categoryes_pre_sydney_2019.txt 
+			-p $(find knowledge_representation)/scripts/base_data/Peoples_Data_Base/people_pre_sydney_2019.txt" />
 	</group>
 </launch>
