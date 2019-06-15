@@ -6752,7 +6752,7 @@ bool JustinaTasks::findAndGuideYolo(std::vector<std::string> ids, POSE pose, std
     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
     JustinaKnowledge::addUpdateKnownLoc("taxi", cx, cy, atan2(cy - robot_y, cx - robot_x));
     JustinaKnowledge::getKnownLocation("taxi", goalx, goaly, goala);
-    std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly
+    std::cout << "JustinaTasks...->Centroid object:" << goalx << "," << goaly
         << "," << goala << std::endl;
 
     tf::Vector3 wgc(cx, cy, cz);
