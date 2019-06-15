@@ -23,7 +23,7 @@ float goalSpeeds_simul[2] = {0.3, 0.3};
 int zero_head[2] = {2040, 2520};
 //float offset = -0.07671; // This for help me carry
 //float offset = -0.10671; // This for help me carry
-float offset = -0.0;
+float offset = 0.0;
 //float offset = -0.04; // This is for p and g 
 float offsetReadSimul = -0.04;
 
@@ -83,6 +83,7 @@ int main(int argc, char ** argv){
     bool bulkEnable = false;
     bool syncWriteEnable = false;
     bool correctParams = false;
+    offset = 0.0;
     simul = false;
 
     if(ros::param::has("~port")){
@@ -95,6 +96,9 @@ int main(int argc, char ** argv){
     }
     else
         correctParams &= true;
+
+    if(ros::param::has("~head_offset"))
+    	ros::param::get("~head_offset", offset);
 
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
