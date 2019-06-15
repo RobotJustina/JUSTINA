@@ -2267,7 +2267,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Object": [[], [], ["item"], []],
 	"Room": [[], [], ["room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object_place -Room-) (step ))" +
-                                "(task (plan user_speech) (action_type get_object) (params -Object- default_location))" +
+                                "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step ))" +
                                 "(task (plan user_speech) (action_type deliver_in_position) (params default_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -2279,7 +2279,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Category": [[], [], ["category"], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
-                                "(task (plan user_speech) (action_type get_object) (params default_object default_location))" +
+                                "(task (plan user_speech) (action_type get_object) (params default_object default_location) (step ))" +
                                 "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
