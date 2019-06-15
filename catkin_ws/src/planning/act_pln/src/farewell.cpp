@@ -206,12 +206,15 @@ int main(int argc, char** argv)
 
 			case SM_WAIT_FOR_DOOR:
 				if (!JustinaNavigation::obstacleInFront())
-					nextState = SM_INIT;
+					nextState = SM_SAY_WAIT_FOR_DOOR;
 			break;
             
             
             case SM_INIT:
                 std::cout << "Farewell Test...->navigate to initial point " << std::endl;
+                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	JustinaNavigation::moveDist(1.0, 4000);
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
