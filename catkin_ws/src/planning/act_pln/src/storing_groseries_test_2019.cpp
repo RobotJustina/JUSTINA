@@ -501,15 +501,18 @@ int main(int argc, char** argv)
                             }
                         }
                     
-                        std::cout << stateMachine << "Saving objs recog." << std::endl;
+                        // This is for saving the images in this test is nt necesary
+                        /*std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
                         temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/";
-                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
+                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());*/
                             
                         //Append acction to the plan
                         // This is for generate PDF
                         //JustinaTools::pdfAppend(name_test, justinaSay.str());
                         JustinaTools::getCategoriesFromVisionObject(recoObjForTake, categories_tabl);
+                        for(int i = 0; i < categories_tabl.size(); i++)
+                            std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
                         // This is for generate PDF
                         /*JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
                         for(int i = 0; i < categories_tabl.size(); i++){
@@ -851,8 +854,8 @@ int main(int argc, char** argv)
                     JustinaHRI::say(justinaSay.str());
                     std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                     std::string catObjectGrasp;
-                    if(idObjectGrasp.find("unknown") != std::string::npos)
-                        catObjectGrasp = categories_tabl[indexObjectGrasp];
+                    if(idObjectGrasp.find("unknown") == std::string::npos)
+                        catObjectGrasp = recoObjForTake[indexObjectGrasp].category;
                     else
                         catObjectGrasp = "unknown";
                     geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
@@ -1038,7 +1041,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_WAIT_FOR_CONFIRMATION" << std::endl;
                     justinaSay.str("");                                       
                     if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
-                        if(lastRecoSpeech.find("Justina_yes") != std::string::npos)
+                        if(lastRecoSpeech.find("justina yes") != std::string::npos)
                         {
                                 ss_level_in_arm << level_in_[arm];
                                 if(arm <2)
@@ -1054,7 +1057,7 @@ int main(int argc, char** argv)
                                     nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                                 }
                         }
-                        if(lastRecoSpeech.find("Justina no") != std::string::npos)
+                        if(lastRecoSpeech.find("justina no") != std::string::npos)
                         {
                             JustinaHRI::waitAfterSay("Sorry, I did not understand you", 600);                            
                             nextState = SM_WAIT_FOR_COMMAND;
