@@ -246,10 +246,12 @@
 	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 5)(actions make_task ?name ?param finded)(actions_num_params 6 6)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions move manipulator ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions make_task_neg ?name ?param grabed)(actions_num_params 8 8)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions update_status ?param nil)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
 	;(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)));T1 test
 	;(assert (into (name ?name)(number ?step)(next (+ ?step 1))(plan 6)))
-	(assert (finish-planner ?name 7))
+	(assert (finish-planner ?name 9))
 )
 
 

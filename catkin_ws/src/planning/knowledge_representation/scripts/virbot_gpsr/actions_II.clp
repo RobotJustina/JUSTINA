@@ -376,7 +376,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule update_number_task_for_split_room
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current) ?nof))
-	?f1 <- (plan (name ?name) (actions ?act&:(neq ?act make_task) $?params)(number ?current))
+	?f1 <- (plan (name ?name) (status inactive) (actions ?act&:(neq ?act make_task) $?params)(number ?current))
 	?f5 <- (update num task)
 	=>
 	(modify ?f (actions_num_params ?final (- ?current 1) ?nof))
@@ -385,7 +385,7 @@
 
 (defrule update_number_task_for_split_room_make_task
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?final ?current&:(< ?final ?current) ?nof))
-	?f1 <- (plan (name ?name) (actions make_task $?params)(actions_num_params ?anp1 ?anp2)(number ?current))
+	?f1 <- (plan (name ?name) (status inactive)(actions make_task $?params)(actions_num_params ?anp1 ?anp2)(number ?current))
 	?f5 <- (update num task)
 	=>
 	(modify ?f (actions_num_params ?final (- ?current 1) ?nof))
@@ -394,7 +394,7 @@
 
 (defrule update_number_task_for_split_room_final
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
-	?f1 <- (plan (name ?name) (number ?n) (actions ?act&:(neq ?act make_task) $?params))
+	?f1 <- (plan (name ?name) (status inactive)(number ?n) (actions ?act&:(neq ?act make_task) $?params))
         ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
 	?f4 <- (num_places ?num)
 	?f5 <- (update num task)
@@ -412,7 +412,7 @@
 
 (defrule update_number_task_for_split_room_final_make_task
 	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
-	?f1 <- (plan (name ?name) (number ?n) (actions make_task $?params)(actions_num_params ?anp1 ?anp2))
+	?f1 <- (plan (name ?name) (number ?n) (status inactive)(actions make_task $?params)(actions_num_params ?anp1 ?anp2))
         ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
 	?f4 <- (num_places ?num)
 	?f5 <- (update num task)
@@ -467,7 +467,7 @@
 (defrule split_review_room_cat
         ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?category ?room))
         ?f1 <- (item (name ?category) (type Category))
-        ?f3 <- (item (name ?place) (status nil) (possession ?room))
+        ?f3 <- (item (name ?place)(status nil) (possession ?room))
         ?f4 <- (num_places ?num)
         =>
         (retract ?f4)
@@ -482,36 +482,58 @@
         ?f <- (delate_no_visited_rooms ?name )
         ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions go_to_place ?place))
         ?f2 <- (visit_places ?n1)
+	?f3 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f1)
         (retract ?f2)
         (assert (delate_no_visited_rooms ?name))
         (assert (visit_places (+ 1 ?n1)))
+	(modify ?f3 (status nil))
 )
 
 (defrule delate_no_find_object
         ?f <- (delate_no_visited_rooms ?name)
         ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions only-find-object ?object ?place))
         ?f2 <- (visit_places ?n1)
+	?f3 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f1)
         (retract ?f2)
         (assert (delate_no_visited_rooms ?name))
         (assert (visit_places (+ 1 ?n1)))
+	(modify ?f3 (status nil))
 )
 
 (defrule delate_no_find_cat
         ?f <- (delate_no_visited_rooms ?name)
         ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions find_cat_obj ?category ?place))
         ?f2 <- (visit_places ?n1)
+	?f3 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f1)
         (retract ?f2)
         (assert (delate_no_visited_rooms ?name))
         (assert (visit_places (+ 1 ?n1)))
+	(modify ?f3 (status nil))
+)
+
+(defrule reset_num_visit_obj
+        ?f <- (num_places ?n1)
+        ?f2 <- (visit_places ?n2&:(eq ?n2 ?n1))
+        ?f3 <- (delate_no_visited_rooms ?name)
+        ;(not (plan (name ?name) (number ?num) (status active) (actions only-find-object ?object ?place)))
+	;?f4 <- (item (name ?place))
+        =>
+        (retract ?f)
+        (retract ?f2)
+        (retract ?f3)
+        (assert (num_places 0))
+        (assert (visit_places 0))
+	;(modify ?f1 (status accomplished))
+	;(modify ?f4 (status nil))
 )
 
 (defrule reset_num_visit
@@ -519,6 +541,7 @@
         ?f2 <- (visit_places ?n2&:(eq ?n2 ?n1))
         ?f3 <- (delate_no_visited_rooms ?name)
         ?f1 <- (plan (name ?name) (number ?num) (status active) (actions find_cat_obj ?category ?place))
+	?f4 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f2)
@@ -526,6 +549,7 @@
         (assert (num_places 0))
         (assert (visit_places 0))
 	(modify ?f1 (status accomplished))
+	(modify ?f4 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -557,6 +581,7 @@
         ?f3 <- (finish-planner ?name ?n1)
         ?f4 <- (visit_places ?n2)
 	?f5 <- (Arm (name ?arm))
+	?f7 <- (item (name ?place))
         =>
         ;(retract ?f3)
         (retract ?f)
@@ -568,6 +593,7 @@
         (assert (finish-planner ?name ?num-pln))
         (assert (visit_places (+ 2 ?n2)))
 	(modify ?f5 (status ready) (grasp ?object))
+	(modify ?f7 (status nil))
 )
 
 (defrule exe-plan-no-only-found-object
@@ -578,6 +604,7 @@
         ;?f3 <- (finish-planner ?name ?n2)
         ?f3 <- (item (name ?place))
         ?f4 <- (visit_places ?n2)
+	?f7 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f4)
@@ -585,6 +612,7 @@
         ;(assert (finish-planner ?name ?num-pln))
         (modify ?f3 (status nil))
         (assert (visit_places (+ 2 ?n2)))
+	(modify ?f7 (status nil))
 )
 
 (defrule exe-plan-no-only-found-object-final
@@ -595,6 +623,7 @@
         ?f3 <- (finish-planner ?name ?n2)
         ?f5 <- (item (name ?place))
         ?f6 <- (visit_places ?n3)
+	?f7 <- (item (name ?place))
 	;?f7 <- (Arm (name ?arm))
         =>
         (retract ?f)
@@ -607,6 +636,7 @@
         (assert (num_places 0))
         (modify ?f5 (status nil))
         (assert (visit_places 0))
+	(modify ?f7 (status nil))
 	;(modify ?f7 (status ready) (grasp ?object))
 )
 
@@ -628,6 +658,7 @@
         ;?f3 <- (finish-planner ?name ?n1)
         ?f4 <- (visit_places ?n2)
 	?f5 <- (num_objects_found ?nof)
+	?f6 <- (item (name ?place))
         =>
         ;(retract ?f3)
         (retract ?f)
@@ -640,6 +671,7 @@
         (assert (visit_places (+ 2 ?n2)))
 	(assert (num_objects_found (+ ?nof ?cantidad)))
 	(assert (verify finish_find_cat))
+	(modify ?f6 (status nil))
 )
 
 (defrule exe-plan-only-found-object-parcial-planner
@@ -650,6 +682,7 @@
 	;?f2 <- (finish-planner ?name ?n2)
 	;?f3 <- (item (name ?category))
 	?f6 <- (verify finish_find_cat)
+	?f7 <- (item (name ?place))
 	=>
 	(retract ?f6)
 	;(assert (delate_no_visited_rooms ?name))
@@ -657,6 +690,7 @@
 	;(assert (num_objects_found 0))
 	;(modify ?f3 (status finded))
 	(modify ?f5 (status acomplished))
+	(modify ?f7 (status nil))
 )
 
 (defrule exe-plan-only-found-object-finish-planner
@@ -667,12 +701,14 @@
 	?f2 <- (finish-planner ?name ?n2)
 	?f3 <- (item (name ?category))
 	?f6 <- (verify finish_find_cat)
+	?f7 <- (item (name ?place))
 	=>
 	(retract ?f1 ?f2 ?f6)
 	(assert (delate_no_visited_rooms ?name))
 	(assert (finish-planner ?name ?num-pln))
 	(assert (num_objects_found 0))
 	(modify ?f3 (status finded))
+	(modify ?f7 (status nil))
 	;(modify ?f5 (status acomplished))
 )
 
@@ -684,12 +720,14 @@
 	?f2 <- (finish-planner ?name ?n2)
 	?f3 <- (item (name ?category))
 	?f6 <- (verify finish_find_cat)
+	?f7 <- (item (name ?place))
 	=>
 	(retract ?f1 ?f2 ?f6)
 	(assert (delate_no_visited_rooms ?name))
 	(assert (finish-planner ?name ?num-pln))
 	(assert (num_objects_found 0))
 	(modify ?f3 (status finded))
+	(modify ?f7 (status nil))
 	;(modify ?f5 (status acomplished))
 )
 
@@ -701,12 +739,14 @@
         ?f3 <- (item (name ?place))
         ;?f3 <- (finish-planner ?name ?n2)
         ?f4 <- (visit_places ?n2)
+	?f7 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f4)
         (modify ?f2 (status accomplished))
         (modify ?f3 (status nil))
         (assert (visit_places (+ 2 ?n2)))
+	(modify ?f7 (status nil))
         ;(assert (finish-planner ?name ?num-pln))
 )
 
@@ -718,6 +758,7 @@
         ?f3 <- (finish-planner ?name ?n2)
         ?f5 <- (item (name ?place))
         ?f6 <- (visit_places ?n3)
+	?f7 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f3)
@@ -729,6 +770,7 @@
         (assert (num_places 0))
         (modify ?f5 (status nil))
         (assert (visit_places 0))
+	(modify ?f7 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1063,8 +1105,8 @@
 	?f <- (received ?sender command ask_incomplete object ?plan ?param ?response 1)
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti object ?plan ?param))
-	?f3 <- (task ?plan get_object default_location ?location ?step)
-	?f4 <- (task ?plan deliver_in_position default_location ?place ?step2)
+	?f3 <- (task ?plan get_object ?dfg&:(or (eq ?dfg default_location) (eq ?dfg default_object)) ?location ?step)
+	?f4 <- (task ?plan deliver_in_position ?df&:(or (eq ?df default_location) (eq ?df default_object)) ?place ?step2)
 	?f5 <- (task incomplete active)
 	=>
 	(retract ?f)
