@@ -1271,9 +1271,21 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
                     ss << "(assert (cmd_simple_category " << vObject.id <<" 1))";
                     JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
 					//std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
-                    if(query == tokens[0])
-                       numObj++;
-			            objects.push_back(vObject.id);
+                    if(query == tokens[0]){
+                       if(tokens[1] == "nil"){
+    			            objects.push_back(vObject.id);
+                            numObj++;
+                       }
+                       else{
+                            ss.str("");
+                            ss << "(assert (cmd_compare_color " << vObject.id << " " << tokens[1] << " 1))";
+                            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                            if(query == "true"){
+    			                objects.push_back(vObject.id);
+                                numObj++;
+                            }
+                       }
+                    }
 				}
 			}
 		}
@@ -1283,9 +1295,18 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
     JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
 
 	ss.str("");
-	currentName = tokens[0];
+    if(tokens[1] == "nil")
+    	currentName = tokens[0];
+    else{
+        ss << tokens[1] << " " << tokens[0];
+        currentName = ss.str();
+        ss.str("");
+    }
 	if(numObj > 0){
-		ss << "I found the " << tokens[0];
+        if(tokens[1] == "nil")
+    		ss << "I found the " << tokens[0];
+        else
+    		ss << "I found the " << tokens[1] << " "<<tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		ss << "I found ";
@@ -1306,7 +1327,10 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = 1;
 	}
 	else {
-		ss << "I can not find the " << tokens[0];
+        if(tokens[1] == "nil")
+    		ss << "I did not find the " << tokens[0];
+        else
+    		ss << "I did not find the " << tokens[1] << " "<<tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = 0;
@@ -1339,6 +1363,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	bool finishMotion = false;
 	float pos = POS, advance = ADVANCE, maxAdvance = MAXA;
+    std::string query;
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1368,8 +1393,16 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					//std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-					if (vObject.id == tokens[0])
-						numObj++;
+					if (vObject.id == tokens[0]){
+                        if(tokens[1] == "nil")
+    						numObj++;
+                           else{
+                                ss.str("");
+                                ss << "(assert (cmd_compare_color " << vObject.id << " " << tokens[1] << " 1))";
+                                JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                                    numObj++;
+                           }
+                    }
 				}
 			}
 		}
@@ -1379,9 +1412,18 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
     JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 4000);
 
 	ss.str("");
-	currentName = tokens[0];
+    if(tokens[1] == "nil")
+    	currentName = tokens[0];
+    else{
+        ss << tokens[1] << " " << tokens[0];
+        currentName = ss.str();
+        ss.str("");
+    }
 	if(numObj > 0){
-		ss << "I found the " << tokens[0];
+        if(tokens[1] == "nil")
+    		ss << "I found the " << tokens[0];
+        else
+    		ss << "I found the " << tokens[1] << " " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = numObj;
@@ -1390,7 +1432,10 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = 1;
 	}
 	else {
-		ss << "I can not find the " << tokens[0];
+        if(tokens[1] == "nil")
+		    ss << "I did not find the " << tokens[0];
+        else
+    		ss << "I did not find the " << tokens[1] << " " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(),2500);
 		ss.str("");
 		cantidad = 0;
