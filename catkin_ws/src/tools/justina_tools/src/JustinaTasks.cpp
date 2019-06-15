@@ -1101,6 +1101,7 @@ bool JustinaTasks::waitRecognizedSpecificGesture(
         boost::posix_time::second_clock::local_time();
     boost::posix_time::time_duration diff;
     bool recognized = false;
+    std::vector<vision_msgs::GestureSkeleton> newGestures;
     do {
         boost::this_thread::sleep(boost::posix_time::milliseconds(200));
         ros::spinOnce();
@@ -1114,10 +1115,12 @@ bool JustinaTasks::waitRecognizedSpecificGesture(
             } else if (!(g.gesture.compare("left_waving") == 0
                         || g.gesture.compare("right_waving") == 0))
                 continue;
+            newGestures.push_back(g);
             recognized = true;
         }
     } while (ros::ok() && (curr - prev).total_milliseconds() < timeout
             && !recognized);
+    gestures = newGestures;
     std::cout << "recognized:" << recognized << std::endl;
     return recognized;
 }
@@ -1454,7 +1457,7 @@ void JustinaTasks::filterObjectByLocation(std::vector<vision_msgs::VisionObject>
 }
 
 void JustinaTasks::filterObjectByLocation(std::vector<vision_msgs::GestureSkeleton> gestureObjects, std::vector<Eigen::Vector3d> &centroids, std::string location){
-    centroids.clear();
+    centroids = std::vector<Eigen::Vector3d>();
     for (int i = 0; i < gestureObjects.size(); i++) {
         vision_msgs::GestureSkeleton gesture = gestureObjects[i];
         float cx, cy, cz;
@@ -1482,7 +1485,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     bool direction = false;
     bool taskStop = false;
 
-    gesturesPos.clear();
+    gesturesPos = std::vector<Eigen::Vector3d>();
 
     for (float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn += incAngleTurn) {
         for (float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn += incAngPan) {
@@ -2565,7 +2568,7 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm,
         //This is for get gripper with the pose of servos
         //JustinaManip::getLeftHandPosition(x, y, z);
     }
-    JustinaHRI::waitAfterSay("please wait to put your hand", 5000);
+    JustinaHRI::waitAfterSay("Please, wait to the next instruction, not put your hand", 6000);
     if (JustinaVision::getGripperPos(gripperPose)) {
         x = gripperPose.x;
         y = gripperPose.y;
@@ -2578,7 +2581,7 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm,
     }
 
     JustinaVision::startHandFrontDetectBB(x, y, z);
-    JustinaHRI::waitAfterSay("ok, please put your hand on top of my gripper", 5000);
+    JustinaHRI::waitAfterSay("ok, now please put your hand on top of my gripper", 5000);
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     //JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
@@ -2622,7 +2625,7 @@ bool JustinaTasks::detectObjectInGripper(std::string object,
     boost::posix_time::ptime prev =
         boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
-    JustinaHRI::waitAfterSay("Please, wait", 4500);
+    JustinaHRI::waitAfterSay("Please, wait to the next instruction, not put your hand", 6000);
     if (withLeftOrRightArm) {
         JustinaManip::laGoTo("take", 4000);
         JustinaManip::startLaOpenGripper(0.6);
@@ -2648,7 +2651,7 @@ bool JustinaTasks::detectObjectInGripper(std::string object,
     JustinaVision::startHandFrontDetectBB(x, y, z);
     prev = boost::posix_time::second_clock::local_time();
     curr = prev;
-    ss << "Please put the " << object << " in my hand";
+    ss << "ok, now please put the " << object << " in my hand";
     JustinaHRI::waitAfterSay(ss.str(), 3000);
     while (ros::ok() && !JustinaVision::getDetectionHandFrontBB()
             && (curr - prev).total_milliseconds() < timeout) {
@@ -7205,7 +7208,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
 std::vector<Eigen::Vector3d> JustinaTasks::filterObjectsNearest(std::vector<Eigen::Vector3d> centroids, std::vector<Eigen::Vector3d> centroidsObjects, float thrSamePerson)
 {
     std::cout << "JustinaTasks.->filterObjectsNearest." << std::endl;
-    std::vector<Eigen::Vector3d> newCentroids;
+    std::vector<Eigen::Vector3d> newCentroids = centroids;
     float gx_w, gy_w, gz_w;
     for(int i = 0; i < centroidsObjects.size(); i++)
     {

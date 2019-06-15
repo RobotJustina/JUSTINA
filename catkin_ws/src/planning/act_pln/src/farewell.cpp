@@ -276,6 +276,7 @@ int main(int argc, char** argv)
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     for(int i = 0; i < centroidGestures.size(); i++)
                     {
+                    	ss.str("");
                         Eigen::Vector3d centroid = centroidGestures[i];
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
                         ss << "person_" << i;
@@ -306,7 +307,7 @@ int main(int argc, char** argv)
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
                 reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 0.9, 120000);
-                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 0.9, 120000);
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.9, 120000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -344,8 +345,10 @@ int main(int argc, char** argv)
                         std::cout<<"entro a while, rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
                     }
                     std::cout<<"sali del while" << std::endl;
-                
-                    gender = nearestFace(lastRecognizedFaces);
+                    if(lastRecognizedFaces.recog_faces.size() > 0)
+                    	gender = nearestFace(lastRecognizedFaces);
+                    else
+                    	gender = 0;
                     std::cout <<"genero: " << gender << std::endl;
                     }
                 else
@@ -371,8 +374,12 @@ int main(int argc, char** argv)
                             nextState = SM_GoCoatRack;
                         }
 
-                        else
-                            nextState = SM_CLOSE_TO_GUEST;
+                        else{
+						if (centroids_loc.size() > 0)
+							nextState = SM_CLOSE_TO_GUEST;
+						else
+							nextState = SM_ReturnSearchWaving;
+                        }
                     }
 
                     else {
@@ -390,9 +397,12 @@ int main(int argc, char** argv)
                 }
                 if(gender == 1){
                     JustinaHRI::waitAfterSay("Sorry, but ladies first, in a moment i will back for you", 5000, minDelayAfterSay);
-                    centroids_loc.erase(centroids_loc.begin());
                     JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
-                    nextState=SM_CLOSE_TO_GUEST; 
+                    centroids_loc.erase(centroids_loc.begin());
+                    if(centroids_loc.size() > 0)
+                    	nextState=SM_CLOSE_TO_GUEST;
+                    else
+                    	nextState=SM_ReturnSearchWaving;
                 }
                 break;
 
