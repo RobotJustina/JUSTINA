@@ -1181,8 +1181,8 @@ bool JustinaTasks::waitRecognizedYolo(std::vector<std::string> ids, std::vector<
         for (std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end(); it++) {
             for (int i = 0; i < ids.size(); i++) {
                 if (it->id.compare(ids[i]) == 0) {
-                    if (it->pose.position.x != 0 && it->pose.position.y != 0
-                            && it->pose.position.z != 0)
+                    if (fabs(it->pose.position.x) > 0.07 && fabs(it->pose.position.y) > 0.07
+                            && fabs(it->pose.position.z) > 0.07)
                         yoloObjects.push_back(*it);
                 }
             }
@@ -1261,7 +1261,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
         float initAngPan, float incAngPan, float maxAngPan, float initAngTil,
         float incAngTil, float maxAngTil, float incAngleTurn,
         float maxAngleTurn, std::vector<Eigen::Vector3d> &centroidFaces, int &genderRecog,
-        std::string location) {
+        std::string location, int numrecog, float thrSamePerson) {
 
     bool recog = false;
     bool moveBase = false;
@@ -1295,10 +1295,22 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                 JustinaManip::waitForHdGoalReached(3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionFaceObject> facesObject;
-                recog = waitRecognizedFace(2000, id, gender, ages, pose, facesObject);
-                if (recog)
-                    recog = getNearestRecognizedFace(facesObject, 9.0,
-                            centroidFace, genderRecog, location);
+                if(waitRecognizedFace(2000, id, gender, ages, pose, facesObject)){
+                    if(numrecog == 1){
+                        Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
+                        recog = getNearestRecognizedFace(facesObject, 9.0, centroidFace, genderRecog, location);
+                        if(recog)
+                            centroidFaces.push_back(centroidFace);
+                    }
+                    else{
+                        std::vector<Eigen::Vector3d> newCentroidsFaces;
+                        filterObjectByLocation(facesObject, newCentroidsFaces, location);
+                        if(numrecog == 0)
+                            filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
+
+                        // TODO IT TAKES THE CONDITION TO RECOG A NUMBER OF PERSON IN SPECIFICI
+                    }
+                }
                 ros::spinOnce();
                 taskStop = JustinaTasks::tasksStop();
                 if (taskStop)
@@ -1309,6 +1321,13 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
             incTil = -incTil;
         }
         moveBase = true;
+    }
+    if (numrecog == 1 && centroidFaces.size() > 0)
+        std::cout << "JustinaTasks.->turnAndRecognizeGesture.-> centroid face person :" << centroidFaces[0](0, 0) << ", " << centroidFaces[0](1, 0) << ", " << centroidFaces[0](2, 0) << std::endl;
+    if (numrecog == 0 && centroidFaces.size() > 0 )
+    {
+        recog = true;
+        std::cout << "JustinaTasks.->turnAndRecognizeGesture.->: have been found objects:" << centroidFaces.size() << std::endl;
     }
     return recog;
 }
@@ -1472,6 +1491,25 @@ void JustinaTasks::filterObjectByLocation(std::vector<vision_msgs::GestureSkelet
         centroid(0, 0) = gesture.gesture_centroid.x;
         centroid(1, 0) = gesture.gesture_centroid.y;
         centroid(2, 0) = gesture.gesture_centroid.z;
+        centroids.push_back(centroid);
+    }
+}
+
+void JustinaTasks::filterObjectByLocation(std::vector<vision_msgs::VisionFaceObject> faceObjects, std::vector<Eigen::Vector3d> &centroids, std::string location){
+    centroids = std::vector<Eigen::Vector3d>();
+    for (int i = 0; i < faceObjects.size(); i++) {
+        vision_msgs::VisionFaceObject faceObject = faceObjects[i];
+        float cx, cy, cz;
+        cx = faceObject.face_centroid.x;
+        cy = faceObject.face_centroid.y;
+        cz = faceObject.face_centroid.z;
+        JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+        if (location.compare("") != 0 && !JustinaKnowledge::isPointInKnownArea(cx, cy, location))
+            continue;
+        Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
+        centroid(0, 0) = faceObject.face_centroid.x;
+        centroid(1, 0) = faceObject.face_centroid.y;
+        centroid(2, 0) = faceObject.face_centroid.z;
         centroids.push_back(centroid);
     }
 }
@@ -2281,15 +2319,12 @@ bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location) {
     time = ros::Time::now();
     JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
 
-    Eigen::Vector3d centroidFace;
+    std::vector<Eigen::Vector3d> centroidFaces;
     int genderRecog;
     // The second parametter is -1 for all gender person
     bool recog = turnAndRecognizeFace("", -1, -1, NONE, -M_PI_4, M_PI_4 / 2.0,
-            M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog,
+            M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFaces, genderRecog,
             location);
-    std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
-        << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
-    std::cout << std::endl;
     //personLocation.clear();
 
     ss.str("");
@@ -2301,6 +2336,10 @@ bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location) {
         JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
         return false;
     }
+    
+    std::cout << "Centroid Face in coordinates of robot:" << centroidFaces[0](0, 0)
+        << "," << centroidFaces[0](1, 0) << "," << centroidFaces[0](2, 0) << ")";
+    std::cout << std::endl;
 
     std::cout << "I have found a person " << std::endl;
     ss << "I found you";
@@ -2313,9 +2352,9 @@ bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location) {
             time.sec, 15);
 
     float cx, cy, cz;
-    cx = centroidFace(0, 0);
-    cy = centroidFace(1, 0);
-    cz = centroidFace(2, 0);
+    cx = centroidFaces[0](0, 0);
+    cy = centroidFaces[0](1, 0);
+    cz = centroidFaces[0](2, 0);
     float dis = sqrt(pow(cx, 2) + pow(cy, 2));
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
@@ -3842,15 +3881,12 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing,
     JustinaHRI::insertAsyncSpeech(ss.str(), 500, time.sec, 10);
     //JustinaHRI::waitAfterSay(ss.str(), 2000);
 
-    Eigen::Vector3d centroidFace;
+    std::vector<Eigen::Vector3d> centroidFaces;
     int genderRecog;
 
     bool recog = turnAndRecognizeFace(personID, -1, -1, NONE, -M_PI_4, M_PI_4 / 2.0,
-            M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog,
+            M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFaces, genderRecog,
             location);
-    std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
-        << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
-    std::cout << std::endl;
     //personLocation.clear();
 
     ss.str("");
@@ -3862,6 +3898,10 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing,
         //JustinaHRI::waitAfterSay(ss.str(), 2000);
         return false;
     }
+    
+    std::cout << "Centroid Face in coordinates of robot:" << centroidFaces[0](0, 0)
+        << "," << centroidFaces[0](1, 0) << "," << centroidFaces[0](2, 0) << ")";
+    std::cout << std::endl;
 
     std::cout << "I found the crowd " << std::endl;
     //ss << person << ", I found you";
@@ -3874,9 +3914,9 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing,
     //JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     float cx, cy, cz;
-    cx = centroidFace(0, 0);
-    cy = centroidFace(1, 0);
-    cz = centroidFace(2, 0);
+    cx = centroidFaces[0](0, 0);
+    cy = centroidFaces[0](1, 0);
+    cz = centroidFaces[0](2, 0);
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
