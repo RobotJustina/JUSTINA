@@ -124,6 +124,7 @@ int main(int argc, char ** argv){
     bool bulkEnable = false;
     bool syncWriteEnable = false;
     bool correctParams = false;
+    bool enableTorque = true;
     simul = false;
 
     if(ros::param::has("~port")){
@@ -137,6 +138,9 @@ int main(int argc, char ** argv){
     else
         correctParams &= true;
     
+    if(ros::param::has("~enable_torque"))
+    	ros::param::get("~enable_torque", enableTorque);
+
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
     
@@ -190,7 +194,7 @@ int main(int argc, char ** argv){
     jointStates.position.insert(jointStates.position.begin(), positions, positions + 9);
 
     // Setup features for init the servos of left arm
-    if(!simul){
+    if(!simul && enableTorque){
         for(int i = 0; i < 9; i++){
             dynamixelManager.enableTorque(i); 
             dynamixelManager.setPGain(i, 32);
@@ -238,7 +242,7 @@ int main(int argc, char ** argv){
 
     while(ros::ok()){
         if(!simul){
-            if(newGoalPose){
+            if(newGoalPose && enableTorque){
                 std::cout << "right_arm_pose.->send newGoalPose" << std::endl;
                 for(int i = 0; i < 7; i++){
                     dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
@@ -251,7 +255,7 @@ int main(int argc, char ** argv){
                 newGoalPose = false;
             }
 
-            if(newGoalGripper){
+            if(newGoalGripper && enableTorque){
                 std::cout << "right_arm_node.->Proccessing the new goal gripper." << std::endl; 
                 int countValidLimit, countValid = 0;
                 if(gripperTorqueActive){
@@ -329,6 +333,13 @@ int main(int argc, char ** argv){
             jointStates.position[8] = float(-(zero_gripper[1]-curr_position[8])/bitsPerRadian);
             // std::cout << "right_arm_node.->curr_position[0]:" << curr_position[3] << std::endl;
             
+            if(!enableTorque){
+            	std::cout << "left_arm_node.-> ";
+                for(int i = 0; i < 9; i++)
+                	std::cout << jointStates.position[i] << " ";
+                	std::cout << std::endl;
+            }
+
             if(gripperTorqueActive){
                 dynamixelManager.getPresentLoad(7, currentLoadD21);
                 dynamixelManager.getPresentLoad(8, currentLoadD22);
@@ -408,23 +419,25 @@ int main(int argc, char ** argv){
     int countValidate = 0;
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
-    do{
-        for(int i = 0; i < 6; i++){
-            if(!validatePosition[i]){
-                unsigned short position;
-                if(bulkEnable)
-                    dynamixelManager.readBulkData();
-                dynamixelManager.getPresentPosition(i, position);
-                float error = fabs(position - zero_arm[i]);
-                //std::cout << "right_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
-                if(error < 10){
-                    validatePosition[i] = true;
-                    countValidate++;
-                }
-            }
-        }
-        curr = boost::posix_time::second_clock::local_time();
-    }while(countValidate < 6 && (curr - prev).total_milliseconds() < 7500);
+    if(enableTorque){
+		do{
+			for(int i = 0; i < 6; i++){
+				if(!validatePosition[i]){
+					unsigned short position;
+					if(bulkEnable)
+						dynamixelManager.readBulkData();
+					dynamixelManager.getPresentPosition(i, position);
+					float error = fabs(position - zero_arm[i]);
+					//std::cout << "right_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
+					if(error < 10){
+						validatePosition[i] = true;
+						countValidate++;
+					}
+				}
+			}
+			curr = boost::posix_time::second_clock::local_time();
+		}while(countValidate < 6 && (curr - prev).total_milliseconds() < 7500);
+    }
 
     std::cout << "right_arm_node.->The arm have reached the init pose" << std::endl;
 
