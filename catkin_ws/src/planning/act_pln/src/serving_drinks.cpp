@@ -316,7 +316,7 @@ void callbackCmdFindObject(
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
             if(centroids_loc.size() == 0){
                 poseRecog = JustinaTasks::NONE;
-                centroids.clear();
+                centroids = std::vector<Eigen::Vector3d>();
                 success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, tokens[1], 0, 1.0);
                 if(success){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
