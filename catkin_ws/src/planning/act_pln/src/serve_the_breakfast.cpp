@@ -45,7 +45,8 @@ enum STATE{
     SM_PLACE_BOWL,
     SM_PLACE_SPOON,
     SM_GO_FOR_CEREAL,
-    SM_ALIGN_WITH_TABLE
+    SM_ALIGN_WITH_TABLE,
+    SM_RETURN_TO_TABLE
 };
 
 std::string lastRecoSpeech;
@@ -117,14 +118,24 @@ int main(int argc, char **argv){
     my_cutlery.ObjectList[4].id="yellow";
     my_cutlery.ObjectList[5].id="orange";
 
+    std::vector<vision_msgs::VisionObject> recoObjForTake;
+    std::vector<vision_msgs::VisionObject> recoObjList;
+
     int type;
     int graspObjectID = BOWL;
     std::string id_cutlery;
     std::string graspObject = " bowl "; // To say object, First Justina will take the bowl
 
-
+// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+    std::string idObjectGrasp = "milk"; // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
     Eigen::Vector3d centroid;
     std::vector<Eigen::Vector3d> centroids;
+
+    geometry_msgs::Pose poseCereal;
     
     std::stringstream ss;
     
@@ -361,8 +372,25 @@ int main(int argc, char **argv){
 
             case SM_GO_FOR_CEREAL:
 
-                state = SM_FINISH_TEST;
+                if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
+                    JustinaNavigation::getClose(cutleryLoc, 80000); 
 
+                alignWithTable();
+
+                if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
+                    //withLeft = poseCereal.position.y > 0 ? true:false;
+                    JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
+
+            break;
+
+            case SM_RETURN_TO_TABLE:
+
+                if(!JustinaNavigation::getClose(tableLoc, 80000) )
+                    JustinaNavigation::getClose(tableLoc, 80000); 
+
+                alignWithTable();
+                JustinaTasks::placeObject(withLeft);
+                state = SM_FINISH_TEST;
             break;
 
 
