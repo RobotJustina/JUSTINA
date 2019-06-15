@@ -800,11 +800,14 @@
 
 (defrule exe-plan-neg-many-obj
         ?f <-  (received ?sender command many_obj ?obj ?param ?cantidad 0)
+	?f1 <- (item (name ?obj))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj ?param))
         ?f3 <- (item (name robot))
         =>
         (retract ?f)
-        (modify ?f2 (statusTwo active))
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status finded))
+        ;(modify ?f2 (statusTwo active))
         
 )
 

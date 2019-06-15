@@ -2362,7 +2362,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Color":[["red", "blue", "yellow", "black", "white", "gray", "orange"],[],[],[]],
 	"Category": [[], [], ["category"], []],
 	"Location":[[],[],["place"],[]],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Category- -Location- -Color-) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location- -Color-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2370,7 +2370,6 @@ meaning_mapping_patterns_eegpsr2 = [
         {"params": ["Action_report", "Person"],
 	"Action_report": [["inform", "report"], [], [], []],
 	"Person":[["me"],[],[],[]],
-	"Location":[[],[],["place"],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',

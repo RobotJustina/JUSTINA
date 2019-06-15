@@ -24,7 +24,10 @@
 #define SM_FIND_AND_TAKE_OBJECTS  51
 #define SM_TAKE_OBJECT_RIGHT 55
 #define SM_TAKE_OBJECT_LEFT 60
-#define SM_GOTO_CUPBOARD 70
+#define SM_GOTO_CUPBOARD         70
+#define SM_WAIT_FOR_COMMAND      71
+#define SM_PARSE_SPOKEN_COMMAND  72
+#define SM_WAIT_FOR_CONFIRMATION   73
 #define SM_OPEN_DOOR 75
 #define SM_FIND_OBJECTS_ON_CUPBOARD 80
 #define SM_PUT_OBJECT_ON_CUPBOARD 100
@@ -163,6 +166,18 @@ int main(int argc, char** argv)
 
     /////*******************************//////
 
+    std::string lastRecoSpeech;
+    std::vector<std::string> validCommands;
+    validCommands.push_back("level one");
+    validCommands.push_back("level two");
+    validCommands.push_back("level three");
+    validCommands.push_back("Justina yes");
+    validCommands.push_back("Justina no");
+
+    int arm = 0;
+    int level_in_[2];
+    std::stringstream ss_level_in_arm;
+
     std::string nv_cpb;
     std::string cnt_od;
     std::string ask_hlp;
@@ -230,7 +245,7 @@ int main(int argc, char** argv)
                     if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
                     else
-                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_WAIT_FOR_COMMAND;
                 }
                 break;
 
@@ -486,15 +501,18 @@ int main(int argc, char** argv)
                             }
                         }
                     
-                        std::cout << stateMachine << "Saving objs recog." << std::endl;
+                        // This is for saving the images in this test is nt necesary
+                        /*std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
                         temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/";
-                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
+                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());*/
                             
                         //Append acction to the plan
                         // This is for generate PDF
                         //JustinaTools::pdfAppend(name_test, justinaSay.str());
                         JustinaTools::getCategoriesFromVisionObject(recoObjForTake, categories_tabl);
+                        for(int i = 0; i < categories_tabl.size(); i++)
+                            std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
                         // This is for generate PDF
                         /*JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
                         for(int i = 0; i < categories_tabl.size(); i++){
@@ -836,8 +854,8 @@ int main(int argc, char** argv)
                     JustinaHRI::say(justinaSay.str());
                     std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                     std::string catObjectGrasp;
-                    if(idObjectGrasp.find("unknown") != std::string::npos)
-                        catObjectGrasp = categories_tabl[indexObjectGrasp];
+                    if(idObjectGrasp.find("unknown") == std::string::npos)
+                        catObjectGrasp = recoObjForTake[indexObjectGrasp].category;
                     else
                         catObjectGrasp = "unknown";
                     geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
@@ -962,6 +980,88 @@ int main(int argc, char** argv)
                         attempsPlaceObj = 1;
                         nextState = SM_NAVIGATION_TO_TABLE;
                     }
+                }
+                break;
+            //----------------------------------------------------------------------------------------------------------------------------------
+            case SM_WAIT_FOR_COMMAND: 
+                {
+                    std::cout << stateMachine << "SM_WAIT_FOR_COMMAND"<< std::endl;                    
+                    justinaSay.str("");                    
+                    //if(objectGrasped[2] != objectGrasped[1] )
+                    //{
+                        justinaSay << "Could you tell me at what level to store the" << objectGraspedCat[arm]<< "For example level one, level two or level three";
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
+                        {
+                            nextState = SM_WAIT_FOR_COMMAND;
+                        }
+                        else
+                        {
+                            std::cout << "Parsing word..." << std::endl;
+                            nextState = SM_PARSE_SPOKEN_COMMAND;
+                        }
+                        //}
+                }
+                break;
+            case SM_PARSE_SPOKEN_COMMAND:
+                {
+                    std::cout << stateMachine << "SM_PARSE_SPOKEN_COMMAND" << std::endl;
+                    justinaSay.str("");                    
+                    if(lastRecoSpeech.find("level one") != std::string::npos)
+                    {
+                        justinaSay << "Do you want I store the" << objectGraspedCat[arm]<< "on the level one, please say Justina yes or Justina no";                        
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+                        level_in_[arm] = 1;                        
+                        nextState = SM_WAIT_FOR_CONFIRMATION;
+                    }
+                    else if(lastRecoSpeech.find("level two") != std::string::npos)
+                    {
+                        justinaSay << "Do you want I store the" << objectGraspedCat[arm]<< "on the level two, please say Justina yes or Justina no";                        
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+                        level_in_[arm] = 2;                        
+                        nextState = SM_WAIT_FOR_CONFIRMATION;
+                    }
+                    else if(lastRecoSpeech.find("level three") != std::string::npos)
+                    {
+                        justinaSay << "Do you want I store the" << objectGraspedCat[arm]<< "on the level three, please say Justina yes or Justina no";                        
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+                        level_in_[arm] = 3;                        
+                        nextState = SM_WAIT_FOR_CONFIRMATION;
+                    }                    
+                    else
+                    {
+                        JustinaHRI::say("Sorry I did not understand you");
+                        sleep(2);
+                        nextState = SM_WAIT_FOR_COMMAND;
+                    }
+                }                
+                break;
+            case SM_WAIT_FOR_CONFIRMATION:
+                {
+                    std::cout << stateMachine << "SM_WAIT_FOR_CONFIRMATION" << std::endl;
+                    justinaSay.str("");                                       
+                    if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
+                        if(lastRecoSpeech.find("justina yes") != std::string::npos)
+                        {
+                                ss_level_in_arm << level_in_[arm];
+                                if(arm <2)
+                                {    
+                                    justinaSay << "Ok, I am going to store the" <<objectGraspedCat[arm]<< "on the level"<<ss_level_in_arm.str();               
+                                    JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
+                                    arm++;
+                                    nextState = SM_WAIT_FOR_COMMAND;
+                                }
+                                else
+                                {
+                                    arm = 0;
+                                    nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                                }
+                        }
+                        if(lastRecoSpeech.find("justina no") != std::string::npos)
+                        {
+                            JustinaHRI::waitAfterSay("Sorry, I did not understand you", 600);                            
+                            nextState = SM_WAIT_FOR_COMMAND;
+                        }   
                 }
                 break;
 
