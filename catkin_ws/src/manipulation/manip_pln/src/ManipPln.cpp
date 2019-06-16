@@ -571,7 +571,7 @@ void ManipPln::callbackLaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
     this->laGoalPose = msg->data;
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;*/
-	this->raNewGoal = false;
+	this->laNewGoal = false;
 }
 //
 void ManipPln::callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
