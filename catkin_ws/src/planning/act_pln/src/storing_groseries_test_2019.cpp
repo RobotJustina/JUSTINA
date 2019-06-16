@@ -219,7 +219,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-    nextState = 74;
+//    nextState = 74;
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -450,6 +450,7 @@ int main(int argc, char** argv)
                     JustinaManip::startTorsoGoTo(0.0, 0.0, 0.0);
                     if(attempsFindObjectsTable == 0 && alignWithTable){
                         JustinaHRI::say("I am going to search objects on the table");
+                        std::cout<< "I am going to search objects on the table"<<std::endl;
                         //Append acction to the plan
                         // This is for generate PDF
                         // JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
@@ -717,6 +718,7 @@ int main(int argc, char** argv)
                                     justinaSay << "I am going to take the " << recoObjForTake[indexObjectGrasp].id << " with my left arm";
                             }
                             
+                            std::cout<< justinaSay <<std::endl;
                             JustinaHRI::say(justinaSay.str());
                                 
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
