@@ -137,6 +137,7 @@ class JustinaTasks
         static bool findGenderGesturePerson(std::string gesture, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidFace, POSE pose = NONE, std::string location = "", bool fWaitSpecificGesture= true);
         static bool introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2, bool first_location=true);
         static bool introduceOneToPeople(std::string name_person, std::string location_people);
+        static bool placeObjectDishWasher(float distanceToDishWasher, float heightOptimal);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeSkeleton(POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidSkeleton, std::string location);

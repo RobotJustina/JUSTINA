@@ -46,7 +46,8 @@ enum STATE{
     SM_PLACE_SPOON,
     SM_GO_FOR_CEREAL,
     SM_ALIGN_WITH_TABLE,
-    SM_RETURN_TO_TABLE
+    SM_RETURN_TO_TABLE,
+    SM_TAKE_CEREAL
 };
 
 std::string lastRecoSpeech;
@@ -105,8 +106,8 @@ int main(int argc, char **argv){
 
     //LOCATIONS
     std::string recogLoc = "kitchen";
-    std::string cutleryLoc = "table_location";
-    std::string tableLoc = "table_location";
+    std::string cutleryLoc = "cupboard";
+    std::string tableLoc = "storage_table";
 
     //FOR GRASP OBJECTS (CUTLERY)
     vision_msgs::VisionObjectList my_cutlery;     
@@ -313,6 +314,8 @@ int main(int argc, char **argv){
             case SM_LOOK_FOR_TABLE:
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
+                JustinaHRI::waitAfterSay("I have reached the table", 4000, MIN_DELAY_AFTER_SAY);
+                
                 /*
                 JustinaHRI::waitAfterSay("I'm looking for the table", 4000, MIN_DELAY_AFTER_SAY);
                 centroids.clear();
@@ -373,23 +376,38 @@ int main(int argc, char **argv){
 
             case SM_GO_FOR_CEREAL:
 
+                JustinaHRI::waitAfterSay("I'm going to the cup board", 4000, MIN_DELAY_AFTER_SAY);
+                
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
 
-                alignWithTable();
+                JustinaHRI::waitAfterSay("I have reached cup board", 4000, MIN_DELAY_AFTER_SAY);
+                
+            break;
 
+            case SM_TAKE_CEREAL:
+
+                alignWithTable();
+                JustinaHRI::waitAfterSay("I'm going to take the cereal", 4000, MIN_DELAY_AFTER_SAY);
+                
                 if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
                     //withLeft = poseCereal.position.y > 0 ? true:false;
                     JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
-
+                state = SM_RETURN_TO_TABLE;
             break;
-
             case SM_RETURN_TO_TABLE:
 
+                JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
+                
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
 
                 alignWithTable();
+
+                  
+
+                JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals on the bowl", 4000, MIN_DELAY_AFTER_SAY);
+                
                 JustinaTasks::placeObject(withLeft);
                 state = SM_FINISH_TEST;
             break;
@@ -399,7 +417,6 @@ int main(int argc, char **argv){
 
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
-                
                 success = true;
             break;
         }
