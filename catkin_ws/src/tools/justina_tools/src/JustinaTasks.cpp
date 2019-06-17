@@ -7636,3 +7636,83 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
 
     return find;
 }
+
+bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heightOptimal){
+    std::cout << "JustinaTasks::place object on dish washer..." << std::endl;
+
+
+    JustinaManip::hdGoTo(0, -0.7, 5000);
+    if (!JustinaTasks::alignWithTable(0.45))
+        if(!JustinaTasks::alignWithTable(0.45));
+            return false;
+
+    
+    JustinaManip::laGoTo("put1", 5000);
+    JustinaManip::laGoTo("take", 5000);
+
+    
+
+    JustinaManip::raGoTo("put1", 5000);
+    JustinaManip::raGoTo("take", 5000);
+
+    
+
+
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
+    float movTorsoFromCurrPos;
+    float goalTorso = 0.79 - heightOptimal;
+    int waitTime;
+    movTorsoFromCurrPos = goalTorso - torsoSpine;
+    waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
+    std::cout << "JustinaTasks.->movTorsoFromCurrPos:"
+        << movTorsoFromCurrPos << std::endl;
+    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
+    std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
+    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    JustinaManip::waitForTorsoGoalReached(waitTime);
+
+    JustinaManip::startLaOpenGripper(0.5);
+    ros::spinOnce();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+    JustinaManip::startRaOpenGripper(0.5);
+    ros::spinOnce();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
+    //float movTorsoFromCurrPos;
+    goalTorso = 0.1;
+    //int waitTime;
+    movTorsoFromCurrPos = goalTorso - torsoSpine;
+    waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
+    std::cout << "JustinaTasks.->movTorsoFromCurrPos:"
+        << movTorsoFromCurrPos << std::endl;
+    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
+    std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
+    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    JustinaManip::waitForTorsoGoalReached(waitTime);
+
+    JustinaManip::laGoTo("put1", 5000);
+    JustinaNavigation::moveDist(-0.2, 5000);
+
+    JustinaManip::startLaOpenGripper(0.0);
+    JustinaManip::laGoTo("navigation", 5000);
+
+
+    JustinaManip::raGoTo("put1", 5000);
+    JustinaNavigation::moveDist(-0.2, 5000);
+
+    JustinaManip::startRaOpenGripper(0.0);
+    JustinaManip::raGoTo("navigation", 5000);
+
+    JustinaManip::startHdGoTo(0.0, 0.0);
+
+    return true;
+
+}

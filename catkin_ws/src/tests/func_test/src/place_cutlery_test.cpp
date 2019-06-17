@@ -25,7 +25,7 @@ int main(int argc, char ** argv){
 			case 0:
 				std::cout << "P & G Test...-> delivering the objects" << std::endl;
 
-      			if(withLeft){
+      			/*if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
       				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, 0, 0.16))
       					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, 0, 0.16))
@@ -50,7 +50,12 @@ int main(int argc, char ** argv){
       				state=1;
 
       			else
-      				state=0;
+      				state=0;*/
+				JustinaHRI::say("I am going to deliver the objects");
+				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72))
+					if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72))
+      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+				state = 1;
 
 				break;
 			case 1:
