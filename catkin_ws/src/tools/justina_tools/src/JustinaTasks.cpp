@@ -3311,7 +3311,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaManip::raGoTo("put_storing_L4_P2", 3000);
         }
     }
-    JustinaNavigation::moveDist(0.3, 2500);
+    //JustinaNavigation::moveDist(0.3, 2500);
     
 
 
