@@ -220,7 +220,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-    nextState = 71;
+//    nextState = 71;
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -999,11 +999,11 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_COMMAND: 
                 {
                     std::cout << stateMachine << "SM_WAIT_FOR_COMMAND"<< std::endl; 
-					
+					/*
 					objectGrasped[0] = true;
 					objectGrasped[1] = true; 
 					objectGraspedCat[0] = "drinks";
-					objectGraspedCat[1] = "snacks";					
+					objectGraspedCat[1] = "snacks";	//*/				
 
                     if(objectGrasped[arm])
                     {   
