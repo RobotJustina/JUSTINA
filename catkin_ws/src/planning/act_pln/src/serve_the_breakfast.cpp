@@ -62,7 +62,7 @@ bool alignWithTable()
         std::cout << ".-> Can not align with table." << std::endl;
         if(countAlign++ < MAX_ATTEMPTS_ALIGN)
         {
-            JustinaNavigation::moveDistAngle(0.1, 0, 2000);
+            JustinaNavigation::moveDistAngle(0.1, 0, 5000);
         }else
         {
             countAlign = 0;
@@ -106,7 +106,7 @@ int main(int argc, char **argv){
     //LOCATIONS
     std::string recogLoc = "kitchen";
     std::string cutleryLoc = "table_location";
-    std::string tableLoc = "end_table";
+    std::string tableLoc = "table_location";
 
     //FOR GRASP OBJECTS (CUTLERY)
     vision_msgs::VisionObjectList my_cutlery;     
@@ -180,7 +180,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_INIT;
+    STATE state = SM_ALIGN_WITH_TABLE;//SM_INIT;
 
 
 
@@ -333,8 +333,9 @@ int main(int argc, char **argv){
                 guest_z = gz_w;
                 JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.3, 30000);
                 withLeft = true;
-                state = SM_PLACE_BOWL;
                 */
+                state = SM_PLACE_BOWL;
+                
             break;
 
             case SM_PLACE_BOWL:
