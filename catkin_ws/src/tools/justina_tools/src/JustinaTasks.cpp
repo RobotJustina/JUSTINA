@@ -7689,7 +7689,7 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
     //float movTorsoFromCurrPos;
-    goalTorso = 0.1;
+    goalTorso = 0.15;
     //int waitTime;
     movTorsoFromCurrPos = goalTorso - torsoSpine;
     waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
@@ -7702,10 +7702,7 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     JustinaManip::waitForTorsoGoalReached(waitTime);
 
     JustinaManip::laGoTo("put1", 5000);
-    JustinaNavigation::moveDist(-0.2, 5000);
-
-    JustinaManip::startLaOpenGripper(0.0);
-    JustinaManip::laGoTo("navigation", 5000);
+    //JustinaNavigation::moveDist(-0.2, 5000);
 
 
     JustinaManip::raGoTo("put1", 5000);
@@ -7713,6 +7710,9 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
 
     JustinaManip::startRaOpenGripper(0.0);
     JustinaManip::raGoTo("navigation", 5000);
+
+    JustinaManip::startLaOpenGripper(0.0);
+    JustinaManip::laGoTo("navigation", 5000);
 
     JustinaManip::startHdGoTo(0.0, 0.0);
 
