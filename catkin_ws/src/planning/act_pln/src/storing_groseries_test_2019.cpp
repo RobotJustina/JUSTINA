@@ -1060,7 +1060,7 @@ int main(int argc, char** argv)
                     justinaSay.str("");                    
                     if(lastRecoSpeech.find("level one") != std::string::npos)
                     {
-                        /*justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level one, please say Justina yes or Justina no";                        
+                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level one, please say Justina yes or Justina no";                        
                         std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level one, please say Justina yes or Justina no" << std::endl;
                         JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
                         level_in_[arm] = 1;                        
@@ -1068,7 +1068,7 @@ int main(int argc, char** argv)
                     }
                     else if(lastRecoSpeech.find("level two") != std::string::npos)
                     {
-                       /* justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level two, please say Justina yes or Justina no";                        
+                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level two, please say Justina yes or Justina no";                        
                         std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level two, please say Justina yes or Justina no"<< std::endl;
                         JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
                         level_in_[arm] = 2;                        
@@ -1076,7 +1076,7 @@ int main(int argc, char** argv)
                     }
                     else if(lastRecoSpeech.find("level three") != std::string::npos)
                     {
-                       /* justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level three, please say Justina yes or Justina no";                        
+                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level three, please say Justina yes or Justina no";                        
                         std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level three, please say Justina yes or Justina no"<< std::endl;
                         JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
                         level_in_[arm] = 3;                        
@@ -1094,12 +1094,6 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_CONFIRMATION:
                 {
                     std::cout << stateMachine << "SM_WAIT_FOR_CONFIRMATION" << std::endl;
-                   
-                    justinaSay.str("");                                       
-                    justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level "<< level_in_[arm]<<", please say Justina yes or Justina no";                        
-                    std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level "<< level_in_[arm]<<", please say Justina yes or Justina no"<< std::endl;
-                    JustinaHRI::waitAfterSay(justinaSay.str(), 600);
-
                     justinaSay.str("");                                       
                     if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     {
