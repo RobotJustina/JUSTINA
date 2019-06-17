@@ -293,7 +293,7 @@ int main(int argc, char **argv){
                 
                 while(countGraspAttemps++ <= MAX_ATTEMPTS_GRASP )
                 {
-                    if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
+                    if(!JustinaTasks::graspObjectColorCupBoardFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
                         std::cout << ".-> cannot take the object" << std::endl;
                     else
                         break;
