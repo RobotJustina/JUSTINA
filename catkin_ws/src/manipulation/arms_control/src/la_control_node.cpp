@@ -232,7 +232,7 @@ int main(int argc, char** argv)
             }
             break;
         case SM_SENDING_PROFILES:
-            if(new_global_goal == false)  //----------
+            if(!new_global_goal)  //----------
             {                             //---------- 
                 for(int i=0; i < 7; i++)
                 {

@@ -220,7 +220,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-//    nextState = 71;
+    nextState = 71;
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -999,7 +999,7 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_COMMAND: 
                 {
                     std::cout << stateMachine << "SM_WAIT_FOR_COMMAND"<< std::endl; 
-					/*
+					
 					objectGrasped[0] = true;
 					objectGrasped[1] = true; 
 					objectGraspedCat[0] = "drinks";
@@ -1029,7 +1029,7 @@ int main(int argc, char** argv)
                     	{
 	                        justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< " For example level one, level two or level three";
 	                        std::cout <<  "Could you tell me at what level to store the " << objectGraspedCat[arm]<< " For example level one, level two or level three"<<std::endl;
-	                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+	                        JustinaHRI::waitAfterSay(justinaSay.str(), 12000);
 	                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
 	                        {
 	                            nextState = SM_WAIT_FOR_COMMAND;
@@ -1045,8 +1045,7 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                    	arm++;
-                    	if(arm >1 )
+                    	if(arm++ >1 )
                     	{
                     		arm = 0;
                     		nextState = SM_PUT_OBJECT_ON_CUPBOARD;

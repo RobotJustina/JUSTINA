@@ -3279,6 +3279,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             //JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L4_P2", 3000);
         }
+        JustinaManip::startLaOpenGripper(0.7);
     }
     if(!withLeftArm){
         JustinaManip::raGoTo("navigation", 3000);
@@ -3310,6 +3311,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L4_P2", 3000);
         }
+        JustinaManip::startRaOpenGripper(0.7);
     }
     //JustinaNavigation::moveDist(0.3, 2500);
     
