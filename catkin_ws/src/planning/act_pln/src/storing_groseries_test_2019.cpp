@@ -33,6 +33,7 @@
 #define SM_FIND_OBJECTS_ON_CUPBOARD 80
 #define SM_PUT_OBJECT_ON_CUPBOARD 100
 #define SM_FINISH_TEST 110
+#define SM_PLACE_ARMS 120
 
 std::string stateMachine = "stroing_groceries.->";
 
@@ -220,7 +221,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-//    nextState = 71;
+    nextState = 71;
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -999,7 +1000,7 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_COMMAND: 
                 {
                     std::cout << stateMachine << "SM_WAIT_FOR_COMMAND"<< std::endl; 
-				/*	
+					
 					objectGrasped[0] = true;
 					objectGrasped[1] = true; 
 					objectGraspedCat[0] = "drinks";
@@ -1028,9 +1029,9 @@ int main(int argc, char** argv)
                     	if(ask)
                     	{
 	                        justinaSay.str("");
-                            justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< " For example level one, level two or level three";
-	                        std::cout <<  "Could you tell me at what level to store the " << objectGraspedCat[arm]<< " For example level one, level two or level three"<<std::endl;
-	                        JustinaHRI::waitAfterSay(justinaSay.str(), 12000);
+                            justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three";
+	                        std::cout <<  "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three"<<std::endl;
+	                        JustinaHRI::waitAfterSay(justinaSay.str(), 50000);
 	                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
 	                        {
 	                            nextState = SM_WAIT_FOR_COMMAND;
@@ -1060,69 +1061,75 @@ int main(int argc, char** argv)
                     justinaSay.str("");                    
                     if(lastRecoSpeech.find("level one") != std::string::npos)
                     {
-                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level one, please say Justina yes or Justina no";                        
-                        std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level one, please say Justina yes or Justina no" << std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
                         level_in_[arm] = 1;                        
-                        nextState = SM_WAIT_FOR_CONFIRMATION;
+                     
+                        ss_level_in_arm << level_in_[arm];   
+                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str();               
+                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str() << std::endl;
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
+                        categories.push_back(objectGraspedCat[arm]);
+                        level.push_back(level_in_[arm]);
+
+                        if(arm++ < 2)
+                            nextState = SM_WAIT_FOR_COMMAND;
+                        else
+                        {
+                            arm = 0;
+                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        }
                     }
                     else if(lastRecoSpeech.find("level two") != std::string::npos)
                     {
-                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level two, please say Justina yes or Justina no";                        
-                        std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level two, please say Justina yes or Justina no"<< std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
-                        level_in_[arm] = 2;                        
-                        nextState = SM_WAIT_FOR_CONFIRMATION;
+                        level_in_[arm] = 2;
+
+                        ss_level_in_arm << level_in_[arm];   
+                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str();               
+                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str() << std::endl;
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
+                        categories.push_back(objectGraspedCat[arm]);
+                        level.push_back(level_in_[arm]);
+
+                        if(arm++ < 2)
+                            nextState = SM_WAIT_FOR_COMMAND;
+                        else
+                        {
+                            arm = 0;
+                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        }
                     }
                     else if(lastRecoSpeech.find("level three") != std::string::npos)
                     {
-                        justinaSay << "Do you want I store the " << objectGraspedCat[arm]<< " on the level three, please say Justina yes or Justina no";                        
-                        std::cout << "Do you want I store the " << objectGraspedCat[arm]<< " on the level three, please say Justina yes or Justina no"<< std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);//*/
                         level_in_[arm] = 3;                        
-                        nextState = SM_WAIT_FOR_CONFIRMATION;
-                    }                    
+
+                        ss_level_in_arm << level_in_[arm];   
+                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str();               
+                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str() << std::endl;
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
+                        categories.push_back(objectGraspedCat[arm]);
+                        level.push_back(level_in_[arm]);
+
+                        if(arm++ < 2)
+                            nextState = SM_WAIT_FOR_COMMAND;
+                        else
+                        {
+                            arm = 0;
+                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        }
+                    }
                     else
                     {
-                        JustinaHRI::say("Sorry I did not understand you");
-                        std::cout << "Sorry I did not understand you" << std::endl;
-                        sleep(2);
+                        JustinaHRI::waitAfterSay(" Sorry, I did not understand you ", 600);  
+                        std::cout << "Sorry, I did not understand you"<< std::endl;                 
                         nextState = SM_WAIT_FOR_COMMAND;
                     }
                 }                
                 break;
-            case SM_WAIT_FOR_CONFIRMATION:
-                {
-                    std::cout << stateMachine << "SM_WAIT_FOR_CONFIRMATION" << std::endl;
-                    justinaSay.str("");                                       
-                    if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
-                    {
-                        if(lastRecoSpeech.find("justina yes") != std::string::npos)
-                        {
-                                ss_level_in_arm << level_in_[arm];   
-                                justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level"<<ss_level_in_arm.str();               
-                                std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level"<<ss_level_in_arm.str() << std::endl;
-                                JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
-                                categories.push_back(objectGraspedCat[arm]);
-                                level.push_back(level_in_[arm]);
-                                arm++;
-                                if(arm < 2)
-                                    nextState = SM_WAIT_FOR_COMMAND;
-                                else
-                                {
-                                    arm = 0;
-                                    nextState = SM_PUT_OBJECT_ON_CUPBOARD;
-                                }
-                        }
-                        if(lastRecoSpeech.find("justina no") != std::string::npos)
-                        {
-                            JustinaHRI::waitAfterSay("Sorry, I did not understand you", 600);  
-                            std::cout << "Sorry, I did not understand you"<< std::endl;                 
-                            nextState = SM_WAIT_FOR_COMMAND;
-                        }
-                    }   
-                }
-                break;
+            case SM_MOVE_ARMS:
+            {
+                std::cout << stateMachine << "SM_MOVE_ARMS" << std::endl;
+                
+            }    
+            break;
             default:{
                     fail = true;
                     success = true;
