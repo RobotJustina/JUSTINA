@@ -18,7 +18,7 @@ int main(int argc, char ** argv){
 	int chances =0;
 	
 
-	while(ros::ok() && cv::waitKey(1) != 'q'){
+	while(ros::ok() && cv::waitKey(1) != 'q' && finished ==false){
 		
 
 		switch(state){

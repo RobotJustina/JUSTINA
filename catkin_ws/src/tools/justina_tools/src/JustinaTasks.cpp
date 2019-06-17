@@ -7641,10 +7641,13 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     std::cout << "JustinaTasks::place object on dish washer..." << std::endl;
 
 
-    JustinaManip::hdGoTo(0, -0.7, 5000);
-    if (!JustinaTasks::alignWithTable(0.45))
-        if(!JustinaTasks::alignWithTable(0.45));
+    if (!JustinaTasks::alignWithTable(distanceToDishWasher)){
+        std::cout << "cannot align with table" <<std::endl;
+        if(!JustinaTasks::alignWithTable(distanceToDishWasher));{
+            std::cout << "failed to excecute the task" <<std::endl;
             return false;
+        }
+    }       
 
     
     JustinaManip::laGoTo("put1", 5000);
