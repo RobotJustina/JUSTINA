@@ -3260,14 +3260,14 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         }
         else if(level == 2)
         {
-            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
             JustinaManip::laGoTo("put_storing_L2_P1", 3000);
             JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L2_P2", 3000);
         }
         else if(level == 3)
         {
-            JustinaManip::torsoGoTo(0.2, 0.0, 0.0, 4000);
+            JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 4000);
             JustinaManip::laGoTo("put_storing_L3_P1", 3000);
             JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L3_P2", 3000);
@@ -3281,8 +3281,8 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         }
         JustinaManip::startLaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
-        JustinaManip::startLaOpenGripper(0.0);
         JustinaNavigation::moveDist(-0.2, 2500);
+        JustinaManip::startLaOpenGripper(0.0);
         JustinaManip::laGoTo("navigation", 3000);
     }
     if(!withLeftArm){
@@ -3296,14 +3296,14 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         }
         else if(level == 2)
         {
-            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
             JustinaManip::raGoTo("put_storing_L2_P1", 3000);
             JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L2_P2", 3000);
         }
         else if(level == 3)
         {
-            JustinaManip::torsoGoTo(0.2, 0.0, 0.0, 4000);
+            JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 4000);
             JustinaManip::raGoTo("put_storing_L3_P1", 3000);
             JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L3_P2", 3000);
@@ -3317,8 +3317,8 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         }
         JustinaManip::startRaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
-        JustinaManip::startRaOpenGripper(0.0);
         JustinaNavigation::moveDist(-0.2, 2500);
+        JustinaManip::startRaOpenGripper(0.0);
         JustinaManip::raGoTo("navigation", 3000);
     }
     //JustinaNavigation::moveDist(0.3, 2500);
