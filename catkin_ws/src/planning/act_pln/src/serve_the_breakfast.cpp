@@ -404,8 +404,6 @@ int main(int argc, char **argv){
 
                 alignWithTable();
 
-                  
-
                 JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals on the bowl", 4000, MIN_DELAY_AFTER_SAY);
                 
                 JustinaTasks::placeObject(withLeft);
