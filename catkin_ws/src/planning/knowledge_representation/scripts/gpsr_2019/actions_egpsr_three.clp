@@ -75,6 +75,30 @@
 	(assert (task pstorage_category ?storage ?sp_obj ?step))
 	(modify ?f1 (status nil))
 )
+
+(defrule task_get_object_description
+	?f <- (task ?plan get_object_description object ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Get object description ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_desc)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pobj_desc object ?place ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_retrieve_object
+	?f <- (task ?plan retrieve_object ?category ?place ?sp ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Get object description ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_retrieved)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pretrieve_obj ?category ?place ?sp ?step))
+	(modify ?f1 (status nil))
+)
 ;;;;;;;;;;;;;;;;;;
 (defrule plan_get_rpose_object
 	?goal <- (objetive get_rpose_obj ?name ?place ?rpose ?category ?step)
@@ -141,6 +165,29 @@
 	(assert (finish-planner ?name 3))
 
 )
+
+(defrule plan_get_object_description
+	?goal <- (objetive obj_desc ?name ?obj ?place ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions obj_desc ?obj ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions update_status finish_objetive finaly_desc)(duration 6000)))
+	(assert (finish-planner ?name 3))
+
+)
+
+(defrule plan_retrieve_object
+	?goal <- (objetive retrieve_object ?name ?cat ?place ?sp ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions retrieve_object ?cat ?place ?sp)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_retrieved)(duration 6000)))
+	(assert (finish-planner ?name 2))
+
+)
 ;;;;;;;;;;;;;;;;;;
 (defrule exe_scheduled-get-rpose-object 
 	(state (name ?name) (number ?step) (status active)(duration ?time))
@@ -190,5 +237,25 @@
 	=>
 	(retract ?f1)
 	(assert (objetive storage_category task_storage_category ?storage ?sp_obj ?step))
+)
+
+(defrule exe_scheduled-get-object-description 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pobj_desc ?obj ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive obj_desc task_obj_desc ?obj ?place ?step))
+)
+
+(defrule exe_scheduled-retrieve-object  
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pretrieve_obj ?cat ?place ?sp ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive retrieve_object task_retrieve_object ?cat ?place ?sp ?step))
 )
 ;;;;;;;;;;;;;;;;;;;

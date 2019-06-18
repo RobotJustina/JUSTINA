@@ -660,6 +660,20 @@ def storage_obj(cmd):
     pubCmdStorageObj.publish(request)
     return cmd._id
 
+def obj_desc(cmd):
+    global pubCmdObjDesc 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdObjDesc.publish(request)
+    return cmd._id
+
+def retrieve_object(cmd):
+    global pubCmdRetrieveObj 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdRetrieveObj.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -724,7 +738,9 @@ fmap = {
     'take_out_garbage': take_out_garbage,
     'rpose_obj': rpose_obj,
     'pourin_obj': pourin_obj,
-    'storage_obj': storage_obj
+    'storage_obj': storage_obj,
+    'obj_desc': obj_desc,
+    'retrieve_object': retrieve_object
 }
 
 def quit():
@@ -741,7 +757,7 @@ def main():
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp, pubCmdTakeOutGarbage  
-    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj 
+    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj, pubCmdObjDesc, pubCmdRetrieveObj 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -827,6 +843,8 @@ def main():
     pubCmdRPoseObj = rospy.Publisher('/planning_clips/rpose_obj', PlanningCmdClips, queue_size=1)
     pubCmdPourinObj = rospy.Publisher('/planning_clips/pourin_obj', PlanningCmdClips, queue_size=1)
     pubCmdStorageObj = rospy.Publisher('/planning_clips/storage_obj', PlanningCmdClips, queue_size=1)
+    pubCmdObjDesc = rospy.Publisher('/planning_clips/obj_desc', PlanningCmdClips, queue_size=1)
+    pubCmdRetrieveObj = rospy.Publisher('/planning_clips/retrieve_object', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

@@ -53,6 +53,7 @@ std::string lastCmdName = "";
 std::string currentName = "";
 std::string objectName = "";
 std::string categoryName = "";
+std::string objs_desc = "";
 int numberAttemps = 0;
 int cantidad = 0;
 int women;
@@ -64,6 +65,7 @@ ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
 std::string cat_grammar= "gpsr_guadalajara.xml";
+bool obj_desc_flag;
 
 std::string microsoft_grammars[13];
 std::string sphinx_grammars[13];
@@ -813,6 +815,15 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaHRI::waitAfterSay(ss.str(), 10000);
 				responseMsg.successful = 1;
 			}
+		}
+		else if(param1.compare("tell_desc_obj") == 0){
+            std::cout << objs_desc << std::endl;
+            if(obj_desc_flag)
+    			JustinaHRI::waitAfterSay("I will describe you the objects I found", 12000);
+            else
+    			JustinaHRI::waitAfterSay("I am sorry", 12000);
+			JustinaHRI::waitAfterSay(objs_desc, 12000);
+			responseMsg.successful = 1;
 		}
 	} else
 		success = false;
@@ -4387,6 +4398,234 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdObjDesc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "-------- Command Get Object description --------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	ros::Time finishPlan = ros::Time::now();
+	ros::Duration d = finishPlan - beginPlan;
+	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
+	
+	ss.str("");
+    ss << "I am looking for objects on the " << tokens[1];
+	JustinaHRI::waitAfterSay(ss.str(), 2500);
+	JustinaManip::hdGoTo(0, -0.9, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+	JustinaTasks::alignWithTable(0.42);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+	int numObj  = 0;
+	std::string query;
+	std::vector<std::string> object;
+    std::vector<std::string> category;
+    std::vector<std::string> categories;
+    std::vector<std::string> objects;
+
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
+    
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    std::vector<vision_msgs::VisionObject> recognizedObjects;
+    std::cout << "Find a object " << std::endl;
+    bool found = false;
+    for (int j = 0; j < 10; j++) {
+        std::cout << "Test object" << std::endl;
+        objects.clear();
+        category.clear();
+        categories.clear();
+        found = JustinaVision::detectObjects(recognizedObjects);
+        if (found) {
+            found = false;
+            for (int i = 0; i < recognizedObjects.size(); i++) {
+                vision_msgs::VisionObject vObject = recognizedObjects[i];
+                std::cout << "object:  " << vObject.id << std::endl;
+                objects.push_back(vObject.id);
+                ss.str("");
+                ss << "(assert (cmd_simple_category " << vObject.id <<" 1))";
+                JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                category.push_back(query);
+                std::pair<bool, int> element_in_vector = findInVector<std::string>(categories, query); 
+                if (!element_in_vector.first){
+                    categories.push_back(query);
+                }
+            }
+        }
+    }
+
+	ss.str("");
+    int count;
+    if(categories.size() > 0){
+        ss << "There are ";
+       for(int i = 0; i < categories.size(); i ++){
+           count  = 0;
+            object.clear();
+            for(int j = 0; j < objects.size(); j++){
+                if (category.at(j) == categories.at(i)){
+                    object.push_back(objects.at(j));
+                    count++;
+                }
+            }
+            ss << count << " " << categories.at(i);
+            if(object.size() == 1){
+                ss << ", the " << object.at(0);
+            }
+            else{
+                for(int k = 0; k < object.size() - 1; k++){
+                    ss << ", the " << object.at(k);
+                }
+                ss << ", and the " << object.at(object.size() - 1);
+            }
+            if(i != categories.size() - 1)
+                ss << ", ";
+            if(i == categories.size() - 2 && categories.size() > 0){
+                ss << "and ";
+            }
+       }
+       obj_desc_flag = true;
+    }
+    else{
+        ss << "I did not find objects";
+        std::cout << "I did not find objects" << std::endl;
+        obj_desc_flag = false;
+    }
+
+    ss << " on the " << tokens[1];
+
+    objs_desc = ss.str();
+
+    JustinaHRI::waitAfterSay(ss.str(), 12000);
+	object.clear();
+    category.clear();
+    categories.clear();
+    objects.clear();
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdRetrieveObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "-------- Command Retrieve Object --------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    
+    int count = 0;
+    int obj_count = 0;
+    bool help = false;
+	bool armFlag;
+    std::string obj_name;
+    std::string lastReco;
+    std::string query;
+    std::string to_speech;
+	std::vector<std::string> objects;
+    std::vector<poseObj> pose_obj;
+   
+    ss.str("");
+    ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
+    while (!help && count < 3){
+        switchSpeechReco(0, ss.str());
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+        JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+        if(lastReco == "robot yes" || lastReco == "justina yes")
+            help = true;
+        count++;
+    }
+    count = 0;
+    if(!help){
+        JustinaHRI::waitAfterSay("I am sorry If you dont help me I can not do this task", 100000);
+        responseMsg.successful = 0;
+    }
+    else{
+        obj_name = tokens[0];
+        to_speech = obj_name;
+        boost::replace_all(to_speech, "_", " ");
+        ss.str("");
+        ss << "Ok, go for the  " << to_speech;
+        JustinaHRI::waitAfterSay(ss.str(), 100000);
+        
+        //Place
+        query = tokens[1];
+
+        //guide to the bin
+        JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+        JustinaHRI::waitAfterSay("please wait", 2500);
+
+        JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        
+        //try to grasp object
+        ss.str("");
+        if(tokens[2] != "nil")
+            ss << "We can find the " << to_speech << " on the " << tokens[1];
+        else
+            ss << "We can find the " << to_speech << " into the  " << tokens[2] << " on the " << tokens[1];
+        JustinaHRI::waitAfterSay(ss.str(), 2500);
+                
+        armFlag = false;
+        //grasp object
+        ss.str("");
+        ss << "I can not grasp the " << to_speech << ", I need your help";
+        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+        ss.str("");
+        ss << "please take the " << to_speech << " that you want and put it in my gripper";
+        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+
+        JustinaManip::raGoTo("navigation", 3000);
+        JustinaTasks::detectObjectInGripper(obj_name, armFlag, 7000);
+        //JustinaHRI::waitAfterSay("thank you", 5000, 0);
+            
+        ss.str("");
+        ss << "I will guide you back";
+        JustinaHRI::waitAfterSay(ss.str(), 100000);
+        
+        //guide to the bin
+        JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaTasks::guideAPerson("current_loc", 120000); //guiar al objeto
+        JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        
+        ss.str("");
+        ss << "I will give you the " << to_speech;
+        JustinaHRI::waitAfterSay(ss.str(), 100000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaTasks::dropObject(obj_name, armFlag, 30000);
+        ss.str("");
+        ss << "enjoy it, Thank you for your help";
+        JustinaHRI::waitAfterSay(ss.str(), 100000);
+    
+    }
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
 int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "gpsr_test");
@@ -4451,6 +4690,8 @@ int main(int argc, char **argv) {
     ros::Subscriber subRPoseObj = n.subscribe("planning_clips/rpose_obj", 1, callbackCmdRPoseObj); 
     ros::Subscriber subPourinObj = n.subscribe("planning_clips/pourin_obj", 1, callbackCmdPourinObj); 
     ros::Subscriber subStorageObj = n.subscribe("planning_clips/storage_obj", 1, callbackCmdStorageObj); 
+    ros::Subscriber subObjDesc = n.subscribe("planning_clips/obj_desc", 1, callbackCmdObjDesc); 
+    ros::Subscriber subRetrieveObj = n.subscribe("planning_clips/retrieve_object", 1, callbackCmdRetrieveObj); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
     sendAndRunClips_pub = n.advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1);
