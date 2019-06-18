@@ -88,3 +88,4 @@
 (side_table	is_kind_of      place)
 (sink	is_kind_of      place)
 (storage_table	is_kind_of      place)
+

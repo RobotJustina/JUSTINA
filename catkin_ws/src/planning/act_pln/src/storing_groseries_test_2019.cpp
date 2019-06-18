@@ -919,7 +919,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_PUT_OBJECT_ON_CUPBOARD" << std::endl;
                     for(int i=0; i< categories.size(); i++) //----------------
                     {
-                    	std::cout<< categories[i]<<" : "<<level[i]<<std::endl;
+                    	std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
                     }//----------------------
                     bool withLeftOrRightArm;
                     /********************
@@ -1030,7 +1030,7 @@ int main(int argc, char** argv)
                     	{
 	                        justinaSay.str("");
                             justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three";
-	                        std::cout <<  "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three"<<std::endl;
+	                        std::cout <<  "\nCould you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three"<<std::endl;
 	                        JustinaHRI::waitAfterSay(justinaSay.str(), 50000);
 	                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
 	                        {
@@ -1043,14 +1043,14 @@ int main(int argc, char** argv)
 	                        }
 	                    }
 	                    else
-							nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+							nextState = SM_MOVE_ARMS;
                     }
                     else
                     {
                     	if(arm++ >1 )
                     	{
                     		arm = 0;
-                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    		nextState = SM_MOVE_ARMS;
                     	}
                     }
                 }
@@ -1075,7 +1075,7 @@ int main(int argc, char** argv)
                         else
                         {
                             arm = 0;
-                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                            nextState = SM_MOVE_ARMS;
                         }
                     }
                     else if(lastRecoSpeech.find("level two") != std::string::npos)
@@ -1094,13 +1094,14 @@ int main(int argc, char** argv)
                         else
                         {
                             arm = 0;
-                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                            nextState = SM_MOVE_ARMS;
                         }
                     }
                     else if(lastRecoSpeech.find("level three") != std::string::npos)
                     {
                         level_in_[arm] = 3;                        
 
+                        ss_level_in_arm.str()="";
                         ss_level_in_arm << level_in_[arm];   
                         justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str();               
                         std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<<ss_level_in_arm.str() << std::endl;
@@ -1113,7 +1114,7 @@ int main(int argc, char** argv)
                         else
                         {
                             arm = 0;
-                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                            nextState = SM_MOVE_ARMS;
                         }
                     }
                     else
@@ -1126,8 +1127,21 @@ int main(int argc, char** argv)
                 break;
             case SM_MOVE_ARMS:
             {
+/*                JustinaTasks::placeObjectOnShelfHC(0,level_in_[0]);
+                JustinaTasks::placeObjectOnShelfHC(1,level_in_[1]);//*/
                 std::cout << stateMachine << "SM_MOVE_ARMS" << std::endl;
-                
+                for(int i=0; i <= categories.size(); i++) //----------------
+                {
+                    std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
+                    if(categories[i] == objectGraspedCat[0])
+                    {
+                        JustinaTasks::placeObjectOnShelfHC(0,level[i]);
+                    }
+                    if(categories[i] == objectGraspedCat[1])
+                    {
+                        JustinaTasks::placeObjectOnShelfHC(1,level[i]);
+                    }
+                }//----------------------//*/
             }    
             break;
             default:{

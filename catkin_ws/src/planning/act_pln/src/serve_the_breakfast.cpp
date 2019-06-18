@@ -181,7 +181,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_ALIGN_WITH_TABLE;//SM_INIT;
+    STATE state = SM_INIT;
 
 
 
@@ -236,7 +236,7 @@ int main(int argc, char **argv){
                 ss << "I'm looking for a" << graspObject << "on the table";
                 JustinaHRI::say(ss.str());
                 ros::Duration(2.0).sleep();
-
+                JustinaManip::hdGoTo(0, -.8, 2000);
                 if(!JustinaVision::getObjectSeg(my_cutlery))
                 {
                         std::cout << ".-> Can not detect any object" << std::endl;

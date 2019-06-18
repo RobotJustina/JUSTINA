@@ -2384,7 +2384,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Person":[["me"],[],[],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type get_object_description) (params object -Place-) (step ))" +
                                 "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
-				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_desc_obj) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2395,9 +2395,18 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Person":[["me"],[],[],[]],
 	"Category": [[], [], ["category"], []],
 	"Storage": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params object -Storage- biggest -Category-) (step )) " +
-                                "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type retrieve_object) (params  -Category- -Storage- nil) (step )) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        {"params": ["Action_deliver", "Person", "Category", "Special_object","Storage"],
+	"Action_deliver": [["deliver", "bring", "give"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Category": [[], [], ["category"], []],
+	"Special_object": [[], [], ["item"], []],
+	"Storage": [[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type retrieve_object) (params  -Category- -Storage- -Special_object-) (step )) ",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
