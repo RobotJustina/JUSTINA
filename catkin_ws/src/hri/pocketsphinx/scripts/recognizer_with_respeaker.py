@@ -9,7 +9,7 @@ import time
 from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
 import pyaudio
-
+import numpy as np
 import time
 
 from std_msgs.msg import String, Bool, Int8 
@@ -76,13 +76,13 @@ class recognizer(object):
         self._stream_param = "~stream"
         self._wavpath_param = "~wavpath"
 
-	# respeaker param
+	    # respeaker param
 
-	self._rate_param = rospy.get_param("~rate", 16000)
-	self._channel_param = rospy.get_param("~channel", 1)
-	self._width_param = rospy.get_param("~width", 2L)
-	self._index_param = rospy.get_param("~index", 2)
-	self._chunk_param = rospy.get_param("~chunk", 2048)
+        self._rate_param = rospy.get_param("~rate", 16000)
+        self._channel_param = rospy.get_param("~channel", 1)
+        self._width_param = rospy.get_param("~width", 2L)
+        self._index_param = rospy.get_param("~index", 2)
+        self._chunk_param = rospy.get_param("~chunk", 2048)
 
         # you may need to change publisher destination depending on what you run
         self.pub_ = rospy.Publisher('~output', String, queue_size=1)
@@ -182,10 +182,10 @@ class recognizer(object):
 	    # See http://cmusphinx.sourceforge.net/wiki/tutorialtuning
             p = pyaudio.PyAudio()
             stream = p.open(format=p.get_format_from_width(self._width_param), 
-			    channels=self._channel_param,
+			                channels=self._channel_param,
                             rate=self._rate_param, 
                             input=True, 
-		            frames_per_buffer=self._chunk_param, 
+		                    frames_per_buffer=self._chunk_param, 
                             input_device_index=self._index_param)
 
             stream.start_stream()
