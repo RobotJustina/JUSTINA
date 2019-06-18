@@ -145,3 +145,50 @@
 	(modify ?f (status accomplished))
 )
 ;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-task-get-object-description 
+	(plan (name ?name) (number ?num-pln) (status active) (actions obj_desc ?obj ?place)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?obj " " ?place ""))
+	(assert (send-blackboard ACT-PLN obj_desc ?command ?t 4))
+)
+
+(defrule exe-plan-geted-object-description 
+        ?f <-  (received ?sender command obj_desc ?obj ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions obj_desc $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-geted-object-desription
+        ?f <-  (received ?sender command obj_desc ?obj ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions obj_desc $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-retrieve-object 
+	(plan (name ?name) (number ?num-pln) (status active) (actions retrieve_object ?cat ?place ?sp)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?cat " " ?place " " ?sp ""))
+	(assert (send-blackboard ACT-PLN retrieve_object ?command ?t 4))
+)
+
+(defrule exe-plan-retrieved-object 
+        ?f <-  (received ?sender command retrieve_object ?cat ?place ?sp 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions retrieve_object $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-retrieve_object 
+        ?f <-  (received ?sender command retrieve_object ?cat ?place ?sp 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions retrieve_object $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;

@@ -1,7 +1,6 @@
 <launch>
-	<arg name="launch_sound_play" default="true" />
-  	<arg name="launch_audio_capture" default="true" />
-	
+  <arg name="launch_audio_capture" default="true" />
+
 	<!-- doa from respeaker -->
 	<node name="doa_test" pkg="resp_test" type="resp_test_node.py" output="screen"/>
 	
@@ -10,6 +9,7 @@
         if="$(arg launch_audio_capture)"
         respawn="true">
     <rosparam>
+      device: hw:2,0
       format: wave
       channels: 1
       depth: 16
@@ -17,11 +17,5 @@
     </rosparam>
 	</node>
 
-	<!-- sound play -->
-  	<node name="sound_play" pkg="sound_play" type="soundplay_node.py"
-        if="$(arg launch_sound_play)"
-        respawn="true">
-    <remap from="robotsound" to="sound_play" />
- 	</node>
-
+	
 </launch>
