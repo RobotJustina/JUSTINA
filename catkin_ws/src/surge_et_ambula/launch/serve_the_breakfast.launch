@@ -7,9 +7,9 @@
 	<arg name="_wavpath" value="_wavpath:=none" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="initial_pose_x" default="0.0"/>
-		<arg name="initial_pose_y" default="0.0"/>
-		<arg name="initial_pose_a" default="0.0"/>
+		<arg name="initial_pose_x" default="3.39463"/>
+		<arg name="initial_pose_y" default="-0.360929"/>
+		<arg name="initial_pose_a" default="1.5708"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping serve_the_breakfast"/>
