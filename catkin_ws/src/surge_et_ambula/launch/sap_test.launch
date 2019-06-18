@@ -1,5 +1,5 @@
 <launch>
-	<include file="$(find surge_et_ambula)/launch/justina_simul.launch"/>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
 	<group ns="vision">
 		<node name="pano_maker" pkg="pano_maker" type="pano_maker_node" output="screen" args="--d"/>
 	</group>

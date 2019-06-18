@@ -192,3 +192,26 @@
 	(modify ?f1 (status accomplished)) ;performance for IROS
 )
 ;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-interact_with_door 
+	(plan (name ?name) (number ?num-pln) (status active) (actions interact_with_door ?door ?place ?action)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?door " " ?place " " ?action ""))
+	(assert (send-blackboard ACT-PLN interact_with_door ?command ?t 4))
+)
+
+(defrule exe-plan-interacted-with-door  
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-interacted-with-door 
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
