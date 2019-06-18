@@ -7659,12 +7659,12 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
 
     
     JustinaManip::laGoTo("put1", 5000);
-    JustinaManip::laGoTo("take", 5000);
+    JustinaManip::laGoTo("place_dishwasher", 5000);
 
     
 
     JustinaManip::raGoTo("put1", 5000);
-    JustinaManip::raGoTo("take", 5000);
+    JustinaManip::raGoTo("place_dishwasher", 5000);
 
     
 
