@@ -75,7 +75,6 @@ bool alignWithTable()
 }
 
 
-
 int main(int argc, char **argv){
 
     ros::init(argc, argv, "serve_the_breakfast_test");
@@ -151,7 +150,6 @@ int main(int argc, char **argv){
     float theta = 0, thetaToGoal = 0, angleHead = 0;
     float pointingDirX, pointingDirY, pointingDirZ, pointingNormal;
     geometry_msgs::Pose pose;
-
     
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
@@ -183,7 +181,6 @@ int main(int argc, char **argv){
 
     JustinaHRI::usePocketSphinx = true;
     STATE state = SM_ALIGN_WITH_TABLE; //SM_INIT;
-
 
 
     while(ros::ok() && !success){
@@ -395,6 +392,7 @@ int main(int argc, char **argv){
                     //withLeft = poseCereal.position.y > 0 ? true:false;
                     JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
                 state = SM_RETURN_TO_TABLE;
+
             break;
             case SM_RETURN_TO_TABLE:
 
@@ -479,6 +477,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
+
     if (goalTorso < minTorso){
         missingZ = minTorso - goalTorso;
         goalTorso = minTorso;
@@ -495,10 +494,12 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     float lastRobotX, lastRobotY, lastRobotTheta;
     //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
     JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
+    
     if (usingTorse)
         JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
     JustinaNavigation::moveLateral(movLateral, 3000);
     JustinaNavigation::moveDist(movFrontal, 3000);
+
     if (usingTorse)
         JustinaManip::waitForTorsoGoalReached(waitTime);
 
@@ -534,6 +535,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                     objToGraspY = objects.ObjectList.at(0).maxPoint.y;
                 else
                     objToGraspY = objects.ObjectList.at(0).minPoint.y;
+
                 objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.0;
                 dz = minTorso;
                 break;
@@ -569,6 +571,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
         return false;
     }
+
     std::cout << "JustinaTasks.->Moving ";
     if (withLeftArm)
         std::cout << "left arm";
@@ -583,8 +586,9 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         if ( typeCutlery == 0) {
             JustinaManip::startLaOpenGripper(0.8);
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY , objToGraspZ + 0.5,0,.74,0,0.0 , 5000);
-            //JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            
+            for(int i = 1; i <= 10; i++)
+                JustinaManip::laGoToCartesian(objToGraspX/10 *i, objToGraspY/10 *i , objToGraspZ + 0.5,0,.74,0,0.0 , 5000);
             
             kk=0;
             while( kk++ < 5 )
@@ -599,21 +603,20 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 JustinaManip::torsoGoTo(torsoSpine - dz, 0.0, 0.0, 5000);
         }
         else if (typeCutlery == 1 ) {
+
             JustinaManip::startLaOpenGripper(0.8);
-            
-            if(missingZ > 0.01){
+            /*if(missingZ > 0.01){
                 for (int i = maxIteration - 1; i > 0; i--) {
                     float deltaObjToGraspX = objToGraspX + dz / i;
                     JustinaManip::laGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, 600);
                 }
             }else
                 JustinaManip::torsoGoTo(torsoSpine - dz, 0.0, 0.0, 5000);
+            */
+            for(int i = 20; i >= 0; i-=10)
+                JustinaManip::laGoToCartesian( objToGraspX-.10-float(i)/100.0, objToGraspY-.15-float(i)/100.0, objToGraspZ,1000);
 
-            JustinaManip::laGoToCartesian(objToGraspX-0.2, objToGraspY , objToGraspZ + 0.2 , 5000);
-            JustinaManip::laGoToCartesian(objToGraspX-0.1, objToGraspY , objToGraspZ + 0.1 , 5000);
-            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY , objToGraspZ + 0.01 , 5000);
-            //JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
-            
+            JustinaManip::laGoToCartesian( objToGraspX-.05, objToGraspY, objToGraspZ,5000);
             kk=0;
             while( kk++ < 5 )
                 std::cout << "WWWWWWWWWWWWWWWWWWWW" << std::endl;
@@ -638,6 +641,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             JustinaManip::startLaOpenGripper(-0.1);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
+        
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         for (int i = 0; i < 3; i++) {
@@ -700,11 +704,6 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             if(missingZ > 0.01){
                 for (int i = maxIteration - 1; i > 0; i--) {
                     float deltaObjToGraspX = objToGraspX + dz / i;
-                    
-                    JustinaManip::raGoToCartesian(objToGraspX-0.2, objToGraspY , objToGraspZ + 0.2 , 5000);
-                    JustinaManip::raGoToCartesian(objToGraspX-0.1, objToGraspY , objToGraspZ + 0.1 , 5000);
-                    JustinaManip::raGoToCartesian(objToGraspX, objToGraspY , objToGraspZ + 0.01 , 5000);
-            
                     JustinaManip::raGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 0.0, 600);
                 }
             }else
