@@ -10,6 +10,7 @@
 		<arg name="initial_pose_x" default="3.39463"/>
 		<arg name="initial_pose_y" default="-0.360929"/>
 		<arg name="initial_pose_a" default="1.5708"/>
+		<arg name="head_offset" value="-0.02"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping serve_the_breakfast"/>
