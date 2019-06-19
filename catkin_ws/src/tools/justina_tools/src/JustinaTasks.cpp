@@ -5524,7 +5524,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             }
             if (typeCutlery != 3) {
                 if (!JustinaVision::isStillOnTable(objects.ObjectList.at(0))) {
-                    JustinaNavigation::moveDist(-0.35, 3000);
+                    //JustinaNavigation::moveDist(-0.35, 3000);
                     std::cout << "The object was grasp with the left arm in the first test" << std::endl;
                     return true;
                 }
@@ -5619,7 +5619,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             }
             if (typeCutlery != 3) {
                 if (!JustinaVision::isStillOnTable(objects.ObjectList.at(0))) {
-                    JustinaNavigation::moveDist(-0.35, 3000);
+                    //JustinaNavigation::moveDist(-0.35, 3000);
                     std::cout << "The object was grasp with the left arm in the first test" << std::endl;
                     return true;
                 }
@@ -7662,9 +7662,14 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     //JustinaManip::laGoTo("place_dishwasher", 5000);
     JustinaManip::startLaGoTo("put1");
     JustinaManip::startRaGoTo("put1");
+    JustinaManip::waitForLaGoalReached(5000);
+    JustinaManip::waitForRaGoalReached(5000);
 
     JustinaManip::startLaGoTo("place_dishwasher");
     JustinaManip::startRaGoTo("place_dishwasher");
+
+    JustinaManip::waitForLaGoalReached(5000);
+    JustinaManip::waitForRaGoalReached(5000);
 
     //JustinaManip::raGoTo("put1", 5000);
     //JustinaManip::raGoTo("place_dishwasher", 5000);
@@ -7712,18 +7717,23 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     JustinaManip::waitForTorsoGoalReached(waitTime);
 
-    JustinaManip::laGoTo("put1", 5000);
-    //JustinaNavigation::moveDist(-0.2, 5000);
-
-
-    JustinaManip::raGoTo("put1", 5000);
+    JustinaManip::startLaGoTo("put1");
+    JustinaManip::startRaGoTo("put1");
+    JustinaManip::waitForLaGoalReached(5000);
+    JustinaManip::waitForRaGoalReached(5000);
+    
     JustinaNavigation::moveDist(-0.2, 5000);
 
     JustinaManip::startRaOpenGripper(0.0);
-    JustinaManip::raGoTo("navigation", 5000);
+    //JustinaManip::raGoTo("navigation", 5000);
 
     JustinaManip::startLaOpenGripper(0.0);
-    JustinaManip::laGoTo("navigation", 5000);
+    //JustinaManip::laGoTo("navigation", 5000);
+
+    JustinaManip::startLaGoTo("navigation");
+    JustinaManip::startRaGoTo("navigation");
+    JustinaManip::waitForLaGoalReached(5000);
+    JustinaManip::waitForRaGoalReached(5000);
 
     JustinaManip::startHdGoTo(0.0, 0.0);
 
