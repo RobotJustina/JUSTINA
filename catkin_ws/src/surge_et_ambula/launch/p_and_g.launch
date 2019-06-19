@@ -1,6 +1,6 @@
 <launch>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="head_offset" value="-0.08"/>
+		<arg name="head_offset" value="-0.04"/>
 	</include>
 	<group ns="vision">
 		<node name="color_reco" pkg="color_reco" type="color_reco_node" output="screen" />
