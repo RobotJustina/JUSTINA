@@ -613,11 +613,10 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             }else
                 JustinaManip::torsoGoTo(torsoSpine - dz, 0.0, 0.0, 5000);
             */
-            for(int i = 20; i >= 0; i--)
-                JustinaManip::laGoToCartesian( objToGraspX-15-i, objToGraspY, objToGraspZ+10+i,5000);
+            for(int i = 20; i >= 0; i-=10)
+                JustinaManip::laGoToCartesian( objToGraspX-.10-float(i)/100.0, objToGraspY-.15-float(i)/100.0, objToGraspZ,1000);
 
-            JustinaManip::laGoToCartesian( objToGraspX, objToGraspY, objToGraspZ,5000);
-
+            JustinaManip::laGoToCartesian( objToGraspX-.05, objToGraspY, objToGraspZ,5000);
             kk=0;
             while( kk++ < 5 )
                 std::cout << "WWWWWWWWWWWWWWWWWWWW" << std::endl;
