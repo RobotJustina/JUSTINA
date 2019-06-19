@@ -74,9 +74,11 @@ int main(int argc, char** argv)
 	int attempts = 0;
 	int maxDelayAfterSay = 300;
 	int cont_z;
+	int cont =0;
 	int type;
 	bool openDWFlag=false; //set this flag as false due to the dishwasher will be open by default
 	bool takeCascadePod=false;
+	int contObj =0;
 
 
 
@@ -174,11 +176,15 @@ int main(int argc, char** argv)
 
       		case SM_InspectTheObjetcs:
 
+			  	JustinaManip::startTorsoGoTo(0.1, 0, 0);
+				JustinaManip::waitForTorsoGoalReached(0.5);
+
 				if((objTaken == 1 && attempts >3) || (objTaken==3 && attempts >3)){
 					JustinaHRI::say("Sorry I could not grasp another object now");
         			ros::Duration(2.0).sleep();
-					chances ++;
+					
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+					cont ++;
 					break;
 				}
 				else{
@@ -191,10 +197,12 @@ int main(int argc, char** argv)
       				}
       				else{
       					std::cout << "P & G Test...-> trying to detect the objects" << std::endl;
-      					JustinaHRI::say("I am looking for an object on the table");
+      					JustinaHRI::say("I am looking for objects on the table");
         				ros::Duration(2.0).sleep();
       					if(!JustinaVision::getObjectSeg(my_cutlery)){
       						if(!JustinaVision::getObjectSeg(my_cutlery)){
+								JustinaHRI::say("I can not see any object on the table");
+        						ros::Duration(2.0).sleep();
       							std::cout << "P & G Test...-> Can not detect any object" << std::endl;
       							nextState = SM_InspectTheObjetcs;
       						}
@@ -216,7 +224,7 @@ int main(int argc, char** argv)
                 					pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
                 					id_cutlery = my_cutlery.ObjectList[i].id;
                 					type = my_cutlery.ObjectList[i].type_object;
-                					JustinaHRI::say("I've found an object on the table");
+                					JustinaHRI::say("I have found an object on the table");
         							ros::Duration(2.0).sleep();
                 					nextState = SM_TakeObject;
                 					break;
@@ -254,25 +262,31 @@ int main(int argc, char** argv)
       			
 
 				if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
-      				std::cout << "P & G Test...-> cannot take the object" << std::endl;
+      				JustinaHRI::say("I can not grasp the object");
+        			ros::Duration(2.0).sleep();
+					std::cout << "P & G Test...-> cannot take the object" << std::endl;
       				std::cout << "P & G Test...-> trying again" << std::endl;
 				}
 				else{
-					if(!withLeft && chances != 4)
+					
+					if(!withLeft && contObj != 4)
 						withLeft=true;
 					else
 						withLeft=false;
 
 					objTaken ++;
+					contObj ++;
 				}
 
-				if(chances == 4 && objTaken == 1){
+				if(contObj == 5){
 					JustinaManip::startTorsoGoTo(0.1, 0, 0);
 					JustinaManip::waitForTorsoGoalReached(0.5);
+					cont ++;
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
 				}
 				else{
 					if(objTaken==2){
+						cont ++;
       					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
 						JustinaManip::startTorsoGoTo(0.1, 0, 0);
 						JustinaManip::waitForTorsoGoalReached(0.5);
@@ -286,6 +300,10 @@ int main(int argc, char** argv)
       		break;
 
       		case SM_NAVIGATE_TO_THE_DISHWASHER:
+			  	JustinaNavigation::moveDist(-0.35, 3000);
+			  	JustinaManip::startTorsoGoTo(0.1, 0, 0);
+				JustinaManip::waitForTorsoGoalReached(0.5);
+
 				std::cout << "P & G Test...->moving to the dish washer" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("dishwasher", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
@@ -293,14 +311,17 @@ int main(int argc, char** argv)
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
 						if (JustinaTasks::sayAndSyncNavigateToLoc("dishwasher", 120000)) {
 							nextState = SM_DeliverObject;
+							JustinaHRI::say("I am going to deliver the objects");
 						}
 					} 
 					else{
 						nextState = SM_DeliverObject;
+						JustinaHRI::say("I am going to deliver the objects");
 					}
 				} 
 				else {
 					nextState = SM_DeliverObject;
+					JustinaHRI::say("I am going to deliver the objects");
 				}
 			break;
 
@@ -317,37 +338,19 @@ int main(int argc, char** argv)
 					ros::Duration(0.5).sleep();
 				}
 
-      			/*if(withLeft){
-      				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::laGoTo("home", 6000);
-      				withLeft=false;
-      				objTaken --;
-      			}
-      			else{
-      				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::raGoTo("home", 6000);
-      				withLeft=true;
-      				objTaken --;
-      			}*/
-				JustinaHRI::say("I am going to deliver the objects");
-				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72))
-					if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      			
+				//JustinaHRI::say("I am going to deliver the objects");
+				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72)){
+      				std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+					nextState = SM_DeliverObject;
+					break;
+				}
+				
 
-      			chances++;
-
-      			if(chances==3){
-					objTaken = 0;
+      			if(contObj == 5){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
 					JustinaHRI::say("human close the diswasher, please");
 					ros::Duration(0.5).sleep();
-					attempts = 0;
 					JustinaManip::startTorsoGoTo(0.1, 0, 0);
 					JustinaManip::waitForTorsoGoalReached(0.5);
 				}
@@ -361,26 +364,6 @@ int main(int argc, char** argv)
 					JustinaManip::waitForTorsoGoalReached(0.5);
 				}
 
-      			/*else if(objTaken==0 && chances== 4){
-					nextState = SM_NAVIGATE_TO_THE_TABLE;
-					JustinaHRI::say("human, please, keep the diswasher open for me");
-					ros::Duration(0.5).sleep();
-					attempts = 0;
-					JustinaManip::startTorsoGoTo(0.1, 0, 0);
-					JustinaManip::waitForTorsoGoalReached(0.5);
-				}
-
-				else if(objTaken==0 && chances ==2){
-      				nextState = SM_NAVIGATE_TO_THE_TABLE;
-					JustinaHRI::say("human, please, keep the diswasher open for me");
-					ros::Duration(0.5).sleep();
-					attempts = 0;
-					JustinaManip::startTorsoGoTo(0.1, 0, 0);
-					JustinaManip::waitForTorsoGoalReached(0.5);
-				}
-
-      			else
-      				nextState = SM_DeliverObject;*/
       			
       		break;
 

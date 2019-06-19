@@ -70,15 +70,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 (defrule exe-plan-task-pourin-obj 
-	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?canpourin)(duration ?t))
+	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?pourable ?canpourin ?person)(duration ?t))
 	;(item (type Property) (name ?oprop))
 	=>
-	(bind ?command (str-cat "" ?canpourin ""))
+	(bind ?command (str-cat "" ?pourable " " ?canpourin " " ?person ""))
 	(assert (send-blackboard ACT-PLN pourin_obj ?command ?t 4))
 )
 
 (defrule exe-plan-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 1)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 1)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)
@@ -86,7 +86,7 @@
 )
 
 (defrule exe-plan-no-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 0)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 0)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)
@@ -192,3 +192,26 @@
 	(modify ?f1 (status accomplished)) ;performance for IROS
 )
 ;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-interact_with_door 
+	(plan (name ?name) (number ?num-pln) (status active) (actions interact_with_door ?door ?place ?action)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?door " " ?place " " ?action ""))
+	(assert (send-blackboard ACT-PLN interact_with_door ?command ?t 4))
+)
+
+(defrule exe-plan-interacted-with-door  
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-interacted-with-door 
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

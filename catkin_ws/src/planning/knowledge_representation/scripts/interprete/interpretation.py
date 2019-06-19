@@ -2153,7 +2153,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Person": [["me"], [], [], []],
 	"Something": [["something"], [], [], []],
 	"Canpourin": [[], [], ["item"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type pourin_object) (param -Canpourin-) (step )) ",
+	"conceptual_dependency":"(task (plan user_speech) (action_type pourin_object) (param nil -Canpourin- -Person-) (step )) ",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2428,12 +2428,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Person":[["me"],[],[],[]],
 	"Pourable": [[], [], ["item"], []],
 	"Canpourin": [[], [], ["item"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params pour) (step ))" + 
-                                "(task (plan user_speech) (action_type get_object) (params -Pourable- default_loaction) (step )) " +
-                                "(task (plan user_speech) (action_type put_into_object) (params -Canpourin- default_location -Pourable-)(step ))" +
-                                "(task (plan user_speech) (action_type get_special_object) (params -Canpourin-) (step ))" +
-                                "(task (plan user_speech) (action update_object_location) (params location current_loc)(step ))" +
-				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type pourin_object) (param -Pourable- -Canpourin- -Person-) (step )) ",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2443,9 +2438,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_pour": [["pour", "serve"], [], [], []],
 	"Pourable": [[], [], ["item"], []],
 	"Canpourin": [[], [], ["item"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params pour) (step ))" + 
-                                "(task (plan user_speech) (action_type get_object) (params -Pourable- default_loaction) (step )) " +
-                                "(task (plan user_speech) (action_type put_into_object) (params -Canpourin- default_location -Pourable-))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type pourin_object) (param -Pourable- -Canpourin- nil) (step )) ",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

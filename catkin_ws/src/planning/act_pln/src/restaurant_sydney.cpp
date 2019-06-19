@@ -304,10 +304,10 @@ int main(int argc, char** argv)
                 JustinaHRI::enableSpeechRecognized(false);
                 if(validateFood){
                     //JustinaHRI::waitAfterSay("Do you want a food, say justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("You want something to eat, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Do you want some food, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }else{
                     //JustinaHRI::waitAfterSay("Do you want a beverage, please tell me justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("You want something to drink, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Do you want some drink, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_TYPE_ORDER_CONFIRM;
@@ -357,11 +357,8 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_TAKE_ORDER;
                         }
-                        // TODO REY COMMENT THIS
-                        /*if(validateFood)
-                            validateFood = false;
-                        else
-                            validateFood = true;*/
+                        if(!validateFood)
+                            validateFood = true;
                     }
                 }
                 else {
@@ -409,6 +406,17 @@ int main(int argc, char** argv)
                                 obj1C = ss2.str();
                                 // TODO REVIEW REY COMMENT
                                 //isFood = false;
+                            }else if(typeOrder.compare("take_order_combo") == 0){
+                                tokens.clear();
+                                boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
+                                ss2.str("");
+                                for(int i = 0; i < tokens.size(); i++){
+                                    ss << tokens[i] << " ";
+                                    ss2 << tokens[i];
+                                    if(i < tokens.size() -1)
+                                        ss2 << " ";
+                                }
+                                obj1C = ss2.str();
                             }
                             ss << ", say justina yes or justina no";
                             if(isFood)
@@ -542,12 +550,12 @@ int main(int argc, char** argv)
                             nextState = SM_SAY_TYPE_ORDER;
                         }
                     }
-                }
-                else{
-                    JustinaHRI::enableSpeechRecognized(false);
-                    JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                    findGestureOrAttendOrder = false;
-                    nextState = SM_RETURN_BAR;
+                    else{
+                        JustinaHRI::enableSpeechRecognized(false);
+                        JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                        findGestureOrAttendOrder = false;
+                        nextState = SM_RETURN_BAR;
+                    }
                 }
                 break;
 

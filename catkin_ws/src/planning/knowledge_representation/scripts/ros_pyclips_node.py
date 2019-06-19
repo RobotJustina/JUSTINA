@@ -674,6 +674,13 @@ def retrieve_object(cmd):
     pubCmdRetrieveObj.publish(request)
     return cmd._id
 
+def interact_with_door(cmd):
+    global pubCmdInteractDoor 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdInteractDoor.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -740,7 +747,8 @@ fmap = {
     'pourin_obj': pourin_obj,
     'storage_obj': storage_obj,
     'obj_desc': obj_desc,
-    'retrieve_object': retrieve_object
+    'retrieve_object': retrieve_object,
+    'interact_with_door': interact_with_door
 }
 
 def quit():
@@ -757,7 +765,7 @@ def main():
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp, pubCmdTakeOutGarbage  
-    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj, pubCmdObjDesc, pubCmdRetrieveObj 
+    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj, pubCmdObjDesc, pubCmdRetrieveObj, pubCmdInteractDoor  
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -845,6 +853,7 @@ def main():
     pubCmdStorageObj = rospy.Publisher('/planning_clips/storage_obj', PlanningCmdClips, queue_size=1)
     pubCmdObjDesc = rospy.Publisher('/planning_clips/obj_desc', PlanningCmdClips, queue_size=1)
     pubCmdRetrieveObj = rospy.Publisher('/planning_clips/retrieve_object', PlanningCmdClips, queue_size=1)
+    pubCmdInteractDoor = rospy.Publisher('/planning_clips/interact_with_door', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
