@@ -2448,9 +2448,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Action_place": [["place", "set", "put", "leave"], [], [], []],
 	"Tableware": [[], [], ["item"], []],
 	"Place": [[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type ask_for_help) (params tableware))" +
-                                "(task (plan user_speech) (action_type get_special_object) (params -Tableware-) (step ))" + 
-                                "(task (plan user_speech) (action_type deliver_in_position) (params -Place-) (step )) ",
+	"conceptual_dependency":"(task (plan user_speech) (action_type set_tableware) (params -Tableware- -Place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2459,8 +2457,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Cutlery": [[], [], ["item"], []],
 	"On": [["on"], [], [], []],
 	"Pos": [["it", "right", "left"], [], [], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type get_object) (params -Cutlery- default_loaction))" +
-                                "(task (plan user_speech) (action_type serve_cutlery) (params -Cutlery- tableware_place -Pos- ) (step )) ",
+	"conceptual_dependency":"(task (plan user_speech) (action_type set_cutlery) (params -Cutlery- -Pos-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

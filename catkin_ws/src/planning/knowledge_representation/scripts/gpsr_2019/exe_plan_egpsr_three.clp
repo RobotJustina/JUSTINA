@@ -215,3 +215,54 @@
 	(modify ?f1 (status accomplished)) ;performance for IROS
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-set_tableware 
+	(plan (name ?name) (number ?num-pln) (status active) (actions set_tableware ?tableware ?place)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?tableware " " ?place ""))
+	(assert (send-blackboard ACT-PLN set_tableware ?command ?t 4))
+)
+
+(defrule exe-plan-seted-tableware 
+        ?f <-  (received ?sender command set_tableware ?tableware ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_tableware $?params))
+	?f2 <- (item (name ?tableware))
+	?f3 <- (item (name ?place))
+        =>
+        (retract ?f)
+	(modify ?f2 (status set_tableware))
+	(modify ?f3 (status set_tableware))
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-seted-tableware 
+        ?f <-  (received ?sender command set_tableware ?tableware ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_tableware $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-set_cutlery 
+	(plan (name ?name) (number ?num-pln) (status active) (actions set_cutlery ?cutlery ?pos ?tableware ?place)(duration ?t))
+	?f <- (item (name ?name) (zone ?zone))
+	=>
+	(bind ?command (str-cat "" ?cutlery " " ?zone " " ?pos " " ?tableware " " ?place ""))
+	(assert (send-blackboard ACT-PLN set_cutlery ?command ?t 4))
+)
+
+(defrule exe-plan-seted-cutlery 
+        ?f <-  (received ?sender command set_cutlery ?cutlery ?zone ?pos ?tableware ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_cutlery $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-seted-cutlery 
+        ?f <-  (received ?sender command set_cutlery ?cutlery ?zone ?pos ?tableware ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_cutlery $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
