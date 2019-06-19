@@ -5524,9 +5524,11 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             }
             if (typeCutlery != 3) {
                 if (!JustinaVision::isStillOnTable(objects.ObjectList.at(0))) {
-                    //JustinaNavigation::moveDist(-0.35, 3000);
-                    std::cout << "The object was grasp with the left arm in the first test" << std::endl;
-                    return true;
+                    if(!JustinaVision::isStillOnTable(objects.ObjectList.at(0))){
+                        //JustinaNavigation::moveDist(-0.35, 3000);
+                        std::cout << "The object was grasp with the left arm in the first test" << std::endl;
+                        return true;
+                    }
                 }
             } else {
                 for (int i = 0; i < 3; i++) {
