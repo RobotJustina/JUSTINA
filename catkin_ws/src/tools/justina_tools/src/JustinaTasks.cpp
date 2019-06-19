@@ -3255,30 +3255,22 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         {
             JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 2000);
             JustinaManip::laGoTo("put_storing_L1_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L1_P2", 3000);
         }
         else if(level == 2)
         {
             JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
             JustinaManip::laGoTo("put_storing_L2_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L2_P2", 3000);
         }
         else if(level == 3)
         {
             JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 4000);
             JustinaManip::laGoTo("put_storing_L3_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::laGoTo("put_storing_L3_P2", 3000);
+            JustinaManip::laGoTo("put_storing_L3_P3", 3000);
         }
-        else if(level == 4)
-        {
-            JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 8000);
-            JustinaManip::laGoTo("put_storing_L4_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
-            JustinaManip::laGoTo("put_storing_L4_P2", 3000);
-        }
+        
         JustinaTasks::alignWithTable(0.35);
         JustinaManip::startLaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
@@ -3292,30 +3284,22 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         {
             JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 2000);
             JustinaManip::raGoTo("put_storing_L1_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L1_P2", 3000);
         }
         else if(level == 2)
         {
             JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
             JustinaManip::raGoTo("put_storing_L2_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L2_P2", 3000);
         }
         else if(level == 3)
         {
             JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 4000);
             JustinaManip::raGoTo("put_storing_L3_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
             JustinaManip::raGoTo("put_storing_L3_P2", 3000);
+            JustinaManip::raGoTo("put_storing_L3_P3", 3000);
         }
-        else if(level == 4)
-        {
-            JustinaManip::torsoGoTo(0.3, 0.0, 0.0, 8000);
-            JustinaManip::raGoTo("put_storing_L4_P1", 3000);
-//            JustinaNavigation::moveDist(0.2, 2500);
-            JustinaManip::raGoTo("put_storing_L4_P2", 3000);
-        }
+
         JustinaTasks::alignWithTable(0.35);
         JustinaManip::startRaOpenGripper(0.7);
         ros::Duration(0.6).sleep();

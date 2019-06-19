@@ -217,7 +217,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-    nextState = 71;
+//    nextState = 71;
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -1021,7 +1021,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "---------------------------SM_WAIT_FOR_COMMAND-------------------------"<< std::endl; 
 					
-					objectGrasped[0] = true;
+/*					objectGrasped[0] = true;
 					objectGrasped[1] = true; 
 					objectGraspedCat[0] = "drinks";
 					objectGraspedCat[1] = "snacks";	//*/				
@@ -1065,128 +1065,21 @@ int main(int argc, char** argv)
 	                        }
 	                    }
 	                    else
-							nextState = SM_SIMUL;
+							nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
                     else
                     {
-                    	if(arm++ >1 )
+                        arm++;
+                    	if(arm > 1)
                     	{
                     		arm = 0;
-                    		nextState = SM_SIMUL;
+                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     	}
                     }
                 }
                 break;
             case SM_PARSE_SPOKEN_COMMAND:
                 {      
-/*                    if(lastRecoSpeech.find("level one") != std::string::npos)
-                    {
-                        level_in_[arm] = 1;                        
-                      
-                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm];               
-                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm] << std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 7000);
-                        if(categories.size() != 0)
-                        {    
-
-                            for(int i=0; i < categories.size() ; i++)
-                            {
-                                if(objectGraspedCat[arm] != categories[i])
-                                {
-                                    categories.push_back(objectGraspedCat[arm]);
-                                    level.push_back(level_in_[arm]);
-                                }
-
-                            } 
-                        }
-                        else
-                        {
-                            categories.push_back(objectGraspedCat[arm]);
-                            level.push_back(level_in_[arm]);
-                        }
-                        //categories.push_back(objectGraspedCat[arm]);
-                        //level.push_back(level_in_[arm]);
-                        std::cout<<"arm-----------------------> " <<arm<<std::endl;
-                        if(arm++ < 2)
-                            nextState = SM_WAIT_FOR_COMMAND;
-                        else
-                        {
-                            arm = 0;
-                            nextState = SM_SIMUL;
-                        }
-                    }
-                    else if(lastRecoSpeech.find("level two") != std::string::npos)
-                    {
-                        level_in_[arm] = 2;
-  
-                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm];               
-                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm] << std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
-                        if(categories.size() != 0)
-                        {    
-
-                            for(int i=0; i < categories.size() ; i++)
-                            {
-                                if(objectGraspedCat[arm] != categories[i])
-                                {
-                                    categories.push_back(objectGraspedCat[arm]);
-                                    level.push_back(level_in_[arm]);
-                                }
-
-                            } 
-                        }
-                        else
-                        {
-                            categories.push_back(objectGraspedCat[arm]);
-                            level.push_back(level_in_[arm]);
-                        }
-                        //categories.push_back(objectGraspedCat[arm]);
-                        //level.push_back(level_in_[arm]);
-                        std::cout<<"arm-----------------------> " <<arm<<std::endl;
-                        if(arm++ < 2)
-                            nextState = SM_WAIT_FOR_COMMAND;
-                        else
-                        {
-                            arm = 0;
-                            nextState = SM_SIMUL;
-                        }
-                    }
-                    else if(lastRecoSpeech.find("level three") != std::string::npos)
-                    {
-                        level_in_[arm] = 3;                        
- 
-                        justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm];               
-                        std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm] << std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600); 
-                        if(categories.size() != 0)
-                        {    
-
-                            for(int i=0; i < categories.size() ; i++)
-                            {
-                                if(objectGraspedCat[arm] != categories[i])
-                                {
-                                    categories.push_back(objectGraspedCat[arm]);
-                                    level.push_back(level_in_[arm]);
-                                }
-
-                            } 
-                        }
-                        else
-                        {
-                            categories.push_back(objectGraspedCat[arm]);
-                            level.push_back(level_in_[arm]);
-                        }
-                        //categories.push_back(objectGraspedCat[arm]);
-                        //level.push_back(level_in_[arm]);
-                        std::cout<<"arm-----------------------> " <<arm<<std::endl;
-                        if(arm++ < 2)
-                            nextState = SM_WAIT_FOR_COMMAND;
-                        else
-                        {
-                            arm = 0;
-                            nextState = SM_SIMUL;
-                        }
-                    }//*/
                     std::cout << stateMachine << "SM_PARSE_SPOKEN_COMMAND" << std::endl;
                     
                     justinaSay.str("");       
@@ -1210,35 +1103,20 @@ int main(int argc, char** argv)
                     categories.push_back(objectGraspedCat[arm]);
                     level.push_back(level_in_[arm]);
                     
-                    /*if(categories.size() != 0)
-                    {    
-
-                        for(int i=0; i < categories.size() ; i++)
-                        {
-                            if(objectGraspedCat[arm] != categories[i])
-                            {
-                                categories.push_back(objectGraspedCat[arm]);
-                                level.push_back(level_in_[arm]);
-                            }
-                        } 
+                    //std::cout<<"arm-----------------------> " <<arm<<std::endl;
+                    arm++;
+                    if(arm <= 1){
+                        nextState = SM_WAIT_FOR_COMMAND;
                     }
                     else
                     {
-                        categories.push_back(objectGraspedCat[arm]);
-                        level.push_back(level_in_[arm]);
-                    }///*/
-                    std::cout<<"arm-----------------------> " <<arm<<std::endl;
-                    if(arm++ <= 1)
-                        nextState = SM_WAIT_FOR_COMMAND;
-                    else
-                    {
                         arm = 0;
-                        nextState = SM_SIMUL;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
             }                
             break;
             
-            case SM_SIMUL:
+/*            case SM_SIMUL:
             {
 
                 for(int i=0; i < categories.size(); i++)
