@@ -70,15 +70,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 (defrule exe-plan-task-pourin-obj 
-	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?canpourin)(duration ?t))
+	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?pourable ?canpourin ?person)(duration ?t))
 	;(item (type Property) (name ?oprop))
 	=>
-	(bind ?command (str-cat "" ?canpourin ""))
+	(bind ?command (str-cat "" ?pourable " " ?canpourin " " ?person ""))
 	(assert (send-blackboard ACT-PLN pourin_obj ?command ?t 4))
 )
 
 (defrule exe-plan-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 1)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 1)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)
@@ -86,7 +86,7 @@
 )
 
 (defrule exe-plan-no-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 0)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 0)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)

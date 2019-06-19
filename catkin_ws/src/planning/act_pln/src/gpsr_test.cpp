@@ -121,9 +121,11 @@ void switchSpeechReco(int grammar_id, std::string speech){
     else{
         //use speech recognition of microsoft
         //JustinaHRI::usePocketSphinx = false;
+        JustinaHRI::enableSpeechRecognized(false);
         JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
         if(speech != "")
             JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
     }
 }
 
@@ -4038,16 +4040,16 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
         //ask object name
         //JustinaHRI::waitAfterSay("I can not recognize the object", 10000);
         help =false;
-        while(!help && count < 5){
+        while(!help && count < 5 && tokens[0] == "nil"){
             ss.str("");
-            ss << "Tell me what you want I pourin in the " << tokens[0];
+            ss << "Tell me what you want I pourin in the " << tokens[1];
             switchSpeechReco(11, ss.str());
             JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
             if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
                 if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
                     std::cout << "last int: " << obj_name << std::endl;
                     ss.str("");
-                    ss << "You want I pourin the " << obj_name << " into the " << tokens[0];
+                    ss << "You want I pourin the " << obj_name << " into the " << tokens[1];
                     JustinaHRI::waitAfterSay(ss.str(), 10000);
                     switchSpeechReco(0, "say justina yes or justina no");
                     JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -4059,11 +4061,15 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
                 count++;
             }
         }
+        if(tokens[0] != "nil"){
+            obj_name = tokens[0];
+            help = true;
+        }
         if(help){
             to_speech = obj_name;
             boost::replace_all(to_speech, "_", " ");
             ss.str("");
-            ss << "Ok, go for the  " << to_speech;
+            ss << "Ok, go for the " << to_speech;
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
             //get default location
@@ -4117,12 +4123,12 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
             }
             
             ss.str("");
-            ss << "Now go for the  " << tokens[0];
+            ss << "Now go for the  " << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
             //get default location
             ss.str("");
-            ss << "(assert (get_obj_default_loc " << tokens[0] << " 1))";
+            ss << "(assert (get_obj_default_loc " << tokens[1] << " 1))";
             JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
 
             //guide to the bin
@@ -4133,10 +4139,10 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             
             ss.str("");
-            ss << "Here we can take the " << tokens[0] << ", but I need your help";
+            ss << "Here we can take the " << tokens[1] << ", but I need your help";
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             ss.str("");
-            ss << "I can not pour the " << to_speech << " into the" << tokens[0];
+            ss << "I can not pour the " << to_speech << " into the" << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             ss.str("");
             ss << "I will give you the " << to_speech;
@@ -4144,10 +4150,9 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             JustinaTasks::dropObject(obj_name, armFlag, 30000);
             ss.str("");
-            ss << "Please pour the " << to_speech << " into the" << tokens[0];
+            ss << "Please pour the " << to_speech << " into the" << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
-            JustinaHRI::waitAfterSay("Enjoy", 100000);
             JustinaHRI::waitAfterSay("If you are ready we can continue", 100000);
 
             help = false;
@@ -4163,8 +4168,27 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
                          help = true;
                      count++;
             }
+
+            if(tokens[2] == "me"){
+                
+                ss.str("");
+                ss << "Ok take the " << tokens[1] << ", I am going to guide you back";
+                JustinaHRI::waitAfterSay(ss.str(), 100000);
+                //guide to the bin
+                JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+                JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                
+
+                JustinaHRI::waitAfterSay("Thanks for your help, Enjoy it", 100000);
             
-            JustinaHRI::waitAfterSay("I will return to the initial point, Thanks for your help ", 100000);
+            }
+            else{
+                JustinaHRI::waitAfterSay("I will return to the initial point, Thanks for your help ", 100000);
+            }
+            
 
         }
         else{
