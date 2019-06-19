@@ -21,7 +21,7 @@
 )
 
 (defrule task_pourin_object
-	?f <- (task ?plan pourin_object ?canpourin ?step)
+	?f <- (task ?plan pourin_object ?pourable ?canpourin ?person ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name ?canpourin))
 	;;;(item (type Category) (name ?category))
@@ -30,7 +30,7 @@
 	(printout t "Get something that can pourin ")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_pourin)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task ppourin_obj ?canpourin ?step))
+	(assert (task ppourin_obj ?pourable ?canpourin ?person ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 )
@@ -137,11 +137,11 @@
 )
 
 (defrule plan_canpourin_object
-	?goal <- (objetive pourin_obj ?name ?canpourin ?step)
+	?goal <- (objetive pourin_obj ?name ?pourable ?canpourin ?person ?step)
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Something that can pouring" crlf)
-	(assert (plan (name ?name) (number 1) (actions pourin_object ?canpourin)(duration 6000)))
+	(assert (plan (name ?name) (number 1) (actions pourin_object ?pourable ?canpourin ?person)(duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_pourin)(duration 6000)))
 	(assert (finish-planner ?name 2))
 
@@ -229,10 +229,10 @@
 	(state (name ?name) (number ?step) (status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task ppourin_obj ?canpourin ?step)
+	?f1 <- (task ppourin_obj ?pourable ?canpourin ?person ?step)
 	=>
 	(retract ?f1)
-	(assert (objetive pourin_obj task_pourin_obj ?canpourin ?step))
+	(assert (objetive pourin_obj task_pourin_obj ?pourable ?canpourin ?person ?step))
 )
 
 (defrule exe_scheduled-storage-object 
