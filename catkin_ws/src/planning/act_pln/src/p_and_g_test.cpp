@@ -197,10 +197,12 @@ int main(int argc, char** argv)
       				}
       				else{
       					std::cout << "P & G Test...-> trying to detect the objects" << std::endl;
-      					JustinaHRI::say("I am looking for an object on the table");
+      					JustinaHRI::say("I am looking for objects on the table");
         				ros::Duration(2.0).sleep();
       					if(!JustinaVision::getObjectSeg(my_cutlery)){
       						if(!JustinaVision::getObjectSeg(my_cutlery)){
+								JustinaHRI::say("I can not see any object on the table");
+        						ros::Duration(2.0).sleep();
       							std::cout << "P & G Test...-> Can not detect any object" << std::endl;
       							nextState = SM_InspectTheObjetcs;
       						}
@@ -222,7 +224,7 @@ int main(int argc, char** argv)
                 					pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
                 					id_cutlery = my_cutlery.ObjectList[i].id;
                 					type = my_cutlery.ObjectList[i].type_object;
-                					JustinaHRI::say("I've found an object on the table");
+                					JustinaHRI::say("I have found an object on the table");
         							ros::Duration(2.0).sleep();
                 					nextState = SM_TakeObject;
                 					break;
@@ -260,17 +262,20 @@ int main(int argc, char** argv)
       			
 
 				if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
-      				std::cout << "P & G Test...-> cannot take the object" << std::endl;
+      				JustinaHRI::say("I can not grasp the object");
+        			ros::Duration(2.0).sleep();
+					std::cout << "P & G Test...-> cannot take the object" << std::endl;
       				std::cout << "P & G Test...-> trying again" << std::endl;
 				}
 				else{
-					contObj ++;
+					
 					if(!withLeft && contObj != 4)
 						withLeft=true;
 					else
 						withLeft=false;
 
 					objTaken ++;
+					contObj ++;
 				}
 
 				if(contObj == 5){
@@ -295,6 +300,7 @@ int main(int argc, char** argv)
       		break;
 
       		case SM_NAVIGATE_TO_THE_DISHWASHER:
+			  	JustinaNavigation::moveDist(-0.35, 3000);
 			  	JustinaManip::startTorsoGoTo(0.1, 0, 0);
 				JustinaManip::waitForTorsoGoalReached(0.5);
 
