@@ -9,13 +9,13 @@ import sys
 import Dynamixel
 import time
 
-PORT = "/dev/justinaObjTrainBase"
-#PORT = "/dev/ttyUSB0"
+#PORT = "/dev/justinaObjTrainBase"
+PORT = "/dev/ttyUSB0"
 BAUDRATE = 1000000
 DELAY_SAFE_DATA = 0.2
 DELAY_FOR_MOVE = 2
 MAX_ENCODER = 4096
-BASE_MOTOR_SPEED = 60
+BASE_MOTOR_SPEED = 10
 MOTOR_ID = 1
 INC_POS = 400
 TEST_POSE1 = 1000
@@ -24,6 +24,7 @@ TEST_POSE2 = 0
 
 
 class Base:
+	positive = True
 	def __init__(self):
 		self.motor = Dynamixel.DynamixelMan(PORT,BAUDRATE)
 		time.sleep(DELAY_SAFE_DATA)
@@ -33,7 +34,13 @@ class Base:
 		time.sleep(DELAY_SAFE_DATA)
 		actualPos = self.motor.GetPresentPosition(MOTOR_ID)
 		time.sleep(DELAY_SAFE_DATA)
-		self.motor.SetGoalPosition( MOTOR_ID, (actualPos + INC_POS) % MAX_ENCODER )
+		if self.positive:
+			self.motor.SetGoalPosition( MOTOR_ID, 4086 )
+			self.positive = False
+		else:
+			self.motor.SetGoalPosition( MOTOR_ID, 10 )
+			self.positive = True
+
 		time.sleep(DELAY_FOR_MOVE)
 
 	def test_motor_base (self):
