@@ -17,7 +17,6 @@
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
-			<param name="enable_torque" value="$(arg enable_torque)"/>
 		</node>
 		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="false">
 			<param name="port" value="/dev/justinaLeftArm"/>
