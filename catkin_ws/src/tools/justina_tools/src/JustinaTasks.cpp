@@ -5409,7 +5409,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             case 3:
                 objToGraspX = objects.ObjectList.at(0).minPoint.x - 0.04;
                 objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ = objects.ObjectList.at(0).pose.position.z + 0.017;
+                objToGraspZ = objects.ObjectList.at(0).pose.position.z + 0.3;
                 break;
             default:
                 break;
@@ -5459,11 +5459,11 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
         }
 
         //Move the manipulator to objectOB
-        if (typeCutlery == 1 || typeCutlery == 2 || typeCutlery == 0) {
+        if (typeCutlery == 1 || typeCutlery == 2 || typeCutlery == 0 || typeCutlery == 3) {
             JustinaManip::startLaOpenGripper(0.3);
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);
-            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);
+            JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
             if(missingZ > 0.01){
             	for (int i = maxIteration - 1; i > 0; i--) {
             		float deltaObjToGraspX = objToGraspX + dz / i;
