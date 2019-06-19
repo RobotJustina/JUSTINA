@@ -99,7 +99,22 @@
 	(assert (task pretrieve_obj ?category ?place ?sp ?step))
 	(modify ?f1 (status nil))
 )
+
+(defrule task_interact_with_door
+	?f <- (task ?plan interact_with_door ?door ?place ?action ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Open or close some door ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_close_or_open)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pinteract_with_door ?door ?place ?action ?step))
+	(modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;
+;:;;;;;;;;;;;;;;;;;
+
 (defrule plan_get_rpose_object
 	?goal <- (objetive get_rpose_obj ?name ?place ?rpose ?category ?step)
 	=>
@@ -188,6 +203,17 @@
 	(assert (finish-planner ?name 2))
 
 )
+
+(defrule plan_interact_with_door
+	?goal <- (objetive interact_with_door ?name ?door ?place ?action ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions interact_with_door ?door ?place ?action)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_close_or_open)(duration 6000)))
+	(assert (finish-planner ?name 2))
+
+)
 ;;;;;;;;;;;;;;;;;;
 (defrule exe_scheduled-get-rpose-object 
 	(state (name ?name) (number ?step) (status active)(duration ?time))
@@ -257,5 +283,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive retrieve_object task_retrieve_object ?cat ?place ?sp ?step))
+)
+
+(defrule exe_scheduled-interact-with-door 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pinteract_with_door ?door ?place ?action ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive interact_with_door task_interact_with_door ?door ?place ?action ?step))
 )
 ;;;;;;;;;;;;;;;;;;;
