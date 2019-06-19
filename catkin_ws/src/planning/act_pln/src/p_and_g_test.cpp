@@ -342,6 +342,7 @@ int main(int argc, char** argv)
 				//JustinaHRI::say("I am going to deliver the objects");
 				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72)){
       				std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+					JustinaNavigation::moveDist(0.1, 3000);  
 					nextState = SM_DeliverObject;
 					break;
 				}
@@ -389,6 +390,7 @@ int main(int argc, char** argv)
 			case SM_FinalState:
 				std::cout <<"P & G Test...->finalState reached" << std::endl;
 				JustinaHRI::say("I have finished the procter & Gamble challenge");
+				std::cout <<"total objetos: " << contObj << std::endl; 
 				ros::Duration(2.0).sleep();
 				success=true;
 			break;
