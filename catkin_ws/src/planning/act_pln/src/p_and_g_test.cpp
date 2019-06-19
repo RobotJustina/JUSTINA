@@ -182,7 +182,7 @@ int main(int argc, char** argv)
 				if((objTaken == 1 && attempts >3) || (objTaken==3 && attempts >3)){
 					JustinaHRI::say("Sorry I could not grasp another object now");
         			ros::Duration(2.0).sleep();
-					//chances ++;
+					
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
 					cont ++;
 					break;
@@ -332,33 +332,14 @@ int main(int argc, char** argv)
 					ros::Duration(0.5).sleep();
 				}
 
-      			/*if(withLeft){
-      				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::laGoTo("home", 6000);
-      				withLeft=false;
-      				objTaken --;
-      			}
-      			else{
-      				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::raGoTo("home", 6000);
-      				withLeft=true;
-      				objTaken --;
-      			}*/
+      			
 				//JustinaHRI::say("I am going to deliver the objects");
 				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72)){
-					if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      				std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
 					nextState = SM_DeliverObject;
 					break;
 				}
-				//else
-				//	chances++;
+				
 
       			if(contObj == 5){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;

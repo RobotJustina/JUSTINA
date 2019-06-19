@@ -304,10 +304,10 @@ int main(int argc, char** argv)
                 JustinaHRI::enableSpeechRecognized(false);
                 if(validateFood){
                     //JustinaHRI::waitAfterSay("Do you want a food, say justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("You want something to eat, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Do you want something to eat, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }else{
                     //JustinaHRI::waitAfterSay("Do you want a beverage, please tell me justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("You want something to drink, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Do you want something to drink, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_TYPE_ORDER_CONFIRM;
@@ -357,11 +357,8 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_TAKE_ORDER;
                         }
-                        // TODO REY COMMENT THIS
-                        /*if(validateFood)
-                            validateFood = false;
-                        else
-                            validateFood = true;*/
+                        if(!validateFood)
+                            validateFood = true;
                     }
                 }
                 else {
