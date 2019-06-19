@@ -1080,7 +1080,7 @@ int main(int argc, char** argv)
                       
                         justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm];               
                         std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm] << std::endl;
-                        JustinaHRI::waitAfterSay(justinaSay.str(), 600);
+                        JustinaHRI::waitAfterSay(justinaSay.str(), 7000);
                         if(categories.size() != 0)
                         {    
 
