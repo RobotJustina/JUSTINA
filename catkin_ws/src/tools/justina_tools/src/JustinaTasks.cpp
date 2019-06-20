@@ -5393,7 +5393,8 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             case 3:
                 objToGraspX = objects.ObjectList.at(0).minPoint.x - 0.04;
                 objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ = objects.ObjectList.at(0).pose.position.z + 0.3;
+                objToGraspZ = objects.ObjectList.at(0).pose.position.z + 0.08;
+                //dz = minTorso;
                 break;
             default:
                 break;
@@ -5443,7 +5444,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
         }
 
         //Move the manipulator to objectOB
-        if (typeCutlery == 1 || typeCutlery == 2 || typeCutlery == 0 || typeCutlery == 3) {
+        if (typeCutlery == 1 || typeCutlery == 2 || typeCutlery == 0) {
             JustinaManip::startLaOpenGripper(0.3);
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);
