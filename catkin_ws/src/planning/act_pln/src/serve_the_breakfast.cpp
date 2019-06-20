@@ -532,11 +532,11 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             case 1:
                 objToGraspX = objects.ObjectList.at(0).pose.position.x;
                 if (withLeftArm)
-                    objToGraspY = objects.ObjectList.at(0).maxPoint.y;
+                    objToGraspY = objects.ObjectList.at(0).pose.position.y;//maxPoint.y;
                 else
-                    objToGraspY = objects.ObjectList.at(0).minPoint.y;
+                    objToGraspY = objects.ObjectList.at(0).pose.position.y;//minPoint.y;
 
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.03;
+                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.04;
                 dz = minTorso;
                 break;
             default:
@@ -585,7 +585,33 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         if ( typeCutlery == 0) 
         {
             //stuff
-            std::vector<float> currPose;
+            std::vector<float> articular;            
+            
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+                JustinaManip::startLaGoToArticular(articular);
+            else
+                std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
+            
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            JustinaManip::startLaOpenGripper(0.8);
+
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(1500);
+                JustinaManip::startLaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
+
+            articular.clear();
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.00, objToGraspY - 0.0, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(1500);
+                JustinaManip::startLaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            }
+            JustinaManip::waitForLaGoalReached(1500);
+
+
+            /*std::vector<float> currPose;
             JustinaManip::getLaCurrentPos(currPose);
             if (currPose.size() == 7) {
                 currPose[3] -= 0.06;
@@ -596,35 +622,35 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaManip::startLaOpenGripper(-0.1);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));    
+            */
         }
         else if (typeCutlery == 1 ) 
         {
-            JustinaManip::startLaOpenGripper(0.8);
             
             std::vector<float> articular;            
+            
             if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
                 JustinaManip::startLaGoToArticular(articular);
             else
                 std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
             
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-
             JustinaManip::startLaOpenGripper(0.8);
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(2500);
+                JustinaManip::waitForLaGoalReached(1500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
 
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(2500);
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.00, objToGraspY - 0.0, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(1500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
-            JustinaManip::waitForLaGoalReached(2500);
+            JustinaManip::waitForLaGoalReached(1500);
 
             /*for(int i = 20; i >= 0; i-=10)
                 JustinaManip::laGoToCartesian( objToGraspX-.10-float(i)/100.0, objToGraspY-.15-float(i)/100.0, objToGraspZ,1000);
@@ -710,18 +736,18 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(2500);
+                JustinaManip::waitForLaGoalReached(1500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
 
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(2500);
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.0, objToGraspY - 0.0, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(1500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
-            JustinaManip::waitForLaGoalReached(2500);
+            JustinaManip::waitForLaGoalReached(1500);
 
 
             /*
