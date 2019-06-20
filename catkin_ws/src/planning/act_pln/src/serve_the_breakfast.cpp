@@ -536,7 +536,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 else
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;//minPoint.y;
 
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.04;
+                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.08;
                 dz = minTorso;
                 break;
             default:
@@ -597,14 +597,14 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(1500);
+                JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.00, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(1500);
+                JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
@@ -638,19 +638,19 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             JustinaManip::startLaOpenGripper(0.8);
 
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(1500);
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.04, objToGraspY - 0.15, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
 
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.00, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(1500);
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.04, objToGraspY + 0.1, objToGraspZ, articular)){
+                JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
-            JustinaManip::waitForLaGoalReached(1500);
+            JustinaManip::waitForLaGoalReached(2500);
 
             /*for(int i = 20; i >= 0; i-=10)
                 JustinaManip::laGoToCartesian( objToGraspX-.10-float(i)/100.0, objToGraspY-.15-float(i)/100.0, objToGraspZ,1000);
