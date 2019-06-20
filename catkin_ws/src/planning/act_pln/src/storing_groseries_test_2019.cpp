@@ -470,7 +470,7 @@ int main(int argc, char** argv)
                         else{
                             std::cout << "I  can't detect anything" << std::endl;
                             attempsFindObjectsTable++;
-                            nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            nextState = SM_FINISH_TEST;
                         }
                     }else{
                         // std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
@@ -1165,6 +1165,14 @@ int main(int argc, char** argv)
 
             }    
             break;//----------------------//*/
+            case SM_FINISH_TEST:
+            {
+                std::cout << stateMachine << "SM_FINISH_TEST.-> I have finish the test" << std::endl;
+                JustinaHRI::say("I have finished the test");
+                fail = false;
+                success = true;
+            }
+            break;
             default:{
                     fail = true;
                     success = true;

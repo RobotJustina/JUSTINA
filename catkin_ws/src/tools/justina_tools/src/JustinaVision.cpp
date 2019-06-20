@@ -615,7 +615,7 @@ bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& 
     if(!cltDetectAllObjectsVot.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
-        return -1;
+        return false;
     }
     recoObjList = srv.response.recog_objects;
     image = srv.response.image;
