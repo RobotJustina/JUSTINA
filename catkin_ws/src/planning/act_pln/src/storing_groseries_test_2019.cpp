@@ -217,7 +217,13 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
-//    nextState = 71;
+
+/*    nextState = 71;				
+	objectGrasped[0] = true;
+	objectGrasped[1] = true; 
+	objectGraspedCat[0] = "drinks";
+	objectGraspedCat[1] = "snacks";	//*/
+
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -1019,12 +1025,7 @@ int main(int argc, char** argv)
             
             case SM_WAIT_FOR_COMMAND: 
                 {
-                    std::cout << stateMachine << "---------------------------SM_WAIT_FOR_COMMAND-------------------------"<< std::endl; 
-					
-/*					objectGrasped[0] = true;
-					objectGrasped[1] = true; 
-					objectGraspedCat[0] = "drinks";
-					objectGraspedCat[1] = "snacks";	//*/				
+                    std::cout << stateMachine << "---------------------------SM_WAIT_FOR_COMMAND-------------------------"<< std::endl; 				
 
                     if(objectGrasped[arm])
                     {   
@@ -1045,7 +1046,7 @@ int main(int argc, char** argv)
 	                    			break;
 	                    		}
 	                    	} 
-	                    }		
+	                    }//From else (categories.size != 0)		
                     	if(ask)
                     	{
 	                        justinaSay.str("");
@@ -1065,15 +1066,24 @@ int main(int argc, char** argv)
 	                        }
 	                    }
 	                    else
-							nextState = SM_PUT_OBJECT_ON_CUPBOARD;
-                    }
+	                    {
+	                        arm++;
+	                    	if(arm > 1)
+	                    	{
+	                    		arm = 0;
+	                    		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+	                    		nextState = SM_SIMUL;
+	                    	}
+                        }
+                    }//From if (objectGrasped[arm])
                     else
                     {
                         arm++;
                     	if(arm > 1)
                     	{
                     		arm = 0;
-                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    		nextState = SM_SIMUL;
                     	}
                     }
                 }
@@ -1111,7 +1121,8 @@ int main(int argc, char** argv)
                     else
                     {
                         arm = 0;
-                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        //nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_SIMUL;
                     }
             }                
             break;
@@ -1122,6 +1133,8 @@ int main(int argc, char** argv)
                 for(int i=0; i < categories.size(); i++)
                     std::cout<< categories[i]<<" in the level -> "<<level[i]<<std::endl;
                 
+		        JustinaNavigation::moveDist(1.1, 2500);
+
                 for(int i=0; i < categories.size(); i++) //----------------
                 {
                     if(categories[i] == objectGraspedCat[0])
@@ -1133,13 +1146,28 @@ int main(int argc, char** argv)
                         JustinaTasks::placeObjectOnShelfHC(1,level[i]);
                     }
                 }
+
+				objectGrasped[0] = true;
+				objectGrasped[1] = true; 
+				objectGraspedCat[0] = "food";
+				objectGraspedCat[1] = "fruits";
+				//food
+				//fruits
+				//containers
+				//cuterly
+				//tableware
+				//cleaning stuff	
+		        JustinaNavigation::moveDist(-1.1, 2500);
+
+				nextState = SM_WAIT_FOR_COMMAND;
+
             }    
             break;//----------------------//*/
             default:{
                     fail = true;
                     success = true;
-                }
-                break;
+            }
+            break;
         }
         ros::spinOnce();
         loop.sleep();

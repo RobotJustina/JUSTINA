@@ -36,7 +36,6 @@ int main(int argc, char** argv)
     JustinaVision::setNodeHandle(&n);
     ros::Rate loop(10);
 
-    ros::Publisher pubTorsoPose = n.advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_pose",1);
 
     int nextState = 0;
     bool fail = false;
@@ -48,18 +47,14 @@ int main(int argc, char** argv)
     validCommands.push_back("robot no");
     validCommands.push_back("robot stop");
     validCommands.push_back("move your head");
-    
-    std_msgs::Float32MultiArray torso_pose_msg;
-    torso_pose_msg.data.resize(3);
-    torso_pose_msg.data[0] = 0.1; 
-    pubTorsoPose.publish(torso_pose_msg);
 
     JustinaHRI::setInputDevice(JustinaHRI::USB);
     JustinaHRI::setOutputDevice(JustinaHRI::USB);
     JustinaHRI::setVolumenInputDevice(JustinaHRI::USB, 65000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 50000);
+    JustinaManip::startTorsoGoTo(0.1, 0, 0);
 
-    ros::spinOnce();
+
     while(ros::ok() && !fail && !success)
     {
         switch(nextState)
