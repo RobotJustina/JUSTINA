@@ -169,9 +169,9 @@ int main(int argc, char** argv)
 
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
-    validCommands.push_back("level one");
-    validCommands.push_back("level two");
-    validCommands.push_back("level three");
+    validCommands.push_back("first");
+    validCommands.push_back("second");
+    validCommands.push_back("third");
 
     int arm = 0;
     int level_in_[2];
@@ -1052,8 +1052,8 @@ int main(int argc, char** argv)
                     	if(ask)
                     	{
 	                        justinaSay.str("");
-                            justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three";
-	                        std::cout <<  "\nCould you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example level one, level two or level three"<<std::endl;
+                            justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example first, second or third";
+	                        std::cout <<  "\nCould you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example first, second or third"<<std::endl;
 	                        JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay(justinaSay.str(), 10000);
                             JustinaHRI::enableSpeechRecognized(true);
@@ -1095,11 +1095,11 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_PARSE_SPOKEN_COMMAND" << std::endl;
                     
                     justinaSay.str("");       
-                    if(lastRecoSpeech.find("level one") != std::string::npos)
+                    if(lastRecoSpeech.find("first") != std::string::npos)
                         level_in_[arm] = 1;
-                    else if(lastRecoSpeech.find("level two") != std::string::npos)
+                    else if(lastRecoSpeech.find("second") != std::string::npos)
                         level_in_[arm] = 2;  
-                    else if(lastRecoSpeech.find("level three") != std::string::npos)
+                    else if(lastRecoSpeech.find("third") != std::string::npos)
                         level_in_[arm] = 3;
                     else
                     {
