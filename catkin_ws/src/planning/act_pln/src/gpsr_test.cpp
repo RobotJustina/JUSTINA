@@ -4132,8 +4132,8 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
             JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
 
             //guide to the bin
-            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            //JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+            //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
             JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -4152,7 +4152,7 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
             ss.str("");
             ss << "Please pour the " << to_speech << " into the" << tokens[1];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
-            
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             JustinaHRI::waitAfterSay("If you are ready we can continue", 100000);
 
             help = false;
@@ -4177,7 +4177,7 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
                 //guide to the bin
                 JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+                JustinaTasks::guideAPerson("current_loc", 120000); //guiar al objeto
                 JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 
@@ -4727,16 +4727,18 @@ void callbackCmdInteractDoor(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         
         JustinaHRI::waitAfterSay("I need your help", 100000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         
         ss.str("");
         ss << "Coul you " << tokens[2] << " the door please"; 
         JustinaHRI::waitAfterSay(ss.str(), 100000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         
         JustinaHRI::waitAfterSay("when you are rady say, justina yes", 100000);
         help = false;
         count = 0;
         while (!help && count < 10){
-            switchSpeechReco(0, "are you ready");
+            switchSpeechReco(0, "are you ready, say justina yes or justina no");
             JustinaHRI::waitForSpeechRecognized(lastReco,400);
 
             JustinaHRI::waitForSpeechRecognized(lastReco,10000);
@@ -4755,23 +4757,110 @@ void callbackCmdInteractDoor(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
         if(tokens[2] == "open"){
             help = false;
             count = 0;
-            while(!help && count < 10)
+            while(!help && count < 10){
                help = JustinaNavigation::doorIsOpen(0.9, 2000);
+               JustinaHRI::waitAfterSay("The door is still close, please open the door", 100000);
+               boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            }
         }
         if(tokens[2] == "close"){
             help = true;
             count = 0;
             while(help && count < 10)
                help = JustinaNavigation::doorIsOpen(0.9, 2000);
+               JustinaHRI::waitAfterSay("The door is still open, please close the door", 100000);
+               boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         }
         
         ss.str("");
         ss << "Now i can see that the door is " << tokens[2]; 
         JustinaHRI::waitAfterSay(ss.str(), 100000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
         JustinaHRI::waitAfterSay("thank you for your help", 100000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaHRI::waitAfterSay("I will return to the initial point", 100000);
     
     }
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdSetCutlery(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "-------- Command Set Cutlery --------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    std::string query;
+    std::string obj_name;
+    
+    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+    JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000);
+            
+    //try to grasp object
+    geometry_msgs::Pose pose;
+    bool grasp = false;
+    bool armFlag;
+    ss.str("");
+    ss << "I am looking for the" << tokens[0];
+    JustinaHRI::waitAfterSay(ss.str(), 2500);
+    JustinaManip::hdGoTo(0, -0.9, 5000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+    JustinaTasks::alignWithTable(0.42);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    
+    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+    grasp = JustinaTasks::findObject(tokens[0], pose, armFlag);
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
+
+    if(grasp){
+        JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+        grasp = JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, armFlag, tokens[0], true);
+        JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+
+        if(grasp){
+            JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+            JustinaTasks::sayAndSyncNavigateToLoc(tokens[4], 120000);
+            ss.str("");
+            ss << "I am going to deliver the " << tokens[0];
+            if(tokens[2] == "right" || tokens[2] == "left")
+                ss << " at the " << tokens[2] << " of " << tokens[3];
+            if(tokens[2] == "it")
+                ss << " into the " << tokens[3];
+            JustinaHRI::waitAfterSay(ss.str(), 2000);
+            JustinaTasks::placeObject(armFlag);
+            if(armFlag)
+                JustinaManip::laGoTo("home", 6000);
+            else
+                JustinaManip::raGoTo("home", 6000);
+        }
+        else{
+            ss.str("");
+            ss << "I am sorry, I can not grasp the " << tokens[0];
+            JustinaHRI::waitAfterSay(ss.str(), 10000);
+        }
+    }
+    else{
+        ss.str("");
+        ss << "I am sorry, I can not find the " << tokens[0];
+        JustinaHRI::waitAfterSay(ss.str(), 10000);
+    }
+
+
 
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
@@ -4845,6 +4934,7 @@ int main(int argc, char **argv) {
     ros::Subscriber subObjDesc = n.subscribe("planning_clips/obj_desc", 1, callbackCmdObjDesc); 
     ros::Subscriber subRetrieveObj = n.subscribe("planning_clips/retrieve_object", 1, callbackCmdRetrieveObj); 
     ros::Subscriber subInteractDoor = n.subscribe("planning_clips/interact_with_door", 1, callbackCmdInteractDoor); 
+    ros::Subscriber subSetCutlery = n.subscribe("planning_clips/set_cutlery", 1, callbackCmdSetCutlery); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
     sendAndRunClips_pub = n.advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1);

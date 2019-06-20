@@ -681,6 +681,20 @@ def interact_with_door(cmd):
     pubCmdInteractDoor.publish(request)
     return cmd._id
 
+def set_tableware(cmd):
+    global pubCmdSetTableware 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdSetTableware.publish(request)
+    return cmd._id
+
+def set_cutlery(cmd):
+    global pubCmdSetCutlery 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdSetCutlery.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -748,7 +762,9 @@ fmap = {
     'storage_obj': storage_obj,
     'obj_desc': obj_desc,
     'retrieve_object': retrieve_object,
-    'interact_with_door': interact_with_door
+    'interact_with_door': interact_with_door,
+    'set_tableware': set_tableware,
+    'set_cutlery': set_cutlery
 }
 
 def quit():
@@ -765,7 +781,7 @@ def main():
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson, pubCmdOfferDrink 
     global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal, pubCmdTrainPerson, pubCmdGetOrder, pubCmdDeliverOrder, pubCmdObjectsOnLocation  
     global pubCmdGetBag, pubCmdFollowToTaxi, pubCmdIntroducePerson, pubCmdMakeQuestion, pubCmdGuideToTaxi, pubCmdCleanUp, pubCmdTakeOutGarbage  
-    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj, pubCmdObjDesc, pubCmdRetrieveObj, pubCmdInteractDoor  
+    global pubCmdRPoseObj, pubCmdPourinObj, pubCmdStorageObj, pubCmdObjDesc, pubCmdRetrieveObj, pubCmdInteractDoor, pubCmdSetTableware, pubCmdSetCutlery 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -854,6 +870,8 @@ def main():
     pubCmdObjDesc = rospy.Publisher('/planning_clips/obj_desc', PlanningCmdClips, queue_size=1)
     pubCmdRetrieveObj = rospy.Publisher('/planning_clips/retrieve_object', PlanningCmdClips, queue_size=1)
     pubCmdInteractDoor = rospy.Publisher('/planning_clips/interact_with_door', PlanningCmdClips, queue_size=1)
+    pubCmdSetTableware = rospy.Publisher('/planning_clips/set_tableware', PlanningCmdClips, queue_size=1)
+    pubCmdSetCutlery = rospy.Publisher('/planning_clips/set_cutlery', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
