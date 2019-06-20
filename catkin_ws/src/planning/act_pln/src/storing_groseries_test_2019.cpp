@@ -977,10 +977,12 @@ int main(int argc, char** argv)
                                 if(categories[i] == objectGraspedCat[0])
                                 {
                                     JustinaTasks::placeObjectOnShelfHC(0,level[i]);
+                                    objectGrasped[0] = false;
                                 }
                                 if(categories[i] == objectGraspedCat[1])
                                 {
                                     JustinaTasks::placeObjectOnShelfHC(1,level[i]);
+                                    objectGrasped[1] = false;
                                 }
                                 nextState = SM_NAVIGATION_TO_TABLE;
                             }//----------------------//*/
@@ -1072,7 +1074,7 @@ int main(int argc, char** argv)
 	                    	{
 	                    		arm = 0;
 	                    		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
-	                    		nextState = SM_SIMUL;
+	                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
 	                    	}
                         }
                     }//From if (objectGrasped[arm])
@@ -1083,7 +1085,7 @@ int main(int argc, char** argv)
                     	{
                     		arm = 0;
                     		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
-                    		nextState = SM_SIMUL;
+                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     	}
                     }
                 }
@@ -1122,7 +1124,7 @@ int main(int argc, char** argv)
                     {
                         arm = 0;
                         //nextState = SM_PUT_OBJECT_ON_CUPBOARD;
-                        nextState = SM_SIMUL;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
             }                
             break;
