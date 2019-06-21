@@ -70,15 +70,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 (defrule exe-plan-task-pourin-obj 
-	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?canpourin)(duration ?t))
+	(plan (name ?name) (number ?num-pln) (status active) (actions pourin_object ?pourable ?canpourin ?person)(duration ?t))
 	;(item (type Property) (name ?oprop))
 	=>
-	(bind ?command (str-cat "" ?canpourin ""))
+	(bind ?command (str-cat "" ?pourable " " ?canpourin " " ?person ""))
 	(assert (send-blackboard ACT-PLN pourin_obj ?command ?t 4))
 )
 
 (defrule exe-plan-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 1)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 1)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)
@@ -86,7 +86,7 @@
 )
 
 (defrule exe-plan-no-pourined-obj 
-        ?f <-  (received ?sender command pourin_obj ?canpourin 0)
+        ?f <-  (received ?sender command pourin_obj ?pourable ?canpourin ?person 0)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions pourin_object $?params))
         =>
         (retract ?f)
@@ -145,3 +145,124 @@
 	(modify ?f (status accomplished))
 )
 ;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-task-get-object-description 
+	(plan (name ?name) (number ?num-pln) (status active) (actions obj_desc ?obj ?place)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?obj " " ?place ""))
+	(assert (send-blackboard ACT-PLN obj_desc ?command ?t 4))
+)
+
+(defrule exe-plan-geted-object-description 
+        ?f <-  (received ?sender command obj_desc ?obj ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions obj_desc $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-geted-object-desription
+        ?f <-  (received ?sender command obj_desc ?obj ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions obj_desc $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-retrieve-object 
+	(plan (name ?name) (number ?num-pln) (status active) (actions retrieve_object ?cat ?place ?sp)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?cat " " ?place " " ?sp ""))
+	(assert (send-blackboard ACT-PLN retrieve_object ?command ?t 4))
+)
+
+(defrule exe-plan-retrieved-object 
+        ?f <-  (received ?sender command retrieve_object ?cat ?place ?sp 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions retrieve_object $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-retrieve_object 
+        ?f <-  (received ?sender command retrieve_object ?cat ?place ?sp 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions retrieve_object $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-interact_with_door 
+	(plan (name ?name) (number ?num-pln) (status active) (actions interact_with_door ?door ?place ?action)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?door " " ?place " " ?action ""))
+	(assert (send-blackboard ACT-PLN interact_with_door ?command ?t 4))
+)
+
+(defrule exe-plan-interacted-with-door  
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-interacted-with-door 
+        ?f <-  (received ?sender command interact_with_door ?door ?place ?action 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions interact_with_door $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-set_tableware 
+	(plan (name ?name) (number ?num-pln) (status active) (actions set_tableware ?tableware ?place)(duration ?t))
+	=>
+	(bind ?command (str-cat "" ?tableware " " ?place ""))
+	(assert (send-blackboard ACT-PLN set_tableware ?command ?t 4))
+)
+
+(defrule exe-plan-seted-tableware 
+        ?f <-  (received ?sender command set_tableware ?tableware ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_tableware $?params))
+	?f2 <- (item (name ?tableware))
+	?f3 <- (item (name ?place))
+        =>
+        (retract ?f)
+	(modify ?f2 (status set_tableware))
+	(modify ?f3 (status set_tableware))
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-seted-tableware 
+        ?f <-  (received ?sender command set_tableware ?tableware ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_tableware $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-set_cutlery 
+	(plan (name ?name) (number ?num-pln) (status active) (actions set_cutlery ?cutlery ?pos ?tableware ?place)(duration ?t))
+	?f <- (item (name ?cutlery) (zone ?zone))
+	=>
+	(bind ?command (str-cat "" ?cutlery " " ?zone " " ?pos " " ?tableware " " ?place ""))
+	(assert (send-blackboard ACT-PLN set_cutlery ?command ?t 4))
+)
+
+(defrule exe-plan-seted-cutlery 
+        ?f <-  (received ?sender command set_cutlery ?cutlery ?zone ?pos ?tableware ?place 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_cutlery $?params))
+        =>
+        (retract ?f)
+        (modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-seted-cutlery 
+        ?f <-  (received ?sender command set_cutlery ?cutlery ?zone ?pos ?tableware ?place 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions set_cutlery $?params))
+        =>
+        (retract ?f)
+	(modify ?f1 (status accomplished))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -21,7 +21,7 @@
 )
 
 (defrule task_pourin_object
-	?f <- (task ?plan pourin_object ?canpourin ?step)
+	?f <- (task ?plan pourin_object ?pourable ?canpourin ?person ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name ?canpourin))
 	;;;(item (type Category) (name ?category))
@@ -30,7 +30,7 @@
 	(printout t "Get something that can pourin ")
 	(assert (state (name ?plan)(number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_pourin)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (task ppourin_obj ?canpourin ?step))
+	(assert (task ppourin_obj ?pourable ?canpourin ?person ?step))
 	(modify ?f1 (status nil))
 	(modify ?f2 (status nil))
 )
@@ -75,7 +75,70 @@
 	(assert (task pstorage_category ?storage ?sp_obj ?step))
 	(modify ?f1 (status nil))
 )
+
+(defrule task_get_object_description
+	?f <- (task ?plan get_object_description object ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Get object description ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_desc)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pobj_desc object ?place ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_retrieve_object
+	?f <- (task ?plan retrieve_object ?category ?place ?sp ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Get object description ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_retrieved)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pretrieve_obj ?category ?place ?sp ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_interact_with_door
+	?f <- (task ?plan interact_with_door ?door ?place ?action ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Open or close some door ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_close_or_open)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pinteract_with_door ?door ?place ?action ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_set_tableware
+	?f <- (task ?plan set_tableware ?tableware ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Open or close some door ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_seted_tableware)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pset_tableware ?tableware ?place ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_set_cutlery
+	?f <- (task ?plan set_cutlery ?cutlery ?pos ?tableware ?place ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Open or close some door ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_seted_cutlery)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pset_cutlery ?cutlery ?pos ?tableware ?place ?step))
+	(modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;
+;:;;;;;;;;;;;;;;;;;
+
 (defrule plan_get_rpose_object
 	?goal <- (objetive get_rpose_obj ?name ?place ?rpose ?category ?step)
 	=>
@@ -98,11 +161,11 @@
 )
 
 (defrule plan_canpourin_object
-	?goal <- (objetive pourin_obj ?name ?canpourin ?step)
+	?goal <- (objetive pourin_obj ?name ?pourable ?canpourin ?person ?step)
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Something that can pouring" crlf)
-	(assert (plan (name ?name) (number 1) (actions pourin_object ?canpourin)(duration 6000)))
+	(assert (plan (name ?name) (number 1) (actions pourin_object ?pourable ?canpourin ?person)(duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_pourin)(duration 6000)))
 	(assert (finish-planner ?name 2))
 
@@ -141,6 +204,62 @@
 	(assert (finish-planner ?name 3))
 
 )
+
+(defrule plan_get_object_description
+	?goal <- (objetive obj_desc ?name ?obj ?place ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions obj_desc ?obj ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions update_status finish_objetive finaly_desc)(duration 6000)))
+	(assert (finish-planner ?name 3))
+
+)
+
+(defrule plan_retrieve_object
+	?goal <- (objetive retrieve_object ?name ?cat ?place ?sp ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions retrieve_object ?cat ?place ?sp)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_retrieved)(duration 6000)))
+	(assert (finish-planner ?name 2))
+
+)
+
+(defrule plan_interact_with_door
+	?goal <- (objetive interact_with_door ?name ?door ?place ?action ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Storage object" crlf)
+	(assert (plan (name ?name) (number 1) (actions interact_with_door ?door ?place ?action)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_close_or_open)(duration 6000)))
+	(assert (finish-planner ?name 2))
+
+)
+
+(defrule plan_set_tableware
+	?goal <- (objetive set_tableware ?name ?tableware ?place ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Set tableware" crlf)
+	(assert (plan (name ?name) (number 1) (actions set_tableware ?tableware ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_seted_tableware)(duration 6000)))
+	(assert (finish-planner ?name 2))
+
+)
+
+(defrule plan_set_cutlery
+	?goal <- (objetive set_cutlery ?name ?cutlery ?pos ?tableware ?place ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Set tableware" crlf)
+	(assert (plan (name ?name) (number 1) (actions make_task ?name ?tableware droped) (actions_num_params 2 2) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions set_cutlery ?cutlery ?pos ?tableware ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions update_status finish_objetive finaly_seted_cutlery)(duration 6000)))
+	(assert (finish-planner ?name 3))
+)
 ;;;;;;;;;;;;;;;;;;
 (defrule exe_scheduled-get-rpose-object 
 	(state (name ?name) (number ?step) (status active)(duration ?time))
@@ -156,10 +275,10 @@
 	(state (name ?name) (number ?step) (status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task ppourin_obj ?canpourin ?step)
+	?f1 <- (task ppourin_obj ?pourable ?canpourin ?person ?step)
 	=>
 	(retract ?f1)
-	(assert (objetive pourin_obj task_pourin_obj ?canpourin ?step))
+	(assert (objetive pourin_obj task_pourin_obj ?pourable ?canpourin ?person ?step))
 )
 
 (defrule exe_scheduled-storage-object 
@@ -190,5 +309,55 @@
 	=>
 	(retract ?f1)
 	(assert (objetive storage_category task_storage_category ?storage ?sp_obj ?step))
+)
+
+(defrule exe_scheduled-get-object-description 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pobj_desc ?obj ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive obj_desc task_obj_desc ?obj ?place ?step))
+)
+
+(defrule exe_scheduled-retrieve-object  
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pretrieve_obj ?cat ?place ?sp ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive retrieve_object task_retrieve_object ?cat ?place ?sp ?step))
+)
+
+(defrule exe_scheduled-interact-with-door 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pinteract_with_door ?door ?place ?action ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive interact_with_door task_interact_with_door ?door ?place ?action ?step))
+)
+
+(defrule exe_scheduled-set-tableware 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pset_tableware ?tableware ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive set_tableware task_set_tableware ?tableware ?place ?step))
+)
+
+(defrule exe_scheduled-set-cutlery 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pset_cutlery ?cutlery ?pos ?tableware ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive set_cutlery task_set_cutlery ?cutlery ?pos ?tableware ?place ?step))
 )
 ;;;;;;;;;;;;;;;;;;;

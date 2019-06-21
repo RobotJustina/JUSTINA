@@ -140,3 +140,12 @@
 (cleaning_stuff			tag			vrb)
 (cutlery			tag			vrb)
 (toiletries			tag			vrb)
+
+(red						tag		clr)
+(blue						tag		clr)
+(white						tag		clr)
+(black						tag		clr)
+(green						tag		clr)
+(yellow						tag		clr)
+(orange						tag		clr)
+(gray						tag		clr)

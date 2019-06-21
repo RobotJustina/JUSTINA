@@ -74,13 +74,13 @@ class JustinaTasks
         static bool placeObjectOnShelfHC(bool withLeftArm, int level);
         static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
         static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
-        static bool waitRecognizedFace(float timeout, std::string id, int gender, int ages, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
+        static bool waitRecognizedFace(float timeout, std::string id, int gender, int ages, POSE pose, std::vector<vision_msgs::VisionFaceObject> &filterFaces, std::vector<vision_msgs::VisionFaceObject> &allFaces);
         static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
         static bool waitRecognizedSpecificGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, std::string typeGesture, float timeout);
         static bool waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &skeletons, POSE pose, float timeout);
         static bool waitRecognizedYolo(std::vector<std::string> ids, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout);
-        static bool turnAndRecognizeFace(std::string id, int gender, int ages, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
-        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "", bool guide=false, int age = -1);
+        static bool turnAndRecognizeFace(std::string id, int gender, int ages, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, std::vector<Eigen::Vector3d> &centroidFaces, int &genderRecog, std::string location, int numrecog = 1, float thrSamePerson = 0.0);
+        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "", bool guide=false, int ages = -1);
         static bool findSkeletonPerson(POSE pose = NONE, std::string location = "");
         static bool turnAndRecognizeYolo(std::vector<std::string> ids, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, std::vector<Eigen::Vector3d> &centroids, std::string location = "", int numrecog = 1, float thrSamePerson = 0.0);
         static bool findYolo(std::vector<std::string> ids, POSE &poseRecog, POSE specificPos = NONE, std::string location = "");
@@ -117,7 +117,8 @@ class JustinaTasks
         static bool graspBlock(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspBlockFeedback(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspCutleryFeedback(float x, float y, float z, bool withLeftArm, std::string colorCutlery  = "", bool usingTorse = false);
-        static bool graspObjectColorFeedback(float x, float y, float z, bool withLeftArm, std::string colorObject  = "", bool usingTorse = false);        
+        static bool graspObjectColorCupBoardFeedback(float x, float y, float z, bool withLeftArm, std::string colorObject  = "", bool usingTorse = false);        
+        static bool graspObjectColorFeedback(vision_msgs::VisionObject object, bool withLeftArm, std::string colorObject  = "", bool usingTorse = false);        
         static bool placeBlockOnBlock(float h, bool withLeftArm, std::string idBlock = "", bool usingTorse =false, float X=0.0, float Y=0.0, float Z=0.0, bool simul = false);
         static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
         static bool setRoi(vision_msgs::VisionFaceObjects faces);
@@ -131,11 +132,13 @@ class JustinaTasks
         static bool getNearestRecognizedYolo(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location);
         static void filterObjectByLocation(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, std::vector<Eigen::Vector3d> &centroids, std::string location = "");
         static void filterObjectByLocation(std::vector<vision_msgs::GestureSkeleton> gestureObjects, std::vector<Eigen::Vector3d> &centroids, std::string location = "");
+        static void filterObjectByLocation(std::vector<vision_msgs::VisionFaceObject> faceObjects, std::vector<Eigen::Vector3d> &centroids, std::string location = "");
         
         static bool waitRecognizedFaceGesture(float timeout, std::string id, int gender, std::string gesture, std::vector<vision_msgs::VisionFaceObject> &facesRecog, Eigen::Vector3d &centroidFace, std::string location = "");
         static bool findGenderGesturePerson(std::string gesture, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidFace, POSE pose = NONE, std::string location = "", bool fWaitSpecificGesture= true);
         static bool introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2, bool first_location=true);
-        static bool introduceOneToPeople(std::string name_person, std::string location_people);
+        static bool introduceOneToPeople(std::string name_person, std::string location_people, int gender, int ages);
+        static bool placeObjectDishWasher(float distanceToDishWasher, float heightOptimal);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeSkeleton(POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidSkeleton, std::string location);

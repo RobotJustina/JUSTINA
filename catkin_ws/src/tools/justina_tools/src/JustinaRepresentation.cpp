@@ -13,6 +13,10 @@ ros::ServiceClient * JustinaRepresentation::cliSpechInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStringInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStrQueryKDB;
 ros::ServiceClient * JustinaRepresentation::cliInitKDB;
+ros::ServiceClient * JustinaRepresentation::cliLocationPath;
+ros::ServiceClient * JustinaRepresentation::cliObjectPath;
+ros::ServiceClient * JustinaRepresentation::cliCategoryPath;
+ros::ServiceClient * JustinaRepresentation::cliPeoplePath;
 
 JustinaRepresentation::~JustinaRepresentation(){
     delete command_runCLIPS;
@@ -28,6 +32,10 @@ JustinaRepresentation::~JustinaRepresentation(){
     delete cliStrQueryKDB;
     delete cliInitKDB;
     delete command_response;
+    delete cliLocationPath;
+    delete cliObjectPath;
+    delete cliCategoryPath;
+    delete cliPeoplePath;
 }
 
 void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
@@ -44,6 +52,11 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
     cliStrQueryKDB = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB"));
     cliInitKDB = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::InitKDB>("/planning_clips/init_kdb"));
     command_response = new ros::Publisher(nh->advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1));
+    
+    cliLocationPath = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::kdbFilePath>("/knowledge_representation/getLocationPath"));
+    cliObjectPath = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::kdbFilePath>("/knowledge_representation/getObjectPath"));
+    cliCategoryPath = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::kdbFilePath>("/knowledge_representation/getCategoryPath"));
+    cliPeoplePath = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::kdbFilePath>("/knowledge_representation/getPeoplePath"));
 }
 
 void JustinaRepresentation::runCLIPS(bool enable){
@@ -99,7 +112,20 @@ void JustinaRepresentation::getLocations(std::string path, std::map<std::string,
 {
     std::cout << "Ltm.->Loading known locations from " << path << std::endl;
     std::vector<std::string> lines;
-    std::ifstream file(path.c_str());
+    std::string loc_path;
+
+        knowledge_msgs::kdbFilePath srv;
+        //srv.request.name = "test_interprete";
+        if (cliLocationPath->call(srv)) {
+            std::cout << "Response of interpreter:" << std::endl;
+            std::cout << "Success: " <<  srv.response.kdb_file_path << std::endl;
+            loc_path = srv.response.kdb_file_path;
+        }
+        else{
+             std::cout << "Failed to call service" << std::endl;
+             loc_path = path;
+        }
+    std::ifstream file(loc_path.c_str());
     std::string tempStr;
     while (std::getline(file, tempStr))
         lines.push_back(tempStr);
@@ -150,7 +176,19 @@ void JustinaRepresentation::getObjects(std::string path, std::map<std::string, s
 {
     std::cout << "Ltm.->Loading known locations from " << path << std::endl;
     std::vector<std::string> lines;
-    std::ifstream file(path.c_str());
+    std::string loc_path;
+        knowledge_msgs::kdbFilePath srv;
+        //srv.request.name = "test_interprete";
+        if (cliObjectPath->call(srv)) {
+            std::cout << "Response of interpreter:" << std::endl;
+            std::cout << "Success: " <<  srv.response.kdb_file_path << std::endl;
+            loc_path = srv.response.kdb_file_path;
+        }
+        else{
+             std::cout << "Failed to call service" << std::endl;
+             loc_path = path;
+        }
+    std::ifstream file(loc_path.c_str());
     std::string tempStr;
     while (std::getline(file, tempStr))
         lines.push_back(tempStr);
@@ -209,7 +247,19 @@ void JustinaRepresentation::getObjects(std::string path, std::map<std::string, s
 void JustinaRepresentation::getPeoples(std::string path, std::map<std::string, std::vector<std::string> > &peoples){
     std::cout << "Ltm.->Loading known peoples from " << path << std::endl;
     std::vector<std::string> lines;
-    std::ifstream file(path.c_str());
+    std::string loc_path;
+        knowledge_msgs::kdbFilePath srv;
+        //srv.request.name = "test_interprete";
+        if (cliPeoplePath->call(srv)) {
+            std::cout << "Response of interpreter:" << std::endl;
+            std::cout << "Success: " <<  srv.response.kdb_file_path << std::endl;
+            loc_path = srv.response.kdb_file_path;
+        }
+        else{
+             std::cout << "Failed to call service" << std::endl;
+             loc_path = path;
+        }
+    std::ifstream file(loc_path.c_str());
     std::string tempStr;
     while(std::getline(file,tempStr)){
         lines.push_back(tempStr);
@@ -257,7 +307,19 @@ void JustinaRepresentation::getPeoples(std::string path, std::map<std::string, s
 void JustinaRepresentation::getCategorys(std::string path, std::map<std::string, std::vector<std::string> > &categorys){
     std::cout << "Ltm.->Loading known categorys from " << path << std::endl;
     std::vector<std::string> lines;
-    std::ifstream file(path.c_str());
+    std::string loc_path;
+        knowledge_msgs::kdbFilePath srv;
+        //srv.request.name = "test_interprete";
+        if (cliCategoryPath->call(srv)) {
+            std::cout << "Response of interpreter:" << std::endl;
+            std::cout << "Success: " <<  srv.response.kdb_file_path << std::endl;
+            loc_path = srv.response.kdb_file_path;
+        }
+        else{
+             std::cout << "Failed to call service" << std::endl;
+             loc_path = path;
+        }
+    std::ifstream file(loc_path.c_str());
     std::string tempStr;
 
     //std::cout << "before while" << std::endl;

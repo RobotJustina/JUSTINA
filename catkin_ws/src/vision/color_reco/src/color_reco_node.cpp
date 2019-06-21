@@ -1440,19 +1440,23 @@ bool callback_srvCutlerySeg(vision_msgs::GetObjectsColor::Request &req, vision_m
             switch(typeCutlery){
                 case DISH:
                     ss << "_dish";
-                    rate = 1.0;
+                    //rate = 1.0;
+                    rate = 0.6;
                     break;
                 case CUTLERY:
                     ss << "_cutlery";
-                    rate= 0.8;
+                    //rate= 0.8;
+                    rate = 1.0;
                     break;
                 case GLASS:
                     ss << "_glass";
-                    rate=0.4;
+                    //rate=0.4;
+                    rate = 0.8;
                     break;
                 case BOWL:
                     ss << "_bowl";
-                    rate=0.6;
+                    //rate=0.6;
+                    rate=0.4;
                     break;
                 default:
                     break;

@@ -14,7 +14,9 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
-#define SM_INIT 0
+#define SM_SAY_WAIT_FOR_DOOR 0
+#define SM_WAIT_FOR_DOOR 1
+#define SM_INIT 2
 #define SM_WAIT_FOR_UMBRELLA 10
 #define SM_SEARCH_WAVING 20
 #define SM_CLOSE_TO_GUEST 30
@@ -31,8 +33,10 @@
 #define SM_Recognize_Gender 140
 
 #define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
+#define GRAMMAR_POCKET_FOLLOW "/grammars/pre_sydney/gpsr/follow_me.jsgf"
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
 #define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_FOLLOW "follow_me.xml"
 #define GRAMMAR_NAMES "people_names.xml"
 #define TIMEOUT_SPEECH 10000
 #define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
@@ -62,6 +66,8 @@ void switchSpeechReco(bool pocket, std::string grammarPocket, std::string gramma
         JustinaHRI::enableSpeechRecognized(true);
     }
 }
+
+
 
 
 int nearestFace(vision_msgs::VisionFaceObjects faces){
@@ -101,10 +107,11 @@ int main(int argc, char** argv)
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
     JustinaRepresentation::setNodeHandle(&n);
 
-    std::string grammarCommandsID = "receptionisCommands";
-    std::string grammarNamesID = "receptionistNames";
+    std::string grammarCommandsID = "farewellCommands";
+    std::string grammarNamesID = "farewellNames";
+    std::string grammarFollowID = "farewellFollow";
 
-    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::usePocketSphinx = false;
     
     
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
@@ -182,14 +189,32 @@ int main(int argc, char** argv)
   	{
         switch(nextState)
     	{
-            case SM_INIT:
-                std::cout << "Farewell Test...->start Farewell test" << std::endl;
+            case SM_SAY_WAIT_FOR_DOOR:
+                std::cout << "P & G Test...-> start Farewell test" << std::endl;
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                //JustinaHRI::loadGrammarSpeechRecognized(grammarNamesID, GRAMMAR_POCKET_NAMES);  
-                //ros::spinOnce();
-                //boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::loadGrammarSpeechRecognized(grammarFollowID, GRAMMAR_POCKET_FOLLOW);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        		JustinaManip::startHdGoTo(0.0, 0.0);
+        		JustinaHRI::say("I am ready for the Farewell test");
+        		ros::Duration(2.0).sleep();
+				JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+				nextState = SM_WAIT_FOR_DOOR;
+			break;
+
+			case SM_WAIT_FOR_DOOR:
+				if (!JustinaNavigation::obstacleInFront())
+					nextState = SM_SAY_WAIT_FOR_DOOR;
+			break;
+            
+            
+            case SM_INIT:
+                std::cout << "Farewell Test...->navigate to initial point " << std::endl;
+                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	JustinaNavigation::moveDist(1.0, 4000);
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
@@ -264,7 +289,7 @@ int main(int argc, char** argv)
             // This case is the new by Rey
             case SM_SEARCH_WAVING:
                 std::cout << "Farewell Test...->SM_SEARCH_WAVING" << std::endl;
-                JustinaHRI::waitAfterSay("I will search the guests", 3500, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("I will search the guests waving", 3500, minDelayAfterSay);
                 centroidGestures = std::vector<Eigen::Vector3d>();
                 findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.1, 0.1f, 9.0, centroidGestures, "", true, 0, 0.7);
                 //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
@@ -345,10 +370,16 @@ int main(int argc, char** argv)
                         std::cout<<"entro a while, rostros: " << lastRecognizedFaces.recog_faces.size() <<std::endl;
                     }
                     std::cout<<"sali del while" << std::endl;
-                    if(lastRecognizedFaces.recog_faces.size() > 0)
+                    if(lastRecognizedFaces.recog_faces.size() > 0){
                     	gender = nearestFace(lastRecognizedFaces);
-                    else
+                        JustinaHRI::waitAfterSay("Ready", 5000, minDelayAfterSay);
+                        if(gender == 0)
+                            JustinaHRI::waitAfterSay("You are a lady, so I scort you first", 5000, minDelayAfterSay);
+                    }
+                    else{
+                        JustinaHRI::waitAfterSay("Sorry, I could not state your gender, but", 5000, minDelayAfterSay);
                     	gender = 0;
+                    }
                     std::cout <<"genero: " << gender << std::endl;
                     }
                 else
@@ -356,7 +387,7 @@ int main(int argc, char** argv)
                 
                 lastRecognizedFaces.recog_faces.clear();
                 nextState = SM_CONFIRMATION_TO_GO;  
-                JustinaHRI::waitAfterSay("Ready", 5000, minDelayAfterSay);  
+                  
                 break;
 
 
@@ -375,10 +406,12 @@ int main(int argc, char** argv)
                         }
 
                         else{
-						if (centroids_loc.size() > 0)
-							nextState = SM_CLOSE_TO_GUEST;
-						else
-							nextState = SM_ReturnSearchWaving;
+                            JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                            centroids_loc.erase(centroids_loc.begin());
+						    if (centroids_loc.size() > 0)
+						    	nextState = SM_CLOSE_TO_GUEST;
+						    else
+						    	nextState = SM_ReturnSearchWaving;
                         }
                     }
 
@@ -497,12 +530,20 @@ int main(int argc, char** argv)
                    
                     //JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
 
-                    JustinaManip::hdGoTo(0.0, 0.0, 1000);
+                    //JustinaManip::hdGoTo(0.0, 0.0, 1000);
 
                     //JustinaHRI::waitAfterSay("I have found the taxi driver", 5000, minDelayAfterSay);
                     nextState = SM_CLOSE_TO_TAXI_DRIVER;
-                }else
-                    nextState = SM_SearchTaxiDriver;
+                }
+                else{
+                    JustinaManip::hdGoTo(0.0, 0.0, 1000);
+                    JustinaHRI::waitAfterSay("Sorry, I can not find the taxi, but I can scort you following you", 3500, minDelayAfterSay);
+                    switchSpeechReco(true, grammarFollowID, GRAMMAR_FOLLOW, "");
+                    JustinaTasks::followAPersonAndRecogStop("stop follow me");
+                    JustinaManip::hdGoTo(0.0, 0.0, 1000);
+                    nextState = SM_CLOSE_TO_TAXI_DRIVER;
+                }
+                    //nextState = SM_SearchTaxiDriver;
                 break;
 
             case SM_CLOSE_TO_TAXI_DRIVER:

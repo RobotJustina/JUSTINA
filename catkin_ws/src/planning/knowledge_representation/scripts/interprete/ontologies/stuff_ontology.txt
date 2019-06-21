@@ -14,7 +14,7 @@
 (abspos			is_kind_of		stuff)
 (relpos			is_kind_of		stuff)
 (category		is_kind_of		stuff)
-(color			is_kind_of		stuff)
+#(color			is_kind_of		stuff)
 (room			is_kind_of		stuff)
 #(rpos			is_kind_of		stuff)
 

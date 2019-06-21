@@ -30,9 +30,9 @@
 #define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
 #define GRAMMAR_POCKET_DRINKS "grammars/pre_sydney/order_drink.jsgf"
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
-#define GRAMMAR_COMMANDS "receptionist_commands.xml"
-#define GRAMMAR_DRINKS "receptionist_drinks.xml"
-#define GRAMMAR_NAMES "receptionist_names.xml"
+#define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_DRINKS "order_drink.xml"
+#define GRAMMAR_NAMES "people_names.xml"
 
 enum STATE{
     SM_INIT,
@@ -98,6 +98,7 @@ int main(int argc, char **argv){
     std::string hostDrink = "coke";
 
     Eigen::Vector3d centroid;
+    std::vector<Eigen::Vector3d> faceCentroids;
     std::vector<Eigen::Vector3d> centroids;
     
     std::stringstream ss;
@@ -147,7 +148,7 @@ int main(int argc, char **argv){
     JustinaKnowledge::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
 
-    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::usePocketSphinx = false;
 
     while(ros::ok() && !success){
 
@@ -611,14 +612,15 @@ int main(int argc, char **argv){
             case SM_FIND_TO_HOST:
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
                 theta = 0;
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, centroid, genderRecog, "kitchen");
+                faceCentroids = std::vector<Eigen::Vector3d>();
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "kitchen");
                 if(findPerson){
                     JustinaHRI::waitAfterSay("John, I found you", 3000);
                     //JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
                     findPersonCount = 0;
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
-                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    JustinaTools::transformPoint("/base_link", faceCentroids[0](0, 0), faceCentroids[0](1, 0) , faceCentroids[0](2, 0), "/map", gx_w, gy_w, gz_w);
                     host_z = gz_w;
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaKnowledge::addUpdateKnownLoc("john", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
@@ -642,12 +644,13 @@ int main(int argc, char **argv){
             case SM_FIND_TO_GUEST:
                 std::cout << test << ".-> State SM_FIND_TO_GUEST: Finding to ." << std::endl;
                 theta = 0;
-                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, centroid, genderRecog, "living_room");
+                faceCentroids = std::vector<Eigen::Vector3d>();
+                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, faceCentroids, genderRecog, "living_room");
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
-                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    JustinaTools::transformPoint("/base_link", faceCentroids[0](0, 0), faceCentroids[0](1, 0) , faceCentroids[0](2, 0), "/map", gx_w, gy_w, gz_w);
                     guest_z = gz_w;
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
@@ -848,15 +851,15 @@ int main(int argc, char **argv){
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
                 JustinaManip::waitForLaGoalReached(8000);
-                
-                
-                JustinaManip::startLaGoTo("navigation");
-                JustinaManip::startRaGoTo("navigation");
-                JustinaManip::waitForLaGoalReached(8000);
+                 
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
                 ss.str("");
                 ss << names[names.size() - 1] << "Please, look at me";
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                
+                JustinaManip::startLaGoTo("navigation");
+                JustinaManip::startRaGoTo("navigation");
+                JustinaManip::waitForLaGoalReached(8000);
                 
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
 

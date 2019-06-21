@@ -39,7 +39,7 @@
 	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 5)(size 2) (wide 2) (height 2) (weight 2))
 	(item (type Objects) (name grape_juice)(zone counter)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(grasp 7)(size 3) (wide 3) (height 3) (weight 3))
 	(item (type Objects) (name orange_juice)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color orange)(grasp 3)(size 4) (wide 5) (height 5) (weight 5)(heaviest yes))
-	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color gray)(grasp 3)(size 6) (wide 6) (height 6) (weight 6)(heaviest yes))
+	(item (type Objects) (name sprite)(zone counter)(image energy_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color black)(grasp 3)(size 6) (wide 6) (height 6) (weight 6)(heaviest yes))
 
 	;;; FOOD
 	;(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0)(category food))

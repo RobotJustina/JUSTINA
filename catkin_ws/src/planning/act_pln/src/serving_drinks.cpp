@@ -66,7 +66,7 @@ double maxTime = 180;
 std::string microsoft_grammars[3];
 std::string sphinx_grammars[3];
 bool alternative_drink = true;
-bool poket_reco = true;
+bool poket_reco = false;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
@@ -126,6 +126,7 @@ void switchSpeechReco(int grammar_id, std::string speech){
         //JustinaHRI::usePocketSphinx = false;
         JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
         JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
     }
 }
 
@@ -316,7 +317,7 @@ void callbackCmdFindObject(
             //success = JustinaTasks::findYolo(idsPerson, poseRecog, JustinaTasks::NONE, tokens[1]);
             if(centroids_loc.size() == 0){
                 poseRecog = JustinaTasks::NONE;
-                centroids.clear();
+                centroids = std::vector<Eigen::Vector3d>();
                 success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, tokens[1], 0, 1.0);
                 if(success){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -926,9 +927,9 @@ int main(int argc, char **argv) {
     JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
 
-    microsoft_grammars[0] = "confirmation.xml";
-    microsoft_grammars[1] = "what_drink.xml";
-    microsoft_grammars[2] = "name_response.xml";
+    microsoft_grammars[0] = "commands.xml";
+    microsoft_grammars[1] = "order_drink.xml";
+    microsoft_grammars[2] = "people_names.xml";
 
     sphinx_grammars[0] = "confirmation";
     sphinx_grammars[1] = "order_drink";

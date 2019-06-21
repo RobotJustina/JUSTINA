@@ -17,6 +17,7 @@
 #include "knowledge_msgs/planning_cmd.h"
 #include "knowledge_msgs/StrQueryKDB.h"
 #include "knowledge_msgs/InitKDB.h"
+#include "knowledge_msgs/kdbFilePath.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -42,6 +43,10 @@ class JustinaRepresentation {
         static ros::ServiceClient * cliStringInterpretation;
         static ros::ServiceClient * cliStrQueryKDB;
         static ros::ServiceClient * cliInitKDB;
+        static ros::ServiceClient * cliLocationPath;
+        static ros::ServiceClient * cliObjectPath;
+        static ros::ServiceClient * cliCategoryPath;
+        static ros::ServiceClient * cliPeoplePath;
 
         //static bool strQueryKDB(std::string query, std::string &result, int timeout);
 

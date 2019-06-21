@@ -112,9 +112,24 @@
 	(assert (send-blackboard ACT-PLN train_person ?command ?t 4))
 )
 
+(defrule exe-plan-train-person-v2 
+	(plan (name ?name) (number ?num-pln) (status active) (actions train_person ?person) (duration ?t))
+	=>
+	(bind ?command(str-cat "" ?person ""))
+	(assert (send-blackboard ACT-PLN train_person ?command ?t 4))
+)
+
 (defrule exe-plan-trained-person
 	?f <- (received ?sender command train_person ?person 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions train_person))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-trained-person-v2 
+	?f <- (received ?sender command train_person ?person 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions train_person ?person))
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))

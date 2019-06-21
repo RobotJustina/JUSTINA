@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -24,11 +23,16 @@
 #define SM_FIND_AND_TAKE_OBJECTS  51
 #define SM_TAKE_OBJECT_RIGHT 55
 #define SM_TAKE_OBJECT_LEFT 60
-#define SM_GOTO_CUPBOARD 70
+#define SM_GOTO_CUPBOARD         70
+#define SM_WAIT_FOR_COMMAND      71
+#define SM_PARSE_SPOKEN_COMMAND  72
+#define SM_WAIT_FOR_CONFIRMATION 73
+#define SM_SIMUL                 74
 #define SM_OPEN_DOOR 75
 #define SM_FIND_OBJECTS_ON_CUPBOARD 80
 #define SM_PUT_OBJECT_ON_CUPBOARD 100
 #define SM_FINISH_TEST 110
+#define SM_PLACE_ARMS 120
 
 std::string stateMachine = "stroing_groceries.->";
 
@@ -163,6 +167,20 @@ int main(int argc, char** argv)
 
     /////*******************************//////
 
+    std::string lastRecoSpeech;
+    std::vector<std::string> validCommands;
+    validCommands.push_back("first");
+    validCommands.push_back("second");
+    validCommands.push_back("third");
+
+    int arm = 0;
+    int level_in_[2];
+    bool ask;
+
+    std::vector<std::string> categories;
+    std::vector<int>              level;
+    std::string ss_level;
+    
     std::string nv_cpb;
     std::string cnt_od;
     std::string ask_hlp;
@@ -200,6 +218,13 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
+
+    /*nextState = 71;				
+	objectGrasped[0] = true;
+	objectGrasped[1] = true; 
+	objectGraspedCat[0] = "drinks";
+	objectGraspedCat[1] = "snacks";	//*/
+
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
@@ -230,7 +255,7 @@ int main(int argc, char** argv)
                     if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
                     else
-                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_WAIT_FOR_COMMAND;
                 }
                 break;
 
@@ -430,14 +455,15 @@ int main(int argc, char** argv)
                     JustinaManip::startTorsoGoTo(0.0, 0.0, 0.0);
                     if(attempsFindObjectsTable == 0 && alignWithTable){
                         JustinaHRI::say("I am going to search objects on the table");
+                        std::cout<< "I am going to search objects on the table"<<std::endl;
                         //Append acction to the plan
                         // This is for generate PDF
                         // JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
                         JustinaTasks::alignWithTable(0.35);
                     }
 
-                    recoObjForTake.clear();
-                    categories_tabl.clear();
+                    recoObjForTake = std::vector<vision_msgs::VisionObject>();
+                    categories_tabl = std::vector<std::string>();
 
                     if(!JustinaVision::detectAllObjectsVot(recoObjForTake, image, 5)){
                         if(objectGrasped[0] || objectGrasped[1])
@@ -445,10 +471,19 @@ int main(int argc, char** argv)
                         else{
                             std::cout << "I  can't detect anything" << std::endl;
                             attempsFindObjectsTable++;
-                            nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            nextState = SM_FINISH_TEST;
                         }
                     }else{
                         // std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
+                        if(recoObjForTake.size() == 0){
+                            if(objectGrasped[0] || objectGrasped[1])
+                                nextState = SM_GOTO_CUPBOARD;
+                            else{
+                                std::cout << "I  can't detect anything" << std::endl;
+                                attempsFindObjectsTable++;
+                                nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            }
+                        }
                         justinaSay.str("");
                         if(recoObjForTake.size() <= 10){
                             int countObject = recoObjForTake.size();
@@ -486,15 +521,18 @@ int main(int argc, char** argv)
                             }
                         }
                     
-                        std::cout << stateMachine << "Saving objs recog." << std::endl;
+                        // This is for saving the images in this test is nt necesary
+                        /*std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
                         temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/";
-                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
+                        JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());*/
                             
                         //Append acction to the plan
                         // This is for generate PDF
                         //JustinaTools::pdfAppend(name_test, justinaSay.str());
                         JustinaTools::getCategoriesFromVisionObject(recoObjForTake, categories_tabl);
+                        for(int i = 0; i < categories_tabl.size(); i++)
+                            std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
                         // This is for generate PDF
                         /*JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
                         for(int i = 0; i < categories_tabl.size(); i++){
@@ -694,6 +732,7 @@ int main(int argc, char** argv)
                                     justinaSay << "I am going to take the " << recoObjForTake[indexObjectGrasp].id << " with my left arm";
                             }
                             
+                            std::cout<< justinaSay <<std::endl;
                             JustinaHRI::say(justinaSay.str());
                                 
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
@@ -836,8 +875,8 @@ int main(int argc, char** argv)
                     JustinaHRI::say(justinaSay.str());
                     std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
                     std::string catObjectGrasp;
-                    if(idObjectGrasp.find("unknown") != std::string::npos)
-                        catObjectGrasp = categories_tabl[indexObjectGrasp];
+                    if(idObjectGrasp.find("unknown") == std::string::npos)
+                        catObjectGrasp = recoObjForTake[indexObjectGrasp].category;
                     else
                         catObjectGrasp = "unknown";
                     geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
@@ -890,6 +929,10 @@ int main(int argc, char** argv)
             case SM_PUT_OBJECT_ON_CUPBOARD:
                 {
                     std::cout << stateMachine << "SM_PUT_OBJECT_ON_CUPBOARD" << std::endl;
+                    for(int i=0; i< categories.size(); i++) //----------------
+                    {
+                    	std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
+                    }//----------------------
                     bool withLeftOrRightArm;
                     /********************
                      * This is only for ensure that justina have a object in the hand
@@ -919,14 +962,31 @@ int main(int argc, char** argv)
                                     JustinaTasks::alignWithTable(0.35);
                                 }
                             }
-
-                            if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm, 1)){
+                            /*
+                            if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm, 2)){
                                 if(!withLeftOrRightArm)
                                     objectGrasped[0] = false;
                                 else
                                     objectGrasped[1] = false;
                                 attempsPlaceObj = 0;
-                            }
+                            }//*/
+                            for(int i=0; i < categories.size(); i++)//-----------------
+                                std::cout<< categories[i]<<" in the level -> "<<level[i]<<std::endl;
+                            
+                            for(int i=0; i < categories.size(); i++) 
+                            {
+                                if(categories[i] == objectGraspedCat[0])
+                                {
+                                    JustinaTasks::placeObjectOnShelfHC(0,level[i]);
+                                    objectGrasped[0] = false;
+                                }
+                                if(categories[i] == objectGraspedCat[1])
+                                {
+                                    JustinaTasks::placeObjectOnShelfHC(1,level[i]);
+                                    objectGrasped[1] = false;
+                                }
+                                nextState = SM_NAVIGATION_TO_TABLE;
+                            }//----------------------//*/
                             attempsPlaceObj++;
                         }
                         else{
@@ -964,12 +1024,162 @@ int main(int argc, char** argv)
                     }
                 }
                 break;
+            //----------------------------------------------------------------------------------------------------------------------------------
+            
+            case SM_WAIT_FOR_COMMAND: 
+                {
+                    std::cout << stateMachine << "---------------------------SM_WAIT_FOR_COMMAND-------------------------"<< std::endl; 				
 
+                    if(objectGrasped[arm])
+                    {   
+                    	if(categories.size() == 0)       
+                    		ask = true;       
+						else
+						{
+	                    	for(int i=0; i< categories.size(); i++)
+	                    	{
+	                    		if(categories[i] != objectGraspedCat[arm])
+	                    		{
+	                    			ask = true;
+	                    			std::cout<<categories[i] <<" : "<<objectGraspedCat[arm];
+	                    		}
+	                    		else
+	                    		{
+	                    			ask = false;
+	                    			break;
+	                    		}
+	                    	} 
+	                    }//From else (categories.size != 0)		
+                    	if(ask)
+                    	{
+	                        justinaSay.str("");
+                            justinaSay << "Could you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example first, second or third";
+	                        std::cout <<  "\nCould you tell me at what level to store the " << objectGraspedCat[arm]<< ", For example first, second or third"<<std::endl;
+	                        JustinaHRI::enableSpeechRecognized(false);
+                            JustinaHRI::waitAfterSay(justinaSay.str(), 10000);
+                            JustinaHRI::enableSpeechRecognized(true);
+	                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 10000))
+	                        {
+	                            nextState = SM_WAIT_FOR_COMMAND;
+	                        }
+	                        else
+	                        {
+	                            std::cout << "Parsing word..." << std::endl;
+	                            nextState = SM_PARSE_SPOKEN_COMMAND;
+	                        }
+	                    }
+	                    else
+	                    {
+	                        arm++;
+	                    	if(arm > 1)
+	                    	{
+	                    		arm = 0;
+	                    		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+	                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+	                    	}
+                        }
+                    }//From if (objectGrasped[arm])
+                    else
+                    {
+                        arm++;
+                    	if(arm > 1)
+                    	{
+                    		arm = 0;
+                    		//nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    		nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    	}
+                    }
+                }
+                break;
+            case SM_PARSE_SPOKEN_COMMAND:
+                {      
+                    std::cout << stateMachine << "SM_PARSE_SPOKEN_COMMAND" << std::endl;
+                    
+                    justinaSay.str("");       
+                    if(lastRecoSpeech.find("first") != std::string::npos){
+                        level_in_[arm] = 1;
+                        ss_level = "first";
+                    }
+                    else if(lastRecoSpeech.find("second") != std::string::npos){
+                        level_in_[arm] = 2;
+                        ss_level = "second";  
+                    }
+                    else if(lastRecoSpeech.find("third") != std::string::npos){
+                        level_in_[arm] = 3;
+                        ss_level = "third";
+                    }
+                    else
+                    {
+                        JustinaHRI::waitAfterSay(" Sorry, I did not understand you ", 6000);  
+                        std::cout << "Sorry, I did not understand you"<< std::endl;                 
+                        nextState = SM_WAIT_FOR_COMMAND;
+                    }
+
+                    justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the "<< ss_level<< " level ";               
+                    std::cout  << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the "<< ss_level<< " level " << std::endl;
+                    JustinaHRI::waitAfterSay(justinaSay.str(), 7000);
+
+                    categories.push_back(objectGraspedCat[arm]);
+                    level.push_back(level_in_[arm]);
+                    
+                    arm++;
+                    if(arm <= 1){
+                        nextState = SM_WAIT_FOR_COMMAND;
+                    }
+                    else
+                    {
+                        arm = 0;
+                        //nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                    }
+            }                
+            break;
+            
+/*            case SM_SIMUL:
+            {
+
+                for(int i=0; i < categories.size(); i++)
+                    std::cout<< categories[i]<<" in the level -> "<<level[i]<<std::endl;
+                
+		        JustinaNavigation::moveDist(1.1, 2500);
+
+                for(int i=0; i < categories.size(); i++) //----------------
+                {
+                    if(categories[i] == objectGraspedCat[0] && objectGrasped[0])
+                        JustinaTasks::placeObjectOnShelfHC(0,level[i]);
+                    if(categories[i] == objectGraspedCat[1] && objectGrasped[1])
+                        JustinaTasks::placeObjectOnShelfHC(1,level[i]);
+                }
+
+				objectGrasped[0] = true;
+				objectGrasped[1] = true; 
+				objectGraspedCat[0] = "food";
+				objectGraspedCat[1] = "containers";
+				//food
+				//fruits
+				//containers
+				//cuterly
+				//tableware
+				//cleaning stuff	
+		        JustinaNavigation::moveDist(-1.1, 2500);
+
+				nextState = SM_WAIT_FOR_COMMAND;
+
+            }    
+            break;//----------------------//*/
+            case SM_FINISH_TEST:
+            {
+                std::cout << stateMachine << "SM_FINISH_TEST.-> I have finish the test" << std::endl;
+                JustinaHRI::say("I have finished the test");
+                fail = false;
+                success = true;
+            }
+            break;
             default:{
                     fail = true;
                     success = true;
-                }
-                break;
+            }
+            break;
         }
         ros::spinOnce();
         loop.sleep();

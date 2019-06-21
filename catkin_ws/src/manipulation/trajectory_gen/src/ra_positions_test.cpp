@@ -5,7 +5,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    cout<<"Iitializing ra_positions_test node..."<<endl;
+    cout<<"Starting ra_positions_test node by Luis Nava..."<<endl;
     ros::init(argc, argv, "ra_positions_test");
     ros::NodeHandle n;
 

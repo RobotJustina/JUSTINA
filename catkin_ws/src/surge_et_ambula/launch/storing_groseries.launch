@@ -3,6 +3,7 @@
 		<arg name="initial_pose_x" value="3.405"/>
 		<arg name="initial_pose_y" value="-2.367"/>
 		<arg name="initial_pose_a" value="1.4629"/>
+		<arg name="head_offset" value="-0.02"/>
 	</include>
 	<group ns="knowledge">
 		<node name="rospy_clips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
