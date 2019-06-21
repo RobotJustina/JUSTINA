@@ -2972,7 +2972,7 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
         JustinaManip::hdGoTo(0.0, 0.0, 5000);
 
     ss.str("");
-    ss << tokens[0] << " please not move, and look at me";
+    ss << tokens[0] << " please not move, and look at me, I try to remember you";
 
     JustinaHRI::waitAfterSay(ss.str(), 6000);
     JustinaVision::faceTrain(tokens[0], 4);
