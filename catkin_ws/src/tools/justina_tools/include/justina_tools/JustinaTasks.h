@@ -74,7 +74,7 @@ class JustinaTasks
         static bool placeObjectOnShelfHC(bool withLeftArm, int level);
         static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
         static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
-        static bool waitRecognizedFace(float timeout, std::string id, int gender, int ages, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
+        static bool waitRecognizedFace(float timeout, std::string id, int gender, int ages, POSE pose, std::vector<vision_msgs::VisionFaceObject> &filterFaces, std::vector<vision_msgs::VisionFaceObject> &allFaces);
         static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
         static bool waitRecognizedSpecificGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, std::string typeGesture, float timeout);
         static bool waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &skeletons, POSE pose, float timeout);
@@ -137,7 +137,7 @@ class JustinaTasks
         static bool waitRecognizedFaceGesture(float timeout, std::string id, int gender, std::string gesture, std::vector<vision_msgs::VisionFaceObject> &facesRecog, Eigen::Vector3d &centroidFace, std::string location = "");
         static bool findGenderGesturePerson(std::string gesture, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidFace, POSE pose = NONE, std::string location = "", bool fWaitSpecificGesture= true);
         static bool introduceTwoPeople(std::string name1, std::string location1, std::string name2, std::string location2, bool first_location=true);
-        static bool introduceOneToPeople(std::string name_person, std::string location_people);
+        static bool introduceOneToPeople(std::string name_person, std::string location_people, int gender, int ages);
         static bool placeObjectDishWasher(float distanceToDishWasher, float heightOptimal);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
