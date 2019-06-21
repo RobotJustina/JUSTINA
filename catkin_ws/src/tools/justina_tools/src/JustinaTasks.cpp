@@ -377,7 +377,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         } else {
             // --------------  Calculate the next ik inverse point ----------------
             std::vector<float> articular;
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.125, objToGraspY - 0.25, objToGraspZ, articular))
                 JustinaManip::startLaGoToArticular(articular);
             else
                 std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
@@ -392,7 +393,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
                 JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -406,7 +408,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.095, objToGraspY - 0.0, objToGraspZ, articular)){
                 JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -485,7 +488,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         } else {
             // --------------  Calculate the next ik inverse point ----------------
             std::vector<float> articular;
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.125, objToGraspY - 0.25, objToGraspZ, articular))
                 JustinaManip::startRaGoToArticular(articular);
             else
                 std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
@@ -497,7 +501,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -507,8 +512,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             //Move the manipulator to objectOB
 
             // *********** This is for calculate IkInverse into the goto cartesian is the old mode ***********
-            JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            //JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, 2500);
+            //boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
             //JustinaManip::raGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.035, objToGraspZ, 2500); // This the old grasp offset
             
@@ -518,7 +523,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.095, objToGraspY - 0.0, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -1008,7 +1014,7 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
             lastRecognizedFaces =
                 JustinaVision::getFaceRecognition(id).recog_faces;
         else{
-            if(gender == -1 && ages == -1)
+            if(gender == -1 || ages == -1)
                 lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
             else
                 lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition().recog_faces;
@@ -1018,9 +1024,9 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
                 lastRecognizedFaces.begin();
                 lastRecognizedFacesIt != lastRecognizedFaces.end();
                 lastRecognizedFacesIt++)
-            if (lastRecognizedFacesIt->face_centroid.x == 0.0
-                    && lastRecognizedFacesIt->face_centroid.y == 0.0
-                    && lastRecognizedFacesIt->face_centroid.z == 0.0)
+            if (lastRecognizedFacesIt->face_centroid.x == 0.03
+                    && lastRecognizedFacesIt->face_centroid.y == 0.03
+                    && lastRecognizedFacesIt->face_centroid.z == 0.03)
                 lastRecognizedFaces.erase(lastRecognizedFacesIt);
     } while (ros::ok() && (curr - prev).total_milliseconds() < timeout
             && lastRecognizedFaces.size() == 0);
@@ -1068,7 +1074,7 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
         recognized = true;
     else
         recognized = false;
-    std::cout << "recognized:" << recognized << std::endl;
+    std::cout << "JustinaTasks.->waitRecognizedFace recognized:" << recognized << std::endl;
     return recognized;
 }
 
@@ -1786,9 +1792,27 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
 
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
-    if (guide)
-        JustinaTasks::guideAPerson("person2", 120000, 1.5, true, 0.8);
-    else {
+    if (guide){
+        //This is to point to the person
+        /*JustinaTasks::guideAPerson("person2", 120000, 1.5, true, 0.8);
+        float torsoSpine, torsoWaist, torsoShoulders;
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        float currx, curry, currtheta;
+        JustinaNavigation::getRobotPose(currx, curry, currtheta);
+        float dist_to_head = sqrt(pow(worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
+        //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+        float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
+        if (angleHead < -M_PI)
+            angleHead = 2 * M_PI + angleHead;
+        if (angleHead > M_PI)
+            angleHead = 2 * M_PI - angleHead;
+        JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.53 + torsoSpine), dist_to_head), 5000);*/
+        
+        int waitToClose = (int) (dis * 10000);
+        std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+        std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+        closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
+    }else {
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
         std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
