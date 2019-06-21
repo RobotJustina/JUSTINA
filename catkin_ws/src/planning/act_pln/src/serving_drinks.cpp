@@ -778,6 +778,10 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     bool success = false;
     bool la = false;
     bool ra = false;
+    bool objectDetected = false;
+    std::vector<vision_msgs::VisionObject> recoObj;
+    sensor_msgs::Image image;
+    int index;
 
     while(!success && attemps<4){
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
@@ -786,28 +790,67 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
     for (int i = 1; i < tokens.size()-1; i++){
         ss.str("");
-        ss << "Barman I need a " << tokens[i]; 
+        ss << "Barman I need a " << tokens[i]  << " please, put the " << tokens[i] << "in front of me, on the table" << std::endl; 
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-        ss.str("");
-        ss << "please put the " << tokens[i] << " in my gripper";
-        JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-        if(!ra){
 
-            JustinaManip::raGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-            ra = true;
+        switchSpeechReco(0,"did you understand the order, say justina yes");
+        
+
+        JustinaHRI::waitForSpecificSentence("justina yes", 10000);
+
+
+        if(JustinaTasks::alignWithTable(0.35)){
             ss.str("");
-            ss << "(assert (set_object_arm " << tokens[i] << " false))";
-            JustinaRepresentation::sendAndRunCLIPS(ss.str());
-            JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+            ss << "I am looking for the " << tokens[i]  << " on the table" << std::endl; 
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+
+            recoObj = std::vector<vision_msgs::VisionObject>();
+
+            if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
+                for(int j = 0; j < recoObj.size(); j++){
+                    objectDetected = recoObj[j].id.find(tokens[i]);
+                    if(objectDetected)
+                        index =j;
+                }
+                
+                if(objectDetected){
+                    ss.str("");
+                    ss << "I have found the " << tokens[i] << std::endl; 
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    JustinaTasks::alignWithTable(0.35);
+                    ss.str("");
+                    ss << "I am going to take the " << tokens[i] << std::endl; 
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
+                }
+            }
         }
-        if(!la && tokens.size() > 3){
-            JustinaManip::laGoTo("navigation", 3000);
-            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-            la = true;
-            ss << "(assert (set_object_arm " << tokens[i] << " true))";
-            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+        else if(!objectDetected){
+            ss.str("");
+            ss << "Sorry i could not grasp the " << tokens[i] << " by myself" << std::endl; 
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            ss.str("");
+            ss << "please put the " << tokens[i] << " in my gripper";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            if(!ra){
+
+                JustinaManip::raGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+                ra = true;
+                ss.str("");
+                ss << "(assert (set_object_arm " << tokens[i] << " false))";
+                JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+            }
+            if(!la && tokens.size() > 3){
+                JustinaManip::laGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+                la = true;
+                ss << "(assert (set_object_arm " << tokens[i] << " true))";
+                JustinaRepresentation::sendAndRunCLIPS(ss.str());
+            }
         }
+        
 
     } 
 
