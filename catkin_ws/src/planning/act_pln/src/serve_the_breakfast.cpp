@@ -128,7 +128,7 @@ int main(int argc, char **argv){
     std::vector<vision_msgs::VisionObject> recoObjList;
 
     int type;
-    int graspObjectID = CUTLERY;//BOWL;
+    int graspObjectID = BOWL;
     std::string id_cutlery;
     std::string graspObject = " bowl "; // To say object, First Justina will take the bowl
 
@@ -448,7 +448,7 @@ int main(int argc, char **argv){
                                 id_cutlery = my_cutlery.ObjectList[i].id;
                                 type = my_cutlery.ObjectList[i].type_object;
                                 ss.str("");
-                                ss << "I've found a" << graspObject << "on the table";
+                                ss << "I've found a" << graspObject << "";
                                 JustinaHRI::say(ss.str());
                                 ros::Duration(2.0).sleep();
                                 state = SM_POURING_CEREAL;
@@ -657,20 +657,22 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         if ( typeCutlery == 0) 
         {
             JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);
-            JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            JustinaManip::startLaOpenGripper(0.3);
+            JustinaManip::laGoToCartesian(objToGraspX + 0.06, objToGraspY + 0.05, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
             //stuff
+            /*
             std::vector<float> currPose;
-            JustinaManip::getLaCurrentPos(currPose);
+            JustinaManip::getRaCurrentPos(currPose);
             if (currPose.size() == 7) {
                 currPose[3] -= 0.06;
-                JustinaManip::laGoToArticular(currPose, 3000);
-            }
+                JustinaManip::raGoToArticular(currPose, 3000);
+            }*/
             JustinaManip::startLaCloseGripper(0.5);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
                 JustinaManip::startTorsoGoTo(torsoSpine+.02, 0, 0);
-            JustinaNavigation::moveDist(-.3, 3000);
+            JustinaNavigation::moveDist(-.4, 3000);
             if ( usingTorse )
             JustinaManip::waitForTorsoGoalReached(waitTime);
 
@@ -746,20 +748,21 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         {
             JustinaManip::raGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);
             JustinaManip::startRaOpenGripper(0.3);
-            JustinaManip::raGoToCartesian(objToGraspX + 0.03, objToGraspY + 0.00, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            JustinaManip::raGoToCartesian(objToGraspX + 0.06, objToGraspY + 0.05, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
             //stuff
+            /*
             std::vector<float> currPose;
             JustinaManip::getRaCurrentPos(currPose);
             if (currPose.size() == 7) {
                 currPose[3] -= 0.06;
                 JustinaManip::raGoToArticular(currPose, 3000);
-            }
+            }*/
             JustinaManip::startRaCloseGripper(0.5);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.01, 0, 0);
-            JustinaNavigation::moveDist(-.3, 3000);
+                JustinaManip::startTorsoGoTo(torsoSpine+.02, 0, 0);
+            JustinaNavigation::moveDist(-.4, 3000);
             if ( usingTorse )
             JustinaManip::waitForTorsoGoalReached(waitTime);
 
