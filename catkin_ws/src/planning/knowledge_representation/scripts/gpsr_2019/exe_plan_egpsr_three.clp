@@ -244,7 +244,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule exe-plan-task-set_cutlery 
 	(plan (name ?name) (number ?num-pln) (status active) (actions set_cutlery ?cutlery ?pos ?tableware ?place)(duration ?t))
-	?f <- (item (name ?name) (zone ?zone))
+	?f <- (item (name ?cutlery) (zone ?zone))
 	=>
 	(bind ?command (str-cat "" ?cutlery " " ?zone " " ?pos " " ?tableware " " ?place ""))
 	(assert (send-blackboard ACT-PLN set_cutlery ?command ?t 4))

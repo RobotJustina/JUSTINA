@@ -2710,8 +2710,32 @@ void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
-
-    int person_name = 0;
+    ///new performance
+    bool success = false;
+    int count = 0;
+            ss.str("");
+            ss << tokens[0] << " please look at me, I try to find you";
+            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            while(!success && count <4){
+    			success = JustinaTasks::findPerson(tokens[0], -1, JustinaTasks::NONE, true, tokens[1]);
+                count++;
+            }
+            if(success){
+                ss.str("");
+                ss << "hello " << tokens[0] << " , I'm glad to see you again";
+                JustinaHRI::waitAfterSay(ss.str(), 10000, 0);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                ss.str("");
+                ss << "I have to go, see you later  " << tokens[0];
+                JustinaHRI::waitAfterSay(ss.str(), 10000, 0);
+            }
+            else{
+                ss.str("");
+                ss << "I am sorry, " << tokens[0] << " I did not find you";
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+            }
+    //////////
+    /*int person_name = 0;
     float timeOut = 15000.0;
     std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
@@ -2746,8 +2770,8 @@ void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
         ss.str("");
         ss << "Hello " << tokens[0] << ", i find you";
         JustinaHRI::waitAfterSay(ss.str(), 6000);
-    }
-
+    }*/
+    responseMsg.successful = 1;
     command_response_pub.publish(responseMsg);
 }
 
@@ -2947,7 +2971,10 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
     else
         JustinaManip::hdGoTo(0.0, 0.0, 5000);
 
-    JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
+    ss.str("");
+    ss << tokens[0] << " please not move, and look at me";
+
+    JustinaHRI::waitAfterSay(ss.str(), 6000);
     JustinaVision::faceTrain(tokens[0], 4);
     
     while(!finish_train && count < 4){
@@ -4971,7 +4998,7 @@ int main(int argc, char **argv) {
 
         microsoft_grammars[0] = "commands.xml";
         microsoft_grammars[1] = "oreder_drink.xml";
-        microsoft_grammars[2] = "people_name.xml";
+        microsoft_grammars[2] = "people_names.xml";
         microsoft_grammars[3] = cat_grammar;
         microsoft_grammars[4] = "questions.xml";
         microsoft_grammars[5] = "follow_me.xml";
