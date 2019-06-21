@@ -930,9 +930,8 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_PUT_OBJECT_ON_CUPBOARD" << std::endl;
                     for(int i=0; i< categories.size(); i++) //----------------
-                    {
-                    	std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
-                    }//----------------------
+                        std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
+                    
                     bool withLeftOrRightArm;
                     /********************
                      * This is only for ensure that justina have a object in the hand
