@@ -179,6 +179,7 @@ int main(int argc, char** argv)
 
     std::vector<std::string> categories;
     std::vector<int>              level;
+    std::string ss_level;
     
     std::string nv_cpb;
     std::string cnt_od;
@@ -218,7 +219,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
 
-/*    nextState = 71;				
+    /*nextState = 71;				
 	objectGrasped[0] = true;
 	objectGrasped[1] = true; 
 	objectGraspedCat[0] = "drinks";
@@ -1095,12 +1096,18 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_PARSE_SPOKEN_COMMAND" << std::endl;
                     
                     justinaSay.str("");       
-                    if(lastRecoSpeech.find("first") != std::string::npos)
+                    if(lastRecoSpeech.find("first") != std::string::npos){
                         level_in_[arm] = 1;
-                    else if(lastRecoSpeech.find("second") != std::string::npos)
-                        level_in_[arm] = 2;  
-                    else if(lastRecoSpeech.find("third") != std::string::npos)
+                        ss_level = "first";
+                    }
+                    else if(lastRecoSpeech.find("second") != std::string::npos){
+                        level_in_[arm] = 2;
+                        ss_level = "second";  
+                    }
+                    else if(lastRecoSpeech.find("third") != std::string::npos){
                         level_in_[arm] = 3;
+                        ss_level = "third";
+                    }
                     else
                     {
                         JustinaHRI::waitAfterSay(" Sorry, I did not understand you ", 6000);  
@@ -1108,14 +1115,13 @@ int main(int argc, char** argv)
                         nextState = SM_WAIT_FOR_COMMAND;
                     }
 
-                    justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm];               
-                    std::cout << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the level "<< level_in_[arm] << std::endl;
+                    justinaSay << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the "<< ss_level<< " level ";               
+                    std::cout  << "Ok, I am going to store the " <<objectGraspedCat[arm]<< " on the "<< ss_level<< " level " << std::endl;
                     JustinaHRI::waitAfterSay(justinaSay.str(), 7000);
 
                     categories.push_back(objectGraspedCat[arm]);
                     level.push_back(level_in_[arm]);
                     
-                    //std::cout<<"arm-----------------------> " <<arm<<std::endl;
                     arm++;
                     if(arm <= 1){
                         nextState = SM_WAIT_FOR_COMMAND;
@@ -1139,20 +1145,16 @@ int main(int argc, char** argv)
 
                 for(int i=0; i < categories.size(); i++) //----------------
                 {
-                    if(categories[i] == objectGraspedCat[0])
-                    {
+                    if(categories[i] == objectGraspedCat[0] && objectGrasped[0])
                         JustinaTasks::placeObjectOnShelfHC(0,level[i]);
-                    }
-                    if(categories[i] == objectGraspedCat[1])
-                    {
+                    if(categories[i] == objectGraspedCat[1] && objectGrasped[1])
                         JustinaTasks::placeObjectOnShelfHC(1,level[i]);
-                    }
                 }
 
 				objectGrasped[0] = true;
 				objectGrasped[1] = true; 
 				objectGraspedCat[0] = "food";
-				objectGraspedCat[1] = "fruits";
+				objectGraspedCat[1] = "containers";
 				//food
 				//fruits
 				//containers
