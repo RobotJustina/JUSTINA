@@ -2,6 +2,7 @@
 	<arg name="simul" default="false"/>
 	<arg name="simul_pcl" default="false"/>
 	<arg name="dynamic_map" default="false"/>
+	<arg name="head_offset" default="0.0"/>
 	<arg name="enable_torque" default="true"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
@@ -33,6 +34,7 @@
 			<param name="sync_write_enable" value="true"/>
 			<param name="read_simul" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="head_offset" value="$(arg head_offset)"/>
 		</node>
 		<!-- node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
 			<param name="simul" value="$(arg simul)"/>
