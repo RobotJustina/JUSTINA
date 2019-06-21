@@ -1,9 +1,12 @@
+/***************************************************************
+*	This program is to check what is the conection time 
+*	        with dynamixels motors of the arms
+*****************************************************************/
 #include<ros/ros.h>
 #include<hardware_tools/DynamixelManager.hpp>
 #include<vector>
 
 using namespace std;
-using namespace ros;
 
 string port;
 int baudRate, times;
@@ -13,16 +16,17 @@ int goalSpeeds[7] = {};
 uint16_t curr_position[7] = {};
 
 void parameters();
-void showDatas();
+void showData();
 
 int main(int argc, char **argv)
 {
-    cout<<"Initializing baud_rate node..."<<endl;
-    init(argc, argv, "baud_rate");
-    NodeHandle node;
+    cout<<"Starting baud_rate node by Luis Nava..."<<endl;
+    ros::init(argc, argv, "baud_rate");
+    ros::NodeHandle node;
+
 
     parameters();
-    showDatas();
+    showData();
 
     vector<int> ids;
     for(int i = 0; i<7; i++){
@@ -55,9 +59,9 @@ int main(int argc, char **argv)
     for(int i = 0; i < 7; i++)
         dynamixelManager.getPresentPosition(i, curr_position[i]);
     
-    cout<<"Getting time of comunication"<<endl;//----------------------------------Get information----------------------------------------
+    cout<<"Getting time of comunication"<<endl;
 
-    Time ti = Time::now();
+    ros::Time ti = ros::Time::now();
     for(int j=0; j<times ; j++){
 
         for (int i = 0; i < 7; i++){
@@ -71,7 +75,7 @@ int main(int argc, char **argv)
             dynamixelManager.writeSyncGoalPosesData();	
         }
     }//From the time numbers
-    Time td = Time::now();
+    ros::Time td = ros::Time::now();
 
     cout<<"Time of comunication:"<<td-ti<<endl;
 
@@ -79,7 +83,7 @@ int main(int argc, char **argv)
 }
 
 void parameters(){
-    NodeHandle node("~");
+    ros::NodeHandle node("~");
 
     if(!node.hasParam("baud"))
         cout<<"missing baudRate"<<endl;    	
@@ -95,7 +99,7 @@ void parameters(){
         cout<<"Invalid times parameter :("<<endl;
 }//From parameters function
 
-void showDatas(){
+void showData(){
     cout<<"\n"<<endl;
     cout<<"Baud Rate:  "<<baudRate<<endl;
     cout<<"The port is:  "<<port<<endl;
