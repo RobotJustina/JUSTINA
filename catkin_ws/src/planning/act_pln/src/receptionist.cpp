@@ -30,9 +30,9 @@
 #define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
 #define GRAMMAR_POCKET_DRINKS "grammars/pre_sydney/order_drink.jsgf"
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
-#define GRAMMAR_COMMANDS "receptionist_commands.xml"
-#define GRAMMAR_DRINKS "receptionist_drinks.xml"
-#define GRAMMAR_NAMES "receptionist_names.xml"
+#define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_DRINKS "order_drink.xml"
+#define GRAMMAR_NAMES "peopple_names.xml"
 
 enum STATE{
     SM_INIT,
@@ -148,7 +148,7 @@ int main(int argc, char **argv){
     JustinaKnowledge::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
 
-    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::usePocketSphinx = false;
 
     while(ros::ok() && !success){
 

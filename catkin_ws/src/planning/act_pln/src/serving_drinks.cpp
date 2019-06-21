@@ -66,7 +66,7 @@ double maxTime = 180;
 std::string microsoft_grammars[3];
 std::string sphinx_grammars[3];
 bool alternative_drink = true;
-bool poket_reco = true;
+bool poket_reco = false;
 std::string no_drink;
 std::string prev_drink = "no_prev";
 JustinaTasks::POSE poseRecog;
@@ -926,9 +926,9 @@ int main(int argc, char **argv) {
     JustinaRepresentation::initKDB("", false, 20000);
     JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
 
-    microsoft_grammars[0] = "confirmation.xml";
-    microsoft_grammars[1] = "what_drink.xml";
-    microsoft_grammars[2] = "name_response.xml";
+    microsoft_grammars[0] = "commands.xml";
+    microsoft_grammars[1] = "order_drink.xml";
+    microsoft_grammars[2] = "people_names.xml";
 
     sphinx_grammars[0] = "confirmation";
     sphinx_grammars[1] = "order_drink";

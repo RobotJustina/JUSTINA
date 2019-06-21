@@ -111,7 +111,7 @@ int main(int argc, char** argv)
     std::string grammarNamesID = "farewellNames";
     std::string grammarFollowID = "farewellFollow";
 
-    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::usePocketSphinx = false;
     
     
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
