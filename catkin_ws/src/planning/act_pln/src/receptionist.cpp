@@ -32,7 +32,7 @@
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
 #define GRAMMAR_COMMANDS "commands.xml"
 #define GRAMMAR_DRINKS "order_drink.xml"
-#define GRAMMAR_NAMES "peopple_names.xml"
+#define GRAMMAR_NAMES "people_names.xml"
 
 enum STATE{
     SM_INIT,
@@ -851,15 +851,15 @@ int main(int argc, char **argv){
                 JustinaManip::startLaGoTo("offer_seat");
                 JustinaManip::startRaGoTo("offer_seat");
                 JustinaManip::waitForLaGoalReached(8000);
-                
-                
-                JustinaManip::startLaGoTo("navigation");
-                JustinaManip::startRaGoTo("navigation");
-                JustinaManip::waitForLaGoalReached(8000);
+                 
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
                 ss.str("");
                 ss << names[names.size() - 1] << "Please, look at me";
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                
+                JustinaManip::startLaGoTo("navigation");
+                JustinaManip::startRaGoTo("navigation");
+                JustinaManip::waitForLaGoalReached(8000);
                 
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
 

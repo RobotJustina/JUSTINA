@@ -126,6 +126,7 @@ void switchSpeechReco(int grammar_id, std::string speech){
         //JustinaHRI::usePocketSphinx = false;
         JustinaHRI::loadGrammarSpeechRecognized(microsoft_grammars[grammar_id]);
         JustinaHRI::waitAfterSay(speech,5000);
+        JustinaHRI::enableSpeechRecognized(true);
     }
 }
 
