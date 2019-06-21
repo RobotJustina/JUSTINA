@@ -14,18 +14,16 @@ int main(int argc, char** argv)
     bool success = false;
     bool isAlign;
 
-    geometry_msgs::Pose pose;
-
+    //geometry_msgs::Pose pose;
     
     bool found;
     int indexFound = 0;
-    std::string idCube = "purple";
     vision_msgs::VisionObjectList objects;
     vision_msgs::VisionObject object;
     //vision_msgs::CubesSegmented cubes;
     //vision_msgs::Cube cube_aux;
     bool withLeftOrRightArm;
-    object.id = idCube;
+    object.id = "blue";
     objects.ObjectList.push_back(object);
 
     while(ros::ok() && !fail && !success){
@@ -48,10 +46,8 @@ int main(int argc, char** argv)
                     nextState = 2;
                 }
                 else{
-                    pose.position.x = objects.ObjectList[0].pose.position.x;
-                    pose.position.y = objects.ObjectList[0].pose.position.y;
-                    pose.position.z = objects.ObjectList[0].pose.position.z;
-                    if(pose.position.y > 0)
+                    object = objects.ObjectList[0];
+                    if(object.pose.position.y > 0)
                         withLeftOrRightArm = true;
                     else
                         withLeftOrRightArm = false;
@@ -62,7 +58,7 @@ int main(int argc, char** argv)
             case 3:
                 //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
                 //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
-                JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idCube, true);
+                JustinaTasks::graspObjectColorFeedback(object, withLeftOrRightArm, object.id, true);
                 nextState = -1;
                 break;
             default:
