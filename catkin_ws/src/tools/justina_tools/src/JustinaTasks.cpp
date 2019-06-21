@@ -5272,8 +5272,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
     return false;
 }
 
-
-bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) {
+bool JustinaTasks::graspObjectColorFeedback(vision_msgs::VisionObject object, bool withLeftArm, std::string colorObject, bool usingTorse) {
     std::cout << "JustinaTasks.->Moving to a good-pose for grasping objects with ";
     if (withLeftArm) {
         std::cout << "left arm" << std::endl;
@@ -5302,20 +5301,50 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
     float minTorso = 0.08;
     float maxTorso = 0.294;
 
-    float torsoSpine, torsoWaist, torsoShoulders;
-    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
-
-    int typeCutlery;
-    float objToGraspX = x;
-    float objToGraspY = y;
-    float objToGraspZ = z;
+    int typeCutlery = object.type_object;
+    float objToGraspX = object.pose.position.x;
+    float objToGraspY = object.pose.position.y;
+    float objToGraspZ = object.pose.position.z;
     float dz = 0.0;
     int maxIteration = 10;
     float movTorsoFromCurrPos;
     std::cout << "JustinaTasks.->ObjToGrasp: " << "  " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
     float movFrontal = -(idealX - objToGraspX);
     float movLateral = -(idealY - objToGraspY);
+
+    std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal << " lateral=" << movLateral << std::endl;
+    float lastRobotX, lastRobotY, lastRobotTheta;
+    //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
+    JustinaNavigation::moveLateral(movLateral, 3000);
+    JustinaNavigation::moveDist(movFrontal, 3000);
+    
+    ////////
+    bool found = false;
+    vision_msgs::VisionObjectList objects;
+    vision_msgs::VisionObject objectGrasp;
+    vision_msgs::VisionObject object_aux;
+    
+    int indexFound = 0;
+    if (colorObject.compare("") != 0) {
+        JustinaManip::hdGoTo(0, -0.9, 2000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        object_aux.id = colorObject;
+        objects.ObjectList.push_back(object_aux);
+        found = JustinaVision::getObjectSeg(objects);
+        std::cout << "GET OBJECTS: " << found << std::endl;
+    }
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
+        
+    if (!found && colorObject.compare("") == 0)
+        objectGrasp = object; 
+    typeCutlery = objectGrasp.type_object;
+    if(typeCutlery == 3)
+        idealZ = 0.9;
+    
     float movVertical = objToGraspZ - idealZ - torsoSpine;
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
@@ -5328,79 +5357,17 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
 
     movTorsoFromCurrPos = goalTorso - torsoSpine;
     waitTime = (int) (8000 * fabs(movTorsoFromCurrPos) / 0.3);
+    std::cout << "JustinaTasks.->Adjusting with vertical=" << movVertical << std::endl;
     std::cout << "JustinaTasks.->movTorsoFromCurrPos:" << movTorsoFromCurrPos<< std::endl;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
-
-    std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal << " lateral=" << movLateral << " and vertical=" << movVertical << std::endl;
-    float lastRobotX, lastRobotY, lastRobotTheta;
-    //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
-    JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
-    if (usingTorse)
+    if (usingTorse){
         JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
-    JustinaNavigation::moveLateral(movLateral, 3000);
-    JustinaNavigation::moveDist(movFrontal, 3000);
-    if (usingTorse)
         JustinaManip::waitForTorsoGoalReached(waitTime);
-
-    bool found = false;
-    vision_msgs::VisionObjectList objects;
-    vision_msgs::VisionObject object_aux;
-    
-    int indexFound = 0;
-    if (colorObject.compare("") != 0) {
-        JustinaManip::hdGoTo(0, -0.9, 2000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-        object_aux.id = colorObject;
-        objects.ObjectList.push_back(object_aux);
-        found = JustinaVision::getObjectSeg(objects);
-        std::cout << "GET OBJECTS: " << found << std::endl;
     }
-
-    if (found && objects.ObjectList[0].graspable) {
-        std::cout << "The object was found again, update the new coordinates." << std::endl;
-        
-        typeCutlery = objects.ObjectList.at(0).type_object;
-        switch (typeCutlery) {
-            //Cutlery objects
-            case 0:
-                objToGraspX = objects.ObjectList.at(0).pose.position.x;
-                objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.3;
-                dz = minTorso;
-                break;
-            // This to the bowls
-            case 1:
-                objToGraspX = objects.ObjectList.at(0).pose.position.x;
-                if (withLeftArm)
-                    objToGraspY = objects.ObjectList.at(0).maxPoint.y;
-                else
-                    objToGraspY = objects.ObjectList.at(0).minPoint.y;
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.32;
-                dz = minTorso;
-                break;
-            // This to the dishes
-            case 2:
-                objToGraspX = objects.ObjectList.at(0).pose.position.x;
-                if (withLeftArm)
-                    objToGraspY = objects.ObjectList.at(0).maxPoint.y;
-                else
-                    objToGraspY = objects.ObjectList.at(0).minPoint.y;
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.3;
-                dz = minTorso;
-                break;
-            // This is to the glasses
-            case 3:
-                objToGraspX = objects.ObjectList.at(0).minPoint.x - 0.04;
-                objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ = objects.ObjectList.at(0).pose.position.z + 0.08;
-                //dz = minTorso;
-                break;
-            default:
-                break;
-        }
-        std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
-    } else if (!found && colorObject.compare("") == 0) {
+    
+    if (!found && colorObject.compare("") == 0){
+        objectGrasp = object; 
         std::cout << "The object was not found again, update new coordinates with the motion of robot." << std::endl;
         float robotX, robotY, robotTheta;
         //JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
@@ -5412,16 +5379,61 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
         float dxr = dxa * cos(robotTheta) + dya * sin(robotTheta);
         float dyr = -dxa * sin(robotTheta) + dya * cos(robotTheta);
 
-        objToGraspX -= dxr;
-        objToGraspY -= dyr;
+        objectGrasp.pose.position.x -= dxr;
+        objectGrasp.pose.position.y -= dyr;
         std::cout << "lastRobotX:" << lastRobotX << ",lastRobotY:" << lastRobotY << ",lastRobotTheta:" << lastRobotTheta << std::endl;
         std::cout << "robotX:" << robotX << ",robotY:" << robotY << ",robotTheta:" << robotTheta << std::endl;
-        std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:" << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl;
+        std::cout << "objectGrasp.pose.position.x:" << objectGrasp.pose.position.x << ",objectGrasp.pose.position.y:" << objectGrasp.pose.position.y << ",objectGrasp.pose.position.z:" << objectGrasp.pose.position.z << std::endl;
+    }else if (found)
+        objectGrasp = objects.ObjectList[0];
+
+    if ((found && colorObject.compare("") != 0 || !found && colorObject.compare("") == 0) && objectGrasp.graspable) {
+        std::cout << "The object was found again, update the new coordinates." << std::endl;
+        typeCutlery = objectGrasp.type_object;
+        switch (typeCutlery) {
+            //Cutlery objects
+            case 0:
+                objToGraspX = objectGrasp.pose.position.x;
+                objToGraspY = objectGrasp.pose.position.y;
+                objToGraspZ = objectGrasp.minPoint.z + 0.3;
+                dz = minTorso;
+                break;
+            // This to the bowls
+            case 1:
+                objToGraspX = objectGrasp.pose.position.x;
+                if (withLeftArm)
+                    objToGraspY = objectGrasp.maxPoint.y;
+                else
+                    objToGraspY = objectGrasp.minPoint.y;
+                objToGraspZ = objectGrasp.minPoint.z + 0.32;
+                dz = minTorso;
+                break;
+            // This to the dishes
+            case 2:
+                objToGraspX = objectGrasp.pose.position.x;
+                if (withLeftArm)
+                    objToGraspY = objectGrasp.maxPoint.y;
+                else
+                    objToGraspY = objectGrasp.minPoint.y;
+                objToGraspZ = objectGrasp.minPoint.z + 0.3;
+                dz = minTorso;
+                break;
+            // This is to the glasses
+            case 3:
+                objToGraspX = objectGrasp.minPoint.x - 0.02;
+                objToGraspY = objectGrasp.pose.position.y;
+                objToGraspZ = objectGrasp.pose.position.z + 0.12;
+                //dz = minTorso;
+                break;
+            default:
+                break;
+        }
+        std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
     } else if (!found && colorObject.compare("") != 0 || !objects.ObjectList[0].graspable) {
         JustinaNavigation::moveDist(-0.2, 2000);
         return false;
     }
-
+    
     //The position it is adjusted and converted to coords wrt to the corresponding arm
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
     if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY, objToGraspZ, destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
@@ -5458,7 +5470,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             	JustinaManip::torsoGoTo(torsoSpine - dz, 0.0, 0.0, 5000);
         } else {
             JustinaManip::startLaOpenGripper(0.8);
-            JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
+            JustinaManip::laGoToCartesianTraj(objToGraspX - 0.03, objToGraspY, objToGraspZ, 15000);
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
@@ -5555,7 +5567,7 @@ bool JustinaTasks::graspObjectColorFeedback(float x, float y, float z, bool with
             	JustinaManip::torsoGoTo(torsoSpine - dz, 0.0, 0.0, 5000);
         } else {
             JustinaManip::startRaOpenGripper(0.8);
-            JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
+            JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY + 0.03, objToGraspZ, 15000);
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
