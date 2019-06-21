@@ -3146,7 +3146,16 @@ void callbackCmdIntroducePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
     }
     else if (tokens[0] == "people"){
             std::cout << "Introduce to people" << std::endl;
-            JustinaTasks::introduceOneToPeople(tokens[1], tokens[3]);
+            if(tokens[2] == "all" || tokens[2] == "everyone" || tokens[2] == "guests" || tokens[2] == "people")
+                JustinaTasks::introduceOneToPeople(tokens[1], tokens[3], -1, -1);
+            else if(tokens[2] == "men")
+                JustinaTasks::introduceOneToPeople(tokens[1], tokens[3], 1, -1);
+            else if(tokens[2] == "women")
+                JustinaTasks::introduceOneToPeople(tokens[1], tokens[3], 0, -1);
+            else if(tokens[2] == "childer")
+                JustinaTasks::introduceOneToPeople(tokens[1], tokens[3], -1, 0);
+            else if(tokens[2] == "elders")
+                JustinaTasks::introduceOneToPeople(tokens[1], tokens[3], -1, 2);
     }
 	
     responseMsg.successful = 1;

@@ -88,6 +88,7 @@ int main(int argc, char** argv)
     confirmCommands.push_back("I want a drink");
     confirmCommands.push_back("I want a combo");
     std::vector<std::string> orderItems;
+    std::vector<std::string> orderItemsSp;
     std::vector<std::string> typeItems;
 
     std::stringstream ss;
@@ -147,7 +148,7 @@ int main(int argc, char** argv)
             case SM_INIT:
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::hdGoTo(0, 0, 2000);
-                JustinaManip::startTorsoGoTo(0.0, 0.0, 0.0);
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                 JustinaHRI::waitAfterSay("I'm ready for the restaurant test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_WAIT_FOR_INIT_COMMAND;
@@ -271,6 +272,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
                 ss.str("");
                 ss << "table_" << numberTable;
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                 JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
                 std::cout << "restaruant_canada.->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
@@ -296,6 +298,7 @@ int main(int argc, char** argv)
                 attempsSpeechInt = 1;
                 validateFood = false;
                 orderItems = std::vector<std::string>();
+                orderItemsSp = std::vector<std::string>();
                 nextState = SM_SAY_TYPE_ORDER;
                 break;
 
@@ -325,7 +328,7 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isFood){
                             //JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
-                            JustinaHRI::waitAfterSay("Please tell me what food, do you want, for example, i want a pringles", 7000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me which food, do you want, for example, i want a pringles", 7000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                         }else{
                             JustinaHRI::waitAfterSay("Please tell me which beverage, do you want, for example, i want a sprite", 7000, maxDelayAfterSay);
@@ -348,7 +351,7 @@ int main(int argc, char** argv)
                             isFood = validateFood;
                             JustinaHRI::enableSpeechRecognized(false);
                             if(isFood){
-                                JustinaHRI::waitAfterSay("Please tell me what food, do you want, for example, i want a pringles", 5000, maxDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Please tell me which food, do you want, for example, i want a pringles", 5000, maxDelayAfterSay);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                             }else{
                                 JustinaHRI::waitAfterSay("Please tell me which beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
@@ -374,7 +377,7 @@ int main(int argc, char** argv)
                         isFood = validateFood;
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isFood){
-                            JustinaHRI::waitAfterSay("Please tell me what food, do you want, for example, i want a pringles", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me which food, do you want, for example, i want a pringles", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                         }else{
                             JustinaHRI::waitAfterSay("Please tell me which beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
@@ -434,7 +437,7 @@ int main(int argc, char** argv)
                     if(maxAttempsSpeechInt <= maxAttempsSpeechInt){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isFood){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what food, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me which food, do you want", 5000, maxDelayAfterSay);
                             //JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                         }else{
                             JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me which beverage, do you want", 5000, maxDelayAfterSay);
@@ -457,7 +460,7 @@ int main(int argc, char** argv)
                     if(attempsSpeechReco <= maxAttempsSpeechReco){
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isFood){
-                            JustinaHRI::waitAfterSay("Please tell me what food, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me which food, do you want", 5000, maxDelayAfterSay);
                             //JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                         }else{
                             JustinaHRI::waitAfterSay("Please tell me witch beverage, do you want", 5000, maxDelayAfterSay);
@@ -486,8 +489,9 @@ int main(int argc, char** argv)
                     if(lastRecoSpeech.find("yes") != std::string::npos){
                         JustinaHRI::enableSpeechRecognized(false);
                         //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                        JustinaHRI::waitAfterSay("Ok, do you want to add something, say justina yes or justina no", 10000, maxDelayAfterSay);
-                        orderItems.push_back(obj1C);
+                        JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
+                        orderItems.push_back(obj1);
+                        orderItemsSp.push_back(obj1C);
                         //findGestureOrAttendOrder = false;
                         //nextState = SM_RETURN_BAR;
                         nextState = SM_WAITING_FOR_MISSING_ORDER;
@@ -497,7 +501,7 @@ int main(int argc, char** argv)
                             attempsConfirmation++;
                             JustinaHRI::enableSpeechRecognized(false);
                             if(isFood){
-                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what food, do you want", 5000, minDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me which food, do you want", 5000, minDelayAfterSay);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
                             }else{
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me which beverage, do you want", 5000, minDelayAfterSay);
@@ -508,7 +512,7 @@ int main(int argc, char** argv)
                         else{
                             JustinaHRI::enableSpeechRecognized(false);
                             //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                            JustinaHRI::waitAfterSay("Ok, do you want to add something, say justina yes or justina no", 10000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                             //findGestureOrAttendOrder = false;
                             //nextState = SM_RETURN_BAR;
                             nextState = SM_WAITING_FOR_MISSING_ORDER;
@@ -525,7 +529,7 @@ int main(int argc, char** argv)
                     else{
                         JustinaHRI::enableSpeechRecognized(false);
                         //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                        JustinaHRI::waitAfterSay("Ok, do you want to add something, say justina yes or justina no", 10000, maxDelayAfterSay);
+                        JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                         //findGestureOrAttendOrder = false;
                         //nextState = SM_RETURN_BAR;
                         nextState = SM_WAITING_FOR_MISSING_ORDER;
@@ -539,11 +543,19 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("yes") != std::string::npos){
                         if(isFood){
-                            //JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
-                            JustinaHRI::waitAfterSay("Please tell me what food, do you want", 7000, maxDelayAfterSay);
-                            JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
-                            JustinaHRI::enableSpeechRecognized(true);
-                            nextState = SM_TAKE_ORDER;
+                            if(orderItems.size() == 3){
+                                JustinaHRI::enableSpeechRecognized(false);
+                                JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                                findGestureOrAttendOrder = false;
+                                nextState = SM_RETURN_BAR;
+                            }
+                            else{
+                                //JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Please tell me what food, do you want", 7000, maxDelayAfterSay);
+                                JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
+                                JustinaHRI::enableSpeechRecognized(true);
+                                nextState = SM_TAKE_ORDER;
+                            }
                         }else{
                             //JustinaHRI::waitAfterSay("Please tell me which beverage, do you want", 7000, maxDelayAfterSay);
                             //JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
@@ -561,6 +573,7 @@ int main(int argc, char** argv)
 
             case SM_RETURN_BAR:
                 std::cout << "State machine: SM_RETURN_BAR" << std::endl;
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);
                 if(!JustinaNavigation::getClose("kitchen_bar", 120000)){
@@ -601,15 +614,15 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_REPETE_ORDER" << std::endl;
                 ss.str("");
                 ss << "Hey barman, I need a ";
-                for(int i = 0; i < orderItems.size(); i++){
-                    if(orderItems.size() == 1){
-                        ss << orderItems[i] << ", ";
+                for(int i = 0; i < orderItemsSp.size(); i++){
+                    if(orderItemsSp.size() == 1){
+                        ss << orderItemsSp[i] << ", ";
                     }
                     else{
-                        if(i == orderItems.size() - 2)
-                            ss << orderItems[i] << " and ";
+                        if(i == orderItemsSp.size() - 2)
+                            ss << orderItemsSp[i] << " and ";
                         else
-                            ss << orderItems[i] << ", ";
+                            ss << orderItemsSp[i] << ", ";
                     }
                 }
                 ss << "for the table " << numberTable;

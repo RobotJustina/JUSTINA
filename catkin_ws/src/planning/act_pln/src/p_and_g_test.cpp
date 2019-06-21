@@ -66,16 +66,20 @@ int main(int argc, char** argv)
 	my_cutlery.ObjectList[5].id="orange";
 
 	bool cutlery_found = false;
-	geometry_msgs::Pose pose;
+    /////
+	//geometry_msgs::Pose pose;
+    vision_msgs::VisionObject objCutlery;
 	bool withLeft = false;
-	std::string id_cutlery;
+    /////
+	//std::string id_cutlery;
 	int objTaken = 0;
 	int chances =0;
 	int attempts = 0;
 	int maxDelayAfterSay = 300;
 	int cont_z;
 	int cont =0;
-	int type;
+    /////
+	//int type;
 	bool openDWFlag=false; //set this flag as false due to the dishwasher will be open by default
 	bool takeCascadePod=false;
 	int contObj =0;
@@ -219,11 +223,13 @@ int main(int argc, char** argv)
       						for(int i=0; i < my_cutlery.ObjectList.size(); i ++){
       							if(my_cutlery.ObjectList[i].graspable == true){
       								std::cout << "P & G Test...-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
-      								pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                    objCutlery = my_cutlery.ObjectList[i];
+                                    /////
+      								/*pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
                 					pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
                 					pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
                 					id_cutlery = my_cutlery.ObjectList[i].id;
-                					type = my_cutlery.ObjectList[i].type_object;
+                					type = my_cutlery.ObjectList[i].type_object;*/
                 					JustinaHRI::say("I have found an object on the table");
         							ros::Duration(2.0).sleep();
                 					nextState = SM_TakeObject;
@@ -240,7 +246,9 @@ int main(int argc, char** argv)
       			std::cout << "P & G Test...-> taking objects" << std::endl;
 
       			if(objTaken == 0){
-      				if(pose.position.y > 0){
+                    /////
+      				//if(pose.position.y > 0){
+      				if(objCutlery.pose.position.y > 0){
 						withLeft = true;
 						std::cout << "P & G Test...-> using  left arm" << std::endl;
       				}
@@ -261,7 +269,8 @@ int main(int argc, char** argv)
 				
       			
 
-				if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
+				//if(!JustinaTasks::graspObjectColorFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
+				if(!JustinaTasks::graspObjectColorFeedback(objCutlery, withLeft, objCutlery.id, true)){
       				JustinaHRI::say("I can not grasp the object");
         			ros::Duration(2.0).sleep();
 					std::cout << "P & G Test...-> cannot take the object" << std::endl;
