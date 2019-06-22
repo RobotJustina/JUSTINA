@@ -1792,6 +1792,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
 
     if (guide) {
+        std::cout << "JustinaTasks.->Fine person to guide saving the location person2" << std::endl;
         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
         JustinaKnowledge::addUpdateKnownLoc("person2", cx, cy,
                 atan2(cy - robot_y, cx - robot_x) - robot_a);
@@ -1818,10 +1819,13 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
             angleHead = 2 * M_PI - angleHead;
         JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.53 + torsoSpine), dist_to_head), 5000);*/
         
+        std::cout << "JustinaTasks.->Guide person to the location person2" << std::endl;
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
         std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
         JustinaTasks::guideAPerson("person2", waitToClose, 1.5, true, 1.35);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        std::cout << "JustinaTasks.->Guide person success finished" << std::endl;
         float torsoSpine, torsoWaist, torsoShoulders;
         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
         float currx, curry, currtheta;
@@ -3467,8 +3471,9 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr, bool on
                     << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if (hokuyoRear) {
-                    JustinaHRI::waitAfterSay("Ok, follow me", 2500);
+                    ///// The order was change before are first say and after startGetClose, if not work revert
                     JustinaNavigation::startGetClose(loc);
+                    JustinaHRI::waitAfterSay("Ok, follow me", 2500);
                     nextState = SM_GUIDING_PHASE;
                 } else
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
@@ -7159,6 +7164,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                     find = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE,false, location);
                 } 
                 else {
+                    std::cout << "JustinaTasks.->Introduce two people to the person two" << std::endl;
                     name = name2;
                     location = location2;
                     find = JustinaTasks::findPerson(name, -1, JustinaTasks::NONE,false, location, true);
