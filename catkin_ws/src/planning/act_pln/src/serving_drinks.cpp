@@ -736,7 +736,6 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
       JustinaManip::hdGoTo(0.0, 0.0, 5000);*/
 
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
-    JustinaVision::faceTrain(tokens[0], 4);
     
     // This is the last changes for the train
     std::vector<vision_msgs::VisionFaceObject> faces;
@@ -748,6 +747,8 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
             JustinaTasks::waitRecognizedFace(2000, "", -1, -1, JustinaTasks::NONE, faces, facesALL);
         }
     }
+    
+    JustinaVision::faceTrain(tokens[0], 4);
 
     while(!finish_train && count < 4){
         if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
@@ -806,7 +807,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
         switchSpeechReco(0,"did you understand the order, say justina yes");
         
-
+        
         JustinaHRI::waitForSpecificSentence("justina yes", 10000);
 
 
@@ -832,7 +833,9 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                     ss.str("");
                     ss << "I am going to take the " << tokens[i] << std::endl; 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                    JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
+                    // This is for grasp with two frames
+                    //JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
+                    JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
                     ss.str("");
                     ss << "(assert (set_object_arm " << tokens[i] << " false))";
                     JustinaRepresentation::sendAndRunCLIPS(ss.str());
