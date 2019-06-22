@@ -471,7 +471,10 @@ int main(int argc, char** argv)
                         else{
                             std::cout << "I  can't detect anything" << std::endl;
                             attempsFindObjectsTable++;
-                            nextState = SM_FINISH_TEST;
+                            if(attempsFindObjectsTable > 3)
+                                nextState = SM_FINISH_TEST;
+                            else 
+                                SM_FIND_OBJECTS_ON_TABLE;
                         }
                     }else{
                         // std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
@@ -488,6 +491,7 @@ int main(int argc, char** argv)
                         if(recoObjForTake.size() <= 10){
                             int countObject = recoObjForTake.size();
                             justinaSay << "I have found " << countObject << " objects on the table";
+                            attempsFindObjectsTable = 0;
                             // JustinaHRI::say(justinaSay.str());
                         }
                         else{
