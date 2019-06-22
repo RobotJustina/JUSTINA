@@ -1311,6 +1311,8 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionFaceObject> facesObject;
                 std::vector<vision_msgs::VisionFaceObject> allFacesObject;
+                std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject: " << facesObject.size() << std::endl;
+                std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject ALL: " << allFacesObject.size() << std::endl;
                 if(waitRecognizedFace(2000, id, gender, ages, pose, facesObject, allFacesObject)){
                     if(numrecog == 1){
                         Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
@@ -1321,18 +1323,17 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                     else{
                         std::vector<Eigen::Vector3d> newCentroidsFaces;
                         filterObjectByLocation(facesObject, newCentroidsFaces, location);
+                        std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFaces: " << newCentroidsFaces.size() << std::endl;
                         if(numrecog == 0)
                             filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
                         else{
                             // We need to do all for filter person
-                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject " << facesObject.size() << std::endl;
-                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject ALL" << allFacesObject.size() << std::endl;
-                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFaces " << newCentroidsFaces.size() << std::endl;
+                            filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
                             std::vector<Eigen::Vector3d> newCentroidsFacesAll;
                             filterObjectByLocation(allFacesObject, newCentroidsFacesAll, location);
-                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFacesAll" << newCentroidsFacesAll.size() << std::endl;
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFacesAll: " << newCentroidsFacesAll.size() << std::endl;
                             filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
-                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidsFacesAll" << centroidFacesAll.size() << std::endl;
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidsFacesAll: " << centroidFacesAll.size() << std::endl;
                             if(centroidFacesAll.size() >= numrecog)
                                 recog = true;
                         }
@@ -1350,11 +1351,11 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
         moveBase = true;
     }
     if (numrecog == 1 && centroidFaces.size() > 0)
-        std::cout << "JustinaTasks.->turnAndRecognizeGesture.-> centroid face person :" << centroidFaces[0](0, 0) << ", " << centroidFaces[0](1, 0) << ", " << centroidFaces[0](2, 0) << std::endl;
+        std::cout << "JustinaTasks.->turnAndRecognizeFace.-> centroid face person :" << centroidFaces[0](0, 0) << ", " << centroidFaces[0](1, 0) << ", " << centroidFaces[0](2, 0) << std::endl;
     if (numrecog == 0 && centroidFaces.size() > 0 )
     {
         recog = true;
-        std::cout << "JustinaTasks.->turnAndRecognizeGesture.->: have been found objects:" << centroidFaces.size() << std::endl;
+        std::cout << "JustinaTasks.->turnAndRecognizeFace.->: have been found objects:" << centroidFaces.size() << std::endl;
     }
     return recog;
 }
@@ -1802,6 +1803,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
     }
 
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
+    float torsoSpine, torsoWaist, torsoShoulders;
+    float currx, curry, currtheta;
 
     if (guide){
         //This is to point to the person
@@ -1826,20 +1829,15 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
         JustinaTasks::guideAPerson("person2", waitToClose, 1.5, true, 1.35);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         std::cout << "JustinaTasks.->Guide person success finished" << std::endl;
-        float torsoSpine, torsoWaist, torsoShoulders;
-        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-        float currx, curry, currtheta;
-        JustinaNavigation::getRobotPose(currx, curry, currtheta);
-        float dist_to_head = sqrt(pow(worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
-        //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
-        float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
-        if (angleHead < -M_PI)
-            angleHead = 2 * M_PI + angleHead;
-        if (angleHead > M_PI)
-            angleHead = 2 * M_PI - angleHead;
-        JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.53 + torsoSpine), dist_to_head), 5000);
         //closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
-        
+        JustinaNavigation::getRobotPose(currx, curry, currtheta);
+        float thetaToGoal = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx);
+        if (thetaToGoal < 0.0f)
+            thetaToGoal = 2 * M_PI + thetaToGoal;
+        float theta = thetaToGoal - currtheta;
+        std::cout << "JustinaTasks.->Turn in direction of robot:" << theta
+            << std::endl;
+        JustinaNavigation::moveDistAngle(0, theta, 2000);
     }else {
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
@@ -1850,10 +1848,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
                 1.0, waitToClose);
     }
 
-    float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
             torsoShoulders);
-    float currx, curry, currtheta;
     JustinaNavigation::getRobotPose(currx, curry, currtheta);
     float dist_to_head = sqrt(
             pow(worldFaceCentroid.x() - currx, 2)
