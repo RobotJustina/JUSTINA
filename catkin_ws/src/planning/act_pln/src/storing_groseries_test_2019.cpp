@@ -471,7 +471,10 @@ int main(int argc, char** argv)
                         else{
                             std::cout << "I  can't detect anything" << std::endl;
                             attempsFindObjectsTable++;
-                            nextState = SM_FINISH_TEST;
+                            if(attempsFindObjectsTable > 3)
+                                nextState = SM_FINISH_TEST;
+                            else 
+                                SM_FIND_OBJECTS_ON_TABLE;
                         }
                     }else{
                         // std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
@@ -488,6 +491,7 @@ int main(int argc, char** argv)
                         if(recoObjForTake.size() <= 10){
                             int countObject = recoObjForTake.size();
                             justinaSay << "I have found " << countObject << " objects on the table";
+                            attempsFindObjectsTable = 0;
                             // JustinaHRI::say(justinaSay.str());
                         }
                         else{
@@ -930,9 +934,8 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_PUT_OBJECT_ON_CUPBOARD" << std::endl;
                     for(int i=0; i< categories.size(); i++) //----------------
-                    {
-                    	std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
-                    }//----------------------
+                        std::cout<< categories[i]<<" in the level : "<<level[i]<<std::endl;
+                    
                     bool withLeftOrRightArm;
                     /********************
                      * This is only for ensure that justina have a object in the hand
