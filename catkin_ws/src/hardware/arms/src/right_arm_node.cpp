@@ -6,6 +6,7 @@
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
+#include <std_msgs/UInt16.h>
 
 bool newGoalPose = false;
 
@@ -129,6 +130,7 @@ int main(int argc, char ** argv){
     ros::Publisher pubGripper = n.advertise<std_msgs::Float32>("right_arm/current_gripper", 1);
     ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("right_arm/object_on_hand", 1);
     ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/right_arm_battery", 1);
+    ros::Publisher pubCurrentLoadD21 = n.advertise<std_msgs::UInt16>("right_arm/current_loadD21",1);
 
     ros::Rate rate(30);
 
@@ -182,6 +184,7 @@ int main(int argc, char ** argv){
     std_msgs::Float32 msgCurrGripper;
     std_msgs::Bool msgObjOnHand;
     std_msgs::Float32 msgBattery;
+    std_msgs::UInt16 msgCurrentLoadD21;
 
     while(ros::ok()){
 
@@ -281,6 +284,7 @@ int main(int argc, char ** argv){
             if(currentLoadD22 > 1023)
                 currentLoadD22 -= 1023;
             currentLoadD21 = (currentLoadD21 + currentLoadD22) / 2.0f;
+            msgCurrentLoadD21.data = currentLoadD21;
             if(currentLoadD21 > 200 and jointStates.position[7] > -0.05)
                 msgObjOnHand.data = true;
             else
@@ -301,6 +305,7 @@ int main(int argc, char ** argv){
         pubArmPose.publish(msgCurrPose);
         pubGripper.publish(msgCurrGripper);
         pubObjOnHand.publish(msgObjOnHand);
+        pubCurrentLoadD21.publish(msgCurrentLoadD21);
 
         rate.sleep();
         ros::spinOnce();
