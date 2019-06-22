@@ -1014,7 +1014,7 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
             lastRecognizedFaces =
                 JustinaVision::getFaceRecognition(id).recog_faces;
         else{
-            if(gender == -1 || ages == -1)
+            if(gender == -1 && ages == -1)
                 lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
             else
                 lastRecognizedFaces = JustinaVision::getFaceAgeAndGenderRecognition().recog_faces;
@@ -1075,6 +1075,8 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
     else
         recognized = false;
     std::cout << "JustinaTasks.->waitRecognizedFace recognized:" << recognized << std::endl;
+    std::cout << "JustinaTasks.->waitRecognizedFace Face recognized size:" << filterFaces.size() << std::endl;
+    std::cout << "JustinaTasks.->waitRecognizedFace Face recognized  ALL size:" << allFaces.size() << std::endl;
     return recognized;
 }
 
@@ -1280,6 +1282,9 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
     centroidFaces = std::vector<Eigen::Vector3d>();
     // This is for the all centroid faces, is used to count how many people are same and stop when find a max of the desired person
     std::vector<Eigen::Vector3d> centroidFacesAll = std::vector<Eigen::Vector3d>();
+    
+    // Enable detect
+    //JustinaVision::enableFaceAndGender(true);
 
     if (pose == STANDING)
         maxAngTil = initAngTil;
@@ -1320,9 +1325,14 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                             filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
                         else{
                             // We need to do all for filter person
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject " << facesObject.size() << std::endl;
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the facesObject ALL" << allFacesObject.size() << std::endl;
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFaces " << newCentroidsFaces.size() << std::endl;
                             std::vector<Eigen::Vector3d> newCentroidsFacesAll;
                             filterObjectByLocation(allFacesObject, newCentroidsFacesAll, location);
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFacesAll" << newCentroidsFacesAll.size() << std::endl;
                             filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
+                            std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidsFacesAll" << centroidFacesAll.size() << std::endl;
                             if(centroidFacesAll.size() >= numrecog)
                                 recog = true;
                         }
@@ -1811,7 +1821,21 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose,
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
         std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
-        closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
+        JustinaTasks::guideAPerson("person2", waitToClose, 1.5, true, 1.35);
+        float torsoSpine, torsoWaist, torsoShoulders;
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        float currx, curry, currtheta;
+        JustinaNavigation::getRobotPose(currx, curry, currtheta);
+        float dist_to_head = sqrt(pow(worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
+        //JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+        float angleHead = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta;
+        if (angleHead < -M_PI)
+            angleHead = 2 * M_PI + angleHead;
+        if (angleHead > M_PI)
+            angleHead = 2 * M_PI - angleHead;
+        JustinaManip::hdGoTo(angleHead, atan2(worldFaceCentroid.z() - (1.53 + torsoSpine), dist_to_head), 5000);
+        //closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
+        
     }else {
         int waitToClose = (int) (dis * 10000);
         std::cout << "JustinaTasks.->dis:" << dis << std::endl;
@@ -5507,6 +5531,7 @@ bool JustinaTasks::graspObjectColorFeedback(vision_msgs::VisionObject object, bo
         } else {
             JustinaManip::startLaOpenGripper(0.8);
             JustinaManip::laGoToCartesianTraj(objToGraspX - 0.03, objToGraspY, objToGraspZ, 15000);
+            JustinaManip::laStopGoToCartesian();
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
@@ -5604,6 +5629,7 @@ bool JustinaTasks::graspObjectColorFeedback(vision_msgs::VisionObject object, bo
         } else {
             JustinaManip::startRaOpenGripper(0.8);
             JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY + 0.03, objToGraspZ, 15000);
+            JustinaManip::raStopGoToCartesian();
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
@@ -7158,7 +7184,8 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 dialogue.str("");
                 dialogue << "Hello, Is your name, " << name << ", say justina yes or justina no";
 
-                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
+                //JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
+                JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         
                 /*JustinaHRI::usePocketSphinx = true;
@@ -7167,7 +7194,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));*/
                 JustinaHRI::enableSpeechRecognized(false);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::waitAfterSay(dialogue.str(), 5000);
+                JustinaHRI::waitAfterSay(dialogue.str(), 5000, 400);
                 JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
                 //JustinaHRI::enableSpeechRecognized(true);
@@ -7197,7 +7224,7 @@ bool JustinaTasks::introduceTwoPeople(std::string name1, std::string location1,s
                 } 
                 else {
                     ///////
-                    //JustinaKnowledge::deleteKnownLoc("person2");
+                    JustinaKnowledge::deleteKnownLoc("person2");
                     JustinaHRI::waitAfterSay("sorry, I will try to find you again",1500);
                     JustinaNavigation::moveDistAngle(0, 1.57, 3000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -7447,6 +7474,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaTasks::guideAPerson(location_people, 120000, 1.5, true, 0.8);
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "we have arrived to " << location_people << " please wait, i am looking for the people" <<std::endl;
+                JustinaVision::enableFaceAndGender(true);
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 nextState = SM_FIND_PERSON;
                 break;
@@ -7669,6 +7697,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
 
             case SM_FINISH: 
                 std::cout << "JustinaTasks::finish successfully" << std::endl;
+                JustinaVision::enableFaceAndGender(false);
                 find = true;
                 success = true;
                 break;
