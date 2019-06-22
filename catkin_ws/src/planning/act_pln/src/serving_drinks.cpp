@@ -907,7 +907,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
                 
             }
-            if(!la && tokens.size() > 3){
+            if(!la && tokens.size() > 3 && i >1){
                 JustinaManip::laGoTo("navigation", 3000);
                 JustinaTasks::detectObjectInGripper(tokens[i], true, 7000);
                 la = true;

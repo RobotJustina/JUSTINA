@@ -410,6 +410,10 @@ int main(int argc, char** argv)
                             if (centroids_loc.size() > 1){
                                 JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
                                 centroids_loc.erase(centroids_loc.begin());
+                                JustinaHRI::say("Sorry for my mistake, please enjoy the party");
+                                ros::Duration(1.0).sleep();
+                                JustinaHRI::say("I am going to approach to the next person");
+                                ros::Duration(1.0).sleep();
 						    	nextState = SM_CLOSE_TO_GUEST;
                             }else{
 						    	nextState = SM_ReturnSearchWaving;
@@ -440,7 +444,7 @@ int main(int argc, char** argv)
                         }
                     }
                 }
-                if(gender == 1){
+                else if(gender == 1){
                     JustinaHRI::waitAfterSay("Sorry, but ladies first, in a moment i will back for you", 5000, minDelayAfterSay);
 
                     if (centroids_loc.size() > 1){
@@ -568,7 +572,22 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Hello Taxi driver, my name is Justina, I came here with a guest that want to go home", 12000);
                 ros::Duration(1.0).sleep();
 
-                if(numberGuest<maxNumberGuest){
+                JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
+                ros::Duration(1.5).sleep();
+                JustinaHRI::say("please close the umbrella and put in my gripper");
+                ros::Duration(1.5).sleep();
+                JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
+                withLeftArm = true;
+                ros::Duration(1.0).sleep();
+                ss.str("");
+                ss << "Good bye " << idGuest;
+                JustinaHRI::say(ss.str());
+                ros::Duration(1.0).sleep();
+                JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
+                ros::Duration(1.5).sleep();
+                nextState = SM_RETURN_INITIAL_POINT;
+
+                /*if(numberGuest<maxNumberGuest){
                     JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
                     ros::Duration(1.5).sleep();
                     JustinaHRI::say("please close the umbrella and put in my gripper");
@@ -600,7 +619,7 @@ int main(int argc, char** argv)
                     JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
                     ros::Duration(1.5).sleep();
                     nextState = SM_FINAL_STATE;
-                }
+                }*/
                 
                 break;
 
@@ -616,9 +635,20 @@ int main(int argc, char** argv)
 			    		}
 			    	} 
 			    }
-                nextState= SM_SEARCH_WAVING;
+
+
+                /*nextState= SM_SEARCH_WAVING;
                 numberGuest++;
-                JustinaVision::startSkeletonFinding();
+                JustinaVision::startSkeletonFinding();*/
+
+                if(numberGuest<maxNumberGuest){
+                    nextState= SM_SEARCH_WAVING;
+                    numberGuest++;
+                    JustinaVision::startSkeletonFinding();
+                }
+                else
+                    nextState = SM_FINAL_STATE;
+                
                 break;
 
             case SM_FINAL_STATE:
