@@ -737,6 +737,17 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaVision::faceTrain(tokens[0], 4);
+    
+    // This is the last changes for the train
+    std::vector<vision_msgs::VisionFaceObject> faces;
+    std::vector<vision_msgs::VisionFaceObject> facesALL;
+    if(!JustinaTasks::waitRecognizedFace(2000, "", -1, -1, JustinaTasks::NONE, faces, facesALL)){
+        JustinaManip::hdGoTo(0.0, -0.6, 3000);
+        if(!JustinaTasks::waitRecognizedFace(2000, "", -1, -1, JustinaTasks::NONE, faces, facesALL)){
+            JustinaManip::hdGoTo(0.0, -0.2, 3000);
+            JustinaTasks::waitRecognizedFace(2000, "", -1, -1, JustinaTasks::NONE, faces, facesALL);
+        }
+    }
 
     while(!finish_train && count < 4){
         if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
