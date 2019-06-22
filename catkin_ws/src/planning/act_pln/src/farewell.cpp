@@ -207,6 +207,8 @@ int main(int argc, char** argv)
 			case SM_WAIT_FOR_DOOR:
 				if (!JustinaNavigation::obstacleInFront())
 					nextState = SM_SAY_WAIT_FOR_DOOR;
+                else
+                    nextState = SM_INIT;
 			break;
             
             
