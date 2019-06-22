@@ -1498,14 +1498,15 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_find","Find_person"],
 	"Action_find": [["find", "look_for", "locate", "meet"], [], [], []],
 	"Find_person": [[], [], ["person"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Find_person-) (step ))" +
+	                        "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
 	#find person 2 parametros
 	{"params": ["Find_person", "Person", "Person_location"],
-	"Find_person": [["find", "locate", "look_for"], [], [], []],
+	"Find_person": [["find", "locate", "look_for", "spot", "pinpoint"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Person_location": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
@@ -1546,7 +1547,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#grasp object 2 parametros
 	{"params": ["Action_get", "Get_object", "Source_get"],
-	"Action_get": [["get", "grasp", "take"], [], [], []],
+	"Action_get": [["get", "grasp", "take", "retrieve", "pick up"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
 	"Source_get": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step )) ", 
@@ -1556,7 +1557,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#grasp object 1 parametro
 	{"params": ["Action_get", "Get_object"],
-	"Action_get": [["get", "grasp", "take", "look for"], [], [], []],
+	"Action_get": [["get", "grasp", "take", "look for", "retrieve" "pick up"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
@@ -1574,7 +1575,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#follow 1 parametro
 	{"params": ["Action_follow", "Pron"],
-	"Action_follow": [["follow", "after"], [], [], []],
+	"Action_follow": [["follow", "after", "behind"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man no_location) (step ))",
 	"verbal_confirmation": '',
@@ -1637,8 +1638,8 @@ meaning_mapping_patterns_eegpsr2 = [
 	"planner_not_confirmed": ''},
 
 	#$vbplace the $object on the {placement 2}
-	{"params": ["Action_take", "Object", "Place"],
-	"Action_take": [["put", "place", "deliver", "set", "leave"], [], [], []],
+	{"params": ["Action_place", "Object", "Place"],
+	"Action_place": [["put", "place", "deliver", "set", "leave"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
@@ -1712,7 +1713,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#$fndobj   = $vbfind the {kobject?} in the {room}
 	{"params": ["Action_get", "Object", "Location"],
-	"Action_get": [["find", "look_for", "locate"], [], [], []],
+	"Action_get": [["find", "look_for", "locate", "spot", "pinpoint"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))"+
@@ -2199,14 +2200,14 @@ meaning_mapping_patterns_eegpsr2 = [
 	"planner_not_confirmed": ''},
 
         #$store = pick up a {category} from the {placement} and put it into the $storage
-        {"params": ["Action_take", "Category", "Place"],
-	"Action_take": [["take"], [], [], []],
-	"Category": [[], [], ["category"], []],
-	"Place": [[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type storage_object) (params -Category- -Place-) (step )) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
+        #{"params": ["Action_take", "Category", "Place"],
+	#"Action_take": [["take"], [], [], []],
+	#"Category": [[], [], ["category"], []],
+	#"Place": [[], [], ["place"], []],
+	#"conceptual_dependency": "(task (plan user_speech) (action_type storage_object) (params -Category- -Place-) (step )) ",
+	#"verbal_confirmation": '',
+	#"planner_confirmed": '',
+	#"planner_not_confirmed": ''},
         
         {"params": ["Action_put", "It", "Into", "Storage"],
 	"Action_put": [["put"], [], [], []],
@@ -2214,6 +2215,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	"Into": [["into"], [], [], []],
 	"Storage": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type storage_object) (params -Storage- nil) (step ))",
+	#"conceptual_dependency":"(task (plan user_speech) (action_type deliver_in_position) (params -Storage-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2241,6 +2243,15 @@ meaning_mapping_patterns_eegpsr2 = [
 
         #No se implemento $findorsI = $vbfind (a | the) {object meta: Robot must place it on the {placement}}
         #$takeI = $vbtake the {aobject? meta: Place to } from the {placement}
+        {"params": ["Action_take", "Category", "Origin_place"],
+	"Action_take": [["take", "get", "retrieve", "grasp", "pick up"], [], [], []],
+	"Category": [[], [], ["category"], []],
+	"Origin_place": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				"(task (plan user_speech) (action_type get_object) (params default_location -Origin_place- ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
         #$takeI = $vbtake the {aobject meta: Robot will find it on the {placement}}
         
         #$place    = $vbplace it on the {placement}
@@ -2285,6 +2296,17 @@ meaning_mapping_patterns_eegpsr2 = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+
+        #$findpsI  = $vbfind {name meta: {pron sub} is (sitting | standing | lying | waving ) at the {beacon}}
+        {"params": ["Action_find", "Person"],
+	"Action_find": [["find", "locate", "spot", "pinpoint", "look for"], [], [], []],
+	"Person": [[], [], ["person"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+	                        "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
 	
         #and $vbguide {pron}	
 	{"params": ["Action_guide", "Pron"],
@@ -2499,6 +2521,14 @@ meaning_mapping_patterns_eegpsr2 = [
 	"At": [["at", "in"], [], [], []],
 	"Place": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "-Place-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	{"params": ["PronIs", "PGG"],
+	"PronIs": [["she", "he"], [], [], []],
+	"PGG": [["waving", "standing", "lying", "sitting"], [], [], []],
+	"conceptual_dependency": "-PGG-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}

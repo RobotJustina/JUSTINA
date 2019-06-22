@@ -79,6 +79,8 @@ def separaTask(cadena):
 					deliver_object = True
 				elif firstparam[1] == 'set_cutlery':
 					set_cutlery = True
+				elif firstparam[1] == 'find_object_in_room':
+					origin_place = False
 				elif firstparam[1] == 'question':
 					temp2 = firstparam[0] + " " + "question_" + str(question) + " " + firstparam[2]
 					if paramTam > 3:
@@ -104,6 +106,8 @@ def separaTask(cadena):
 						tu = 2
 						#print "TEST TEMPSTEP " + str(tempStep)
 				elif firstparam[2] == 'follow_place_origin':
+                                        if origin_place == False :
+                                            location = ''
 					if step == tempStep + tu:
 						#step = step -1
 						#fpush = False

@@ -198,10 +198,11 @@
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Storage object" crlf)
-	(assert (plan (name ?name) (number 1) (actions get_category_state ?storage ?sp_obj)(duration 6000)))
-	(assert (plan (name ?name) (number 2) (actions storage_object)(duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions update_status finish_objetive finaly_storage)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	;(assert (plan (name ?name) (number 1) (actions get_category_state ?storage ?sp_obj)(duration 6000)))
+	;(assert (plan (name ?name) (number 2) (actions storage_object)(duration 6000)))
+	(assert (plan (name ?name) (number 1) (actions storage_object ?storage ?sp_obj)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions update_status finish_objetive finaly_storage)(duration 6000)))
+	(assert (finish-planner ?name 2))
 
 )
 

@@ -347,6 +347,7 @@
 	(assert (plan_active no))
 	
 	(retract ?f3)
+	(assert (reset_status ?object))
 )
 
 
@@ -402,3 +403,17 @@
 	(retract ?f)
 )
 ;;;;;;;;;;;;;;
+(defrule reset_status_after_finish_objetive
+	?f <- (reset_status finish_objetive)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(modify ?f1 (status nil))
+)
+
+(defrule reset_status_after_finish_task
+	?f <- (reset_status ?obj&:(neq ?obj finish_objetive))
+	=>
+	(retract ?f)
+)
+;;;;;;;;

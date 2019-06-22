@@ -827,6 +827,10 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay(objs_desc, 12000);
 			responseMsg.successful = 1;
 		}
+         else if (param1.compare("whether") == 0) {
+			JustinaHRI::waitAfterSay("I don't dream with electric sheep, but I dream with the dawn's world", 10000);
+			responseMsg.successful = 1;
+        }
 	} else
 		success = false;
 
@@ -1916,6 +1920,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 	if(tokens[0] == "object")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, i want pringles", 10000);
+	if(tokens[0] == "person_pgg")
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, is waving", 10000);
 	
     while(!conf && count < 3){
 	
@@ -1935,6 +1941,9 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	if(tokens[0] == "object_place"){
         ss << "in wich place of the " << tokens[2] << " you want me to put the object";
         switchSpeechReco(7, ss.str());}
+	if(tokens[0] == "person_pgg"){
+        ss << "Tell me what pose or gesture is making " << tokens[2];
+        switchSpeechReco(7, ss.str());}// falta cambiarla
 	ss.str("");
 
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -1950,6 +1959,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			ss << "Do you want i guide " << tokens[2] << " to the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "object_place")
 			ss << "Do you want i put the object on the " << name << ", say justina yes or justina no";
+		else if(tokens[0] == "person_pgg")
+			ss << "is " << name << " " << tokens[2] << ", say justina yes or justina no";
 		//JustinaHRI::waitAfterSay(ss.str(), 2000);
 		//change grammar
         switchSpeechReco(0, ss.str());
@@ -1968,6 +1979,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 				ss << "Ok i will guide her to the " << name;
 			else if(tokens[0] == "object_place")
 				ss << "Ok i will put the object on the " << name;
+			else if(tokens[0] == "person_pgg")
+				ss << "Ok " << tokens[2] << " is " << name;
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			ss.str("");
 			ss << msg->params << " " << name;
@@ -1976,7 +1989,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		}
 		else{
 			ss.str("");
-			ss << msg->params << " nil";
+			ss << msg->params << name;
 			responseMsg.params = ss.str();
 			responseMsg.successful = 0;
 		}
@@ -4259,6 +4272,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     int obj_count = 0;
     bool help = false;
 	bool armFlag;
+    bool guide_to_grasp = true;
     std::string obj_name;
     std::string lastReco;
     std::string query;
@@ -4266,6 +4280,12 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	std::vector<std::string> objects;
     std::vector<poseObj> pose_obj;
    
+    if(tokens[0] == "object" && tokens[1] == "nil"){
+        guide_to_grasp = false;
+		JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000);
+        to_speech = tokens[0];
+    }
+
     ss.str("");
     ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
     while (!help && count < 3){
@@ -4287,120 +4307,122 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
         //JustinaHRI::waitAfterSay("I can not recognize the object", 10000);
         help =true;
         if(help){
-            obj_name = tokens[0];
-            to_speech = obj_name;
-            boost::replace_all(to_speech, "_", " ");
-            ss.str("");
-            ss << "Ok, go for the  " << to_speech;
-            JustinaHRI::waitAfterSay(ss.str(), 100000);
-            
-            //get default location
-            if(tokens[1] == "default_location"){
+            if(guide_to_grasp){
+                obj_name = tokens[0];
+                to_speech = obj_name;
+                boost::replace_all(to_speech, "_", " ");
                 ss.str("");
-                ss << "(assert (get_obj_default_loc " << obj_name << " 1))";
-                JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
-            }
-            else
-                query = tokens[1];
+                ss << "Ok, go for the  " << to_speech;
+                JustinaHRI::waitAfterSay(ss.str(), 100000);
+                
+                //get default location
+                if(tokens[1] == "default_location"){
+                    ss.str("");
+                    ss << "(assert (get_obj_default_loc " << obj_name << " 1))";
+                    JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                }
+                else
+                    query = tokens[1];
 
-            //guide to the bin
-            JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-            JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
-            JustinaHRI::waitAfterSay("please wait", 2500);
+                //guide to the bin
+                JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                JustinaTasks::guideAPerson(query, 120000); //guiar al objeto
+                JustinaHRI::waitAfterSay("please wait", 2500);
 
-            //JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
-            //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-            
-            //try to grasp object
-			geometry_msgs::Pose pose;
-			bool grasp = false;
-            ss.str("");
-            ss << "I am looking for the " << to_speech;
-            JustinaHRI::waitAfterSay(ss.str(), 2500);
-            JustinaManip::hdGoTo(0, -0.9, 5000);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-            JustinaTasks::alignWithTable(0.42);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-
-            if(tokens[1] != "default_location"){
-	            std::vector<vision_msgs::VisionObject> recognizedObjects;
-                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
+                //JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                
+                //try to grasp object
+                geometry_msgs::Pose pose;
+                bool grasp = false;
+                ss.str("");
+                ss << "I am looking for the " << to_speech;
+                JustinaHRI::waitAfterSay(ss.str(), 2500);
+                JustinaManip::hdGoTo(0, -0.9, 5000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                JustinaTasks::alignWithTable(0.42);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                std::cout << "Find a object " << std::endl;
-                bool found = 0;
-                for (int j = 0; j < 10; j++) {
-                    std::cout << "Test object" << std::endl;
-                    found = JustinaVision::detectObjects(recognizedObjects);
-                    if (found) {
-                        found = false;
-                        for (int i = 0; i < recognizedObjects.size(); i++) {
-                            vision_msgs::VisionObject vObject = recognizedObjects[i];
-                            poseObj pObj;
-                            pObj.x = vObject.pose.position.x;
-                            pObj.y = vObject.pose.position.y;
-                            pObj.z = vObject.pose.position.z;
-                            std::cout << "object:  " << vObject.id << std::endl;
-                            std::pair<bool, int> element_in_vector = findInVector<std::string>(objects, vObject.id); 
-                            if (!element_in_vector.first){
-                                ss.str("");
-                                ss << "(assert (cmd_simple_category " << vObject.id << " 1))";
-                                JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
-                                if(query == tokens[0]){
-                                    objects.push_back(vObject.id);
-                                    pose_obj.push_back(pObj); 
-                                    std::cout << "OBJETO: " << vObject.id << std::endl;
+
+
+                if(tokens[1] != "default_location"){
+                    std::vector<vision_msgs::VisionObject> recognizedObjects;
+                    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 4000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                    std::cout << "Find a object " << std::endl;
+                    bool found = 0;
+                    for (int j = 0; j < 10; j++) {
+                        std::cout << "Test object" << std::endl;
+                        found = JustinaVision::detectObjects(recognizedObjects);
+                        if (found) {
+                            found = false;
+                            for (int i = 0; i < recognizedObjects.size(); i++) {
+                                vision_msgs::VisionObject vObject = recognizedObjects[i];
+                                poseObj pObj;
+                                pObj.x = vObject.pose.position.x;
+                                pObj.y = vObject.pose.position.y;
+                                pObj.z = vObject.pose.position.z;
+                                std::cout << "object:  " << vObject.id << std::endl;
+                                std::pair<bool, int> element_in_vector = findInVector<std::string>(objects, vObject.id); 
+                                if (!element_in_vector.first){
+                                    ss.str("");
+                                    ss << "(assert (cmd_simple_category " << vObject.id << " 1))";
+                                    JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                                    if(query == tokens[0]){
+                                        objects.push_back(vObject.id);
+                                        pose_obj.push_back(pObj); 
+                                        std::cout << "OBJETO: " << vObject.id << std::endl;
+                                    }
                                 }
+                                    
                             }
-                                
                         }
                     }
+                    grasp = false;
+                    armFlag = false;
+
+                    if(objects.size() > 0){
+                        obj_name = objects.at(0);
+                        to_speech = obj_name;
+                        boost::replace_all(to_speech, "_", " ");
+                        pose.position.x = pose_obj.at(0).x;
+                        pose.position.y = pose_obj.at(0).y;
+                        pose.position.z = pose_obj.at(0).z;
+                        grasp = true;
+                        if(pose.position.y > 0)
+                            armFlag = true;
+                    }
                 }
-                grasp = false;
-                armFlag = false;
-
-                if(objects.size() > 0){
-                    obj_name = objects.at(0);
-                    to_speech = obj_name;
-                    boost::replace_all(to_speech, "_", " ");
-                    pose.position.x = pose_obj.at(0).x;
-                    pose.position.y = pose_obj.at(0).y;
-                    pose.position.z = pose_obj.at(0).z;
-                    grasp = true;
-                    if(pose.position.y > 0)
-                        armFlag = true;
+                else{
+                    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+                    grasp = JustinaTasks::findObject(obj_name, pose, armFlag);
+                    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
                 }
-            }
-            else{
-                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
-                grasp = JustinaTasks::findObject(obj_name, pose, armFlag);
-                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 8000);
-            }
 
-            if(grasp){
-                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
-                //JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                grasp = JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, armFlag, obj_name, true);
-                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
-            }
-            if(!grasp){
-                armFlag = false;
-                //grasp object
-                ss.str("");
-                ss << "I can not grasp the " << to_speech;
-                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                ss.str("");
-                ss << "please put the " << to_speech << " in my gripper";
-                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                if(grasp){
+                    JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+                    //JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    grasp = JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, armFlag, obj_name, true);
+                    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+                }
+                if(!grasp){
+                    armFlag = false;
+                    //grasp object
+                    ss.str("");
+                    ss << "I can not grasp the " << to_speech;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    ss.str("");
+                    ss << "please put the " << to_speech << " in my gripper";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
 
-                JustinaManip::raGoTo("navigation", 3000);
-                JustinaTasks::detectObjectInGripper(obj_name, armFlag, 7000);
-                JustinaHRI::waitAfterSay("thank you", 5000, 0);
-            }
+                    JustinaManip::raGoTo("navigation", 3000);
+                    JustinaTasks::detectObjectInGripper(obj_name, armFlag, 7000);
+                    JustinaHRI::waitAfterSay("thank you", 5000, 0);
+                }
+            }//grasp to guide
             
             ss.str("");
-            ss << "Now go to the  " << tokens[2];
+            ss << "ok go to the  " << tokens[2];
             JustinaHRI::waitAfterSay(ss.str(), 100000);
             
             //guide to the bin

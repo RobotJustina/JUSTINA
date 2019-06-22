@@ -198,6 +198,7 @@
 (your_team_country		is_kind_of		question)
 (country		is_kind_of		question)
 (affiliation		is_kind_of		question)
+(whether		is_kind_of		question)
 (name		is_kind_of		question)
 
 #$pose
