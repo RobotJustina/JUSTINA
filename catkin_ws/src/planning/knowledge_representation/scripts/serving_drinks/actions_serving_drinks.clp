@@ -46,7 +46,7 @@
 
         ;(assert (plan (name ?name) (number 14)(actions set_plan_status ?name)(actions_num_params 15 17)(duration 6000)))
         (assert (plan (name ?name) (number 13)(actions make_task ?name offer offered) (actions_num_params 14 16)))
-        (assert (plan (name ?name) (number 14) (actions get_ordered_objects ?place1)(actions_num_params 1 1)(duration 6000)));;;(actions_params obj_per_attemp total_orders)
+        (assert (plan (name ?name) (number 14) (actions get_ordered_objects ?place1)(actions_num_params 2 2)(duration 6000)));;;(actions_params obj_per_attemp total_orders)
         ;(assert (plan (name ?name) (number 16) (actions find-person specific)(actions_num_params 1 2)(duration 6000)))
         (assert (plan (name ?name) (number 15) (actions deliver_order ?place2) (duration 6000)))
         (assert (plan (name ?name) (number 16) (actions repeat_task ?name people deliver_order) (actions_num_params 13 15 1 5) (duration 6000)))
