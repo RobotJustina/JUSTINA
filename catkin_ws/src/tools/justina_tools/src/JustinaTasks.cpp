@@ -3640,6 +3640,15 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
     boost::posix_time::ptime prev =
         boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
+
+    std::stringstream ss;
+    if(stopRecog == "")
+        ss<<"I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location" << std::endl;
+    else
+        ss << "I found you, i will start to follow you human, please walk and tell me, "<< stopRecog << " , when we reached the goal location" << std::endl;
+
+
+
     while (ros::ok() && !success
             && (timeout == 0
                 || timeout > 0
@@ -3677,7 +3686,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
                                 300);
                     else
                         JustinaHRI::waitAfterSay(
-                                "I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location",
+                                ss.str(),
                                 10000, 300);
                     follow_start = true;
                     nextState = SM_FOLLOWING_PHASE;

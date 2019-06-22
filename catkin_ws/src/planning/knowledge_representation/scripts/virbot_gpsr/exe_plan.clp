@@ -140,7 +140,7 @@
 
 (defrule exe-plan-move-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?obj)(duration ?t))
- 	    (item (name ?obj) (pose ?x ?y ?z) )
+ 	    (item (type Objects) (name ?obj) (pose ?x ?y ?z) )
         (Arm (name ?arm) (status ready)(bandera ?id) (grasp ?obj))
         =>
         (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z " " ?id ""))
