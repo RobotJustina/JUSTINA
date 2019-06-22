@@ -471,7 +471,7 @@ int main(int argc, char** argv)
                         else{
                             std::cout << "I  can't detect anything" << std::endl;
                             attempsFindObjectsTable++;
-                            if(attempsFindObjectsTable > 2)
+                            if(attempsFindObjectsTable > 3)
                                 nextState = SM_FINISH_TEST;
                             else 
                                 SM_FIND_OBJECTS_ON_TABLE;
