@@ -36,7 +36,7 @@
 #define GRAMMAR_POCKET_FOLLOW "/grammars/pre_sydney/gpsr/follow_me.jsgf"
 #define GRAMMAR_POCKET_NAMES "grammars/pre_sydney/people_names.jsgf"
 #define GRAMMAR_COMMANDS "commands.xml"
-#define GRAMMAR_FOLLOW "follow_me.xml"
+#define GRAMMAR_FOLLOW "follow_taxi.xml"
 #define GRAMMAR_NAMES "people_names.xml"
 #define TIMEOUT_SPEECH 10000
 #define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
@@ -206,9 +206,7 @@ int main(int argc, char** argv)
 
 			case SM_WAIT_FOR_DOOR:
 				if (!JustinaNavigation::obstacleInFront())
-					nextState = SM_SAY_WAIT_FOR_DOOR;
-                else
-                    nextState = SM_INIT;
+					nextState = SM_INIT;
 			break;
             
             
@@ -426,7 +424,13 @@ int main(int argc, char** argv)
                             JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
                             ros::Duration(1.0).sleep();
-                            nextState = SM_CLOSE_TO_GUEST;
+
+                            JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                            centroids_loc.erase(centroids_loc.begin());
+						    if (centroids_loc.size() > 0)
+						    	nextState = SM_CLOSE_TO_GUEST;
+						    else
+						    	nextState = SM_ReturnSearchWaving;
                         }
                     }
                 }
@@ -439,6 +443,8 @@ int main(int argc, char** argv)
                     else
                     	nextState=SM_ReturnSearchWaving;
                 }
+
+
                 break;
 
             
@@ -540,8 +546,8 @@ int main(int argc, char** argv)
                 else{
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
                     JustinaHRI::waitAfterSay("Sorry, I can not find the taxi, but I can scort you following you", 3500, minDelayAfterSay);
-                    switchSpeechReco(true, grammarFollowID, GRAMMAR_FOLLOW, "");
-                    JustinaTasks::followAPersonAndRecogStop("stop follow me");
+                    switchSpeechReco(true, grammarFollowID, GRAMMAR_FOLLOW, "tell me follow me to start following you");
+                    JustinaTasks::followAPersonAndRecogStop("here is the taxi");
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
                     nextState = SM_CLOSE_TO_TAXI_DRIVER;
                 }
