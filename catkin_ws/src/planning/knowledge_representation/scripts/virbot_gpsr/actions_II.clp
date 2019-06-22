@@ -1160,6 +1160,21 @@
 	(modify ?f1 (status no_ask))
 )
 
+(defrule exe-plan-af-ask-incomplete_whattosay
+	?f <- (received ?sender command ask_incomplete whattosay ?plan ?param ?response 1)
+	?f1 <- (item (name ?nti))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti whattosay ?plan ?param))
+	?f3 <- (task ?plan wait_for_user_instruction ?question default question ?step)
+	?f5 <- (task incomplete active)
+	=>
+	(retract ?f)
+	(retract ?f3)
+	(retract ?f5)
+	(assert (task ?plan wait_for_user_instruction ?question ?response ?step))
+	(modify ?f2 (status accomplished))
+	(modify ?f1 (status no_ask))
+)
+
 (defrule exe-plan-neg-ask-incomplete
 	?f <- (received ?sender command ask_incomplete ?incomplete ?plan ?param ?response 0)
 	?f1 <- (item (name ?nti))

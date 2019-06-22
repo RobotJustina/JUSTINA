@@ -495,3 +495,14 @@ target_link_libraries(findGenderGesturePerson
 )
 
 add_dependencies(findGenderGesturePerson ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(introduce_to_people
+	src/introduce_to_people.cpp
+)
+
+target_link_libraries(introduce_to_people
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(introduce_to_people ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
