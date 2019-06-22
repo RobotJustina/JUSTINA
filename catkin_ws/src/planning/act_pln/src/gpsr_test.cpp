@@ -4283,7 +4283,7 @@ void callbackCmdStorageObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	std::vector<std::string> objects;
     std::vector<poseObj> pose_obj;
    
-    if(tokens[0] == "object" && tokens[1] == "nil"){
+    if(tokens[1] == "nil"){
         guide_to_grasp = false;
 		JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000);
         to_speech = tokens[0];
