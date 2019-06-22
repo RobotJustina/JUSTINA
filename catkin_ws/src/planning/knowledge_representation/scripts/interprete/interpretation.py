@@ -1528,8 +1528,9 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_deliver", "Person"],
 	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
-							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+                                "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+				"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -2308,6 +2309,25 @@ meaning_mapping_patterns_eegpsr2 = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+        
+        #$deliverI  = $vbdeliver it to {name meta: {pron sub} is (sitting | standing | lying | waving ) at the {beacon}}
+        {"params": ["Action_deliver", "Person"],
+	"Action_deliver": [["bring", "deliver", "give", "hand"], [], [], []],
+	"Person": [[], [], ["person"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+	                        "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        
+        #$singleSpI= (speak | (say something)) {void meta: When asked, reply to the robot: "$whattosay" }
+        {"params": ["Action_say"],
+	"Action_say": [["speak", "say"], [], [], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question whattosay nil) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question default question) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 	
         #and $vbguide {pron}	
@@ -2527,10 +2547,19 @@ meaning_mapping_patterns_eegpsr2 = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	{"params": ["PronIs", "PGG"],
-	"PronIs": [["she", "he"], [], [], []],
-	"PGG": [["waving", "standing", "lying", "sitting"], [], [], []],
-	"conceptual_dependency": "-PGG-",
+	{"params": ["Question"],
+	"Question": [[], [], ["question"], []],
+	"conceptual_dependency": "-Question-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        {"params": ["Question", "You" , "Dream", "Sheep"],
+	"Question": [[], [], ["question"], []],
+	"You": [["you"], [], [], []],
+	"Dream": [["dream"], [], [], []],
+	"Sheep": [["sheep"], [], [], []],
+	"conceptual_dependency": "-Question-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}

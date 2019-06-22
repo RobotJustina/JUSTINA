@@ -1912,6 +1912,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	int count  = 0;
 	std::string lastReco;
 	std::string name;
+	std::string to_say;
 	responseMsg.successful = 0;
 
     JustinaHRI::waitAfterSay("I have incomplete information, I need your help please", 10000);    
@@ -1920,8 +1921,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 	if(tokens[0] == "object")
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, i want pringles", 10000);
-	if(tokens[0] == "person_pgg")
-		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, is waving", 10000);
+	if(tokens[0] == "whattosay")
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, something about yourself", 10000);
 	
     while(!conf && count < 3){
 	
@@ -1941,8 +1942,8 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	if(tokens[0] == "object_place"){
         ss << "in wich place of the " << tokens[2] << " you want me to put the object";
         switchSpeechReco(7, ss.str());}
-	if(tokens[0] == "person_pgg"){
-        ss << "Tell me what pose or gesture is making " << tokens[2];
+	if(tokens[0] == "whattosay"){
+        ss << "Tell me what you want me to say";
         switchSpeechReco(7, ss.str());}// falta cambiarla
 	ss.str("");
 
@@ -1959,8 +1960,9 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			ss << "Do you want i guide " << tokens[2] << " to the " << name << ", say justina yes or justina no";
 		else if(tokens[0] == "object_place")
 			ss << "Do you want i put the object on the " << name << ", say justina yes or justina no";
-		else if(tokens[0] == "person_pgg")
-			ss << "is " << name << " " << tokens[2] << ", say justina yes or justina no";
+		else if(tokens[0] == "whattosay"){
+			ss << "You want me to say " << lastReco << ", say justina yes or justina no";
+            to_say = lastReco;}
 		//JustinaHRI::waitAfterSay(ss.str(), 2000);
 		//change grammar
         switchSpeechReco(0, ss.str());
@@ -1972,15 +1974,16 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			conf = true;
 			ss.str("");
 			if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
-				ss << "Ok i will find the person in the " << name;
+				ss << "Ok i will find "<< tokens[2] << " in the " << name;
 			else if(tokens[0] == "object")
 				ss << "Ok i try to find the " << name;
 			else if(tokens[0] == "place_destiny")
 				ss << "Ok i will guide her to the " << name;
 			else if(tokens[0] == "object_place")
 				ss << "Ok i will put the object on the " << name;
-			else if(tokens[0] == "person_pgg")
-				ss << "Ok " << tokens[2] << " is " << name;
+			else if(tokens[0] == "whattosay"){
+		        boost::replace_all(to_say, "your", "my");
+				ss << "Ok i will to say " << to_say;}
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			ss.str("");
 			ss << msg->params << " " << name;
