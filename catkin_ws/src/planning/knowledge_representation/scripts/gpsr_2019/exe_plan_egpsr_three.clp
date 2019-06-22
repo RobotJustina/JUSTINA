@@ -115,8 +115,9 @@
 (defrule exe-plan-task-storage-category 
 	(plan (name ?name) (number ?num-pln) (status active) (actions storage_object ?storage ?sp_obj)(duration ?t))
 	(item (name ?obj) (status grabed))
+	(Arm (name ?arm) (bandera ?flag) (grasp ?obj))
 	=>
-	(bind ?command (str-cat "" ?obj " nil " ?storage " " ?sp_obj ""))
+	(bind ?command (str-cat "" ?obj " " ?flag " " ?storage " " ?sp_obj ""))
 	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
 )
 

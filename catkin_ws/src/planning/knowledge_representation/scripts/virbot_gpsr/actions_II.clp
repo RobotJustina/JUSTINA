@@ -473,19 +473,83 @@
 	(assert (finish split_room))
 )
 
-(defrule split_review_room_cat
-        ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?category ?room))
+(defrule split_review_room_cat 
+        ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?category ?room)(actions_num_params ?p1 ?p2 ?nof))
         ?f1 <- (item (name ?category) (type Category))
         ?f3 <- (item (name ?place)(status nil) (possession ?room))
-        ?f4 <- (num_places ?num)
+        ?f4 <- (start split_room)
         =>
         (retract ?f4)
         (assert (visit_place_in_room ?place))
+        (modify ?f3 (status prev_split))
+	(assert (update num task))
+	(assert (split_room_cat params ?p1 ?p2))
+)
+
+(defrule update_number_task_for_split_room_final_cat
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?object ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
+	?f1 <- (plan (name ?name) (status inactive)(number ?n) (actions ?act&:(neq ?act make_task) $?params))
+        ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
+	?f4 <- (num_places ?num)
+	?f5 <- (update num task)
+	?f6 <- (split_room_cat params ?p1 ?p2)
+	=>
+	(retract ?f4 ?f5 ?f6)
+	(assert (num_places (+ ?num 2)))
+	(modify ?f (actions_num_params (+ ?p1 2) (+ ?p2 2) ?nof))
+        (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)))
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions find_cat_obj ?object ?place)))
+	(modify ?f1 (number (+ ?n 2)))
+	(modify ?f3 (status prev_review))
+	(assert (start split_room))
+)
+
+(defrule update_number_task_for_split_room_final_make_task_cat
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st inactive) (eq ?st active))) (actions review_room ?category ?room) (actions_num_params ?n ?n&:(neq ?n 0) ?nof))
+	?f1 <- (plan (name ?name) (number ?n) (status inactive)(actions make_task $?params)(actions_num_params ?anp1 ?anp2))
+        ?f3 <- (item (name ?place) (status prev_split)(possession ?room))
+	?f4 <- (num_places ?num)
+	?f5 <- (update num task)
+	?f6 <- (split_room_cat params ?p1 ?p2)
+	=>
+	(retract ?f4 ?f5 ?f6)
+	(assert (num_places (+ ?num 2)))
+	(modify ?f (actions_num_params (+ ?p1 2) (+ ?p2 2) ?nof))
+        (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)))
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions fin_cat_obj ?category ?place)))
+	(modify ?f1 (number (+ ?n 2)) (actions_num_params (+ ?anp1 2) (+ ?anp2 2)))
+	(modify ?f3 (status prev_review))
+	(assert (start split_room))
+)
+
+(defrule update_number_task_for_split_room_cero_cat
+	?f <- (plan (name ?name) (number ?number) (status ?st&:(or (eq ?st active) (eq ?st inactive))) (actions review_room ?category ?room) (actions_num_params 0 0 ?nof))
+	?f2 <- (update num task)
+	?f3 <- (split_room_cat params ?p1 ?p2)
+	?f4 <- (item (name ?place) (status prev_split)(possession ?room))
+	?f5 <- (num_places ?num)
+	=>
+	(retract ?f2 ?f3 ?f5)
+	(assert (start split_room))
         (assert (num_places (+ ?num 2)))
         (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
         (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions find_cat_obj ?category ?place)) )
-        (modify ?f3 (status prev_review))
+        (modify ?f4 (status prev_review))
 )
+
+;(defrule split_review_room_cat_v2
+;       ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?category ?room))
+;        ?f1 <- (item (name ?category) (type Category))
+;        ?f3 <- (item (name ?place)(status nil) (possession ?room))
+;        ?f4 <- (num_places ?num)
+;        =>
+;        (retract ?f4)
+;        (assert (visit_place_in_room ?place))
+;        (assert (num_places (+ ?num 2)))
+;        (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
+;        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions find_cat_obj ?category ?place)) )
+;        (modify ?f3 (status prev_review))
+;)
 
 (defrule delate_no_visited_rooms 
         ?f <- (delate_no_visited_rooms ?name )
@@ -549,16 +613,16 @@
         ?f <- (num_places ?n1)
         ?f2 <- (visit_places ?n2&:(eq ?n2 ?n1))
         ?f3 <- (delate_no_visited_rooms ?name)
-        ?f1 <- (plan (name ?name) (number ?num) (status active) (actions find_cat_obj ?category ?place))
-	?f4 <- (item (name ?place))
+        ;?f1 <- (plan (name ?name) (number ?num) (status active) (actions find_cat_obj ?category ?place))
+	;?f4 <- (item (name ?place))
         =>
         (retract ?f)
         (retract ?f2)
         (retract ?f3)
         (assert (num_places 0))
         (assert (visit_places 0))
-	(modify ?f1 (status accomplished))
-	(modify ?f4 (status nil))
+	;(modify ?f1 (status accomplished))
+	;(modify ?f4 (status nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
