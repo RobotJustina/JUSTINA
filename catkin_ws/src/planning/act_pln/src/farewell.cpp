@@ -397,7 +397,7 @@ int main(int argc, char** argv)
                 attemptsSpeechInt = 0;
 
                 if (gender == 0){
-                    switchSpeechReco(true, grammarCommandsID, GRAMMAR_COMMANDS, "I think that you want to go, is that correct, tell me justina yes or justina no");
+                    switchSpeechReco(false, grammarCommandsID, GRAMMAR_COMMANDS, "I think that you want to go, is that correct, tell me justina yes or justina no");
 
                     if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
                         if(lastRecoSpeech.find("yes") != std::string::npos){
@@ -406,12 +406,16 @@ int main(int argc, char** argv)
                         }
 
                         else{
-                            JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
-                            centroids_loc.erase(centroids_loc.begin());
-						    if (centroids_loc.size() > 0)
+						    
+                            if (centroids_loc.size() > 1){
+                                JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                                centroids_loc.erase(centroids_loc.begin());
 						    	nextState = SM_CLOSE_TO_GUEST;
-						    else
+                            }else{
 						    	nextState = SM_ReturnSearchWaving;
+                                centroids_loc = std::vector<std::string>();
+                            }
+
                         }
                     }
 
@@ -425,34 +429,39 @@ int main(int argc, char** argv)
                             JustinaHRI::waitAfterSay("Sorry I did not unsderstand you", 10000);
                             ros::Duration(1.0).sleep();
 
-                            JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
-                            centroids_loc.erase(centroids_loc.begin());
-						    if (centroids_loc.size() > 0)
+						    if (centroids_loc.size() > 1){
+                                JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                                centroids_loc.erase(centroids_loc.begin());
 						    	nextState = SM_CLOSE_TO_GUEST;
-						    else
+                            }else{
 						    	nextState = SM_ReturnSearchWaving;
+                                centroids_loc = std::vector<std::string>();
+                            }
                         }
                     }
                 }
                 if(gender == 1){
                     JustinaHRI::waitAfterSay("Sorry, but ladies first, in a moment i will back for you", 5000, minDelayAfterSay);
-                    JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
-                    centroids_loc.erase(centroids_loc.begin());
-                    if(centroids_loc.size() > 0)
-                    	nextState=SM_CLOSE_TO_GUEST;
-                    else
-                    	nextState=SM_ReturnSearchWaving;
+
+                    if (centroids_loc.size() > 1){
+                        JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                        centroids_loc.erase(centroids_loc.begin());
+                        nextState = SM_CLOSE_TO_GUEST;
+                    }else{
+                        nextState = SM_ReturnSearchWaving;
+                        centroids_loc = std::vector<std::string>();
+                    }
                 }
 
 
                 break;
 
-            
-            
+
+
             case SM_ReturnSearchWaving:
                 std::cout << "Farewell Test...-> SM_ReturnSearchWaving" << std::endl;
                 JustinaHRI::say("Sorry for my mistake, please enjoy the party");
-        		ros::Duration(1.0).sleep();
+                ros::Duration(1.0).sleep();
                 JustinaNavigation::startMoveDistAngle(-0.2, 1.15);
 
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
@@ -546,7 +555,7 @@ int main(int argc, char** argv)
                 else{
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
                     JustinaHRI::waitAfterSay("Sorry, I can not find the taxi, but I can scort you following you", 3500, minDelayAfterSay);
-                    switchSpeechReco(true, grammarFollowID, GRAMMAR_FOLLOW, "tell me follow me to start following you");
+                    switchSpeechReco(false, grammarFollowID, GRAMMAR_FOLLOW, "tell me follow me to start following you");
                     JustinaTasks::followAPersonAndRecogStop("here is the taxi");
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
                     nextState = SM_CLOSE_TO_TAXI_DRIVER;
