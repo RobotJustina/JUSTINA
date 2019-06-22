@@ -99,12 +99,13 @@
 		<group ns="obs_avoid">
 			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen">
 				<!-- This is to normal navigation -->
-				<!-- param name="max_x" value="0.7" />
-				<param name="z_threshold" value="0.1" / -->
+				<param name="max_x" value="0.7" />
+				<param name="z_threshold" value="0.06" />
+				<!-- param name="z_threshold" value="0.1" / -->
 				<!-- This is to detect the small objects and closest objects -->
-				<param name="max_x" value="0.8" />
+				<!-- param name="max_x" value="0.8" />
 				<param name="z_threshold" value="0.06"/>
-				<param name="is_obst_counter" value="30" />
+				<param name="is_obst_counter" value="30" / -->
 			</node>
 			<!-- This is to normal navigation -->
 			<!-- TODO THIS FORM IS TO CONFIG A NODE WITH ARGS PARAMS, TEST IF THE NEW FORM WORKS -->
