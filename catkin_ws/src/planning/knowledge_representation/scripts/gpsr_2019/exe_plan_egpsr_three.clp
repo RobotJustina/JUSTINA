@@ -102,7 +102,7 @@
 	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
 )
 
-(defrule exe-plan-task-storage-category 
+(defrule exe-plan-task-storage-category-v2
 	(plan (name ?name) (number ?num-pln) (status active) (actions storage_object)(duration ?t))
 	;(item (type Property) (name ?oprop))
 	?f <- (set_category_state ?category ?loc ?storage ?sp_obj)
@@ -112,20 +112,39 @@
 	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
 )
 
+(defrule exe-plan-task-storage-category 
+	(plan (name ?name) (number ?num-pln) (status active) (actions storage_object ?storage ?sp_obj)(duration ?t))
+	(item (name ?obj) (status grabed))
+	=>
+	(bind ?command (str-cat "" ?obj " nil " ?storage " " ?sp_obj ""))
+	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
+)
+
+(defrule exe-plan-task-storage-category-neg 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions storage_object ?storage ?sp)(duration ?t))
+	(not (item (name ?obj) (status grabed)))
+	=>
+	(modify ?f (status accomplished))
+)
+
 (defrule exe-plan-storage-obj 
         ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 1)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+	?f2 <- (item (name ?obj))
         =>
         (retract ?f)
+        (modify ?f2 (status nil))
         (modify ?f1 (status accomplished))
 )
 
 (defrule exe-plan-no-storage-obj 
         ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 0)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+	?f2 <- (item (name ?obj))
         =>
         (retract ?f)
 	(modify ?f1 (status accomplished)) ;performance for IROS
+        (modify ?f2 (status nil))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 

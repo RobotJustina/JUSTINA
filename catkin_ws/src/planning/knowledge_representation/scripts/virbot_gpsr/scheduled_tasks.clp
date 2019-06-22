@@ -57,6 +57,7 @@
 	(modify ?f1 (status inactive))
 	(modify ?f2 (status active))
 	(retract ?f3)
+	(assert (reset_status ?object))
 )
 
 

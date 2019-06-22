@@ -708,11 +708,13 @@
 	?goal <- (objetive remind_person ?name ?person ?place ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1) (actions make_task ?name ?person went) (actions_num_params 2 3) (duration 6000)))
+	(bind ?speech(str-cat "Now I am going to meet you at the " ?place ))
+	(assert (plan (name ?name) (number 1) (actions make_task ?name ?person went) (actions_num_params 2 4) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions train_person ?person) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions update_status ?person reminded) (duration 6000)))
-	(assert (plan (name ?name) (number 4) (actions update_status finish_objetive finaly_reminded) (duration 6000)))
-	(assert (finish-planner ?name 4))
+	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions update_status ?person reminded) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions update_status finish_objetive finaly_reminded) (duration 6000)))
+	(assert (finish-planner ?name 5))
 )
 
 (defrule plan_remind-person_v2

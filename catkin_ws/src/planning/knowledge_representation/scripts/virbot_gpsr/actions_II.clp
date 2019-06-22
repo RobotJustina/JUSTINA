@@ -31,29 +31,33 @@
 (defrule task_find_object_in_room
         ?f <- (task ?plan find_object_in_room ?object ?room ?step)
         ?f1 <- (item (name ?object)(type Objects))
+	?f2 <- (item (name finish_objetive))
         (item (name ?room) (type Room))
         =>
         (retract ?f)
         (printout t "Find object in room" crlf)
         (assert (state (name ?plan) (number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments ?object status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments finish_objetive status finaly_finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pfindobj_room) (actor robot)(obj robot)(from ?room)(to ?object)(name-scheduled ?plan)(state-number ?step)))
         ;;;;;;;;;;;
         (modify ?f1 (status nil))
+	(modify ?f2 (status nil))
 )
 
 (defrule task_find_category_room
         ?f <- (task ?plan find_category_room ?category ?room ?step)
         ?f1 <- (item (name ?category) (type Category))
+	?f2 <- (item (name finish_objetive))
         (item (name ?room) (type Room))
         =>
         (retract ?f)
         (printout t "Find category in room" crlf)
         (assert (state (name ?plan) (number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments ?category status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments finish_objetive status finaly_finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pfindobj_room) (actor robot)(obj robot)(from ?room)(to ?category)(name-scheduled ?plan)(state-number ?step)))
         ;;;;;;;;;;;
         (modify ?f1 (status nil))
+        (modify ?f2 (status nil))
 )
 
 (defrule task_how_many_obj
@@ -178,7 +182,8 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Object Task" crlf)
         (assert (plan (name ?name) (number 1)(actions ask_for ?object ?room)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(actions_num_params 0 0 1)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions review_room ?object ?room)(actions_num_params 3 3 1)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_finded)(duration 6000)))
         (assert (finish-planner ?name 100))
 )
 
