@@ -10,6 +10,7 @@
 		<arg name="kinect_maxY" value="8.0"/>
 		<arg name="kinect_minZ" value="0.1"/>
 		<arg name="kinect_maxZ" value="1.5"/>
+		<arg name="head_offset" value="-0.02"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping restaurant"/>
