@@ -822,6 +822,9 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                     ss << "I am going to take the " << tokens[i] << std::endl; 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                     JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
+                    ss.str("");
+                    ss << "(assert (set_object_arm " << tokens[i] << " false))";
+                    JustinaRepresentation::sendAndRunCLIPS(ss.str());
                 }
             }
         }
@@ -833,14 +836,45 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             ss << "please put the " << tokens[i] << " in my gripper";
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
             if(!ra){
-
                 JustinaManip::raGoTo("navigation", 3000);
                 JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-                ra = true;
-                ss.str("");
-                ss << "(assert (set_object_arm " << tokens[i] << " false))";
-                JustinaRepresentation::sendAndRunCLIPS(ss.str());
-                JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+                
+                if(JustinaTasks::alignWithTable(0.35)){
+                     if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
+                        for(int j = 0; j < recoObj.size(); j++){
+                            objectDetected = recoObj[j].id.find(tokens[i]);
+                            if(objectDetected)
+                                index =j;
+                        }
+
+                        if(objectDetected){
+                            ss.str("");
+                            ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
+                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                            JustinaTasks::dropObject("", false, 10000);
+                            
+                            ss.str("");
+                            ss << "give me the " << tokens[i] << std::endl; 
+                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+                            
+                            ra = true;
+                            ss.str("");
+                            ss << "(assert (set_object_arm " << tokens[i] << " false))";
+                            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                            JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+                        }
+                    }
+                }
+                else if(!objectDetected){
+                    ra = true;
+                    ss.str("");
+                    ss << "(assert (set_object_arm " << tokens[i] << " false))";
+                    JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                    JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
+                }   
+
+                
             }
             if(!la && tokens.size() > 3){
                 JustinaManip::laGoTo("navigation", 3000);
