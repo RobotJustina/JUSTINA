@@ -394,7 +394,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
             //if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
+            // Good to storing groceries
+            //if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.1, objToGraspZ, articular)){
                 JustinaManip::waitForLaGoalReached(2500);
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -502,7 +504,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
             //if(JustinaManip::inverseKinematics(objToGraspX - 0.1, objToGraspY - 0.15, objToGraspZ, articular)){
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
+            // Good to storing groceries
+            // if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.15, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.1, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -1048,7 +1052,7 @@ bool JustinaTasks::waitRecognizedFace(float timeout, std::string id, int gender,
                 filterFaces.push_back(lastRecognizedFaces[i]);
         }
         lastRecognizedFaces = filterFaces;
-        filterFaces.clear();
+        filterFaces = std::vector<vision_msgs::VisionFaceObject>();
     }
 
     if (gender != -1 && ages == -1) {
