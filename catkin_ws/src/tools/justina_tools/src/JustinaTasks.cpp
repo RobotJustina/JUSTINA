@@ -5627,8 +5627,8 @@ bool JustinaTasks::graspObjectColorFeedback(vision_msgs::VisionObject object, bo
         if (typeCutlery == 1 || typeCutlery == 2 || typeCutlery == 0) {
             JustinaManip::startRaOpenGripper(0.3);
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,0.0, 0.0, 1.5708, -0.1, 5000);
-            JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.08, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, -0.1, 5000);
+            JustinaManip::raGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.08, objToGraspZ,0.0, 0.0, 1.5708, -0.1, 5000);
+            JustinaManip::raGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.08, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, -0.1, 5000);
             if(missingZ > 0.01){
             	for (int i = maxIteration - 1; i > 0; i--) {
             		float deltaObjToGraspX = objToGraspX + dz / i;

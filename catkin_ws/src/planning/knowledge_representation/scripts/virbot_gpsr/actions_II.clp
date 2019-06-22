@@ -1037,6 +1037,21 @@
 	(modify ?f1 (status no_ask))
 )
 
+(defrule exe-plan-af-ask-incomplete_get_object
+	?f <- (received ?sender command ask_incomplete follow_place_origin ?plan ?param ?response 1)
+	?f1 <- (item (name ?nti))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti follow_place_origin ?plan ?param))
+	?f3 <- (task ?plan get_object ?obj ?step)
+	?f4 <- (task incomplete active)
+	?f5 <- (item (name ?obj))
+	=>
+	(retract ?f ?f4)
+	(retract ?f3)
+	(assert (task ?plan get_object ?obj ?response ?step))
+	(modify ?f2 (status accomplished))
+	(modify ?f1 (status no_ask))
+)
+
 (defrule exe-plan-af-ask-incomplete_gesture
 	?f <- (received ?sender command ask_incomplete gesture_place_origin ?plan ?param ?response 1)
 	?f1 <- (item (name ?nti))

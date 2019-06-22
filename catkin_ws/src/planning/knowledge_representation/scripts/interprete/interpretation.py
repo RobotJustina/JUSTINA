@@ -1557,9 +1557,10 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#grasp object 1 parametro
 	{"params": ["Action_get", "Get_object"],
-	"Action_get": [["get", "grasp", "take", "look for", "retrieve" "pick up"], [], [], []],
+	"Action_get": [["get", "grasp", "take", "retrieve","pick_up"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
+	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Get_object-) (step ))" +  
+                                "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -1616,7 +1617,8 @@ meaning_mapping_patterns_eegpsr2 = [
 	{"params": ["Action_get", "Get_object"],
 	"Action_get": [["find", "look_for", "locate", "spot", "pinpoint"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
+	"conceptual_dependency":"(task (plan_user_speech) (action_type ask_info) (params question follow_place_origin -Get_object-) (step ))" + 
+                                "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
