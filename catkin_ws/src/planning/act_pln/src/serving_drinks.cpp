@@ -806,6 +806,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     }
 
     for (int i = 1; i < tokens.size()-1; i++){
+        objectDetected = false;
         ss.str("");
         ss << "Barman I need a " << tokens[i]  << " please, put the " << tokens[i] << "in front of me, on the table" << std::endl; 
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
@@ -816,8 +817,9 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         
         JustinaHRI::waitForSpecificSentence("justina yes", 10000);
 
-
-        if(JustinaTasks::alignWithTable(0.35)){
+        JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
+        objectDetected = JustinaTasks::alignWithTable(0.35);
+        if(objectDetected){
             ss.str("");
             ss << "I am looking for the " << tokens[i]  << " on the table" << std::endl; 
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
@@ -860,7 +862,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 }
             }
         }
-        else if(!objectDetected){
+        if(!objectDetected){
             ss.str("");
             ss << "Sorry i could not grasp the " << tokens[i] << " by myself" << std::endl; 
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
@@ -871,13 +873,15 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 JustinaManip::raGoTo("navigation", 3000);
                 JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
                 ra = true;
-                
-                if(JustinaTasks::alignWithTable(0.35)){
+                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
+                objectDetected = JustinaTasks::alignWithTable(0.35); 
+                if(objectDetected){
                      if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
-                        for(int j = 0; j < recoObj.size(); j++){
-                            objectDetected = recoObj[j].id.find(tokens[i]);
-                            if(objectDetected)
+                        for(int j = 0; j < recoObj.size() && !objectDetected; j++){
+                            if (recoObj[j].id.compare(tokens[i]) == 0){
                                 index =j;
+                                objectDetected = true;
+                            }
                         }
 
                         if(objectDetected){
@@ -899,7 +903,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                         }
                     }
                 }
-                else if(!objectDetected){
+                if(!objectDetected){
                     ra = true;
                     ss.str("");
                     ss << "(assert (set_object_arm " << tokens[i] << " false))";
@@ -913,13 +917,15 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 JustinaManip::laGoTo("navigation", 3000);
                 JustinaTasks::detectObjectInGripper(tokens[i], true, 7000);
                 la = true;
-
-                if(JustinaTasks::alignWithTable(0.35)){
+                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
+                objectDetected = JustinaTasks::alignWithTable(0.35);
+                if(objectDetected){
                      if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
-                        for(int j = 0; j < recoObj.size(); j++){
-                            objectDetected = recoObj[j].id.find(tokens[i]);
-                            if(objectDetected)
+                        for(int j = 0; j < recoObj.size() && !objectDetected; j++){
+                            if (recoObj[j].id.compare(tokens[i]) == 0){
                                 index =j;
+                                objectDetected = true;
+                            }
                         }
 
                         if(objectDetected){
@@ -941,7 +947,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                         }
                     }
                 }
-                else if(!objectDetected){
+                if(!objectDetected){
                     la = true;
                     ss.str("");
                     ss << "(assert (set_object_arm " << tokens[i] << " true))";
@@ -950,9 +956,8 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 }   
             }
         }
-        
-
     } 
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 6000);
 
     responseMsg.successful = 1;
     //validateAttempsResponse(responseMsg);
