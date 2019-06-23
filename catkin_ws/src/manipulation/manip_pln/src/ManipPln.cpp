@@ -984,8 +984,8 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
         return;
     }
-    lGoalArticularTraj.clear();
-    lGoalCartesianTraj.clear();
+    lGoalArticularTraj = std::vector<std::vector<float> >();
+    lGoalCartesianTraj = std::vector<std::vector<float> >();
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
@@ -1060,7 +1060,7 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
             //this->laNewGoalTraj = false;
             //return;
             // This is for not stop if can not manipulate in a final point comments to revert
-            this->laNewGoalTraj = true;
+            //this->laNewGoalTraj = true;
             break;
         }
         lGoalArticularTraj.push_back(srv.response.articular_pose.data);
@@ -1070,7 +1070,10 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         pose.push_back(z);
         lGoalCartesianTraj.push_back(pose);
     }
-    laNewGoalTraj = true;
+    if(lGoalArticularTraj.size() > 0)
+        laNewGoalTraj = true;
+    else
+        laNewGoalTraj = false;
     //}
 }
 
@@ -1085,8 +1088,10 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         return;
     }
 
-    rGoalArticularTraj.clear();
-    rGoalCartesianTraj.clear();
+    rGoalArticularTraj = std::vector<std::vector<float> >();
+    rGoalCartesianTraj = std::vector<std::vector<float> >();
+    //rGoalArticularTraj.clear();
+    //rGoalCartesianTraj.clear();
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
@@ -1154,10 +1159,11 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         srv.request.cartesian_pose.data = nexPos.data;
         if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
             std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
-            this->rGoalArticularTraj.clear();
-            this->rGoalCartesianTraj.clear();
-            this->raNewGoalTraj = false;
-            return;
+            //this->rGoalArticularTraj.clear();
+            //this->rGoalCartesianTraj.clear();
+            //this->raNewGoalTraj = false;
+            //return;
+            break;
         }
         rGoalArticularTraj.push_back(srv.response.articular_pose.data);
         std::vector<float> pose;
@@ -1166,7 +1172,10 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         pose.push_back(z);
         rGoalCartesianTraj.push_back(pose);
     }
-    raNewGoalTraj = true;
+    if(rGoalArticularTraj.size() > 0)
+        raNewGoalTraj = true;
+    else
+        raNewGoalTraj = false;
     //}
 }
 
