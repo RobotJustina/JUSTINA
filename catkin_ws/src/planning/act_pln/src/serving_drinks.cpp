@@ -815,11 +815,10 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         ss << "Barman I need a " << tokens[i]  << " please, put the " << tokens[i] << "in front of me, on the table" << std::endl; 
         JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
 
-        switchSpeechReco(0,"did you understand the order, say justina yes");
-        
-        JustinaHRI::waitForSpeechRecognized(lastReco,400);
-        
-        JustinaHRI::waitForSpecificSentence("justina yes", 10000);
+        // TODO This is for the ask to understand the order
+        //switchSpeechReco(0,"did you understand the order, say justina yes");
+        //JustinaHRI::waitForSpeechRecognized(lastReco,400);
+        //JustinaHRI::waitForSpecificSentence("justina yes", 10000);
 
         JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         objectDetected = JustinaTasks::alignWithTable(0.35);
@@ -847,6 +846,10 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                     ss.str("");
                     ss << "I am going to take the " << tokens[i] << std::endl; 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    if(recoObj[index].pose.position.y > 0)
+                        ra = false;
+                    else
+                        ra = true;
                     // This is for grasp with two frames
                     //JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
                     if(!ra){
