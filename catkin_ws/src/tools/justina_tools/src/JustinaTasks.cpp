@@ -3552,6 +3552,9 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr, bool on
                 std::cout << "State machine: SM_HUMAN_MOVES_AWAY" << std::endl;
                 JustinaHardware::stopRobot();
                 ros::spinOnce();
+                // This change for fized the robot not move when the stop signal are in the navigation
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                ros::spinOnce();
                 nextState = SM_WAIT_FOR_HUMAN_CLOSE;
                 break;
             case SM_WAIT_FOR_HUMAN_CLOSE:
@@ -3592,8 +3595,9 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout, float thr, bool on
                             JustinaHRI::waitAfterSay(
                                     "Human, please stay close to me", 3000);
                         else {
-                            JustinaHRI::waitAfterSay("Ok, follow me", 2500);
+                            ///// The order was change before are first say and after startGetClose, if not work revert
                             JustinaNavigation::startGetClose(loc);
+                            JustinaHRI::waitAfterSay("Ok, follow me", 2500);
                             nextState = SM_GUIDING_PHASE;
                         }
                     }
@@ -7451,6 +7455,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
     std::string location;
     std::vector<std::string> centroids_loc;
     std::vector<Eigen::Vector3d> centroids;
+    std::vector<float> heights;
     int genderRecog;
 
     STATE nextState =SM_INIT;
@@ -7488,13 +7493,13 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaTasks::guideAPerson(location_people, 120000, 1.5, true, 0.8);
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "we have arrived to " << location_people << " please wait, i am looking for the people" <<std::endl;
-                JustinaVision::enableFaceAndGender(true);
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 nextState = SM_FIND_PERSON;
                 break;
 
             case SM_FIND_PERSON:
                 centroids = std::vector<Eigen::Vector3d>();
+                heights = std::vector<float>();
                 find = turnAndRecognizeFace("", gender, ages, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroids, genderRecog, location_people, 2, 0.7);
                 if(find){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -7503,8 +7508,9 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                         ss_loc.str("");
                         Eigen::Vector3d centroid = centroids[i];
                         JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
-                        ss_loc << "person_" << i;
+                        ss_loc << "person_" << i + 1;
                         centroids_loc.push_back(ss_loc.str());
+                        heights.push_back(centroid(2, 0));
                         JustinaKnowledge::addUpdateKnownLoc(ss_loc.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                     }
                 }
@@ -7541,6 +7547,18 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 std::cout << "JustinaTasks.->Turn in direction of robot:" << theta
                     << std::endl;
                 JustinaNavigation::moveDistAngle(0, theta, 2000);
+    
+                JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                dist_to_head = sqrt(pow(gx_w - robot_x, 2) + pow(gy_w - robot_y, 2));
+                //JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
+                angleHead = atan2(gy_w - robot_y, gx_w - robot_x) - robot_x;
+                if (angleHead < -M_PI)
+                    angleHead = 2 * M_PI + angleHead;
+                if (angleHead > M_PI)
+                    angleHead = 2 * M_PI - angleHead;
+                JustinaManip::hdGoTo(angleHead, atan2(heights[0] - (1.53 + torsoSpine), dist_to_head), 5000);
+
                 dialogue << "we have arrived to the person" <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 dialogue.str(std::string()); // Clear the buffer
@@ -7717,18 +7735,20 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                     }
                 }*/
 
-                JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
-                centroids_loc.erase(centroids_loc.begin());
-
-                if(find && centroids_loc.size() > 0)
+                if(centroids_loc.size() > 1){
+                    JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
+                    centroids_loc.erase(centroids_loc.begin());
+                    heights.erase(heights.begin());
                     nextState = SM_GUIDE_PERSON;
-                else
+                }else{
+                    JustinaKnowledge::deleteKnownLoc(centroids_loc[0]);
                     nextState = SM_FINISH;
+                }
+                
                 break;
 
             case SM_FINISH: 
                 std::cout << "JustinaTasks::finish successfully" << std::endl;
-                JustinaVision::enableFaceAndGender(false);
                 find = true;
                 success = true;
                 break;
