@@ -186,7 +186,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_INIT;
+    STATE state = SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//SM_ALIGN_WITH_TABLE;// SM_INIT;
 
 
     while(ros::ok() && !success){
@@ -309,8 +309,11 @@ int main(int argc, char **argv){
         
             case SM_GO_TO_KITCHEN:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
+                
+
                 if(!JustinaNavigation::getClose(recogLoc, 80000) )
                     JustinaNavigation::getClose(recogLoc, 80000); 
+
                 JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
                 state = SM_LOOK_FOR_TABLE;       
                 break;
@@ -402,7 +405,7 @@ int main(int argc, char **argv){
 
 
 
-                if(!placeSpoon(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true) )
+                if(!placeSpoon(pose.position.x, pose.position.y, pose.position.z, !withLeft, id_cutlery, true) )
                     state = SM_PLACE_SPOON;
                 else
                 {
@@ -430,9 +433,15 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("I'm going to take the cereal", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
-                    //withLeft = poseCereal.position.y > 0 ? true:false;
+                {
+                    state = SM_RETURN_TO_TABLE;
                     JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
-                state = SM_RETURN_TO_TABLE;
+                }else
+                {
+                    state = SM_TAKE_CEREAL;
+                }
+
+                
 
             break;
             case SM_RETURN_TO_TABLE:
@@ -704,7 +713,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine-.06, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine-.08, 0, 0);
                 JustinaManip::waitForTorsoGoalReached(waitTime);
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
@@ -810,7 +819,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine-.06, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine-.08, 0, 0);
             JustinaManip::waitForTorsoGoalReached(waitTime);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
@@ -841,7 +850,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(2500);
+                JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
@@ -855,8 +864,8 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForLaGoalReached(3500);
-                JustinaManip::startLaGoToArticular(articular);
+                JustinaManip::waitForRaGoalReached(3500);
+                JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
 
@@ -866,8 +875,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
         }
         
-        if (!JustinaManip::isLaInPredefPos("navigation"))
-            JustinaManip::startLaGoTo("navigation");
+        
 
 
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -985,7 +993,7 @@ bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorOb
     
     if (usingTorse)
         JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
-    JustinaNavigation::moveLateral(movLateral, 3000);
+    JustinaNavigation::moveLateral(movLateral/2, 3000);
     JustinaNavigation::moveDist(movFrontal, 3000);
 
     if (usingTorse)
@@ -1013,11 +1021,11 @@ bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorOb
         objToGraspX = objects.ObjectList.at(0).pose.position.x;
 
         if (withLeftArm)
-            objToGraspY = objects.ObjectList.at(0).maxPoint.y-10;
+            objToGraspY = objects.ObjectList.at(0).pose.position.y + 0.2;
         else
-            objToGraspY = objects.ObjectList.at(0).minPoint.y+10;
+            objToGraspY = objects.ObjectList.at(0).pose.position.y - 0.2;
 
-        objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.22;
+        objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.3;
         dz = minTorso;
             
     }
@@ -1035,39 +1043,79 @@ bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorOb
     {
         
         if (!JustinaManip::isLaInPredefPos("put1"))
-                JustinaManip::laGoTo("put1", 3000);
+                JustinaManip::laGoTo("put1", 2000);
             else
                 std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
     
-        JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
-        JustinaManip::laGoToCartesian(objToGraspX , objToGraspY , objToGraspZ,0.0,0.0,0.0, 5000);
+        //JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
+        JustinaManip::laGoToCartesian(objToGraspX-0.04 , objToGraspY , objToGraspZ,0.0,0.0,0.0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        JustinaManip::startTorsoGoTo(torsoSpine-.08, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
         JustinaManip::startLaOpenGripper(0.3);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        JustinaManip::startTorsoGoTo(torsoSpine+.08, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+
+        if (!JustinaManip::isLaInPredefPos("put1"))
+            JustinaManip::laGoTo("put1", 3000);
+        else
+            std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
+    
 
         ros::spinOnce();
     } 
     else 
     {
         if (!JustinaManip::isRaInPredefPos("put1"))
+            JustinaManip::raGoTo("put1", 2000);
+        else
+            std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
+    
+        JustinaManip::raGoToCartesian(objToGraspX-.04, objToGraspY, objToGraspZ, 0.0, 0.0, 0, 0.0, 5000);
+        //JustinaManip::raGoToCartesian(objToGraspX , objToGraspY , objToGraspZ,0.0,0.0,0.0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        JustinaManip::startTorsoGoTo(torsoSpine-.08, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+
+        JustinaManip::startRaOpenGripper(0.3);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        JustinaManip::startTorsoGoTo(torsoSpine+.08, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+
+        if (!JustinaManip::isRaInPredefPos("put1"))
             JustinaManip::raGoTo("put1", 3000);
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
     
-        JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
-        JustinaManip::raGoToCartesian(objToGraspX , objToGraspY , objToGraspZ,0.0,0.0,0.0, 5000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        JustinaManip::startRaOpenGripper(0.3);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
         ros::spinOnce();
     }
-
+   
     if (!JustinaManip::isLaInPredefPos("navigation"))
-            JustinaManip::startLaGoTo("navigation");
+                    JustinaManip::startLaGoTo("navigation");
+    if (!JustinaManip::isRaInPredefPos("navigation"))
+                    JustinaManip::startRaGoTo("navigation");
+
+    JustinaManip::waitForLaGoalReached(1500);
+    JustinaManip::waitForRaGoalReached(1500);
+
+    
 
     JustinaManip::startTorsoGoTo(0, 0, 0);
     JustinaManip::waitForTorsoGoalReached(waitTime);
+
+
+    
+
+    return true;
 
 }
 
@@ -1166,7 +1214,7 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
         else
             objToGraspY = objects.ObjectList.at(0).minPoint.y;
 
-        objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.25;
+        objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.2;
         dz = minTorso;
             
     }
@@ -1183,13 +1231,13 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
     if( withLeftArm ) 
     {
         
-        JustinaManip::laGoToCartesian(objToGraspX , objToGraspY , objToGraspZ - 0.15, 5000);
+        JustinaManip::raGoToCartesian(objToGraspX -.15, objToGraspY , objToGraspZ ,0.0, 0.0, 1.5707, 0.1, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         std::vector<float> currPose;
         JustinaManip::getLaCurrentPos(currPose);
         if (currPose.size() == 7) 
         {
-            while( (currPose[6] += 0.1 ) < 1.5)
+            while( (currPose[6] += 0.3 ) < 1.5)
             {
                 JustinaManip::laGoToArticular(currPose, 3000);
                 JustinaManip::waitForLaGoalReached(900);   
@@ -1200,20 +1248,28 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
     } 
     else 
     {
-        JustinaManip::raGoToCartesian(objToGraspX , objToGraspY , objToGraspZ - 0.15,0.0, 0.0, 0.0, 0.1, 5000);
+        //JustinaManip::laGoToCartesianTraj(objToGraspX , objToGraspY, objToGraspZ+0.1, 15000);
+        //ustinaManip::laStopGoToCartesian();
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        //ros::spinOnce();
+
+
+        JustinaManip::raGoToCartesian(objToGraspX -.15, objToGraspY , objToGraspZ+.08 ,0.0, 0.0, 1.5707, 0.1, 5000);
         std::vector<float> currPose;
         JustinaManip::getRaCurrentPos(currPose);
         if (currPose.size() == 7) 
         {
             while( (currPose[6] -= 0.1) > -1.5)
             {
-                JustinaManip::raGoToArticular(currPose, 3000);
-                JustinaManip::waitForLaGoalReached(900);   
+                JustinaManip::raGoToArticular(currPose,2000);   
             }
         
         }
-        ros::spinOnce();
+
     }
+
+    JustinaNavigation::moveDist(-.3, 3000);
+
     if (!JustinaManip::isLaInPredefPos("navigation"))
             JustinaManip::startLaGoTo("navigation");
     if (!JustinaManip::isRaInPredefPos("navigation"))
