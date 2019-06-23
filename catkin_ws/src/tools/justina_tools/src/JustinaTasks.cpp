@@ -1332,11 +1332,12 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                             filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
                         else{
                             // We need to do all for filter person
-                            filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
+                        	centroidFaces = filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
+                        	std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidFaces: " << centroidFaces.size() << std::endl;
                             std::vector<Eigen::Vector3d> newCentroidsFacesAll;
                             filterObjectByLocation(allFacesObject, newCentroidsFacesAll, location);
                             std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFacesAll: " << newCentroidsFacesAll.size() << std::endl;
-                            filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
+                            centroidFacesAll = filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
                             std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidsFacesAll: " << centroidFacesAll.size() << std::endl;
                             if(centroidFacesAll.size() >= numrecog)
                                 recog = true;
@@ -7472,9 +7473,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
     bool usePointArmLeft = false;
     float pitchAngle;
     float distanceArm = 0.6;
-    int findPersonCount = 0;
-    int findPersonAttemps = 0;
-    int findPersonRestart = 0;
+    int countSpeechRecognize = 0;
     std::string lastReco;
     std::stringstream ss_loc;
 
@@ -7531,14 +7530,29 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 legX+=0.5;
                 legY+=0.4;
                 legZ = 0.0;*/
+                
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                std::cout << "JustinaTasks.->Guide person success finished" << std::endl;
+                //closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaKnowledge::getKnownLocation(centroids_loc[0], gx_w, gy_w, gz_w);
+                thetaToGoal = atan2(gy_w - robot_y, gx_w - robot_x);
+                if (thetaToGoal < 0.0f)
+                    thetaToGoal = 2 * M_PI + thetaToGoal;
+                theta = thetaToGoal - robot_a;
+                std::cout << "JustinaTasks.->Turn in direction of robot:" << theta
+                    << std::endl;
+                JustinaNavigation::moveDistAngle(0, theta, 2000);
+
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "hey " << name_person << " stay in my left side while i am introducing you to the other person";
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 /*JustinaTools::transformPoint("/base_link", legX, legY , legZ, "/map", legX, legY, legZ);
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                JustinaKnowledge::addUpdateKnownLoc(name_person, legX, legY, atan2(legY - robot_y, legX - robot_x) - robot_a);
-                JustinaKnowledge::getKnownLocation(name_person, goalx, goaly, goala);
-                std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly << "," << goala << std::endl;*/
+                  JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                  JustinaKnowledge::addUpdateKnownLoc(name_person, legX, legY, atan2(legY - robot_y, legX - robot_x) - robot_a);
+                  JustinaKnowledge::getKnownLocation(name_person, goalx, goaly, goala);
+                  std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly << "," << goala << std::endl;*/
+                countSpeechRecognize = 0;
                 nextState=SM_CONFIRMATION;
                 break;
 
@@ -7546,10 +7560,9 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "hello my name is Justina and my friend is " << name_person << " please, tell us your name" <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
-                JustinaHRI::enableGrammarSpeechRecognized("people_names", 5.0);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                //JustinaHRI::enableGrammarSpeechRecognized("people_names", 5.0);
+                JustinaHRI::loadGrammarSpeechRecognized("people_names.xml");
                 JustinaHRI::enableSpeechRecognized(false);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
@@ -7557,16 +7570,20 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 JustinaRepresentation::stringInterpretation(lastReco, name2);
                 dialogue << "is " << name2 << " your name, say justina yes or justina no";
-                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                //JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
+                JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
                 JustinaHRI::enableSpeechRecognized(false);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
                 JustinaHRI::waitForSpeechRecognized(lastReco,400);
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
-                if(lastReco == "robot yes" || lastReco == "justina yes")
+                countSpeechRecognize++;
+                if(countSpeechRecognize <= 2){
+                    if(lastReco == "robot yes" || lastReco == "justina yes")
+                        nextState = SM_INTRODUCE;
+                }
+                else
                     nextState = SM_INTRODUCE;
                 break;
 
