@@ -528,7 +528,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
             //if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.095, objToGraspY - 0.0, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.0, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -7523,8 +7523,6 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaKnowledge::getKnownLocation(centroids_loc[0] ,goalx, goaly, goala);
                 JustinaTasks::guideAPerson(centroids_loc[0], 120000, 1.5, true, 0.8);
                 dialogue.str(std::string()); // Clear the buffer
-                dialogue << "we have arrived to the person" <<std::endl;
-                JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 //////
                 /*JustinaHRI::getLatestLegsPosesRear(legX, legY);
                 legX+=0.5;
@@ -7543,7 +7541,8 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 std::cout << "JustinaTasks.->Turn in direction of robot:" << theta
                     << std::endl;
                 JustinaNavigation::moveDistAngle(0, theta, 2000);
-
+                dialogue << "we have arrived to the person" <<std::endl;
+                JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "hey " << name_person << " stay in my left side while i am introducing you to the other person";
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
