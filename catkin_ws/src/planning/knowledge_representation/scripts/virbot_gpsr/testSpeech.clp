@@ -142,6 +142,8 @@
 ;;; respuesta del comando "cmd_conf"
 (defrule conf_command
 	?f <- (received ?sender command cmd_conf ?plan ?steps 1)
+	?f1 <- (Arm (name right))
+	?f2 <- (Arm (name left))
 	=> 
 	(retract ?f)
 	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
@@ -150,6 +152,8 @@
 	(assert (plan_name ?plan))
 	(assert (delate current_person))
 	(assert (delate current_place))
+	(modify ?f1 (status nil) (grasp nil))
+	(modify ?f2 (status nil) (grasp nil))
 )
 
 (defrule no_conf_command

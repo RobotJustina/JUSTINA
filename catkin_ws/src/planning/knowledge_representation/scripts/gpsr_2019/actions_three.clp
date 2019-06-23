@@ -170,7 +170,7 @@
 )
 
 (defrule task_introduce_to_people
-	?f <- (task ?plan introduce_person ?php ?place ?step)
+	?f <- (task ?plan introduce_people ?php ?place ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name ?place))
 	?f3 <- (item (name ?person) (status current_person))
