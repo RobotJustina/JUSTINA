@@ -826,7 +826,7 @@ meaning_mapping_patterns_gpsr = [
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Phpeople":[["everyone", "people", "men", "women", "guests", "elders", "children"],[],[],[]],
 	"Place":[[],[],["place", "room"],[]],
-	"conceptual_dependency": "(task (plan user_speech) (action_type introduce_person) (params -Phpeople- -Place-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type introduce_people) (params -Phpeople- -Place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -1586,7 +1586,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#follow to room
 	{"params": ["Action_follow", "Pron", "Location"],
-	"Action_follow": [["follow", "after"], [], [], []],
+	"Action_follow": [["follow", "after", "behind"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type follow_man) (params man -Location-) (step ))",
@@ -1596,7 +1596,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#guide to room
 	{"params": ["Action_guide", "Pron", "Location"],
-	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany", "conduct"], [], [], []],
 	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place", "room"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
@@ -2332,7 +2332,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	
         #and $vbguide {pron}	
 	{"params": ["Action_guide", "Pron"],
-	 "Action_guide": [["guide", "escort", "take", "lead", "accompany"],[],[],[]],
+	 "Action_guide": [["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
 	 "Pron": [["her", "him", "it"],[],[],[]],
 	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))" +
 	                        "(task (plan user_speech) (action_type get_object) (params man_guide) (step ))",
