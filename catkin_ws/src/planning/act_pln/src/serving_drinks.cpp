@@ -900,6 +900,11 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                          if(objectDetected){
                              ss.str("");
                              ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
+                             
+                             JustinaNavigation::startMoveDist(-0.15);
+                             JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+                             JustinaNavigation::waitForGoalReached(2000);
+                             
                              JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                              JustinaTasks::dropObject("", false, 10000);
 
@@ -945,6 +950,11 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                         if(objectDetected){
                             ss.str("");
                             ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
+                             
+                            JustinaNavigation::startMoveDist(-0.15);
+                            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+                            JustinaNavigation::waitForGoalReached(2000);
+                            
                             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                             JustinaTasks::dropObject("", true, 10000);
                             
