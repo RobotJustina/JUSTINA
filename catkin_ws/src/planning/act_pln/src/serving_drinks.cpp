@@ -355,7 +355,6 @@ void callbackCmdFindObject(
                     centroids_loc.erase(centroids_loc.begin());
                 else{
                     centroids_loc = std::vector<std::string>();
-                    JustinaNavigation::getClose("kitchen", 120000);
                 }
                 success = true;
             }
@@ -1018,6 +1017,8 @@ void callbackCmdDeliverOrder(const knowledge_msgs::PlanningCmdClips::ConstPtr& m
                 ss << "I am sorry, I cant find you " << name;
                 JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
             }
+            success = false;
+            attemps = 0;
         }
     } 
 
