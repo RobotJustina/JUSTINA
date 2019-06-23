@@ -186,7 +186,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//SM_ALIGN_WITH_TABLE;// SM_INIT;
+    STATE state =  SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//SM_ALIGN_WITH_TABLE;//
 
 
     while(ros::ok() && !success){
@@ -446,6 +446,9 @@ int main(int argc, char **argv){
             break;
             case SM_RETURN_TO_TABLE:
 
+                JustinaManip::startTorsoGoTo(0.0, 0, 0);
+                JustinaManip::waitForTorsoGoalReached(5000);
+
                 JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
@@ -703,7 +706,11 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         {
 
 
-            JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);          
+            JustinaManip::laGoToCartesianTraj(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ, 5000);
+
+            //JustinaManip::laGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);          
+            
+
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
             JustinaManip::startLaOpenGripper(0.3);
