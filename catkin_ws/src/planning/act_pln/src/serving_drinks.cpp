@@ -351,7 +351,12 @@ void callbackCmdFindObject(
                 if(angleHead > M_PI)
                     angleHead = 2 * M_PI - angleHead;
                 JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.53 + torsoSpine), dist_to_head));
-                centroids_loc.erase(centroids_loc.begin());
+                if(centroids_loc.size() > 1)
+                    centroids_loc.erase(centroids_loc.begin());
+                else{
+                    centroids_loc = std::vector<std::string>();
+                    JustinaNavigation::getClose("kitchen", 120000);
+                }
                 success = true;
             }
             ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
