@@ -119,6 +119,7 @@
 	=>
 	(bind ?command (str-cat "" ?obj " " ?flag " " ?storage " " ?sp_obj ""))
 	(assert (send-blackboard ACT-PLN storage_obj ?command ?t 4))
+	(assert (reset_arm storage_object ?arm))
 )
 
 (defrule exe-plan-task-storage-category-neg 
@@ -132,6 +133,7 @@
         ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 1)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
 	?f2 <- (item (name ?obj))
+	(not (reset_arm storage_object ?arm))
         =>
         (retract ?f)
         (modify ?f2 (status nil))
@@ -142,10 +144,37 @@
         ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 0)
         ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
 	?f2 <- (item (name ?obj))
+	(not (reset_arm storage_object ?arm))
         =>
         (retract ?f)
 	(modify ?f1 (status accomplished)) ;performance for IROS
         (modify ?f2 (status nil))
+)
+
+(defrule exe-plan-storage-obj-reset-arm 
+        ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 1)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+	?f2 <- (item (name ?obj))
+	?f3 <- (reset_arm storage_obj ?arm)
+	?f4 <- (Arm (name ?arm))
+        =>
+        (retract ?f ?f3)
+        (modify ?f2 (status nil))
+        (modify ?f1 (status accomplished))
+	(modify ?f4 (status nil) (grasp nil))
+)
+
+(defrule exe-plan-no-storage-obj-reset-arm 
+        ?f <-  (received ?sender command storage_obj ?obj ?loc ?storage ?sp_obj 0)
+        ?f1 <- (plan (name ?name) (number ?num-pln)(status active)(actions storage_object $?params))
+	?f2 <- (item (name ?obj))
+	?f3 <- (reset_arm storage_obj ?arm)
+	?f4 <- (Arm (name ?arm))
+        =>
+        (retract ?f ?f3)
+	(modify ?f1 (status accomplished)) ;performance for IROS
+        (modify ?f2 (status nil))
+	(modify ?f4 (status nil) (grasp nil))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 

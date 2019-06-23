@@ -117,7 +117,7 @@
 
 (defrule exe-plan-found-object
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 1)
- 	    ?f1 <- (item (name ?object))
+ 	    ?f1 <- (item (name ?object) (type Objects))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
 	    ?f3 <- (Arm (name ?arm))
         =>
