@@ -185,7 +185,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_ALIGN_WITH_TABLE; //SM_INIT;
+    STATE state = SM_TAKE_CEREAL;//SM_INIT;
 
 
     while(ros::ok() && !success){
@@ -378,13 +378,14 @@ int main(int argc, char **argv){
 
             case SM_GO_FOR_CEREAL:
 
-                JustinaHRI::waitAfterSay("I'm going to the cup board", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I'm going to the cupboard", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
 
-                JustinaHRI::waitAfterSay("I have reached cup board", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I have reached cupboard", 4000, MIN_DELAY_AFTER_SAY);
                 
+                state = SM_TAKE_CEREAL;
             break;
 
             case SM_TAKE_CEREAL:
@@ -766,11 +767,18 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             JustinaManip::startRaOpenGripper(0.3);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             
-            JustinaManip::raGoToCartesian(objToGraspX + 0.12, objToGraspY + 0.0, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            JustinaManip::raGoToCartesian(objToGraspX + 0.02, objToGraspY + 0.0, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
             
+            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+            if ( usingTorse )
+                JustinaManip::startTorsoGoTo(torsoSpine-.06, 0, 0);
+            JustinaManip::waitForTorsoGoalReached(waitTime);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
             JustinaManip::startRaCloseGripper(0.5);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
                 JustinaManip::startTorsoGoTo(torsoSpine+.02, 0, 0);
