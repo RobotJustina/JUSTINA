@@ -798,6 +798,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     std::vector<vision_msgs::VisionObject> recoObj;
     sensor_msgs::Image image;
     int index;
+    std::string lastReco;
 
     while(!success && attemps<4){
         success = JustinaTasks::sayAndSyncNavigateToLoc(tokens1[tokens1.size() - 1], 120000);
@@ -811,6 +812,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
         switchSpeechReco(0,"did you understand the order, say justina yes");
         
+        JustinaHRI::waitForSpeechRecognized(lastReco,400);
         
         JustinaHRI::waitForSpecificSentence("justina yes", 10000);
 
