@@ -228,6 +228,7 @@ def Initialize():
     clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'functions.clp')
     clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'monitor.clp')
     clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'virbot_blackboard.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'virbot_default_facts.clp')
     
     file_gpsr = filePath + '/virbot_gpsr/speechTest.dat'
     print file_gpsr
