@@ -62,7 +62,7 @@
 	(retract ?f ?f5)
 	(modify ?f1 (status accomplished))
 	(modify ?f3 (status offered))
-	(modify ?f4 (status offer));;;change last_offer for offer if you can ask many times for drinks
+	(modify ?f4 (status last_offer));;;change last_offer for offer if you can ask many times for drinks
 	(assert (drink_order ?obj ?person ?num))
 )
 

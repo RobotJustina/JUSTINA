@@ -335,7 +335,7 @@ void callbackCmdFindObject(
                 }
             }
             if(success && centroids_loc.size() > 0){
-                JustinaHRI::say("I am going to approach to my customer");
+                JustinaHRI::say("I am going to approach to the guest");
                 JustinaKnowledge::getKnownLocation(centroids_loc[0] ,goalx, goaly, goala);
                 JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -807,6 +807,8 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         attemps++;
     }
 
+    JustinaManip::startHdGoTo(0.0, 0.0);
+
     for (int i = 1; i < tokens.size()-1; i++){
         objectDetected = false;
         ss.str("");
@@ -828,6 +830,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
             recoObj = std::vector<vision_msgs::VisionObject>();
 
+            objectDetected = false;
             if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
                 for(int j = 0; j < recoObj.size() && !objectDetected; j++){
                     if (recoObj[j].id.compare(tokens[i]) == 0){
@@ -836,35 +839,42 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                     }
                 }
                 
-                if(objectDetected){
+                if(objectDetected && recoObj.size() > 0){
                     ss.str("");
                     ss << "I have found the " << tokens[i] << std::endl; 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                    JustinaTasks::alignWithTable(0.35);
+                    //JustinaTasks::alignWithTable(0.35);
                     ss.str("");
                     ss << "I am going to take the " << tokens[i] << std::endl; 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                     // This is for grasp with two frames
                     //JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
                     if(!ra){
-                        JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
-                        ra = true;
-                        ss.str("");
-                        ss << "(assert (set_object_arm " << tokens[i] << " false))";
-                        JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                        objectDetected = JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
+                        if(objectDetected){
+                            ra = true;
+                            ss.str("");
+                            ss << "(assert (set_object_arm " << tokens[i] << " false))";
+                            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                        }
                     }
                     else{
-                        JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
-                        la = true;
-                        ss.str("");
-                        ss << "(assert (set_object_arm " << tokens[i] << " true))";
-                        JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                        objectDetected = JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
+                        if(objectDetected){
+                            la = true;
+                            ss.str("");
+                            ss << "(assert (set_object_arm " << tokens[i] << " true))";
+                            JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                        }
                     }
-                    
+
                 }
             }
         }
         if(!objectDetected){
+            JustinaNavigation::startMoveDist(-0.15);
+            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+            JustinaNavigation::waitForGoalReached(2000);
             ss.str("");
             ss << "Sorry i could not grasp the " << tokens[i] << " by myself" << std::endl; 
             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
@@ -878,27 +888,28 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
                 objectDetected = JustinaTasks::alignWithTable(0.35); 
                 if(objectDetected){
-                     if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
+                    objectDetected = false;
+                    if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
                         for(int j = 0; j < recoObj.size() && !objectDetected; j++){
                             if (recoObj[j].id.compare(tokens[i]) == 0){
                                 index =j;
                                 objectDetected = true;
-                            }
-                        }
+                             }
+                         }
 
-                        if(objectDetected){
-                            ss.str("");
-                            ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
-                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                            JustinaTasks::dropObject("", false, 10000);
-                            
-                            ss.str("");
-                            ss << "give me the " << tokens[i] << std::endl; 
-                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-                            JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-                            
-                            ra = true;
-                            ss.str("");
+                         if(objectDetected){
+                             ss.str("");
+                             ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
+                             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                             JustinaTasks::dropObject("", false, 10000);
+
+                             ss.str("");
+                             ss << "give me the " << tokens[i] << std::endl; 
+                             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                             JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
+
+                             ra = true;
+                             ss.str("");
                             ss << "(assert (set_object_arm " << tokens[i] << " false))";
                             JustinaRepresentation::sendAndRunCLIPS(ss.str());
                             JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
@@ -922,6 +933,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                 JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
                 objectDetected = JustinaTasks::alignWithTable(0.35);
                 if(objectDetected){
+                    objectDetected = false;
                      if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
                         for(int j = 0; j < recoObj.size() && !objectDetected; j++){
                             if (recoObj[j].id.compare(tokens[i]) == 0){
@@ -959,7 +971,9 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             }
         }
     } 
-    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 6000);
+    JustinaNavigation::startMoveDist(-0.15);
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+    JustinaNavigation::waitForGoalReached(2000);
 
     responseMsg.successful = 1;
     //validateAttempsResponse(responseMsg);
