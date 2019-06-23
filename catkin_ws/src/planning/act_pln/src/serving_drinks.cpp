@@ -319,6 +319,7 @@ void callbackCmdFindObject(
             if(centroids_loc.size() == 0){
                 poseRecog = JustinaTasks::NONE;
                 centroids = std::vector<Eigen::Vector3d>();
+                JustinaHRI::say("I will search the guest");
                 success = JustinaTasks::turnAndRecognizeYolo(idsPerson, poseRecog, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.3, 0.1, 0.1f, 8.0, centroids, tokens[1], 0, 1.0);
                 if(success){
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -334,6 +335,7 @@ void callbackCmdFindObject(
                 }
             }
             if(success && centroids_loc.size() > 0){
+                JustinaHRI::say("I am going to approach to my customer");
                 JustinaKnowledge::getKnownLocation(centroids_loc[0] ,goalx, goaly, goala);
                 JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.3, 30000);
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
