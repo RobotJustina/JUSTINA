@@ -826,10 +826,11 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
             recoObj = std::vector<vision_msgs::VisionObject>();
 
             if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
-                for(int j = 0; j < recoObj.size(); j++){
-                    objectDetected = recoObj[j].id.find(tokens[i]);
-                    if(objectDetected)
+                for(int j = 0; j < recoObj.size() && !objectDetected; j++){
+                    if (recoObj[j].id.compare(tokens[i]) == 0){
                         index =j;
+                        objectDetected = true;
+                    }
                 }
                 
                 if(objectDetected){
