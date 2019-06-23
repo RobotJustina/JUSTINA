@@ -528,7 +528,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             // --------------  Calculate the next ik inverse point ----------------
             articular.clear();
             //if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.095, objToGraspY - 0.0, objToGraspZ, articular)){
+            if(JustinaManip::inverseKinematics(objToGraspX - 0.115, objToGraspY - 0.0, objToGraspZ, articular)){
                 JustinaManip::waitForRaGoalReached(2500);
                 JustinaManip::startRaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -1332,11 +1332,12 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,int ages, POS
                             filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
                         else{
                             // We need to do all for filter person
-                            filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
+                        	centroidFaces = filterObjectsNearest(centroidFaces, newCentroidsFaces, thrSamePerson);
+                        	std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidFaces: " << centroidFaces.size() << std::endl;
                             std::vector<Eigen::Vector3d> newCentroidsFacesAll;
                             filterObjectByLocation(allFacesObject, newCentroidsFacesAll, location);
                             std::cout << "JustinaTasks.->turnAndRecognizeFace size of the newCentroidsFacesAll: " << newCentroidsFacesAll.size() << std::endl;
-                            filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
+                            centroidFacesAll = filterObjectsNearest(centroidFacesAll, newCentroidsFacesAll, thrSamePerson);
                             std::cout << "JustinaTasks.->turnAndRecognizeFace size of the centroidsFacesAll: " << centroidFacesAll.size() << std::endl;
                             if(centroidFacesAll.size() >= numrecog)
                                 recog = true;
@@ -7472,9 +7473,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
     bool usePointArmLeft = false;
     float pitchAngle;
     float distanceArm = 0.6;
-    int findPersonCount = 0;
-    int findPersonAttemps = 0;
-    int findPersonRestart = 0;
+    int countSpeechRecognize = 0;
     std::string lastReco;
     std::stringstream ss_loc;
 
@@ -7524,21 +7523,35 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaKnowledge::getKnownLocation(centroids_loc[0] ,goalx, goaly, goala);
                 JustinaTasks::guideAPerson(centroids_loc[0], 120000, 1.5, true, 0.8);
                 dialogue.str(std::string()); // Clear the buffer
-                dialogue << "we have arrived to the person" <<std::endl;
-                JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 //////
                 /*JustinaHRI::getLatestLegsPosesRear(legX, legY);
                 legX+=0.5;
                 legY+=0.4;
                 legZ = 0.0;*/
+                
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                std::cout << "JustinaTasks.->Guide person success finished" << std::endl;
+                //closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.5, waitToClose);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaKnowledge::getKnownLocation(centroids_loc[0], gx_w, gy_w, gz_w);
+                thetaToGoal = atan2(gy_w - robot_y, gx_w - robot_x);
+                if (thetaToGoal < 0.0f)
+                    thetaToGoal = 2 * M_PI + thetaToGoal;
+                theta = thetaToGoal - robot_a;
+                std::cout << "JustinaTasks.->Turn in direction of robot:" << theta
+                    << std::endl;
+                JustinaNavigation::moveDistAngle(0, theta, 2000);
+                dialogue << "we have arrived to the person" <<std::endl;
+                JustinaHRI::waitAfterSay(dialogue.str(), 10000);
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "hey " << name_person << " stay in my left side while i am introducing you to the other person";
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 /*JustinaTools::transformPoint("/base_link", legX, legY , legZ, "/map", legX, legY, legZ);
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                JustinaKnowledge::addUpdateKnownLoc(name_person, legX, legY, atan2(legY - robot_y, legX - robot_x) - robot_a);
-                JustinaKnowledge::getKnownLocation(name_person, goalx, goaly, goala);
-                std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly << "," << goala << std::endl;*/
+                  JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                  JustinaKnowledge::addUpdateKnownLoc(name_person, legX, legY, atan2(legY - robot_y, legX - robot_x) - robot_a);
+                  JustinaKnowledge::getKnownLocation(name_person, goalx, goaly, goala);
+                  std::cout << "JUstinaTasks...->Centroid object:" << goalx << "," << goaly << "," << goala << std::endl;*/
+                countSpeechRecognize = 0;
                 nextState=SM_CONFIRMATION;
                 break;
 
@@ -7546,10 +7559,9 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 dialogue.str(std::string()); // Clear the buffer
                 dialogue << "hello my name is Justina and my friend is " << name_person << " please, tell us your name" <<std::endl;
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
-                JustinaHRI::enableGrammarSpeechRecognized("people_names", 5.0);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                //JustinaHRI::enableGrammarSpeechRecognized("people_names", 5.0);
+                JustinaHRI::loadGrammarSpeechRecognized("people_names.xml");
                 JustinaHRI::enableSpeechRecognized(false);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
@@ -7557,16 +7569,20 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 JustinaRepresentation::stringInterpretation(lastReco, name2);
                 dialogue << "is " << name2 << " your name, say justina yes or justina no";
-                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                //JustinaHRI::enableGrammarSpeechRecognized("confirmation", 5.0);
+                JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
                 JustinaHRI::enableSpeechRecognized(false);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::waitAfterSay(dialogue.str(), 5000);
                 JustinaHRI::enableSpeechRecognized(true);
                 dialogue.str("");
                 JustinaHRI::waitForSpeechRecognized(lastReco,400);
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
-                if(lastReco == "robot yes" || lastReco == "justina yes")
+                countSpeechRecognize++;
+                if(countSpeechRecognize <= 2){
+                    if(lastReco == "robot yes" || lastReco == "justina yes")
+                        nextState = SM_INTRODUCE;
+                }
+                else
                     nextState = SM_INTRODUCE;
                 break;
 
@@ -7726,9 +7742,11 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
     return find;
 }
 
-bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heightOptimal){
+bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float maxHtorso, float minHTorso){
     std::cout << "JustinaTasks::place object on dish washer..." << std::endl;
-
+    float torsoSpine, torsoWaist, torsoShoulders;
+    float movTorsoFromCurrPos;
+    int waitTime;
 
     if (!JustinaTasks::alignWithTable(distanceToDishWasher)){
         std::cout << "cannot align with table" <<std::endl;
@@ -7738,6 +7756,19 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
         }
     }       
 
+
+    
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
+    movTorsoFromCurrPos = maxHtorso - torsoSpine;
+    waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
+    std::cout << "JustinaTasks.->movTorsoFromCurrPos:"
+        << movTorsoFromCurrPos << std::endl;
+    std::cout << "JustinaTasks.->goalTorso:" << maxHtorso << std::endl;
+    std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
+    JustinaManip::startTorsoGoTo(maxHtorso, 0, 0);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    JustinaManip::waitForTorsoGoalReached(waitTime);
     
     //JustinaManip::laGoTo("put1", 5000);
     //JustinaManip::laGoTo("place_dishwasher", 5000);
@@ -7755,24 +7786,20 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     //JustinaManip::raGoTo("put1", 5000);
     //JustinaManip::raGoTo("place_dishwasher", 5000);
 
-    
-
-
-    float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
-    float movTorsoFromCurrPos;
-    float goalTorso = 0.79 - heightOptimal;
-    int waitTime;
-    movTorsoFromCurrPos = goalTorso - torsoSpine;
+    movTorsoFromCurrPos = minHTorso - torsoSpine;
     waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
     std::cout << "JustinaTasks.->movTorsoFromCurrPos:"
         << movTorsoFromCurrPos << std::endl;
-    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
+    std::cout << "JustinaTasks.->goalTorso:" << minHTorso << std::endl;
     std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
-    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    JustinaManip::startTorsoGoTo(minHTorso, 0, 0);
     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     JustinaManip::waitForTorsoGoalReached(waitTime);
+
+
+    
 
     JustinaManip::startLaOpenGripper(0.5);
     ros::spinOnce();
@@ -7786,15 +7813,14 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float heigh
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
     //float movTorsoFromCurrPos;
-    goalTorso = 0.15;
     //int waitTime;
-    movTorsoFromCurrPos = goalTorso - torsoSpine;
+    movTorsoFromCurrPos = maxHtorso - torsoSpine;
     waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
     std::cout << "JustinaTasks.->movTorsoFromCurrPos:"
         << movTorsoFromCurrPos << std::endl;
-    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
+    std::cout << "JustinaTasks.->goalTorso:" << maxHtorso << std::endl;
     std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
-    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    JustinaManip::startTorsoGoTo(maxHtorso, 0, 0);
     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     JustinaManip::waitForTorsoGoalReached(waitTime);
 

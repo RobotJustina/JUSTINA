@@ -196,6 +196,7 @@ int main(int argc, char** argv)
       				if(!JustinaTasks::alignWithTable(0.42)){
       					if(!JustinaTasks::alignWithTable(0.42)){
       						std::cout << "P & G Test...-> Can not align with table." << std::endl;
+							JustinaNavigation::moveDist(0.1, 3000);    
       						nextState = SM_InspectTheObjetcs;
       					}
       				}
@@ -349,7 +350,7 @@ int main(int argc, char** argv)
 
       			
 				//JustinaHRI::say("I am going to deliver the objects");
-				if(!JustinaTasks::placeObjectDishWasher(0.45, 0.72)){
+				if(!JustinaTasks::placeObjectDishWasher(0.7, 0.2, 0.0)){
       				std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
 					JustinaNavigation::moveDist(0.1, 3000);  
 					nextState = SM_DeliverObject;
