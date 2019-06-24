@@ -326,6 +326,13 @@
 	(item (type question) (name question_1) (status no_ask) (possession table))
 	(item (type question) (name question_2) (status no_ask) (possession table))
 	(item (type question) (name question_3) (status no_ask) (possession table))
+	(item (type question) (name question_4) (status no_ask) (possession table))
+	(item (type question) (name question_5) (status no_ask) (possession table))
+	(item (type question) (name question_6) (status no_ask) (possession table))
+	(item (type question) (name question_7) (status no_ask) (possession table))
+	(item (type question) (name question_8) (status no_ask) (possession table))
+	(item (type question) (name question_9) (status no_ask) (possession table))
+	
 	(item (type Door) (name exitdoor) (status no_ask) (possession table))
 	;(item (type Furniture) (name shelf) (status no_ask))
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
