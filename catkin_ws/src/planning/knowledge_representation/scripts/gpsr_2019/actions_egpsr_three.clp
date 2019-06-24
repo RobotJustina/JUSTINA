@@ -136,6 +136,17 @@
 	(modify ?f1 (status nil))
 )
 
+(defrule task_review_arms
+	?f <- (task ?plan review_arms ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Open or close some door ")
+	(assert (state (name ?plan)(number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_rev_arms)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task prev_arms ?step))
+	(modify ?f1 (status nil))
+)
 ;;;;;;;;;;;;;;;;;;
 ;:;;;;;;;;;;;;;;;;;
 
@@ -261,6 +272,21 @@
 	(assert (plan (name ?name) (number 3) (actions update_status finish_objetive finaly_seted_cutlery)(duration 6000)))
 	(assert (finish-planner ?name 3))
 )
+
+(defrule plan_rev_arms
+	?goal <- (objetive rev_arms ?name ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Set tableware" crlf)
+	(assert (plan (name ?name) (number 1) (actions rev_arms right) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions make_task ?name right ready) (actions_num_params 3 3) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions drop person arm right)(duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions rev_arms left) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions make_task ?name left ready) (actions_num_params 6 6) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions drop person arm left)(duration 6000)))
+	(assert (plan (name ?name) (number 7) (actions update_status finish_objetive finaly_rev_arms)(duration 6000)))
+	(assert (finish-planner ?name 7))
+)
 ;;;;;;;;;;;;;;;;;;
 (defrule exe_scheduled-get-rpose-object 
 	(state (name ?name) (number ?step) (status active)(duration ?time))
@@ -360,5 +386,15 @@
 	=>
 	(retract ?f1)
 	(assert (objetive set_cutlery task_set_cutlery ?cutlery ?pos ?tableware ?place ?step))
+)
+
+(defrule exe_scheduled-set-cutlery 
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task prev_arms ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive rev_arms task_rev_arms ?step))
 )
 ;;;;;;;;;;;;;;;;;;;

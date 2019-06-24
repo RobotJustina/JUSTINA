@@ -97,8 +97,7 @@
 
 (defrule exe-plan-task-no-make-task-status 
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?item ?status) (actions_num_params ?ini ?end))
-	(item (name ?item) (status ?st&:(neq ?status ?st)))
-	(not (item (name ?item) (status ?status)))
+	(item (type ?type&:(neq ?type Color)) (name ?item) (status ?st&:(neq ?status ?st)))
 	?f2 <- (finish-planner ?name ?n)
 	=>
 	(retract ?f2)
