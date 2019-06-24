@@ -1357,10 +1357,10 @@ void MainWindow::setlocClips()
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
-      /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
       this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
-      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));*/
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();
@@ -1473,7 +1473,7 @@ void MainWindow::on_addCLIPSobj_clicked(){
     std::cout << "QMainWindow.->weight:" << this->ui->weightCLIPSobj->text().toStdString() << std::endl;
     std::cout << "QMainWindow.->size:" << this->ui->sizeCLIPSobj->text().toStdString() << std::endl;
     std::cout << "QMainWindow.->color:" << this->ui->colorCLIPSobj->text().toStdString() << std::endl;
-    std::cout << "QMainWindow.->quant:" << this->ui->quantCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->quant:" << this->ui->graspCLIPSobj->text().toStdString() << std::endl;
 
     //for(std::map<std::string, std::vector<std::string> >::iterator it = objects.begin(); it != objects.end(); it++){
     //    std::cout << "first:" << it->first << std::endl;
@@ -1486,7 +1486,7 @@ void MainWindow::on_addCLIPSobj_clicked(){
     values.push_back(this->ui->weightCLIPSobj->text().toStdString());
     values.push_back(this->ui->sizeCLIPSobj->text().toStdString());
     values.push_back(this->ui->colorCLIPSobj->text().toStdString());
-    values.push_back(this->ui->quantCLIPSobj->text().toStdString());
+    values.push_back(this->ui->graspCLIPSobj->text().toStdString());
 
     JustinaRepresentation::addObjects(objects,name,values);
 
@@ -1820,10 +1820,10 @@ void MainWindow::on_loadCLIPSobj_clicked(){
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
-      /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
       this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
-      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));*/
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
     }
    this->ui->objCLIPStab->resizeRowsToContents();
    this->ui->objCLIPStab->resizeColumnsToContents();
@@ -2035,9 +2035,9 @@ void MainWindow::on_createCLIPSfile_clicked(){
     std::string path= ros::package::getPath("knowledge_representation");
     std::string directory="/scripts/base_data/";
     
-    std::string nameCLIPS="virbot_initial_state.clp";
+    std::string nameCLIPS="/scripts/virbot_gpsr/virbot_initial_state_v2.clp";
     std::string nameONTOLOGY="stuff_ontology.txt";
-    std::string pathFILECLIPS=path+directory+nameCLIPS;
+    std::string pathFILECLIPS=path+nameCLIPS;
     std::string pathFILEONTOLOGY=path+directory+nameONTOLOGY;
     std::cout<<"\n Directory:   "<<pathFILECLIPS<< std::endl;
     std::cout<<"\n Directory:   "<<pathFILEONTOLOGY<< std::endl;
@@ -2085,7 +2085,7 @@ void MainWindow::on_createCLIPSfile_clicked(){
        std::cout<<"\t Size: "<<it2->second[4]<< std::endl;
        std::cout<<"\t Color: "<<it2->second[5]<< std::endl;
        std::cout<<"\t Quantity: "<<it2->second[6]<< std::endl;*/  
-       CLIPSfile<<"\n(item (type Objects) (name "<<it2->first<<") (zone "<<it2->second[1]<<") (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category "<<it2->second[0]<<") (room "<<it2->second[2]<<")(grasp 2)(weight "<<it2->second[3]<<")(size "<<it2->second[4]<<")(height 1)(wide 10)(color "<<it2->second[5]<<")(biggest yes)(smallest yes) (heaviest yes) (lightest yes))\n";  
+       CLIPSfile<<"\n(item (type Objects) (name "<<it2->first<<") (zone "<<it2->second[1]<<") (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category "<<it2->second[0]<<") (room "<<it2->second[2]<<")(grasp " << it2->second[6] <<")(weight "<<it2->second[3]<<")(size "<<it2->second[4]<<")(height 1)(wide 10)(color "<<it2->second[5]<<")(biggest " << it2->second[7] <<  ")(smallest "<< it2->second[8] <<") (heaviest " << it2->second[9]<<") (lightest " << it2->second[10] << "))\n";  
        ONTOLOGYfile<<"\n("<<name<<"\tis_kind_of      item)";
    }
    std::cout<<" CATEGORYS :"<<std::endl;
@@ -2176,12 +2176,12 @@ void MainWindow::on_createCLIPSfile_clicked(){
         //std::cout<<"\nRoom: "<<it->second[2]<<std::endl;
 
         if(type == "furniture"){
-          CLIPSfile<<"\n(item (type "<<itl2->second[0]<<") (name "<<itl2->first<<") (pose -3.55 -3.0 0.0)(quantity "<<itl2->second[1]<<") (quantitys "<<itl2->second[1]<<"))\n";  
+          CLIPSfile<<"\n(item (type "<<itl2->second[0]<<") (name "<<itl2->first<<") (pose -3.55 -3.0 0.0)(quantity "<<itl2->second[1]<<") (quantitys "<<itl2->second[1]<<") (possession " << itl2->second[2] << ") (room " << itl2->second[2] << ") (attributes no_visited))\n";  
           ONTOLOGYfile<<"\n("<<name<<"\tis_kind_of      place)";
         }
    }
 
-   CLIPSfile<<"\n)";
+   CLIPSfile<<"\n) \n;;;;;;";
    ONTOLOGYfile<<"\n\n";
    std::cout<<"\n  File CLIPS and ONTOLOGY Saved "<<std::endl;
 
@@ -2219,7 +2219,11 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
       this->ui->weightCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C1)->text());
       this->ui->sizeCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C2)->text());
       this->ui->colorCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C3)->text());
-      this->ui->quantCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C4)->text());
+      this->ui->graspCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C4)->text());
+      this->ui->biggestCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C5)->text());
+      this->ui->smallestCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C6)->text());
+      this->ui->heaviestCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C7)->text());
+      this->ui->lightestCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C8)->text());
     }
 }
 

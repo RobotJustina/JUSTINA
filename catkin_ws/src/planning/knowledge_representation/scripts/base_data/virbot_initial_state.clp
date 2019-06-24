@@ -147,32 +147,32 @@
 
 
 
-(item (type Furniture) (name bed) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name bed) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom))
 
-(item (type Furniture) (name bookcase) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name bookcase) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room))
 
-(item (type Furniture) (name couch) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name couch) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room))
 
-(item (type Furniture) (name counter) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name counter) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen))
 
-(item (type Furniture) (name cupboard) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name cupboard) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen))
 
-(item (type Furniture) (name desk) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name desk) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom))
 
-(item (type Furniture) (name dining_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name dining_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession dining_room))
 
-(item (type Furniture) (name dishwasher) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name dishwasher) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen))
 
-(item (type Furniture) (name end_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name end_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room))
 
-(item (type Furniture) (name entrance) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name entrance) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession corridor))
 
-(item (type Furniture) (name exit) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name exit) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room))
 
-(item (type Furniture) (name side_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name side_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom))
 
-(item (type Furniture) (name sink) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name sink) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen))
 
-(item (type Furniture) (name storage_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
+(item (type Furniture) (name storage_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen))
 
 )
