@@ -504,12 +504,20 @@ int main(int argc, char** argv)
                     if(lastRecoSpeech.find("yes") != std::string::npos){
                         JustinaHRI::enableSpeechRecognized(false);
                         //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                        JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                         orderItems.push_back(obj1);
                         orderItemsSp.push_back(obj1C);
-                        //findGestureOrAttendOrder = false;
-                        //nextState = SM_RETURN_BAR;
-                        nextState = SM_WAITING_FOR_MISSING_ORDER;
+                        if(orderItems.size() == 3){
+                            JustinaHRI::enableSpeechRecognized(false);
+                            JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                            findGestureOrAttendOrder = false;
+                            nextState = SM_RETURN_BAR;
+                        }
+                        else{
+                            JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
+                            //findGestureOrAttendOrder = false;
+                            //nextState = SM_RETURN_BAR;
+                            nextState = SM_WAITING_FOR_MISSING_ORDER;
+                        }
                     }
                     else{
                         if(attempsConfirmation <= maxAttempsConfirmation){
@@ -525,12 +533,20 @@ int main(int argc, char** argv)
                             nextState = SM_TAKE_ORDER;
                         }
                         else{
-                            JustinaHRI::enableSpeechRecognized(false);
-                            //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                            JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
-                            //findGestureOrAttendOrder = false;
-                            //nextState = SM_RETURN_BAR;
-                            nextState = SM_WAITING_FOR_MISSING_ORDER;
+                            if(orderItems.size() == 3){
+                                JustinaHRI::enableSpeechRecognized(false);
+                                JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                                findGestureOrAttendOrder = false;
+                                nextState = SM_RETURN_BAR;
+                            }
+                            else{
+                                JustinaHRI::enableSpeechRecognized(false);
+                                //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
+                                //findGestureOrAttendOrder = false;
+                                //nextState = SM_RETURN_BAR;
+                                nextState = SM_WAITING_FOR_MISSING_ORDER;
+                            }
                         }
                     }
                 }
@@ -542,12 +558,20 @@ int main(int argc, char** argv)
                         nextState = SM_ORDER_CONFIRM;
                     }
                     else{
-                        JustinaHRI::enableSpeechRecognized(false);
-                        //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                        JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
-                        //findGestureOrAttendOrder = false;
-                        //nextState = SM_RETURN_BAR;
-                        nextState = SM_WAITING_FOR_MISSING_ORDER;
+                        if(orderItems.size() == 3){
+                            JustinaHRI::enableSpeechRecognized(false);
+                            JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                            findGestureOrAttendOrder = false;
+                            nextState = SM_RETURN_BAR;
+                        }
+                        else{
+                            JustinaHRI::enableSpeechRecognized(false);
+                            //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
+                            //findGestureOrAttendOrder = false;
+                            //nextState = SM_RETURN_BAR;
+                            nextState = SM_WAITING_FOR_MISSING_ORDER;
+                        }
                     }
                 }
                 JustinaHRI::enableSpeechRecognized(true);
@@ -558,19 +582,11 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("yes") != std::string::npos){
                         if(isFood){
-                            if(orderItems.size() == 3){
-                                JustinaHRI::enableSpeechRecognized(false);
-                                JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
-                                findGestureOrAttendOrder = false;
-                                nextState = SM_RETURN_BAR;
-                            }
-                            else{
-                                //JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
-                                JustinaHRI::waitAfterSay("Please tell me what food, do you want", 7000, maxDelayAfterSay);
-                                JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
-                                JustinaHRI::enableSpeechRecognized(true);
-                                nextState = SM_TAKE_ORDER;
-                            }
+                            //JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me what food, do you want", 7000, maxDelayAfterSay);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarFood);
+                            JustinaHRI::enableSpeechRecognized(true);
+                            nextState = SM_TAKE_ORDER;
                         }else{
                             //JustinaHRI::waitAfterSay("Please tell me which beverage, do you want", 7000, maxDelayAfterSay);
                             //JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
@@ -741,10 +757,18 @@ int main(int argc, char** argv)
                         attempsGrasp++;
                         if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
                             // index 0 is right arm index 1 is left arm
-                            if(!(withLeftOrRightArm && armsFree[1]))
+                            /*if(!(withLeftOrRightArm && armsFree[1]))
                                 withLeftOrRightArm = false;
                             else if(!(!withLeftOrRightArm && armsFree[0]))
-                                withLeftOrRightArm = true;
+                                withLeftOrRightArm = true;*/
+                            if(withLeftOrRightArm){
+                                if(!armsFree[1])
+                                    withLeftOrRightArm = false;
+                            }
+                            else{
+                                if(!armsFree[0])
+                                    withLeftOrRightArm = true;
+                            }
                             //if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
                             // If we want to use another frame we need to pass de id how not empty
                             if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true)){
@@ -845,6 +869,7 @@ int main(int argc, char** argv)
             
             case SM_VERIFY_OBJECT:
                 std::cout << "State machine: SM_VERIFY_OBJECT" << std::endl;
+                recognizedObjects = std::vector<vision_msgs::VisionObject>();
                 if(JustinaVision::detectObjects(recognizedObjects)){
                     int indexFound = 0;
                     bool found = false;
@@ -866,10 +891,10 @@ int main(int argc, char** argv)
                         ss.str("");
                         ss << "barman the correct object is " << objsToGuide[0] << ", please try again";
                         JustinaHRI::waitAfterSay(ss.str(), 7000, minDelayAfterSay);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
                         JustinaHRI::waitAfterSay("Barman thank you, i will guide you to the client", 6000, minDelayAfterSay);
                         objsToGuide = std::vector<std::string>();
-                        nextState = SM_WAIT_OBJECT;
+                        nextState = SM_GUIDE_TABLE;
                     }
                 }
                 else{
