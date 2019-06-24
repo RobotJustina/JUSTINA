@@ -827,7 +827,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         {
 
             //JustinaManip::raGoToCartesian(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ,0.0, 0.0, 1.5708, 0.1, 5000);          
-            JustinaManip::raGoToCartesianTraj(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ, 0.1, 5000);          
+            JustinaManip::raGoToCartesianTraj(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ, 5000);          
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
