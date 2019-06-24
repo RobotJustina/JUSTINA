@@ -126,8 +126,9 @@ class EncoderOdom
 
         void updatePublish(int32_t encLeft, int32_t encRight, int32_t encFront, int32_t encRear)
         {
-
-            if(abs(encLeft - this->lastEncLeft) < 93000 and abs(encRight - this->lastEncRight) < 93000 and abs(encFront - this->lastEncFront) < 48000 and abs(encRear - this->lastEncRear) < 48000)
+            // This is for the old comparetor of the true categories
+            //if(abs(encLeft - this->lastEncLeft) < 93000 and abs(encRight - this->lastEncRight) < 93000 and abs(encFront - this->lastEncFront) < 48000 and abs(encRear - this->lastEncRear) < 48000)
+            if(abs(encLeft - this->lastEncLeft) < 93000 and abs(encRight - this->lastEncRight) < 93000 and abs(encFront - this->lastEncFront) < 93000 and abs(encRear - this->lastEncRear) < 93000)
                 this->update(encLeft, encRight, encFront, encRear);
             else{
                 ROS_ERROR("MobileBase.->Invalid encoder readings. OMFG!!!!!!!");
