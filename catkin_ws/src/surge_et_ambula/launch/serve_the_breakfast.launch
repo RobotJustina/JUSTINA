@@ -12,9 +12,8 @@
 		<arg name="initial_pose_a" default="1.5708"/>
 		<arg name="head_offset" value="-0.02"/>
 	</include>
-	<group ns="knowledge">
-		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping serve_the_breakfast"/>
-	</group>
+	
+
 	<group ns="vision">
 		<node name="color_reco" pkg="color_reco" type="color_reco_node" output="screen" />
 		<!--node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" /-->
@@ -22,5 +21,5 @@
 		<node name="obj_reco_dishwasher" pkg="obj_reco_dishwasher" type="obj_reco_dishwasher" output="screen" />
 	</group>
 	
-	<node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
+
 </launch>
