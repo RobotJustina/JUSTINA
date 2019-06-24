@@ -1992,7 +1992,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 		}
 		else{
 			ss.str("");
-			ss << msg->params << name;
+			ss << msg->params << " " << name;
 			responseMsg.params = ss.str();
 			responseMsg.successful = 0;
 		}

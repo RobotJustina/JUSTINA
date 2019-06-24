@@ -333,4 +333,22 @@
 	(modify ?f (status accomplished))
 	(modify ?f3 (status ready))
 )
+
+(defrule exe-plan-task-reset_one_arm_1
+	?f <-(plan (name ?name) (number ?num-pln) (status active) (actions rev_arms ?arm1 ?arm2)(duration ?t))
+	?f1 <- (Arm (name ?arm1) (status ?st1&:(neq ?st1 ready)))
+	?f3 <- (item (name right))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f3 (status nil))
+)
+
+(defrule exe-plan-task-reset_one_arm_2
+	?f <-(plan (name ?name) (number ?num-pln) (status active) (actions rev_arms ?arm1 ?arm2)(duration ?t))
+	?f1 <- (Arm (name ?arm2) (status ?st1&:(neq ?st1 ready)))
+	?f3 <- (item (name right))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f3 (status nil))
+)
 ;;;;;;;;;;;;;;;;
