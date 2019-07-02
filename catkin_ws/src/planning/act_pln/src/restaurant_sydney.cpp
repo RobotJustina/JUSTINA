@@ -322,10 +322,10 @@ int main(int argc, char** argv)
                 JustinaHRI::enableSpeechRecognized(false);
                 if(validateFood){
                     //JustinaHRI::waitAfterSay("Do you want a food, say justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("Do you want some food, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Would you like something to eat, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }else{
                     //JustinaHRI::waitAfterSay("Do you want a beverage, please tell me justina yes or justina no", 10000, maxDelayAfterSay);
-                    JustinaHRI::waitAfterSay("Do you want some drink, say justina yes or justina no", 10000, maxDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Would you like something to drink, say justina yes or justina no", 10000, maxDelayAfterSay);
                 }
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_TYPE_ORDER_CONFIRM;
@@ -398,6 +398,7 @@ int main(int argc, char** argv)
                             JustinaHRI::waitAfterSay("Please tell me which beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                         }
+                        JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_TAKE_ORDER;
                     }
                 }
@@ -506,8 +507,8 @@ int main(int argc, char** argv)
                         //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                         orderItems.push_back(obj1);
                         orderItemsSp.push_back(obj1C);
+                        JustinaHRI::enableSpeechRecognized(false);
                         if(orderItems.size() == 3){
-                            JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                             findGestureOrAttendOrder = false;
                             nextState = SM_RETURN_BAR;
@@ -516,6 +517,7 @@ int main(int argc, char** argv)
                             JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                             //findGestureOrAttendOrder = false;
                             //nextState = SM_RETURN_BAR;
+                            JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_WAITING_FOR_MISSING_ORDER;
                         }
                     }
@@ -530,21 +532,22 @@ int main(int argc, char** argv)
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me which beverage, do you want", 5000, minDelayAfterSay);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                             }
+                            JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_TAKE_ORDER;
                         }
                         else{
+                            JustinaHRI::enableSpeechRecognized(false);
                             if(orderItems.size() == 3){
-                                JustinaHRI::enableSpeechRecognized(false);
                                 JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                                 findGestureOrAttendOrder = false;
                                 nextState = SM_RETURN_BAR;
                             }
                             else{
-                                JustinaHRI::enableSpeechRecognized(false);
                                 //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                                 JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                                 //findGestureOrAttendOrder = false;
                                 //nextState = SM_RETURN_BAR;
+                                JustinaHRI::enableSpeechRecognized(true);
                                 nextState = SM_WAITING_FOR_MISSING_ORDER;
                             }
                         }
@@ -555,26 +558,26 @@ int main(int argc, char** argv)
                         attempsWaitConfirmation++;
                         JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay(ss.str(), 10000);
+                        JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_ORDER_CONFIRM;
                     }
                     else{
+                        JustinaHRI::enableSpeechRecognized(false);
                         if(orderItems.size() == 3){
-                            JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                             findGestureOrAttendOrder = false;
                             nextState = SM_RETURN_BAR;
                         }
                         else{
-                            JustinaHRI::enableSpeechRecognized(false);
                             //JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000, minDelayAfterSay);
                             JustinaHRI::waitAfterSay("Ok, Do you want something else, say justina yes or justina no", 10000, maxDelayAfterSay);
                             //findGestureOrAttendOrder = false;
                             //nextState = SM_RETURN_BAR;
+                            JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_WAITING_FOR_MISSING_ORDER;
                         }
                     }
                 }
-                JustinaHRI::enableSpeechRecognized(true);
                 break;
 
             case SM_WAITING_FOR_MISSING_ORDER:
