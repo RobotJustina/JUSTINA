@@ -1316,7 +1316,7 @@ void MainWindow::setlocClips()
     //this->ui->locCLIPStab->setRowCount(0);
     //obtain the information of the file Locations.txt
     //std::map<std::string, std::vector<std::string> > loc;
-    JustinaRepresentation::getLocations(ss.str(), locations);
+    JustinaRepresentation::getLocations(ss.str(), locations, true);
     //objects = loc;
     //int row = 0;
     //std::map<std::string, std::vector<std::string> >::iterator it = locations.begin();
@@ -1339,7 +1339,7 @@ void MainWindow::setlocClips()
     ss.str("");
     ss << path << "/scripts/base_data/Objects.txt";
 
-    JustinaRepresentation::getObjects(ss.str(), objects);
+    JustinaRepresentation::getObjects(ss.str(), objects, true);
     objects = objects;
 
     //row=0;
@@ -1371,7 +1371,7 @@ void MainWindow::setlocClips()
     /*-----------------------------------------------------------------------------------------------------*/
     ss.str("");
     ss<<path<<"/scripts/base_data/People.txt";
-    JustinaRepresentation::getPeoples(ss.str(),peoples);
+    JustinaRepresentation::getPeoples(ss.str(),peoples, true);
     peoples=peoples;
     //row=0;
     //std::map<std::string, std::vector<std::string> >::iterator it4 = peoples.begin();
@@ -1400,7 +1400,7 @@ void MainWindow::setlocClips()
     /*---------------------------------------------------------------------------------------*/
     ss.str("");
     ss<<path<<"/scripts/base_data/Categorys.txt";
-    JustinaRepresentation::getCategorys(ss.str(),categorys);
+    JustinaRepresentation::getCategorys(ss.str(),categorys, true);
     categorys=categorys;
     //row=0;
     this->ui->categoryCLIPStab->setRowCount(0);
