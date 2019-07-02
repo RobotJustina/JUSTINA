@@ -2510,6 +2510,13 @@ meaning_mapping_patterns_eegpsr2 = [
 	####
 	### OFFER objects
 	####
+	{"params": ["Person_name"],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
 	{"params": ["My", "Person_name"],
 	"My": [["My", "name"], [], [], []],
 	"Person_name": [[], [], ["person"], []],
