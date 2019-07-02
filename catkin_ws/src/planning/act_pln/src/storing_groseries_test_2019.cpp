@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-    bool openDoor = false;
+    bool openDoor = true;
     //////******************************//////
 
     bool fail =              false;
