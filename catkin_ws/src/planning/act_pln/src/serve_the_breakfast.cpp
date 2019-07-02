@@ -211,7 +211,7 @@ int main(int argc, char **argv){
                 if( JustinaNavigation::doorIsOpen(0.9, 2000) || attempsDoorOpend >= MAX_ATTEMPTS_DOOR )
                 {
                     state = SM_NAVIGATE_TO_TABLEWARE;
-                    JustinaHRI::waitAfterSay("Thank you, I will navigate to the cupboard", 4000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Thank you, I will navigate to the cabinet", 4000, MIN_DELAY_AFTER_SAY);
                 }
                 else
                     attempsDoorOpend++;
@@ -222,14 +222,23 @@ int main(int argc, char **argv){
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
                 JustinaHRI::waitAfterSay("I have reached ", 4000, MIN_DELAY_AFTER_SAY);
-                JustinaHRI::waitAfterSay("Could you open the cupboard door, please", 4000, MIN_DELAY_AFTER_SAY);
-                ros::Duration(5.0).sleep();
-                JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+
+                
                 
                 state = SM_ALIGN_WITH_TABLE;       
                 break;
 
             case SM_ALIGN_WITH_TABLE:
+
+                if( flagOnce )
+                    JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
+                else
+                    JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
+                
+                
+                ros::Duration(5.0).sleep();
+                JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+
 
                 std::cout << ".-> Aligning with table" << std::endl;
                 
@@ -741,7 +750,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.03, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine+.1, 0, 0);
             JustinaNavigation::moveDist(-.3, 2000);
             if ( usingTorse )
             JustinaManip::waitForTorsoGoalReached(waitTime);
@@ -848,7 +857,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.03, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine+.1, 0, 0);
             JustinaNavigation::moveDist(-.3, 3000);
             if ( usingTorse )
             JustinaManip::waitForTorsoGoalReached(waitTime);
