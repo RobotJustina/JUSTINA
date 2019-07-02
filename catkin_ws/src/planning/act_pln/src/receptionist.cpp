@@ -85,7 +85,7 @@ int main(int argc, char **argv){
     int attemptsMemorizing = 0;
     float pitchAngle;
     int genderRecog;
-    int gender;
+    int gender = 2;
     int numGuests = 1;
     std::string param, typeOrder;
     std::string lastName, lastDrink;
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
     std::string grammarCommandsID = "receptionisCommands";
     std::string grammarDrinksID = "receptionistDrinks";
     std::string grammarNamesID = "receptionistNames";
-    std::string recogLoc = "kitchen";
+    std::string recogLoc = "living_room";
     std::string entranceLoc = "entrance_door";
     std::string hostDrink = "coke";
 
@@ -141,6 +141,9 @@ int main(int argc, char **argv){
     //Just for get the gender but They are useless
 
     std::vector<vision_msgs::VisionFaceObject> facesObject;
+    vision_msgs::VisionFaceObjects faces;
+
+
     Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 
     JustinaVision::setNodeHandle(&nh);
@@ -155,7 +158,7 @@ int main(int argc, char **argv){
     JustinaKnowledge::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
 
-    JustinaHRI::usePocketSphinx = false;
+    JustinaHRI::usePocketSphinx = false;//false;
 
     while(ros::ok() && !success){
 
@@ -596,10 +599,14 @@ int main(int argc, char **argv){
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
                 JustinaHRI::waitAfterSay("I'm memorizing your face", 6000, MIN_DELAY_AFTER_SAY);
-                    
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
                     memorizingOperators.push_back(true);
+
+                    faces = JustinaVision::getFaceAgeAndGenderRecognition();
+                    for (int i =0 ; i < faces.recog_faces.size();i++ )
+                        facesObject.push_back(faces.recog_faces[i]);
 
                     JustinaTasks::getNearestRecognizedFace(facesObject, 9.0, centroidFace, gender, "living_room");
                     std::cout << "genderRecog::: " << gender  << std::endl;
@@ -862,6 +869,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_OFFER_EMPTY_SEAT: Offer empty seat" << std::endl;
                 ss.str("");
                 ss << names[names.size() - 1] << ", could you sit in this place, please";
+
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 5000, ros::Time::now().sec, 10);
 
                 JustinaManip::startLaGoTo("navigation");
@@ -873,6 +881,7 @@ int main(int argc, char **argv){
                 JustinaManip::waitForLaGoalReached(8000);
                  
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 ss.str("");
                 ss << names[names.size() - 1] << "Please, look at me";
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
