@@ -3318,13 +3318,13 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         JustinaManip::laGoTo("navigation", 3000);
         if(level == 1)
         {
-            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.13, 0.0, 0.0, 2000);
             JustinaManip::laGoTo("put_storing_L1_P1", 3000);
             JustinaManip::laGoTo("put_storing_L1_P2", 3000);
         }
         else if(level == 2)
         {
-            JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.25, 0.0, 0.0, 2000);
             JustinaManip::laGoTo("put_storing_L2_P1", 3000);
             JustinaManip::laGoTo("put_storing_L2_P2", 3000);
         }
@@ -3336,7 +3336,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaManip::laGoTo("put_storing_L3_P3", 3000);
         }
         
-        JustinaTasks::alignWithTable(0.35);
+        JustinaTasks::alignWithTable(0.3);
         JustinaManip::startLaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
         JustinaNavigation::moveDist(-0.2, 2500);
@@ -3347,13 +3347,13 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         JustinaManip::raGoTo("navigation", 3000);
         if(level == 1)
         {
-            JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.13, 0.0, 0.0, 2000);
             JustinaManip::raGoTo("put_storing_L1_P1", 3000);
             JustinaManip::raGoTo("put_storing_L1_P2", 3000);
         }
         else if(level == 2)
         {
-            JustinaManip::torsoGoTo(0.15, 0.0, 0.0, 2000);
+            JustinaManip::torsoGoTo(0.25, 0.0, 0.0, 2000);
             JustinaManip::raGoTo("put_storing_L2_P1", 3000);
             JustinaManip::raGoTo("put_storing_L2_P2", 3000);
         }
@@ -3365,7 +3365,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaManip::raGoTo("put_storing_L3_P3", 3000);
         }
 
-        JustinaTasks::alignWithTable(0.35);
+        JustinaTasks::alignWithTable(0.3);
         JustinaManip::startRaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
         JustinaNavigation::moveDist(-0.2, 2500);

@@ -1,0 +1,30 @@
+#Verify Need this delimitation area
+office	room	0.742	1.48	0.88	-1.46	4.39	-1.26	4.25	1.72
+bedroom	room	0.426	5.96	0.756	1.47	4.21	1.71	3.87	6.19
+living_room	room	4.27	2.22	4.4	-1.21	8.87	-0.977	8.71	2.6
+kitchen	room	4.47	6.25	4.69	2.49	8.64	2.73	8.48	6.45
+corridor	room	0.775	0.825	0.826	-0.661	3.16	-0.386	3.23	0.95
+arena	room	0.368	5.99	0.875	-1.42	8.8	-1.01	8.47	6.57
+entrance	furniture	corridor
+entrance_door	furniture	corridor
+exit	furniture	kitchen
+island	furniture	kitchen
+sink	furniture	kitchen
+dishwasher	furniture	kitchen
+fridge	furniture	kitchen
+kitchen_table	furniture	kitchen
+trash_bin	furniture	kitchen
+sideboard	furniture	living_room
+display_cabinet	furniture	living_room
+tv	furniture	living_room
+armchair	furniture	living_room
+couch	furniture	living_room
+coffee_table	furniture	living_room
+desk	furniture	office
+shoe_rack	furniture	office
+safe	furniture	office
+coat_hanger	furniture	office
+bedroom_chest	furniture	bedroom
+sidetable	furniture	bedroom
+shelf	furniture	bedroom
+bed	furniture	bedroom
