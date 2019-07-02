@@ -231,18 +231,19 @@ int main(int argc, char **argv){
             case SM_ALIGN_WITH_TABLE:
 
                 if( flagOnce )
+                {
                     JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
-                else
-                    JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
-                
-                
-                ros::Duration(5.0).sleep();
-                JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+                    ros::Duration(5.0).sleep();
+                    JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+                }
 
-
+                
                 std::cout << ".-> Aligning with table" << std::endl;
                 
                 alignWithTable();
+                if( !flagOnce )
+                    JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
+
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
                 state = SM_FIND_OBJECTS_ON_TABLE;
             
@@ -448,18 +449,33 @@ int main(int argc, char **argv){
 
             case SM_TAKE_CEREAL:
 
-                alignWithTable();
-                JustinaHRI::waitAfterSay("I'm going to take the cereal", 4000, MIN_DELAY_AFTER_SAY);
+                //alignWithTable();
+                //JustinaHRI::waitAfterSay("I'm going to take the cereal", 4000, MIN_DELAY_AFTER_SAY);
                 
-                if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
-                {
-                    state = SM_RETURN_TO_TABLE;
-                    JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
-                }else
-                {
+                //if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
+                //{
+                //    state = SM_RETURN_TO_TABLE;
+                 //   JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
+                //}else
+                //{
                     state = SM_TAKE_CEREAL;
-                }
+                //}
 
+                if (!JustinaManip::isRaInPredefPos("navigation"))
+                    JustinaManip::startRaGoTo("navigation");
+                else
+                    std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+
+                JustinaManip::startRaOpenGripper(0.3);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                JustinaHRI::waitAfterSay("Human please put the cereals in my gripper", 4000, MIN_DELAY_AFTER_SAY);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+                JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaManip::startRaCloseGripper(0.5);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
                 JustinaManip::waitForTorsoGoalReached(3000);
 
@@ -472,9 +488,9 @@ int main(int argc, char **argv){
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
 
-                alignWithTable();
+                //alignWithTable();
 
-                JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals inside the bowl", 4000, MIN_DELAY_AFTER_SAY);
+                //JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals inside the bowl", 4000, MIN_DELAY_AFTER_SAY);
                 
                 state = SM_SEARCH_BOWL;
             break;
