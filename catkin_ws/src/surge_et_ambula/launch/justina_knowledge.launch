@@ -1,7 +1,7 @@
 <launch>
 	<group ns="knowledge">
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    			args="-f $(find knowledge)/navigation/known_locations_pre_sydney.txt -d $(find knowledge)/navigation/known_delimitation_pre_sydney.txt"/>
+    			args="-f $(find knowledge)/navigation/known_locations_sydney.txt -d $(find knowledge)/navigation/known_delimitation_sydney.txt"/>
 		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
 		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
