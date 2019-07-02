@@ -1473,7 +1473,11 @@ void MainWindow::on_addCLIPSobj_clicked(){
     std::cout << "QMainWindow.->weight:" << this->ui->weightCLIPSobj->text().toStdString() << std::endl;
     std::cout << "QMainWindow.->size:" << this->ui->sizeCLIPSobj->text().toStdString() << std::endl;
     std::cout << "QMainWindow.->color:" << this->ui->colorCLIPSobj->text().toStdString() << std::endl;
-    std::cout << "QMainWindow.->quant:" << this->ui->graspCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->grasp:" << this->ui->graspCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->biggest:" << this->ui->biggestCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->smallest:" << this->ui->smallestCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->heaviest:" << this->ui->heaviestCLIPSobj->text().toStdString() << std::endl;
+    std::cout << "QMainWindow.->lightest:" << this->ui->lightestCLIPSobj->text().toStdString() << std::endl;
 
     //for(std::map<std::string, std::vector<std::string> >::iterator it = objects.begin(); it != objects.end(); it++){
     //    std::cout << "first:" << it->first << std::endl;
@@ -1487,6 +1491,10 @@ void MainWindow::on_addCLIPSobj_clicked(){
     values.push_back(this->ui->sizeCLIPSobj->text().toStdString());
     values.push_back(this->ui->colorCLIPSobj->text().toStdString());
     values.push_back(this->ui->graspCLIPSobj->text().toStdString());
+    values.push_back(this->ui->biggestCLIPSobj->text().toStdString());
+    values.push_back(this->ui->smallestCLIPSobj->text().toStdString());
+    values.push_back(this->ui->heaviestCLIPSobj->text().toStdString());
+    values.push_back(this->ui->lightestCLIPSobj->text().toStdString());
 
     JustinaRepresentation::addObjects(objects,name,values);
 
@@ -1507,10 +1515,10 @@ void MainWindow::on_addCLIPSobj_clicked(){
       this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
       this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
-      /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
       this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
-      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));*/
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();
@@ -1667,7 +1675,8 @@ void MainWindow::on_saveCLIPSobj_clicked(){
                 std::cout<<"\t Color: "<<it->second[5];
                 std::cout<<"\t Quantity: "<<it->second[6];*/
                 file<<it->first<<" "<<it->second[0]<<" "<<it->second[1]<<" "<<it->second[2]
-                    <<" "<<it->second[3]<<" "<<it->second[4]<<" "<<it->second[5]<<" "<<it->second[6]<<"\n";
+                    <<" "<<it->second[3]<<" "<<it->second[4]<<" "<<it->second[5]<<" "<<it->second[6]
+                    <<" "<<it->second[7]<<" "<<it->second[8]<<" "<<it->second[9]<<" "<<it->second[10]<<"\n";
             }
             std::cout<<"\n  File Saved "<<std::endl;
             file.close();
@@ -1928,10 +1937,10 @@ void MainWindow::on_deleteCLIPSobj_clicked(){
           this->ui->objCLIPStab->setItem(row, C3, new QTableWidgetItem(QString::fromStdString(it2->second[5])));
           this->ui->objCLIPStab->setItem(row, C4, new QTableWidgetItem(QString::fromStdString(it2->second[6])));
 
-      /*this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
+      this->ui->objCLIPStab->setItem(row, C5, new QTableWidgetItem(QString::fromStdString(it2->second[7])));
       this->ui->objCLIPStab->setItem(row, C6, new QTableWidgetItem(QString::fromStdString(it2->second[8])));
       this->ui->objCLIPStab->setItem(row, C7, new QTableWidgetItem(QString::fromStdString(it2->second[9])));
-      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));*/
+      this->ui->objCLIPStab->setItem(row, C8, new QTableWidgetItem(QString::fromStdString(it2->second[10])));
     }
     this->ui->objCLIPStab->resizeRowsToContents();
     this->ui->objCLIPStab->resizeColumnsToContents();

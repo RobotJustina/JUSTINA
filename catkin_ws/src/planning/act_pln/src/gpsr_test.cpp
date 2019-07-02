@@ -3539,7 +3539,7 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 		JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-		JustinaTasks::guideAPerson("exitdoor", 300000, 1.5);
+		JustinaTasks::guideAPerson("outside", 300000, 1.5);
 
 		JustinaHRI::say("wait here with me I am looking for the taxi driver");
 		ros::Duration(1.0).sleep();
