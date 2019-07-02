@@ -6,7 +6,19 @@
 	<arg name="_stream" value="_stream:=true" />
 	<arg name="_wavpath" value="_wavpath:=none" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
-	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
+		<arg name="dynamic_map" value="true"/>
+		<arg name="clean_goal_map" value="true"/>
+		<arg name="clean_unexplored_map" value="true"/>
+		<arg name="look_at_goal" value="false"/>
+		<arg name="kinect_minX" value="0.25"/>
+		<arg name="kinect_maxX" value="8.0"/>
+		<arg name="kinect_minY" value="-8.0"/>
+		<arg name="kinect_maxY" value="8.0"/>
+		<arg name="kinect_minZ" value="0.1"/>
+		<arg name="kinect_maxZ" value="1.5"/>
+		<arg name="head_offset" value="-0.02"/>
+	</include>
 	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping receptionist" />
 	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
 	<!-- node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" / -->
