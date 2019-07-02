@@ -1,7 +1,9 @@
-candies side_table 3 biscuit biscuit biscuit biscuit
-cleaning_stuff side_table 4 cloth cloth cloth cloth
-drinks side_table 7 water water water water
-food side_table 5 onion onion onion onion
-fruits side_table 5 pear pear pear pear
-snacks side_table 5 doritos doritos doritos doritos
-tableware kitchen 4 bowl bowl bowl bowl
+candies desk 3 biscuit biscuit biscuit biscuit
+cleaning_stuff sink 4 cloth cloth cloth cloth
+containers display_cabinet 4 bowl bowl bowl bowl
+cutlery kitchen_cabinet 4 bowl bowl bowl bowl
+drinks sideboard 7 water water water water
+food shelf 5 onion onion onion onion
+fruits kitchen_table 5 pear pear pear pear
+snacks coffee_table 5 doritos doritos doritos doritos
+tableware kitchen_cabinet 4 bowl bowl bowl bowl
