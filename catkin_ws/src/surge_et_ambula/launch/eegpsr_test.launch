@@ -2,7 +2,7 @@
 	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
 	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping eegpsr2" />
 	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_canada.txt 0 280 eegpsr_pre_sydney.xml 0"/>
+	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_canada.txt 1 280 eegpsr_pre_sydney.xml 0"/>
 	<!-- <node name="monitor" pkg="act_pln" type="monitor" output="screen"/> -->
 
 </launch>
