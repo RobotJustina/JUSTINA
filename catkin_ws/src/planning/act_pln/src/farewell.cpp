@@ -217,11 +217,11 @@ int main(int argc, char** argv)
             	JustinaNavigation::moveDist(1.0, 4000);
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 							std::cout << "Farewell...->moving to the initial point" << std::endl;
 						}
 					} 
@@ -468,11 +468,11 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaNavigation::startMoveDistAngle(-0.2, 1.15);
 
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 							std::cout << "Farewell...->moving to the initial point" << std::endl;
 							nextState = SM_SEARCH_WAVING;
 						}
@@ -491,21 +491,21 @@ int main(int argc, char** argv)
             
             case SM_GoCoatRack:
                 std::cout << "Farewell Test...-> SM_GoCoatRack" << std::endl;
-                JustinaHRI::say("I am going to guide you to the coat rack");
+                JustinaHRI::say("I am going to guide you to the coat hanger");
                 ros::Duration(1.0).sleep();
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("arena", 120000, 1.5);
+                JustinaTasks::guideAPerson("coat_hanger", 120000, 1.5);
 
                 
                 if(numberGuest<maxNumberGuest){
                    
                     JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
 				    ros::Duration(1.0).sleep();
-                    JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
+                    JustinaHRI::say("Please human take the umbrella, it is close to the coat hanger");
 				    ros::Duration(1.0).sleep();
                     JustinaHRI::say("hey guest, do not forget to take your coat");
         		    ros::Duration(2.0).sleep();
@@ -531,7 +531,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("corridor", 120000, 1.5);
+                JustinaTasks::guideAPerson("outside", 120000, 1.5);
                 
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
         		ros::Duration(1.0).sleep();
@@ -626,11 +626,11 @@ int main(int argc, char** argv)
             case SM_RETURN_INITIAL_POINT:
                 std::cout << "Farewell Test...-> SM_RETURN_INITIAL_POINT" << std::endl;
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 			    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 			    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-			    		if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+			    		if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
 			    			std::cout << "Farewell...->moving to the initial point" << std::endl;
 			    		}
 			    	} 
