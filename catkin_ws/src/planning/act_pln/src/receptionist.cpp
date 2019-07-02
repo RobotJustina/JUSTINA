@@ -85,6 +85,7 @@ int main(int argc, char **argv){
     int attemptsMemorizing = 0;
     float pitchAngle;
     int genderRecog;
+    int gender;
     int numGuests = 1;
     std::string param, typeOrder;
     std::string lastName, lastDrink;
@@ -135,6 +136,12 @@ int main(int argc, char **argv){
     STATE state = SM_INIT;
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
+
+
+    //Just for get the gender but They are useless
+
+    std::vector<vision_msgs::VisionFaceObject> facesObject;
+    Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 
     JustinaVision::setNodeHandle(&nh);
     JustinaTasks::setNodeHandle(&nh);
@@ -234,6 +241,7 @@ int main(int argc, char **argv){
                 else
                     ros::Duration(3).sleep();
                 break;
+
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
@@ -574,7 +582,8 @@ int main(int argc, char **argv){
                     JustinaManip::hdGoTo(0, 0, 2000);
                     //JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaHRI::waitAfterSay("Human, please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaVision::faceTrain(names[names.size() - 1], 4);
+                    JustinaVision::faceTrain(names[names.size() - 1], 4);//findPerson = 
+
                     // TODO Get service of the face and gender
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 }
@@ -591,6 +600,10 @@ int main(int argc, char **argv){
                 state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
                     memorizingOperators.push_back(true);
+
+                    JustinaTasks::getNearestRecognizedFace(facesObject, 9.0, centroidFace, gender, "living_room");
+                    std::cout << "genderRecog::: " << gender  << std::endl;
+
                     state = SM_GUIDE_TO_LOC;
                 }
                 attemptsMemorizing++;
@@ -613,7 +626,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
                 theta = 0;
                 faceCentroids = std::vector<Eigen::Vector3d>();
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "kitchen");
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "living_room");
                 if(findPerson){
                     JustinaHRI::waitAfterSay("John, I found you", 3000);
                     //JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
@@ -673,7 +686,14 @@ int main(int argc, char **argv){
             case SM_INTRODUCING:
                 std::cout << test << ".-> State SM_INTRODUCING: Introducing person to Jhon." << std::endl;
                 ss.str("");
-                ss << "John you have a visitor, his name is " << names[names.size() - 1] << " and his favorite drink is " << drinks[drinks.size() - 1];
+                if(gender == 1)
+                    ss << "John you have a visitor, his name is " << names[names.size() - 1] << " and his favorite drink is " << drinks[drinks.size() - 1];
+                else if(gender == 0)
+                    ss << "John you have a visitor, her name is " << names[names.size() - 1] << " and her favorite drink is " << drinks[drinks.size() - 1];
+                else
+                    ss << "John, " << names[names.size() - 1] << " is your visitor, " << names[names.size() - 1] <<  " likes " << drinks[drinks.size() - 1];
+
+
                 //JustinaHRI::insertAsyncSpeech(ss.str(), 8000, ros::Time::now().sec, 10);
                 if(JustinaKnowledge::existKnownLocation("john")){
                     JustinaKnowledge::getKnownLocation("john", goalx, goaly, goala);
@@ -795,7 +815,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
                     centroids.clear();
-                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "living_room");
                     if(!findSeat){
                         findSeatCount++;
                         JustinaHRI::waitAfterSay("I'm going to find a empty seat for you again", 5000);
