@@ -133,7 +133,7 @@ int main(int argc, char **argv){
     
     std::vector<std::string> tokens;
 
-    STATE state = SM_INIT;
+    STATE state = SM_WAIT_FOR_PERSON_ENTRANCE;//SM_INIT;
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
@@ -603,13 +603,11 @@ int main(int argc, char **argv){
                 state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
                     memorizingOperators.push_back(true);
-
+                    //faces = std::vector<vision_msgs::VisionFaceObject>();
                     faces = JustinaVision::getFaceAgeAndGenderRecognition();
-                    for (int i =0 ; i < faces.recog_faces.size();i++ )
-                        facesObject.push_back(faces.recog_faces[i]);
-
-                    JustinaTasks::getNearestRecognizedFace(facesObject, 9.0, centroidFace, gender, "living_room");
-                    std::cout << "genderRecog::: " << gender  << std::endl;
+            
+                    JustinaTasks::getNearestRecognizedFace(faces.recog_faces, 9.0, centroidFace, gender, "entrance");
+                    std::cout << "genderRecog::: " << gender  << " SIZE: "<< faces.recog_faces.size() << std::endl;
 
                     state = SM_GUIDE_TO_LOC;
                 }
@@ -840,7 +838,7 @@ int main(int argc, char **argv){
                     goaly = gy_w;
                     guest_z = gz_w;
                     std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
-                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.6, 30000);
+                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
