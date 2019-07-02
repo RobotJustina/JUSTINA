@@ -4,7 +4,6 @@ scheduled_tasks.clp
 exe_plan.clp
 testSpeech.clp
 actions.clp
-actions_gpsr.clp
 actions_II.clp
 actions_eegpsr_2.clp
 actions_eegpsr_2i.clp

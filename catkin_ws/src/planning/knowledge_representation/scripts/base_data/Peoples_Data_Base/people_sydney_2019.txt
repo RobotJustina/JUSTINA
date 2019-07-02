@@ -1,0 +1,16 @@
+amelia 40 female
+angel 40 female
+ava 40 female
+charlie 40 female
+charlotte 40 female
+hunter 40 female
+jack 40 male
+max 40 female
+mia 40 female
+noah 40 male
+oliver 40 male
+olivia 40 female
+parker 40 female
+sam 40 female
+thomas 40 male
+william 40 male

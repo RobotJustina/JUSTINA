@@ -207,7 +207,7 @@ meaning_mapping_patterns_gpsr = [
 
 	#grasp object 1 parametro
 	{"params": ["Action_get", "Get_object"],
-	"Action_get": [["get", "grasp", "take", "look for"], [], [], []],
+	"Action_get": [["get", "grasp", "take", "look_for"], [], [], []],
 	"Get_object": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
@@ -2302,7 +2302,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
         #$findpsI  = $vbfind {name meta: {pron sub} is (sitting | standing | lying | waving ) at the {beacon}}
         {"params": ["Action_find", "Person"],
-	"Action_find": [["find", "locate", "spot", "pinpoint", "look for"], [], [], []],
+	"Action_find": [["find", "locate", "spot", "pinpoint", "look_for"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 	                        "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))", 
