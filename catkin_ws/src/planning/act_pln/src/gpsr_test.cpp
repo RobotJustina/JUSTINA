@@ -5017,13 +5017,13 @@ int main(int argc, char **argv) {
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
 	
-	JustinaRepresentation::initKDB("", false, 20000);
-    JustinaRepresentation::initKDB("/gpsr_2019/gpsr.dat", false, 20000);
+	//JustinaRepresentation::initKDB("", false, 20000);
+    //JustinaRepresentation::initKDB("/gpsr_2019/gpsr.dat", false, 20000);
     	idsPerson.push_back("person");
 
 	if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
-		fplan = atoi(argv[3]);
+		fplan = false;//atoi(argv[3]);
 		maxTime = atof(argv[4]);
 		cat_grammar = argv[5];
         poket_reco = atoi(argv[6]);
@@ -5073,6 +5073,13 @@ int main(int argc, char **argv) {
             sp_srv.request.flag = false;
             srvEnableSphinx.call(sp_srv);
         }
+	
+        if (atoi(argv[3]) == 0)
+            JustinaRepresentation::initKDB("", false, 20000);
+        else 
+            JustinaRepresentation::initKDB("/virbot_gpsr/egpsr.dat", false, 20000);
+
+        JustinaRepresentation::initKDB("/gpsr_2019/gpsr.dat", false, 20000);
     
 	while (ros::ok()) {
 
