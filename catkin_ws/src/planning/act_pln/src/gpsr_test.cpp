@@ -1944,7 +1944,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
         switchSpeechReco(7, ss.str());}
 	if(tokens[0] == "whattosay"){
         ss << "Tell me what you want me to say";
-        switchSpeechReco(7, ss.str());}// falta cambiarla
+        switchSpeechReco(12, ss.str());}// falta cambiarla
 	ss.str("");
 
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -4094,14 +4094,14 @@ void callbackCmdPourinObj(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
         help =false;
         while(!help && count < 5 && tokens[0] == "nil"){
             ss.str("");
-            ss << "Tell me what you want I pourin in the " << tokens[1];
+            ss << "Tell me what you want I pour in the " << tokens[1];
             switchSpeechReco(11, ss.str());
             JustinaHRI::waitForSpeechRecognized(lastReco, 4000);
             if(JustinaHRI::waitForSpeechRecognized(lastReco, 10000)){
                 if(JustinaRepresentation::stringInterpretation(lastReco, obj_name))
                     std::cout << "last int: " << obj_name << std::endl;
                     ss.str("");
-                    ss << "You want I pourin the " << obj_name << " into the " << tokens[1];
+                    ss << "You want I pour the " << obj_name << " into the " << tokens[1];
                     JustinaHRI::waitAfterSay(ss.str(), 10000);
                     switchSpeechReco(0, "say justina yes or justina no");
                     JustinaHRI::waitForSpeechRecognized(lastReco,400);
@@ -5045,6 +5045,7 @@ int main(int argc, char **argv) {
         microsoft_grammars[9] = "order_food.xml";
         microsoft_grammars[10] = "this_object.xml";
         microsoft_grammars[11] = "obj_pour.xml";
+        microsoft_grammars[12] = "whattosay.xml";
         /*microsoft_grammars[10] = "description_gesture.xml";
         microsoft_grammars[11] = "description_pose.xml";
         microsoft_grammars[12] = "description_hight.xml";
