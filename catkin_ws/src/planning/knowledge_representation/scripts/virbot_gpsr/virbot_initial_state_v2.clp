@@ -7,59 +7,71 @@
 
 
 
-(item (type Objects) (name apple) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name apple) (zone kitchen_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color red)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name bag) (zone end_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category containers) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name beer) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color black)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name basket) (zone end_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category containers) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name biscuit) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category candies) (room office)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color brown)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name bowl) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name bowl) (zone kitchen_cabinet) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color pink)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name cascade_pod) (zone side_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name carrot) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color orange)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name cereal) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name cereals) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color white)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name chocolate_drink) (zone counter) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name cheetos) (zone coffee_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name cloth) (zone side_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name chocolate_milk) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color black)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name coke) (zone counter) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name cloth) (zone sink) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color blue)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name crackers) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name coke) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color red)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name cup) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name dishwasher_tab) (zone sink) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color white)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name dish) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name doritos) (zone coffee_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color black)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name fork) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name frosty_fruits) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category candies) (room office)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color red)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name grape_juice) (zone counter) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name glass) (zone kitchen_cabinet) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color red)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name knife) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name juice) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color purple)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name noodles) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name kiwi) (zone kitchen_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color brown)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name orange) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name lemon) (zone kitchen_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name orange_juice) (zone counter) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name lemonade) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name paprika) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name noodles) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name potato_chips) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name onion) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color purple)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name pringles) (zone bookcase) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name orange) (zone kitchen_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color orange)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name sausages) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name pear) (zone kitchen_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color green)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name scrubby) (zone side_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name plate) (zone kitchen_cabinet) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color blue)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name sponge) (zone side_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name shapes_chicken) (zone coffee_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color white)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name spoon) (zone storage_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name shapes_pizza) (zone coffee_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color white)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name sprite) (zone counter) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name shot_glass) (zone kitchen_cabinet) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color orange)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
-(item (type Objects) (name tray) (zone end_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category containers) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+(item (type Objects) (name snakes) (zone desk) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category candies) (room office)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color green)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name sponge) (zone sink) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name tea_bag) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color white)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name trash_bags) (zone sink) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (room kitchen)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name twisties) (zone coffee_table) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name vegemite) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
+
+(item (type Objects) (name water) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 1)(weight 1)(size 4)(height 1)(wide 10)(color blue)(biggest nil)(smallest nil) (heaviest nil) (lightest nil))
 
 
 
@@ -67,21 +79,23 @@
 
 
 
-(item (type Category) (name cleaning_stuff) (zone side_table)(quantity 3)(biggest sponge)(smallest sponge) (heaviest sponge) (lightest sponge))  
+(item (type Category) (name candies) (zone desk)(quantity 3)(biggest biscuit)(smallest biscuit) (heaviest biscuit) (lightest biscuit))  
 
-(item (type Category) (name containers) (zone end_table)(quantity 3)(biggest tray)(smallest tray) (heaviest tray) (lightest tray))  
+(item (type Category) (name cleaning_stuff) (zone sink)(quantity 3)(biggest cloth)(smallest cloth) (heaviest cloth) (lightest cloth))  
 
-(item (type Category) (name cutlery) (zone storage_table)(quantity 3)(biggest fork)(smallest fork) (heaviest fork) (lightest fork))  
+(item (type Category) (name containers) (zone display_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
 
-(item (type Category) (name drinks) (zone counter)(quantity 3)(biggest grape_juice)(smallest orange_juice) (heaviest coke) (lightest grape_juice))  
+(item (type Category) (name cutlery) (zone kitchen_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
 
-(item (type Category) (name food) (zone cupboard)(quantity 3)(biggest cereal)(smallest cereal) (heaviest cereal) (lightest cereal))  
+(item (type Category) (name drinks) (zone sideboard)(quantity 3)(biggest water)(smallest water) (heaviest water) (lightest water))  
 
-(item (type Category) (name fruits) (zone bookcase)(quantity 3)(biggest apple)(smallest apple) (heaviest apple) (lightest apple))  
+(item (type Category) (name food) (zone shelf)(quantity 3)(biggest onion)(smallest onion) (heaviest onion) (lightest onion))  
 
-(item (type Category) (name snacks) (zone bookcase)(quantity 3)(biggest pringles)(smallest pringles) (heaviest pringles) (lightest pringles))  
+(item (type Category) (name fruits) (zone kitchen_table)(quantity 3)(biggest pear)(smallest pear) (heaviest pear) (lightest pear))  
 
-(item (type Category) (name tableware) (zone storage_table)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
+(item (type Category) (name snacks) (zone coffee_table)(quantity 3)(biggest doritos)(smallest doritos) (heaviest doritos) (lightest doritos))  
+
+(item (type Category) (name tableware) (zone kitchen_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
 
 
 
@@ -163,7 +177,7 @@
 
 (item (type Furniture) (name dishwasher) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name display_cabinet) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name display_cabinet) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
 (item (type Furniture) (name entrance) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession office) (room office) (attributes no_visited))
 
@@ -190,6 +204,10 @@
 (item (type Furniture) (name sink) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
 (item (type Furniture) (name trash_bin) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
+
+(item (type Furniture) (name trash_bin_1) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
+
+(item (type Furniture) (name trash_bin_2) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
 (item (type Furniture) (name tv) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
