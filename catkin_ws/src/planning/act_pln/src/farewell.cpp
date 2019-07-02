@@ -331,8 +331,8 @@ int main(int argc, char** argv)
                 JustinaKnowledge::getKnownLocation(centroids_loc[0], goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 0.9, 120000);
-                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.9, 120000);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 0.75, 90000);
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.75, 90000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -524,8 +524,8 @@ int main(int argc, char** argv)
                 JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
         		ros::Duration(1.0).sleep();
 
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
-                ros::Duration(1.0).sleep();
+                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                //ros::Duration(1.0).sleep();
                 JustinaHRI::say("Do not forget use the umbrella to protect us");
 				ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
@@ -572,13 +572,15 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Hello Taxi driver, my name is Justina, I came here with a guest that want to go home", 12000);
                 ros::Duration(1.0).sleep();
 
-                JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
-                ros::Duration(1.5).sleep();
-                JustinaHRI::say("please close the umbrella and put in my gripper");
-                ros::Duration(1.5).sleep();
-                JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
-                withLeftArm = true;
-                ros::Duration(1.0).sleep();
+                if(numberGuest<maxNumberGuest){
+                    JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
+                    ros::Duration(1.5).sleep();
+                    JustinaHRI::say("please close the umbrella and put in my gripper");
+                    ros::Duration(1.5).sleep();
+                    JustinaTasks::detectObjectInGripper("umbrella", true, 7000);
+                    withLeftArm = true;
+                    ros::Duration(1.0).sleep();
+                }
                 ss.str("");
                 ss << "Good bye " << idGuest;
                 JustinaHRI::say(ss.str());
