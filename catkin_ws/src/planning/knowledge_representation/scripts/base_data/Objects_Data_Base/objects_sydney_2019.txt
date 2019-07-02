@@ -1,4 +1,5 @@
 apple fruits kitchen_table kitchen 1 4 red 1 nil nil nil nil
+basket containers display_cabinet living_room 1 4 yellow 1 nil nil nil nil
 beer drinks sideboard living_room 1 4 black 1 nil nil nil nil
 biscuit candies desk office 1 4 brown 1 nil nil nil nil
 bowl tableware kitchen_cabinet kitchen 1 4 pink 1 nil nil nil nil
@@ -8,12 +9,15 @@ cheetos snacks coffee_table living_room 1 4 yellow 1 nil nil nil nil
 chocolate_milk drinks sideboard living_room 1 4 black 1 nil nil nil nil
 cloth cleaning_stuff sink kitchen 1 4 blue 1 nil nil nil nil
 coke drinks sideboard living_room 1 4 red 1 nil nil nil nil
+containers containers display_cabinet living_room 1 4 red 1 nil nil nil nil
 dishwasher_tab cleaning_stuff sink kitchen 1 4 white 1 nil nil nil nil
 doritos snacks coffee_table living_room 1 4 black 1 nil nil nil nil
+fork cutlery kitchen_cabinet kitchen 1 4 red 1 nil nil nil nil
 frosty_fruits candies desk office 1 4 red 1 nil nil nil nil
 glass tableware kitchen_cabinet kitchen 1 4 red 1 nil nil nil nil
 juice drinks sideboard living_room 1 4 purple 1 nil nil nil nil
 kiwi fruits kitchen_table kitchen 1 4 brown 1 nil nil nil nil
+knife cutlery kitchen_cabinet kitchen 1 4 red 1 nil nil nil nil
 lemon fruits kitchen_table kitchen 1 4 yellow 1 nil nil nil nil
 lemonade drinks sideboard living_room 1 4 yellow 1 nil nil nil nil
 noodles food shelf bedroom 1 4 yellow 1 nil nil nil nil
@@ -25,9 +29,11 @@ shapes_chicken snacks coffee_table living_room 1 4 white 1 nil nil nil nil
 shapes_pizza snacks coffee_table living_room 1 4 white 1 nil nil nil nil
 shot_glass tableware kitchen_cabinet kitchen 1 4 orange 1 nil nil nil nil
 snakes candies desk office 1 4 green 1 nil nil nil nil
-sponge cleaning_stuff sink kitchen 1 4 yellow 1 nil nil nil nil
+sponge cleaning_stuff sink kitchen 1 4 green 1 nil nil nil nil
+spoon cutlery kitchen_cabinet kitchen 1 4 red 1 nil nil nil nil
 tea_bag drinks sideboard living_room 1 4 white 1 nil nil nil nil
 trash_bags cleaning_stuff sink kitchen 1 4 yellow 1 nil nil nil nil
+tray containers display_cabinet living_room 1 4 red 1 nil nil nil nil
 twisties snacks coffee_table living_room 1 4 yellow 1 nil nil nil nil
 vegemite food shelf bedroom 1 4 yellow 1 nil nil nil nil
 water drinks sideboard living_room 1 4 blue 1 nil nil nil nil
