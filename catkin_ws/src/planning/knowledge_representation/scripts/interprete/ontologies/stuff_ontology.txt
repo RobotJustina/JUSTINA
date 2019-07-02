@@ -24,28 +24,25 @@
 
 
 #FAMELE
-(alex		is_kind_of		person)
-(charlie	is_kind_of		person)
-(elizabeth	is_kind_of		person)
-(francis	is_kind_of		person)
-(jennifer	is_kind_of		person)
-(linda		is_kind_of		person)
-(mary		is_kind_of		person)
-(patricia	is_kind_of		person)
-(robin		is_kind_of		person)
-(skyler		is_kind_of		person)
 
 #MALE
-(james		is_kind_of		person)
-(john		is_kind_of		person)
-(michael	is_kind_of		person)
-(robert		is_kind_of		person)
-(william	is_kind_of		person)
-(david			is_kind_of		person)
-(james			is_kind_of		person)
-(robert			is_kind_of		person)
-(scott			is_kind_of		person)
-(richard		is_kind_of		person)
+
+(amelia	is_kind_of      person)
+(angel	is_kind_of      person)
+(ava	is_kind_of      person)
+(charlie	is_kind_of      person)
+(charlotte	is_kind_of      person)
+(hunter	is_kind_of      person)
+(jack	is_kind_of      person)
+(max	is_kind_of      person)
+(mia	is_kind_of      person)
+(noah	is_kind_of      person)
+(oliver	is_kind_of      person)
+(olivia	is_kind_of      person)
+(parker	is_kind_of      person)
+(sam	is_kind_of      person)
+(thomas	is_kind_of      person)
+(william	is_kind_of      person)
  
 
 #(me  			is_kind_of			person)
