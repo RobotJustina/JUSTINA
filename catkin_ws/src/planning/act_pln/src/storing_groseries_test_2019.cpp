@@ -198,10 +198,10 @@ int main(int argc, char** argv)
     std::vector<std::string> categories_cpbr;
     std::vector<std::string> categories_tabl;
 
-    nv_cpb        =  "Navigate to cupboard.";
-    cnt_od        =  "I am search a cupboards door.";
-    ask_hlp       =  "---Ask for help to open the cupboard´s door.";
-    srch_obj_cpb  =  "I am goint to search objects into the cupboard.";
+    nv_cpb        =  "Navigate to kitchen cabinet.";
+    cnt_od        =  "I am search a kitchen cabinets door.";
+    ask_hlp       =  "---Ask for help to open the kitchen cabinet´s door.";
+    srch_obj_cpb  =  "I am goint to search objects into the kitchen cabinet.";
     ctg_objs_fnd  =  "The categories the objects found are: ";
     fnd_tbl       =  "I am trying to find a nearest table.";
     fnd_objs_tbl  =  "I am going to find objects on the table.";
@@ -215,7 +215,7 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, "------- PLANES -----");
     JustinaTools::pdfAppend(name_test, nv_cpb);
     JustinaTools::pdfAppend(name_test, cnt_od);
-    JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
+    JustinaTools::pdfAppend(name_test, "I am trying to open the kitchen cabinets door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);*/
 
 
@@ -234,7 +234,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I'm ready for storing groseries test");
                     // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     // JustinaHRI::asyncSpeech();
-                    nextState = SM_OPEN_DOOR;
+                    nextState = SM_GOTO_CUPBOARD;
                     attempsNavigation = 0;
                     findObjCupboard = false;
                 }
@@ -243,14 +243,14 @@ int main(int argc, char** argv)
             case SM_GOTO_CUPBOARD:
                 {
                     std::cout << stateMachine << "SM_GOTO_CUPBOARD" << std::endl;
-                    // JustinaHRI::say("I am going to navigate to the cupboard");
-                    //JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
+                    // JustinaHRI::say("I am going to navigate to the kitchen cabinet");
+                    //JustinaHRI::insertAsyncSpeech("I am going to navigate to the kitchen cabinet", 3000);
                     //JustinaHRI::asyncSpeech();
                     JustinaManip::startTorsoGoTo(0.1, 0, 0);
-                    if(!JustinaNavigation::getClose("cupboard",200000))
-                        if(!JustinaNavigation::getClose("cupboard",200000))
-                            JustinaNavigation::getClose("cupboard",200000);
-                    //JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
+                    if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
+                        if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
+                            JustinaNavigation::getClose("kitchen_cabinet",200000);
+                    //JustinaHRI::insertAsyncSpeech("I Have reached the kitchen cabinet", 3000);
                     //JustinaHRI::asyncSpeech();
                     if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
@@ -263,12 +263,12 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_OPEN_DOOR" << std::endl;
                     if(!openDoor){
-                        JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 6000);
+                        JustinaHRI::waitAfterSay("Human can you open the kitchen cabinet door please", 6000);
                         findObjCupboard = true;
                         nextState = SM_NAVIGATION_TO_TABLE;
                     }
                     else{
-                        JustinaHRI::say("I'm trying to open the cupboard door");
+                        JustinaHRI::say("I'm trying to open the kitchen cabinet door");
                         // This is for generate PDF
                         // JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
                         if(JustinaTasks::openDoor(false))
@@ -306,7 +306,7 @@ int main(int argc, char** argv)
                     if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5))
                         std::cout << "I  can't detect anything" << std::endl;
                     else{
-                        std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+                        std::cout << "I have found " << recoObjList.size() << " objects on the kitchen cabinet" << std::endl;
                         itemsOnCupboard = recoObjList.size();
                     }
 
@@ -330,12 +330,12 @@ int main(int argc, char** argv)
 
                     int countObject = recoObjList.size();
                     justinaSay.str("");
-                    justinaSay << "I have found " << countObject << " objects into cupboard";
+                    justinaSay << "I have found " << countObject << " objects into kitchen cabinet";
                     // JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
                     JustinaHRI::say(justinaSay.str());
 
                     justinaSay.str("");
-                    justinaSay << "The objects of the cupboard belong to categories";
+                    justinaSay << "The objects of the kitchen cabinet belong to categories";
                     // JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
                     JustinaHRI::say(justinaSay.str());
                     
@@ -346,11 +346,11 @@ int main(int argc, char** argv)
                     JustinaHRI::say(justinaSay.str());
                     nextState = SM_NAVIGATION_TO_TABLE;
 
-                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into kitchen cabinet.";
 
                     // This is for generate PDF
                     /*JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
-                    JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
+                    JustinaTools::pdfAppend(name_test, " - Categories found into kitchen cabinet: ");
                     for(int i = 0; i < categories_cpbr.size(); i++){
                         std::cout << "Category_" << i << ":  " << categories_cpbr[i] << std::endl;
                         temp.str( std::string() );
@@ -994,8 +994,8 @@ int main(int argc, char** argv)
                         }
                         else{
                             attempsPlaceObj = 1;
-                            std::cout << "I can´t placed objects on cupboard whit right Arm" << std::endl;
-                            JustinaHRI::say("I can´t found a free place in the cupboard");
+                            std::cout << "I can´t placed objects on kitchen cabinet whit right Arm" << std::endl;
+                            JustinaHRI::say("I can´t found a free place in the kitchen cabinet");
                             //if(objectGrasped[0])
                             /********************
                              * This is only for ensure that justina have a object in the hand
