@@ -12,19 +12,19 @@
 	<arg name="look_at_goal" default="false"/>
 	<arg name="avoidance_type_obstacle" default="false"/>
 	<!-- This is for test the normal test, only comment to test the navigation with the table short -->
-	<!-- arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_minX" default="0.25"/>
 	<arg name="kinect_maxX" default="0.9"/>
 	<arg name="kinect_minY" default="-0.35"/>
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
-	<arg name="kinect_maxZ" default="1.0"/ -->
+	<arg name="kinect_maxZ" default="1.0"/>
 	<!-- This is only for test test -->
-	<arg name="kinect_minX" default="0.25"/>
+	<!--arg name="kinect_minX" default="0.25"/>
 	<arg name="kinect_maxX" default="1.1"/>
 	<arg name="kinect_minY" default="-0.45"/>
 	<arg name="kinect_maxY" default="0.45"/>
 	<arg name="kinect_minZ" default="0.05"/>
-	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="kinect_maxZ" default="1.0"/ -->
 	<arg name="calculate_diagonal_paths" default="false"/>
 	<arg name="enable_torque" default="true"/>
 	<arg name="head_offset" default="0.0"/>
