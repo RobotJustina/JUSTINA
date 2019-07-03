@@ -64,7 +64,7 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "gpsr_pre_sydney.xml";
+std::string cat_grammar= "gpsr_sydney.xml";
 bool obj_desc_flag;
 
 std::string microsoft_grammars[15];
