@@ -26,6 +26,7 @@
 #define SM_SAY_WAIT_FOR_DOOR 90
 #define SM_WAIT_FOR_DOOR 100
 #define SM_WAIT_FOR_COMMAND 110
+#define SM_Wait_Door_Opened 120
 
 int main(int argc, char** argv)
 {
@@ -45,6 +46,7 @@ int main(int argc, char** argv)
 	
 	bool fail = false;
 	bool success = false;
+	bool door_open = false;
 
   	//int nextState = SM_WaitBlindGame;
   	int nextState = 0;
@@ -117,11 +119,11 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
 							nextState = SM_InspectTheObjetcs;
 						}
@@ -163,11 +165,11 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("storage_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 							nextState = SM_InspectTheObjetcs;
 						}
 					} 
@@ -383,22 +385,46 @@ int main(int argc, char** argv)
 
       		case SM_NAVIGATE_TO_THE_EXIT:
 				std::cout << "P & G Test...->moving to the exit" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
-							nextState = SM_FinalState;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+							nextState = SM_Wait_Door_Opened;
 						}
 					} 
 					else{
-						nextState = SM_FinalState;
+						nextState = SM_Wait_Door_Opened;
 					}
 				} 
 				else {
-					nextState = SM_FinalState;
+					nextState = SM_Wait_Door_Opened;
 				}
 			break;
+
+			case SM_Wait_Door_Opened:
+                std::cout << "Farewell Test...-> SM_Wait_Door_Opened" << std::endl;
+                JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+
+                 door_open = JustinaNavigation::doorIsOpen(0.9, 2000);
+
+                 if(door_open){
+                    JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                    if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
+				    	if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
+				    		if (JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    			std::cout << "Farewell...->moving to the initial point" << std::endl;
+				    		}
+				    	} 
+				    }
+                    nextState = SM_FinalState;
+                 }
+
+                 else
+                    nextState = SM_Wait_Door_Opened;
+                break;
 
 			case SM_FinalState:
 				std::cout <<"P & G Test...->finalState reached" << std::endl;
