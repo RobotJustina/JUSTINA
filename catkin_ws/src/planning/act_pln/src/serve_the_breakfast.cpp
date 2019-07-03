@@ -54,7 +54,9 @@ enum STATE{
     SM_TAKE_CEREAL,
     SM_LEAVE_CEREAL,
     SM_SEARCH_BOWL,
-    SM_POURING_CEREAL
+    SM_POURING_CEREAL,
+    SM_PLACE_MILK,
+    SM_TAKE_MILK
 };
 
 std::string lastRecoSpeech;
@@ -94,6 +96,8 @@ int main(int argc, char **argv){
     bool findSeat = false;
     bool doorOpenFlag = false;
 
+    bool onlyBowl = false;
+
     //COUNTERS
     int countGraspAttemps = 0;
     int findSeatCount = 0;
@@ -114,7 +118,9 @@ int main(int argc, char **argv){
     std::string recogLoc = "kitchen";
     std::string cutleryLoc = "kitchen_cabinet";
     std::string tableLoc = "table_breakfast";
-    std::string cerealsLoc = "shelf";
+    std::string cerealsLoc = "dishwasher";
+    std::string milkLoc = "sideboard";
+
 
     //FOR GRASP OBJECTS (CUTLERY)
     vision_msgs::VisionObjectList my_cutlery;     
@@ -137,7 +143,7 @@ int main(int argc, char **argv){
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
-    std::string idObjectGrasp = "cereal"; // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
+    std::string idObjectGrasp = "chocolate_milk"; // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
     Eigen::Vector3d centroid;
@@ -280,21 +286,42 @@ int main(int argc, char **argv){
 
                         for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
                         {
-                            if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == graspObjectID )
-                            {
-                                std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
-                                pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
-                                pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
-                                pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
-                                id_cutlery = my_cutlery.ObjectList[i].id;
-                                type = my_cutlery.ObjectList[i].type_object;
-                                ss.str("");
-                                ss << "I've found a" << graspObject;
-                                JustinaHRI::say(ss.str());
-                                ros::Duration(2.0).sleep();
-                                state = SM_TAKE_OBJECT;
-                                break;
-                            }
+                            
+
+                            if(flagOnce)
+                                if(my_cutlery.ObjectList[i].graspable == true && ( my_cutlery.ObjectList[i].type_object == graspObjectID  || my_cutlery.ObjectList[i].type_object == 3  ) )
+                                {
+                                    std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                                    pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                    pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                                    pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                                    id_cutlery = my_cutlery.ObjectList[i].id;
+                                    type = my_cutlery.ObjectList[i].type_object;
+                                    ss.str("");
+                                    ss << "I've found a" << graspObject;
+                                    JustinaHRI::say(ss.str());
+                                    ros::Duration(2.0).sleep();
+                                    state = SM_TAKE_OBJECT;
+                                    break;
+                                }
+                            else
+                                if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == graspObjectID )
+                                {
+                                    std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                                    pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                    pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                                    pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                                    id_cutlery = my_cutlery.ObjectList[i].id;
+                                    type = my_cutlery.ObjectList[i].type_object;
+                                    ss.str("");
+                                    ss << "I've found a" << graspObject;
+                                    JustinaHRI::say(ss.str());
+                                    ros::Duration(2.0).sleep();
+                                    state = SM_TAKE_OBJECT;
+                                    break;
+                                }
+
+
                         } 
                     }
                 break;
@@ -315,6 +342,12 @@ int main(int argc, char **argv){
                 {   
                     state= SM_LOOK_FOR_TABLE;//SM_GO_TO_KITCHEN;
                     withLeft ^= true;
+
+                    if(pose.position.y < 0 &&  withLeft == true)
+                    {
+                        break;
+                        onlyBowl = true;
+                    }
                 }
 
                 countGraspAttemps = 0;
@@ -322,6 +355,7 @@ int main(int argc, char **argv){
                 while(countGraspAttemps++ <= MAX_ATTEMPTS_GRASP )
                 {
                     if(!graspObjectColorCupBoardFeedback2(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
+
                         std::cout << ".-> cannot take the object" << std::endl;
                     else
                         break;
@@ -347,6 +381,8 @@ int main(int argc, char **argv){
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
                 JustinaHRI::waitAfterSay("I have reached the table", 4000, MIN_DELAY_AFTER_SAY);
+
+
                 
                 /*
                 JustinaHRI::waitAfterSay("I'm looking for the table", 4000, MIN_DELAY_AFTER_SAY);
@@ -375,14 +411,19 @@ int main(int argc, char **argv){
 
             case SM_PLACE_BOWL:
                 JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
+
+                //JustinaHRI::waitAfterSay("I belive there is a chair", 4000, MIN_DELAY_AFTER_SAY);
                 
-                alignWithTable();
+                ////////////////////alignWithTable();
 
                 if(!JustinaTasks::placeObject(!withLeft))
                     state = SM_PLACE_BOWL;
                 else
                 {
-                    state = SM_PLACE_SPOON;
+                    if(onlyBowl)
+                        state = SM_GO_FOR_CEREAL;
+                    else
+                        state = SM_PLACE_SPOON;
                     //withLeft = false;
                 }
 
@@ -395,8 +436,8 @@ int main(int argc, char **argv){
 
             case SM_PLACE_SPOON:
                 JustinaHRI::waitAfterSay("I'm going to place the spoon", 4000, MIN_DELAY_AFTER_SAY);
-                
-                alignWithTable();
+
+                //////////alignWithTable();
 
                 JustinaManip::hdGoTo(0, -.8, 2000);
                 if(!JustinaVision::getObjectSeg(my_cutlery))
@@ -445,13 +486,13 @@ int main(int argc, char **argv){
             break;
 
             case SM_GO_FOR_CEREAL:
-
-                JustinaHRI::waitAfterSay("I'm going to the shelf", 4000, MIN_DELAY_AFTER_SAY);
+                withLeft = false;
+                JustinaHRI::waitAfterSay("I'm going to the dish washer", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(cerealsLoc, 80000) )
                     JustinaNavigation::getClose(cerealsLoc, 80000); 
 
-                JustinaHRI::waitAfterSay("I have reached shelf", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I have reached.", 4000, MIN_DELAY_AFTER_SAY);
                 
                 state = SM_TAKE_CEREAL;
             break;
@@ -480,8 +521,9 @@ int main(int argc, char **argv){
 
                 JustinaHRI::waitAfterSay("Human please put the cereals in my gripper", 4000, MIN_DELAY_AFTER_SAY);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
+                
                 JustinaManip::startRaCloseGripper(0.5);
+                JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
                 
@@ -558,13 +600,51 @@ int main(int argc, char **argv){
                     else
                         break;
                 }
-                state = SM_FINISH_TEST;
+                state = SM_LEAVE_CEREAL;//SM_FINISH_TEST;
             break;
 
             case SM_LEAVE_CEREAL:
                 
+                ////alignWithTable();
+                JustinaTasks::placeObject(false);
+
+
+                JustinaHRI::waitAfterSay("I'm going for the milk ", 4000, MIN_DELAY_AFTER_SAY);
+                
+                if(!JustinaNavigation::getClose(milkLoc, 80000) )
+                    JustinaNavigation::getClose(milkLoc, 80000); 
+                state = SM_TAKE_MILK;
+            break;
+
+            case SM_TAKE_MILK:
                 alignWithTable();
+                JustinaHRI::waitAfterSay("I'm going to take the milk", 4000, MIN_DELAY_AFTER_SAY);
+                
+                if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
+                {
+                    
+                    JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
+                    state = SM_PLACE_MILK;
+                }else
+                {
+                    state = SM_TAKE_MILK;
+                }
+
+
+                state = SM_FINISH_TEST;
+
+            break;
+
+            case SM_PLACE_MILK:
+                JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
+                
+                if(!JustinaNavigation::getClose(tableLoc, 80000) )
+                    JustinaNavigation::getClose(tableLoc, 80000); 
+
+                ////alignWithTable();
                 JustinaTasks::placeObject(withLeft);
+
+
                 state = SM_FINISH_TEST;
 
             break;
@@ -583,8 +663,6 @@ int main(int argc, char **argv){
 
     return 1;
 }
-
-
 
 
 
@@ -703,6 +781,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 break;
             // This to the bowls
             case 1:
+            case 3:
                 objToGraspX = objects.ObjectList.at(0).pose.position.x-0.05;
                 if (withLeftArm)
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;//maxPoint.y;
@@ -754,7 +833,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
     
     if( withLeftArm ) {
-        if ( typeCutlery == 0) 
+        if ( typeCutlery == 0 ) 
         {
             JustinaManip::laGoToCartesianTraj(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
@@ -776,14 +855,15 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.15, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine+.2, 0, 0);
             
             if ( usingTorse )
             JustinaManip::waitForTorsoGoalReached(waitTime);
+
         JustinaNavigation::moveDist(-.3, 2000);
 
         }
-        else if (typeCutlery == 1 ) 
+        else if (typeCutlery == 1  || typeCutlery == 3) 
         {
             std::vector<float> articular;            
             
@@ -884,7 +964,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
             if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.15, 0, 0);
+                JustinaManip::startTorsoGoTo(torsoSpine+.2, 0, 0);
 
             
             if ( usingTorse )
@@ -893,7 +973,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
         
         }
-        else if (typeCutlery == 1 ) 
+        else if (typeCutlery == 1 || typeCutlery == 3) 
         {
             std::vector<float> articular;            
             
