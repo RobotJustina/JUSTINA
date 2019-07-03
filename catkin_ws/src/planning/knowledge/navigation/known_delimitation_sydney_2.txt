@@ -5,6 +5,7 @@ living_room	room	4.18	2.83	4.4	-1.21	8.87	-0.977	8.6	3.01
 kitchen	room	3.87	6.19	4.18	2.83	8.6	3.01	8.47	6.57
 corridor	room	0.809	0.573	0.829	-0.423	4.32	-0.241	4.3	0.8
 arena	room	0.368	5.99	0.875	-1.42	8.8	-1.01	8.47	6.57
+kitchen_area	room	6.09	5.01	6.13	3.9	7.28	3.93	7.22	5.05
 entrance	furniture	corridor
 entrance_door	furniture	corridor
 exit	furniture	kitchen
@@ -14,6 +15,10 @@ dishwasher	furniture	kitchen
 fridge	furniture	kitchen
 kitchen_table	furniture	kitchen
 trash_bin	furniture	kitchen
+trash_bin_1	furniture	kitchen
+oven	furniture	kitchen
+microwave	furniture	kitchen
+trash_bin_2	furniture	living_room
 sideboard	furniture	living_room
 display_cabinet	furniture	living_room
 tv	furniture	living_room
