@@ -497,7 +497,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_FIND_HUMAN" << std::endl;
                     if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
                         findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.9f, -0.2f, -1.0f, 0.1f, 0.1f, 9.0, centroids, "kitchen_area");
-                        if(findPerson){
+                        if(!findPerson){
                             JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
