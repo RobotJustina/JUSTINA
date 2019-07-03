@@ -31,6 +31,10 @@
 #define SM_WAIT_NAME 120
 #define SM_COMFIRMATION_NAME 130
 #define SM_Recognize_Gender 140
+#define SM_Go_Exit 150
+#define SM_Go_Inside 160
+#define SM_Wait_Door_Opened 170
+#define SM_Wait_Door_Opened_2 180
 
 #define GRAMMAR_POCKET_COMMANDS "grammars/pre_sydney/commands.jsgf"
 #define GRAMMAR_POCKET_FOLLOW "/grammars/pre_sydney/gpsr/follow_me.jsgf"
@@ -122,6 +126,7 @@ int main(int argc, char** argv)
   	bool recog=false;
     bool findUmbrella = false;
     bool findGesture = false;
+    bool door_open = false;
     
     int timeoutspeech = 10000;
 
@@ -526,8 +531,44 @@ int main(int argc, char** argv)
 
                 //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 //ros::Duration(1.0).sleep();
-                JustinaHRI::say("Do not forget use the umbrella to protect us");
-				ros::Duration(1.0).sleep();
+                
+                JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            
+                JustinaTasks::guideAPerson("exit", 120000, 1.5);
+                
+                nextState = SM_Wait_Door_Opened;
+                
+                break;
+
+            case SM_Wait_Door_Opened:
+                std::cout << "Farewell Test...-> SM_Wait_Door_Opened" << std::endl;
+                JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+
+                 door_open = JustinaNavigation::doorIsOpen(0.9, 2000);
+
+                 if(door_open){
+                    JustinaHRI::say("Do not forget use the umbrella to protect us");
+				    ros::Duration(1.0).sleep();
+                    JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                    if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
+				    	if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
+				    		if (JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)) {
+				    			std::cout << "Farewell...->moving to the initial point" << std::endl;
+				    		}
+				    	} 
+				    }
+                    nextState = SM_Go_Exit;
+                 }
+
+                 else
+                    nextState = SM_Wait_Door_Opened;
+                break;
+            
+            case SM_Go_Exit:
+                std::cout << "Farewell Test...-> SM_Go_Exit" << std::endl;
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
@@ -536,7 +577,6 @@ int main(int argc, char** argv)
                 JustinaHRI::say("wait here with me I am looking for the taxi driver");
         		ros::Duration(1.0).sleep();
                 nextState = SM_SearchTaxiDriver;
-                
                 break;
 
             case SM_SearchTaxiDriver:
@@ -587,7 +627,7 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
                 ros::Duration(1.5).sleep();
-                nextState = SM_RETURN_INITIAL_POINT;
+                nextState = SM_Go_Inside;
 
                 /*if(numberGuest<maxNumberGuest){
                     JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
@@ -623,6 +663,40 @@ int main(int argc, char** argv)
                     nextState = SM_FINAL_STATE;
                 }*/
                 
+                break;
+
+            case SM_Go_Inside:
+                std::cout << "Farewell Test...-> SM_Go_Inside" << std::endl;
+                JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor_2", 120000)) {
+			    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
+			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("exitdoor_2", 120000)) {
+			    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
+			    		if (JustinaTasks::sayAndSyncNavigateToLoc("exitdoor_2", 120000)) {
+			    			std::cout << "Farewell...->moving to the initial point" << std::endl;
+			    		}
+			    	} 
+			    }
+
+                nextState = SM_Wait_Door_Opened_2;
+
+                break;
+
+            case SM_Wait_Door_Opened_2:
+                std::cout << "Farewell Test...-> SM_Wait_Door_Opened_2" << std::endl;
+                JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+
+                 door_open = JustinaNavigation::doorIsOpen(0.9, 2000);
+
+                 if(door_open){
+                    JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				    std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	    JustinaNavigation::moveDist(1.0, 4000);
+                    nextState = SM_RETURN_INITIAL_POINT;
+                 }
+
+                 else
+                    nextState = SM_Wait_Door_Opened_2;
                 break;
 
             case SM_RETURN_INITIAL_POINT:
