@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     //vision_msgs::CubesSegmented cubes;
     //vision_msgs::Cube cube_aux;
     bool withLeftOrRightArm;
-    object.id = "blue";
+    object.id = "green_2";
     objects.ObjectList.push_back(object);
 
     while(ros::ok() && !fail && !success){
