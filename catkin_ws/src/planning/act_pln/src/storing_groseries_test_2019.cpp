@@ -14,7 +14,7 @@
 
 #define MAX_FIND_PERSON_COUNT 1
 #define MAX_FIND_PERSON_RESTART 2
-#define MAX_FIND_PERSON_ATTEMPTS 1
+#define MAX_FIND_PERSON_ATTEMPTS 2
 
 #define SM_SAY_WAIT_FOR_DOOR 0
 #define SM_WAIT_FOR_DOOR 1
@@ -72,6 +72,7 @@ int main(int argc, char** argv)
     bool openDoor = true;
     //////******************************//////
     bool findPerson = false;
+    bool skipFindPerson = false;
 
     bool fail =              false;
     bool success =           false;
@@ -278,7 +279,7 @@ int main(int argc, char** argv)
                     // ------ This is for not attempt open the cupboard
                     // nextState = SM_OPEN_DOOR;
                     attempsNavigation = 0;
-                    findPersonAttemps = 1;
+                    findPersonAttemps = 0;
                     findObjCupboard = false;
                 }
                 break;
@@ -495,22 +496,29 @@ int main(int argc, char** argv)
             case SM_FIND_HUMAN:
                 {
                     std::cout << stateMachine << "SM_FIND_HUMAN" << std::endl;
-                    if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                        findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.9f, -0.2f, -1.0f, 0.1f, 0.1f, 9.0, centroids, "kitchen_area");
-                        if(!findPerson){
+                    if(!skipFindPerson){
+                        if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
+                            findPersonAttemps++;
+                            findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.9f, -0.2f, -1.0f, 0.1f, 0.1f, 9.0, centroids, "kitchen_area");
+                            if(!findPerson && findPersonAttemps > 1){
+                                JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
+                                skipFindPerson = true;
+                                nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            }
+                            else{
+                                JustinaHRI::waitAfterSay("Human, i need your help, can you move all chairs for me, please", 6000, 0);
+                                JustinaNavigation::getClose("wait_remove_chair", 20000);
+                                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                                nextState = SM_NAVIGATION_TO_TABLE;
+                            }
+                        }else{
                             JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
+                            skipFindPerson = true;
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
-                        else{
-                            JustinaHRI::waitAfterSay("Human, can you move all chairs for me, please", 6000, 0);
-                            JustinaNavigation::getClose("wait_remove_chair", 20000);
-                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                            nextState = SM_NAVIGATION_TO_TABLE;
-                        }
-                    }else{
-                        JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
-                        nextState = SM_FIND_OBJECTS_ON_TABLE;
                     }
+                    else
+                        nextState = SM_FIND_OBJECTS_ON_TABLE;
                 }
                 break;
 

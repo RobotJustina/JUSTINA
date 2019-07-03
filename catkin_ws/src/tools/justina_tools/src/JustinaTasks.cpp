@@ -4206,8 +4206,11 @@ bool JustinaTasks::openDoor(bool withLeftArm) {
 
     JustinaManip::raGoTo("door_1", 4000);
     JustinaManip::raGoTo("door_2", 4000);
+        
+    boost::this_thread::sleep(boost::posix_time::milliseconds(700));
 
     JustinaNavigation::moveDistAngle(0.0, -0.7854, 3000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(700));
     JustinaManip::raGoTo("navigation", 3000);
     JustinaNavigation::moveDistAngle(0.0, 0.7854, 3000);
     JustinaNavigation::moveDistAngle(-0.4, 0.0, 3000);
