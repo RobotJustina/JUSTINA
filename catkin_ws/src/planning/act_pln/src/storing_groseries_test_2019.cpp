@@ -12,11 +12,16 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
+#define MAX_FIND_PERSON_COUNT 1
+#define MAX_FIND_PERSON_RESTART 2
+#define MAX_FIND_PERSON_ATTEMPTS 2
+
 #define SM_INIT 0
 #define SM_WAIT_FOR_START_COMMAND 10
 #define SM_NAVIGATION_TO_TABLE 20
 #define SM_NAVIGATION_WAIT_REACHED_TO_TABLE 21
 #define SM_FIND_TABLE 25
+#define SM_FIND_HUMAN   27
 #define SM_FIND_OBJECTS_ON_TABLE 30
 #define SM_INF_TAKE_OBJECT 41
 #define SM_TAKE_OBJECT  50
@@ -63,6 +68,7 @@ int main(int argc, char** argv)
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
     bool openDoor = true;
     //////******************************//////
+    bool findPerson = false;
 
     bool fail =              false;
     bool success =           false;
@@ -113,6 +119,17 @@ int main(int argc, char** argv)
 
     geometry_msgs::Pose poseObj_1;
     geometry_msgs::Pose poseObj_2;
+    
+    // This is new for storing groceries test
+    std::vector<std::string> idsPerson;
+    idsPerson.push_back("chair");
+    idsPerson.push_back("person");
+    
+    std::vector<Eigen::Vector3d> centroids;
+    
+    int findPersonCount = 0;
+    int findPersonAttemps = 0;
+    int findPersonRestart = 0;
 
     int countFindObjectsOnTable = 1;
     int countFindObjectsOnCupboard = 1;
@@ -402,7 +419,7 @@ int main(int argc, char** argv)
                             alignWithTable = true;
                             attempsNavigation = 0;
                             attempsFindObjectsTable = 0;
-                            nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            nextState = SM_FIND_HUMAN;
                         }
                         else if((curr - prev).total_milliseconds() > 20000)
                             nextState = SM_NAVIGATION_TO_TABLE;
@@ -444,6 +461,44 @@ int main(int argc, char** argv)
                             firstAttemp = false;
                             break;
                         }
+                    }
+                }
+                break;
+
+            case SM_FIND_HUMAN:
+                {
+                    std::cout << stateMachine << "SM_FIND_HUMAN" << std::endl;
+                    if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
+                        findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.5f, -0.3f, -0.9f, 0.1f, 9.0, centroids, "kitchen_area");
+                        if(findPerson){
+                            findPersonCount++;
+                        }
+                        if(findPersonCount > MAX_FIND_PERSON_COUNT){
+                            findPersonCount = 0;
+                            findPersonAttemps = 0;
+                            findPersonRestart = 0;
+                            JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
+                            nextState = SM_FIND_OBJECTS_ON_TABLE;
+                        }
+                        else{
+                            if(findPersonRestart > MAX_FIND_PERSON_RESTART){
+                                findPersonCount = 0;
+                                findPersonRestart = 0;
+                                findPersonAttemps++;
+                                JustinaHRI::waitAfterSay("Human, can you move all chairs for me, please", 6000, 0);
+                                JustinaNavigation::getClose("wait_remove_chair", 20000);
+                                nextState = SM_NAVIGATION_TO_TABLE;
+                                //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
+                            }
+                            else
+                                findPersonRestart++;
+                        }
+                    }else{
+                        findPersonCount = 0;
+                        findPersonAttemps = 0;
+                        findPersonRestart = 0;
+                        JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
+                        nextState = SM_FIND_OBJECTS_ON_TABLE;
                     }
                 }
                 break;
