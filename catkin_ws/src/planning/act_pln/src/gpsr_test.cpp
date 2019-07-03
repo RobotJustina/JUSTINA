@@ -1044,10 +1044,27 @@ void callbackCmdFindObject(
                                 }
                             }
                             else if(tokens[2] == "under"){
+                                bool armFlag = false;
+                                bool grasp  = false;
+                                if(ref_obj_pose.position.y > 0)
+                                    armFlag = true;
+                                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+                                grasp = JustinaTasks::graspObject(ref_obj_pose.position.x, 
+                                        ref_obj_pose.position.y, ref_obj_pose.position.z, armFlag, tokens[3], true);
+                                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+                                if(grasp){
+                                    ss.str("");
+                                    ss << "I am going to deliver the " << tokens[3];
+                                    JustinaHRI::waitAfterSay(ss.str(), 2000);
+                                    JustinaTasks::placeObject(armFlag);
+                                    (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
+                                }
                                 rel_obj_dist = 0.0;
                                 for(int i = 0; i < recognizedObjects.size(); i++){
-                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z && recognizedObjects[i].pose.position.x < 1.0
-                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z)){
+                                    if (recognizedObjects[i].pose.position.z < ref_obj_pose.position.z 
+                                            && recognizedObjects[i].pose.position.x < 1.0
+                                            && rel_obj_dist < fabs(recognizedObjects[i].pose.position.z - ref_obj_pose.position.z
+                                            && grasp)){
                                         ss.str("");
                                         ss << recognizedObjects[i].id << " " << recognizedObjects[i].pose.position.x 
                                             << " " << recognizedObjects[i].pose.position.y << " " << recognizedObjects[i].pose.position.z << " right";
@@ -1057,9 +1074,25 @@ void callbackCmdFindObject(
                                 }
                             }
                             else if(tokens[2] == "behind"){
+                                bool armFlag = false;
+                                bool grasp  = false;
+                                if(ref_obj_pose.position.y > 0)
+                                    armFlag = true;
+                                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 8000);
+                                grasp = JustinaTasks::graspObject(ref_obj_pose.position.x, 
+                                        ref_obj_pose.position.y, ref_obj_pose.position.z, armFlag, tokens[3], true);
+                                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+                                if(grasp){
+                                    ss.str("");
+                                    ss << "I am going to deliver the " << tokens[3];
+                                    JustinaHRI::waitAfterSay(ss.str(), 2000);
+                                    JustinaTasks::placeObject(armFlag);
+                                    (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
+                                }
                                 for(int i = ref_obj_index + 1; i < recognizedObjects.size(); i++){
                                     if(recognizedObjects[i].pose.position.x < 1.5 
-                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y)){
+                                            && rel_obj_dist > fabs(recognizedObjects[i].pose.position.y - ref_obj_pose.position.y
+                                            && grasp)){
                                         ss.str("");
                                         ss << recognizedObjects[ref_obj_index + 1].id << " " << recognizedObjects[ref_obj_index + 1].pose.position.x 
                                         << " " << recognizedObjects[ref_obj_index + 1].pose.position.y 
