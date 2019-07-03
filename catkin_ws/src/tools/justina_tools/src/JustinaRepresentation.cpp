@@ -224,6 +224,8 @@ void JustinaRepresentation::getObjects(std::string path, std::map<std::string, s
         loc.push_back(parts[9]);
         loc.push_back(parts[10]);
         loc.push_back(parts[11]);
+        loc.push_back(parts[12]);
+        loc.push_back(parts[13]);
 
 
         if (parseSuccess) {
@@ -409,6 +411,8 @@ void JustinaRepresentation::addObjects(std::map<std::string, std::vector<std::st
         it->second[8] = values.at(8);
         it->second[9] = values.at(9);
         it->second[10] = values.at(10);
+        it->second[11] = values.at(11);
+        it->second[12] = values.at(12);
     }
     else
         objects[name] = values;
