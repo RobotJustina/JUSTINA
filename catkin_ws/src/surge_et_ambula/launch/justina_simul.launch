@@ -26,7 +26,7 @@
 	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="true"/>
-		<arg name="simul_pcl" value="true"/>
+		<arg name="simul_pcl" value="false"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
 		<arg name="enable_torque" value="$(arg enable_torque)"/>
 		<arg name="head_offset" value="$(arg head_offset)"/>
