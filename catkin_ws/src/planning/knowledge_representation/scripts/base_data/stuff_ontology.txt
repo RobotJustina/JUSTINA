@@ -14,7 +14,6 @@
 (chocolate_milk	is_kind_of      item)
 (cloth	is_kind_of      item)
 (coke	is_kind_of      item)
-(containers	is_kind_of      item)
 (dishwasher_tab	is_kind_of      item)
 (doritos	is_kind_of      item)
 (fork	is_kind_of      item)
