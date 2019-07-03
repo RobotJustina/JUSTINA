@@ -571,7 +571,7 @@ int main(int argc, char **argv){
 
                         for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
                         {
-                            if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == graspObjectID )
+                            if(my_cutlery.ObjectList[i].graspable == true && (my_cutlery.ObjectList[i].type_object == graspObjectID || my_cutlery.ObjectList[i].type_object == 3 ) )
                             {
                                 std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
                                 pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
@@ -596,7 +596,9 @@ int main(int argc, char **argv){
                 while(countGraspAttemps++ <= MAX_ATTEMPTS_GRASP )
                 {
                     if(!pouringCereal(pose.position.x, pose.position.y, pose.position.z, false, id_cutlery, true))
-                        std::cout << ".-> cannot take the object" << std::endl;
+                    {
+                            std::cout << ".-> cannot take the object" << std::endl;
+                    }
                     else
                         break;
                 }
@@ -629,9 +631,6 @@ int main(int argc, char **argv){
                 {
                     state = SM_TAKE_MILK;
                 }
-
-
-                state = SM_FINISH_TEST;
 
             break;
 
@@ -1384,6 +1383,11 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
 
         std::vector<float> currPose;
         JustinaManip::getRaCurrentPos(currPose);
+
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+        JustinaManip::startTorsoGoTo(torsoSpine+.2, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+
         if (currPose.size() == 7) 
         {
             //while( (currPose[4] += 0.1) < 1.4)
@@ -1395,17 +1399,17 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
                 JustinaManip::raGoToArticular(currPose,2000); 
                 ros::spinOnce();
 
-            while( (currPose[5] -= 0.1) > -.95)
+            while( (currPose[5] -= 0.4) > -.95)
             {
-                JustinaManip::raGoToArticular(currPose,200);  
+                JustinaManip::raGoToArticular(currPose,2000);  
                 ros::spinOnce(); 
             }
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 
-            while( (currPose[5] += 0.1) < 0)
+            while( (currPose[5] += 0.4) < 0)
             {
-                JustinaManip::raGoToArticular(currPose,200);  
+                JustinaManip::raGoToArticular(currPose,2000);  
                 ros::spinOnce(); 
             }
 
