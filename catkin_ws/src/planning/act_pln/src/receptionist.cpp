@@ -838,7 +838,7 @@ int main(int argc, char **argv){
                     goaly = gy_w;
                     guest_z = gz_w;
                     std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
-                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
+                    //JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
