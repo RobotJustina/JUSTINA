@@ -253,6 +253,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::asyncSpeech();
                     nextState = SM_GOTO_CUPBOARD;
                     attempsNavigation = 0;
+                    findPersonAttemps = 1;
                     findObjCupboard = false;
                 }
                 break;
@@ -469,34 +470,19 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_FIND_HUMAN" << std::endl;
                     if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
+                        findPersonAttemps++;
                         findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.5f, -0.3f, -0.9f, 0.1f, 9.0, centroids, "kitchen_area");
                         if(findPerson){
-                            findPersonCount++;
-                        }
-                        if(findPersonCount > MAX_FIND_PERSON_COUNT){
-                            findPersonCount = 0;
-                            findPersonAttemps = 0;
-                            findPersonRestart = 0;
                             JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
                         else{
-                            if(findPersonRestart > MAX_FIND_PERSON_RESTART){
-                                findPersonCount = 0;
-                                findPersonRestart = 0;
-                                findPersonAttemps++;
-                                JustinaHRI::waitAfterSay("Human, can you move all chairs for me, please", 6000, 0);
-                                JustinaNavigation::getClose("wait_remove_chair", 20000);
-                                nextState = SM_NAVIGATION_TO_TABLE;
-                                //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
-                            }
-                            else
-                                findPersonRestart++;
+                            JustinaHRI::waitAfterSay("Human, can you move all chairs for me, please", 6000, 0);
+                            JustinaNavigation::getClose("wait_remove_chair", 20000);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                            nextState = SM_NAVIGATION_TO_TABLE;
                         }
                     }else{
-                        findPersonCount = 0;
-                        findPersonAttemps = 0;
-                        findPersonRestart = 0;
                         JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
                     }
@@ -1013,13 +999,13 @@ int main(int argc, char** argv)
                     if(objectGrasped[0] || objectGrasped[1]){
                         if(attempsPlaceObj < maxAttempsPlaceObj){
                             /******  This is for the aligin with the table *****/
-                            if(!JustinaTasks::alignWithTable(0.35)){
+                            /*if(!JustinaTasks::alignWithTable(0.35)){
                                 JustinaNavigation::moveDist(-0.10, 3000);
                                 if(!JustinaTasks::alignWithTable(0.35)){
                                     JustinaNavigation::moveDist(0.15, 3000);
                                     JustinaTasks::alignWithTable(0.35);
                                 }
-                            }
+                            }*/
                             /*
                             if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm, 2)){
                                 if(!withLeftOrRightArm)
@@ -1033,6 +1019,14 @@ int main(int argc, char** argv)
                             
                             for(int i=0; i < categories.size(); i++) 
                             {
+                                // This add for align with table again
+                                if(!JustinaTasks::alignWithTable(0.35)){
+                                    JustinaNavigation::moveDist(0.10, 3000);
+                                    if(!JustinaTasks::alignWithTable(0.35)){
+                                        JustinaNavigation::moveDist(0.10, 3000);
+                                        JustinaTasks::alignWithTable(0.35);
+                                    }
+                                }
                                 if(categories[i] == objectGraspedCat[0])
                                 {
                                     JustinaTasks::placeObjectOnShelfHC(0,level[i]);
