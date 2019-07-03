@@ -56,14 +56,17 @@ int main(int argc, char** argv)
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 
 	vision_msgs::VisionObjectList my_cutlery;	  
-	my_cutlery.ObjectList.resize(6);  
+	my_cutlery.ObjectList.resize(8);  
 
-	my_cutlery.ObjectList[0].id="red";
-	my_cutlery.ObjectList[1].id="green";
-	my_cutlery.ObjectList[2].id="blue";
-	my_cutlery.ObjectList[3].id="purple";
-	my_cutlery.ObjectList[4].id="yellow";
-	my_cutlery.ObjectList[5].id="orange";
+	
+	my_cutlery.ObjectList[0].id="green";	
+	my_cutlery.ObjectList[1].id="lemon";
+	my_cutlery.ObjectList[2].id="melon";
+	my_cutlery.ObjectList[3].id="blue";
+	my_cutlery.ObjectList[4].id="pink_1";
+	my_cutlery.ObjectList[5].id="yellow";
+	my_cutlery.ObjectList[6].id="red";
+	my_cutlery.ObjectList[7].id="green_2";
 
 	bool cutlery_found = false;
     /////
