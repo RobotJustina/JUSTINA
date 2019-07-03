@@ -3481,7 +3481,7 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
 
         //put bags into collection zone
         JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
-        JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000); //change for real collection zone
+        JustinaTasks::sayAndSyncNavigateToLoc("garbage_collection", 120000); //change for real collection zone
         
         JustinaManip::laGoTo("place_bag_floor", 4000);
         JustinaManip::startLaOpenGripper(0.7);
