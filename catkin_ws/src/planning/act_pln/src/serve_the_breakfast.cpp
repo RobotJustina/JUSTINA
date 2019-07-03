@@ -209,6 +209,7 @@ int main(int argc, char **argv){
                 break;
 
             case SM_WAIT_FOR_OPEN:
+                
                 std::cout << test << ".-> State SM_WAIT_FOR_OPEN: Wait for open the door." << std::endl;
                 
                 JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
@@ -462,7 +463,7 @@ int main(int argc, char **argv){
                  //   JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
                 //}else
                 //{
-                    state = SM_TAKE_CEREAL;
+                 //   state = SM_TAKE_CEREAL;
                 //}
 
                 if (!JustinaManip::isRaInPredefPos("navigation"))
