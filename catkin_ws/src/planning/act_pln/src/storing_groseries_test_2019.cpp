@@ -16,7 +16,9 @@
 #define MAX_FIND_PERSON_RESTART 2
 #define MAX_FIND_PERSON_ATTEMPTS 1
 
-#define SM_INIT 0
+#define SM_SAY_WAIT_FOR_DOOR 0
+#define SM_WAIT_FOR_DOOR 1
+#define SM_INIT 3
 #define SM_WAIT_FOR_START_COMMAND 10
 #define SM_NAVIGATION_TO_TABLE 20
 #define SM_NAVIGATION_WAIT_REACHED_TO_TABLE 21
@@ -66,7 +68,8 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-    bool openDoor = false;
+    // ------ This is for not attempt open the cupboard
+    bool openDoor = true;
     //////******************************//////
     bool findPerson = false;
 
@@ -245,13 +248,35 @@ int main(int argc, char** argv)
     while(ros::ok() && !fail && !success){
         switch(nextState){
 
+            case SM_SAY_WAIT_FOR_DOOR:
+                {
+                    std::cout << stateMachine << "SM_SAY_WAIT_FOR_DOOR" << std::endl;
+                    JustinaManip::startHdGoTo(0.0, 0.0);
+                    JustinaHRI::say("I'm ready for storing groseries test");
+                    JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+                    nextState = SM_WAIT_FOR_DOOR;
+                }
+                break;
+
+            case SM_WAIT_FOR_DOOR:
+                {
+                    if (!JustinaNavigation::obstacleInFront())
+                        nextState = SM_INIT;
+                }
+                break;
+            
             case SM_INIT:
                 {
                     std::cout << stateMachine << "SM_INIT" << std::endl;
+                    JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+                    JustinaNavigation::moveDist(1.0, 4000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     // JustinaHRI::say("I'm ready for storing groseries test");
                     // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     // JustinaHRI::asyncSpeech();
-                    nextState = SM_OPEN_DOOR;
+                    nextState = SM_GOTO_CUPBOARD;
+                    // ------ This is for not attempt open the cupboard
+                    // nextState = SM_OPEN_DOOR;
                     attempsNavigation = 0;
                     findPersonAttemps = 1;
                     findObjCupboard = false;
@@ -265,6 +290,7 @@ int main(int argc, char** argv)
                     //JustinaHRI::insertAsyncSpeech("I am going to navigate to the kitchen cabinet", 3000);
                     //JustinaHRI::asyncSpeech();
                     JustinaManip::startTorsoGoTo(0.1, 0, 0);
+                    JustinaHRI::say("I will navigate to the kitchen cabinet");
                     if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
                         if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
                             JustinaNavigation::getClose("kitchen_cabinet",200000);
@@ -998,6 +1024,7 @@ int main(int argc, char** argv)
                     if(objectGrasped[0] || objectGrasped[1]){
                         if(attempsPlaceObj < maxAttempsPlaceObj){
                             /******  This is for the aligin with the table *****/
+                            // -------------------------------------------- This change was do by Rey, to algin each to put the object
                             /*if(!JustinaTasks::alignWithTable(0.35)){
                                 JustinaNavigation::moveDist(-0.10, 3000);
                                 if(!JustinaTasks::alignWithTable(0.35)){
@@ -1018,6 +1045,7 @@ int main(int argc, char** argv)
                             
                             for(int i=0; i < categories.size(); i++) 
                             {
+                                // -------------------------------------------- This change was do by Rey, to algin each to put the object
                                 // This add for align with table again
                                 if(!JustinaTasks::alignWithTable(0.35)){
                                     JustinaNavigation::moveDist(0.10, 3000);

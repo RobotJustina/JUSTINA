@@ -3372,6 +3372,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
         JustinaManip::startRaOpenGripper(0.0);
         JustinaManip::raGoTo("navigation", 3000);
     }
+    JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 6000);
     //JustinaNavigation::moveDist(0.3, 2500);
     
 
@@ -4197,11 +4198,11 @@ bool JustinaTasks::openDoor(bool withLeftArm) {
     if(!JustinaTasks::alignWithTable(0.4))
         JustinaNavigation::moveDistAngle(0.25, 0.0, 3000);
     
+    JustinaNavigation::moveLateral(0.21, 3000);
+    
     JustinaManip::torsoGoTo(0.2, 0.0, 0.0, 3000);
 
     JustinaManip::raGoTo("navigation", 3000);
-
-    JustinaNavigation::moveLateral(0.21, 3000);
 
     JustinaManip::raGoTo("door_1", 4000);
     JustinaManip::raGoTo("door_2", 4000);
