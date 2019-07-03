@@ -852,7 +852,7 @@ void callbackCmdGetOrderObject(const knowledge_msgs::PlanningCmdClips::ConstPtr&
                         ra = true;
                     // This is for grasp with two frames
                     //JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, recoObj[index].id, true);
-                    if(!ra){
+                    if(ra){
                         objectDetected = JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
                         if(objectDetected){
                             ra = true;

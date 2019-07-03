@@ -198,6 +198,7 @@
 	(item (type Door) (name exitdoor) (status no_ask) (possession table))
 	;(item (type Furniture) (name shelf) (status no_ask))
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
+	( item (type Furniture) (name bar) (possession living_room) (room living_room)(pose -3.55 -3.0 0.0))
 	(item (type Door) (name arena) (status no_ask) (possession table))
         (item (type Speech) (name speech_1) (image i_am_ready_for_recieve_a_new_command))
         (item (type Speech) (name speech_2) (image i_finish_the_test))
