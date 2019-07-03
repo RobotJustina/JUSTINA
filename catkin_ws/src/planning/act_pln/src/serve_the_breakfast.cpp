@@ -756,13 +756,13 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         object_aux.id = colorObject;
         objects.ObjectList.push_back(object_aux);
-        found = JustinaVision::getObjectSeg(objects);
+        //found = JustinaVision::getObjectSeg(objects);
         std::cout << "GET OBJECTS: " << found << std::endl;
     }
 
     
 
-    if (found && objects.ObjectList[0].graspable) {
+    if (true){//found && objects.ObjectList[0].graspable) {
         std::cout << "The object was found again, update the new coordinates." << std::endl;
         typeCutlery = objects.ObjectList.at(0).type_object;
         
