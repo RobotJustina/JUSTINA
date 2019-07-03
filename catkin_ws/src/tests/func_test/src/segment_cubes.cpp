@@ -17,27 +17,31 @@ int main(int argc, char ** argv){
 	std::vector<vision_msgs::CubesSegmented> my_Stacks;
 	my_Stacks.resize(3);
 	//my_cubes.recog_cubes.resize(4);
-	my_cubes.recog_cubes.resize(6);
-	int nStacks = 0;
 
-	my_cubes.recog_cubes[0].color="red";
-	my_cubes.recog_cubes[1].color="green";
-	my_cubes.recog_cubes[2].color="blue";
-	my_cubes.recog_cubes[3].color="purple";
-	my_cubes.recog_cubes[4].color="orange";
-	my_cubes.recog_cubes[5].color="yellow";
+	vision_msgs::VisionObjectList my_cutlery;	  
+
+	my_cutlery.ObjectList.resize(8); 
+
+	my_cutlery.ObjectList[0].id="red";
+	my_cutlery.ObjectList[1].id="green";
+	my_cutlery.ObjectList[2].id="green_2";
+	my_cutlery.ObjectList[3].id="lemon";
+	my_cutlery.ObjectList[4].id="melon";
+	my_cutlery.ObjectList[5].id="blue";
+	my_cutlery.ObjectList[6].id="pink_1";
+	my_cutlery.ObjectList[7].id="yellow";
 
 	while(ros::ok() && cv::waitKey(1) != 'q'){
 		
 
 		switch(state){
 			case 0:
-				JustinaVision::getCutlerySeg(my_cubes); 
-				for(int i =0; i < my_cubes.recog_cubes.size(); i ++){
-					std::cout << "el objeto de color: " << my_cubes.recog_cubes[i].color << 
-					"con centroide: " << my_cubes.recog_cubes[i].cube_centroid.x << ", " << 
-					my_cubes.recog_cubes[i].cube_centroid.y << ", " <<
-					my_cubes.recog_cubes[i].cube_centroid.z <<std::endl; 
+				JustinaVision::getObjectSeg(my_cutlery); 
+				for(int i =0; i < my_cutlery.ObjectList.size(); i ++){
+					std::cout << "el objeto de color: " << my_cutlery.ObjectList[i].id << 
+					"con centroide: " << my_cutlery.ObjectList[i].pose.position.x << ", " << 
+					my_cutlery.ObjectList[i].pose.position.y << ", " <<
+					my_cutlery.ObjectList[i].pose.position.z <<std::endl; 
 				} 
 				//JustinaVision::getCubesSeg(my_cubes);
 				//JustinaTasks::sortCubes(my_cubes, my_Stacks);
