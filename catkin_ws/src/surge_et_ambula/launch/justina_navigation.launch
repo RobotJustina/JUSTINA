@@ -116,8 +116,9 @@
 		<node name="potential_fields" pkg="potential_fields" type="potential_fields_node" output="screen">
 			<param name="topic_scan" value="/hardware/scan"/>
 			<param name="distance_min" value="0.35"/>
-			<param name="k_r" value="15.7"/>
+			<!-- param name="k_r" value="15.7"/ -->
 			<!-- param name="k_r" value="5.5"/ -->
+			<param name="k_r" value="10.7"/>
 		</node>
 		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen">
 			<param name="move_lateral" value="false"/>

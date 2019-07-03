@@ -14,7 +14,7 @@
 
 #define MAX_FIND_PERSON_COUNT 1
 #define MAX_FIND_PERSON_RESTART 2
-#define MAX_FIND_PERSON_ATTEMPTS 2
+#define MAX_FIND_PERSON_ATTEMPTS 1
 
 #define SM_INIT 0
 #define SM_WAIT_FOR_START_COMMAND 10
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-    bool openDoor = true;
+    bool openDoor = false;
     //////******************************//////
     bool findPerson = false;
 
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I'm ready for storing groseries test");
                     // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     // JustinaHRI::asyncSpeech();
-                    nextState = SM_GOTO_CUPBOARD;
+                    nextState = SM_OPEN_DOOR;
                     attempsNavigation = 0;
                     findPersonAttemps = 1;
                     findObjCupboard = false;
@@ -470,8 +470,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_FIND_HUMAN" << std::endl;
                     if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                        findPersonAttemps++;
-                        findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.5f, -0.3f, -0.9f, 0.1f, 9.0, centroids, "kitchen_area");
+                        findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.9f, -0.2f, -1.0f, 0.1f, 0.1f, 9.0, centroids, "kitchen_area");
                         if(findPerson){
                             JustinaHRI::waitAfterSay("Human, thank you", 6000, 0);
                             nextState = SM_FIND_OBJECTS_ON_TABLE;

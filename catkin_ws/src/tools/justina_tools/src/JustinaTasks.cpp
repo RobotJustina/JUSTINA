@@ -3336,7 +3336,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaManip::laGoTo("put_storing_L3_P3", 3000);
         }
         
-        JustinaTasks::alignWithTable(0.3);
+        //JustinaTasks::alignWithTable(0.35);
         JustinaManip::startLaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
         JustinaNavigation::moveDist(-0.2, 2500);
@@ -3365,7 +3365,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm, int level) {
             JustinaManip::raGoTo("put_storing_L3_P3", 3000);
         }
 
-        JustinaTasks::alignWithTable(0.3);
+        //JustinaTasks::alignWithTable(0.35);
         JustinaManip::startRaOpenGripper(0.7);
         ros::Duration(0.6).sleep();
         JustinaNavigation::moveDist(-0.2, 2500);

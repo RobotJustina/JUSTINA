@@ -35,9 +35,9 @@ bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
 {
     //Control constants
-    float alpha =0.9;// 0.6548 ;//= 0.9; // = 1.2
+    float alpha =0.6548;// 0.6548 ;//= 0.9; // = 1.2
     float beta = 0.3;
-    float max_angular = 0.7;//0.7 // 0.8
+    float max_angular = 0.7;//0.7 // 0.8 // 0.7
 
     //Error calculation
     float angle_error = atan2(goal_y, goal_x);
