@@ -360,7 +360,7 @@
 	(retract ?goal)
 	(printout  t "Nuevo plan Serving Drinks")
 	(bind ?what(str-cat "Hello_what_is_your_name"))
-	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_" ?eatdrink ""))
+	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_" ?eatdrink " say justina yes or justina no"))
 	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 3 10)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
 	

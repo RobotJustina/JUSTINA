@@ -554,6 +554,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
         else{
             responseMsg.successful = false;
             JustinaHRI::waitAfterSay("I am at your service",5000);
+            JustinaHRI::waitAfterSay("enjoy the party",5000);
             //JustinaNavigation::moveDistAngle(0, 1.57, 10000);
             //boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
         }
@@ -585,6 +586,11 @@ void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstP
     std::vector<vision_msgs::VisionObject> recoObjForTake;
     sensor_msgs::Image image;
 
+    JustinaHRI::waitAfterSay("Hello Barman, please put the available drinks on the bar", 6000);
+    JustinaHRI::waitAfterSay("I wil try to remember the drinks", 6000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+    JustinaHRI::waitAfterSay("Thank you", 6000);
+
     if(!JustinaTasks::alignWithTable(0.35)){
         JustinaNavigation::moveDist(0.10, 3000);
         if(!JustinaTasks::alignWithTable(0.35)){
@@ -603,6 +609,8 @@ void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstP
             boost::this_thread::sleep(boost::posix_time::milliseconds(400));
         }
     }
+    
+    JustinaHRI::waitAfterSay("Now I am going to take the guest's orders", 6000);
 
     responseMsg.successful = 1;
     //validateAttempsResponse(responseMsg);
@@ -742,6 +750,8 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
       JustinaManip::hdGoTo(0.0, 0.0, 5000);*/
 
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
+    JustinaHRI::waitAfterSay("I will try to remember you", 6000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
     
     // This is the last changes for the train
     std::vector<vision_msgs::VisionFaceObject> faces;
@@ -1141,6 +1151,17 @@ int main(int argc, char **argv) {
                         4000);
                 state = SM_WAIT_FOR_DOOR;
                 break;
+            case SM_WAIT_FOR_DOOR:
+                if (!JustinaNavigation::obstacleInFront())
+                    state = SM_NAVIGATE_TO_THE_LOCATION;
+            break;
+            case SM_NAVIGATE_TO_THE_LOCATION:
+                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+                std::cout << "GPSRTest.->First try to move" << std::endl;
+                JustinaNavigation::moveDist(1.0, 4000);
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+                state = SM_SEND_INIT_CLIPS;
+            break;
             case SM_SCRIPT:
                 initSpeech.successful = false;
                 runSMCLIPS = true;
@@ -1162,6 +1183,15 @@ int main(int argc, char **argv) {
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 ros::spinOnce();
 
+               /* initSpeech.params = "Final";
+                initSpeech.successful = false;
+                command_response_pub.publish(initSpeech);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                ros::spinOnce();*/
+
+                state = SM_SAY_WAIT_FOR_DOOR;
+                break;
+            case SM_SEND_INIT_CLIPS:
                 initSpeech.params = "Final";
                 initSpeech.successful = false;
                 command_response_pub.publish(initSpeech);
@@ -1169,7 +1199,8 @@ int main(int argc, char **argv) {
                 ros::spinOnce();
 
                 state = SM_WAIT_CLIPS; 
-                break;
+
+            break;
             case SM_WAIT_CLIPS:
                 break;
         }
