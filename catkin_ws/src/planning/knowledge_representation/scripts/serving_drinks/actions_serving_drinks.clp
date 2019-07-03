@@ -27,7 +27,7 @@
 	(printout  t "Nuevo plan Serving Drinks")
 	(bind ?what(str-cat "Hello_what_is_your_name"))
 	(bind ?remember (str-cat "Please look at me, I try to remember you"))
-	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_to_drink"))
+	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_to_drink, say justina yes or justina no"))
 
 	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 4 16)(duration 6000)))
         (assert (plan (name ?name) (number 2)(actions go_to_place ?place1)(duration 6000)))

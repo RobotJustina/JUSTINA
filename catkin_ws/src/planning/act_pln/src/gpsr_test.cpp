@@ -67,8 +67,8 @@ double maxTime = 180;
 std::string cat_grammar= "gpsr_pre_sydney.xml";
 bool obj_desc_flag;
 
-std::string microsoft_grammars[13];
-std::string sphinx_grammars[13];
+std::string microsoft_grammars[15];
+std::string sphinx_grammars[15];
 bool alternative_drink = true;
 bool poket_reco = false;
 std::string no_drink;
@@ -2913,12 +2913,20 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     std::string name;
 	std::string query;
     int count  = 0;
+    int grammar = 1;
+
+    alternative_drink = false;
+    no_drink = "nil";
+    if (tokens[0] == "snacks")
+        grammar = 13;
     
     bool success = ros::service::waitForService("spg_say", 5000);
     //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
 
+    ss.str("");
+    ss << "tell me what " << tokens[0] << " do you want";
     while(!drink_conf && count < 3){
-        switchSpeechReco(1, "tell me what drink do you want");
+        switchSpeechReco(grammar, ss.str());
         JustinaHRI::waitForSpeechRecognized(lastReco,400);
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, drink))
@@ -3022,6 +3030,7 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 
     ss.str("");
     ss << tokens[0] << " please not move, and look at me, I try to remember you";
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
     JustinaHRI::waitAfterSay(ss.str(), 6000);
     JustinaVision::faceTrain(tokens[0], 4);
@@ -3412,8 +3421,8 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
     std::vector<std::string> bins;
 
     //change for the real bin locations
-    bins.push_back("bed");
-    bins.push_back("bed");
+    bins.push_back("trash_bin_1");
+    bins.push_back("trash_bin_2");
     
     ss.str("");
     ss << "For this task I need your help, Do you want to help me, say justina yes or justina no";
@@ -3467,6 +3476,8 @@ void callbackCmdTakeOutGarbage(const knowledge_msgs::PlanningCmdClips::ConstPtr&
         }//end while
         
         JustinaHRI::waitAfterSay("thanks for you help, Now i will take out the garbage", 5000, 0);
+        JustinaHRI::waitAfterSay("Please open the exit door for me", 5000, 0);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         //put bags into collection zone
         JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
@@ -5067,7 +5078,7 @@ int main(int argc, char **argv) {
         JustinaHRI::usePocketSphinx = poket_reco;
 
         microsoft_grammars[0] = "commands.xml";
-        microsoft_grammars[1] = "oreder_drink.xml";
+        microsoft_grammars[1] = "order_drink.xml";
         microsoft_grammars[2] = "people_names.xml";
         microsoft_grammars[3] = cat_grammar;
         microsoft_grammars[4] = "questions.xml";
@@ -5079,6 +5090,7 @@ int main(int argc, char **argv) {
         microsoft_grammars[10] = "this_object.xml";
         microsoft_grammars[11] = "obj_pour.xml";
         microsoft_grammars[12] = "whattosay.xml";
+        microsoft_grammars[13] = "order_snacks.xml";
         /*microsoft_grammars[10] = "description_gesture.xml";
         microsoft_grammars[11] = "description_pose.xml";
         microsoft_grammars[12] = "description_hight.xml";
@@ -5146,8 +5158,8 @@ int main(int argc, char **argv) {
                     JustinaHRI::enableSpeechRecognized(false);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 }
-				//state = SM_SAY_WAIT_FOR_DOOR;
-				state =  SM_INIT_SPEECH;
+				state = SM_SAY_WAIT_FOR_DOOR;
+				//state =  SM_INIT_SPEECH;
 			}
 			break;
 		case SM_SAY_WAIT_FOR_DOOR:
