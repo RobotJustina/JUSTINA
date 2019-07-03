@@ -405,6 +405,10 @@ void JustinaRepresentation::addObjects(std::map<std::string, std::vector<std::st
         it->second[4] = values.at(4);
         it->second[5] = values.at(5);
         it->second[6] = values.at(6);
+        it->second[7] = values.at(7);
+        it->second[8] = values.at(8);
+        it->second[9] = values.at(9);
+        it->second[10] = values.at(10);
     }
     else
         objects[name] = values;

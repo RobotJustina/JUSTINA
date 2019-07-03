@@ -89,23 +89,23 @@
 
 
 
-(item (type Category) (name candies) (zone desk)(quantity 3)(biggest biscuit)(smallest biscuit) (heaviest biscuit) (lightest biscuit))  
+(item (type Category) (name candies) (zone desk)(quantity 3)(biggest biscuit)(smallest frosty_fruits) (heaviest biscuit) (lightest frosty_fruits))  
 
-(item (type Category) (name cleaning_stuff) (zone sink)(quantity 3)(biggest cloth)(smallest cloth) (heaviest cloth) (lightest cloth))  
+(item (type Category) (name cleaning_stuff) (zone sink)(quantity 3)(biggest trash_bags)(smallest dishwasher_tab) (heaviest dishwasher_tab) (lightest cloth))  
 
-(item (type Category) (name containers) (zone display_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
+(item (type Category) (name containers) (zone display_cabinet)(quantity 3)(biggest basket)(smallest tray) (heaviest basket) (lightest tray))  
 
-(item (type Category) (name cutlery) (zone kitchen_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
+(item (type Category) (name cutlery) (zone kitchen_cabinet)(quantity 3)(biggest knife)(smallest spoon) (heaviest knife) (lightest spoon))  
 
-(item (type Category) (name drinks) (zone sideboard)(quantity 3)(biggest water)(smallest water) (heaviest water) (lightest water))  
+(item (type Category) (name drinks) (zone sideboard)(quantity 3)(biggest water)(smallest coke) (heaviest beer) (lightest coke))  
 
-(item (type Category) (name food) (zone shelf)(quantity 3)(biggest onion)(smallest onion) (heaviest onion) (lightest onion))  
+(item (type Category) (name food) (zone shelf)(quantity 3)(biggest cereals)(smallest onion) (heaviest cereals) (lightest onion))  
 
-(item (type Category) (name fruits) (zone kitchen_table)(quantity 3)(biggest pear)(smallest pear) (heaviest pear) (lightest pear))  
+(item (type Category) (name fruits) (zone kitchen_table)(quantity 3)(biggest apple)(smallest lemon) (heaviest apple) (lightest lemon))  
 
-(item (type Category) (name snacks) (zone coffee_table)(quantity 3)(biggest doritos)(smallest doritos) (heaviest doritos) (lightest doritos))  
+(item (type Category) (name snacks) (zone coffee_table)(quantity 3)(biggest doritos)(smallest shapes_chicken) (heaviest doritos) (lightest shapes_chicken))  
 
-(item (type Category) (name tableware) (zone kitchen_cabinet)(quantity 3)(biggest bowl)(smallest bowl) (heaviest bowl) (lightest bowl))  
+(item (type Category) (name tableware) (zone kitchen_cabinet)(quantity 3)(biggest glass)(smallest shot_glass) (heaviest plate) (lightest shot_glass))  
 
 
 
