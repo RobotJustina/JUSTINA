@@ -29,7 +29,9 @@
 #define SM_Wait_Door_Opened 120
 #define SM_Ask_Plate 130
 #define SM_Take_Cutlery 140
-#define SM_Grasp_Normal_Objects 150
+#define SM_GRASP_OBJECT_R 150
+#define SM_WAIT_OBJECT_R 160
+
 
 int main(int argc, char** argv)
 {
@@ -51,6 +53,24 @@ int main(int argc, char** argv)
 	bool success = false;
 	bool door_open = false;
 	bool plate = false;
+
+
+	//Reynaldo vars
+	std::vector<std::string> objsToGrasp;
+    std::vector<std::string> objsToTake;
+    objsToGrasp.push_back("bowl");
+    objsToGrasp.push_back("glass");
+    objsToTake.push_back("bowl");
+    objsToTake.push_back("glass");
+    std::string idObject;
+    bool withLeftOrRightArm;
+	bool alignWithTable = false;
+	int attempsGrasp = 1;
+    int maxAttempsGrasp = 2;
+	geometry_msgs::Pose pose;
+    bool armsFree[2] = {true, true};
+    std::string objsToDeliv[2] = {"", ""};
+	std::stringstream ss;
 
   	//int nextState = SM_WaitBlindGame;
   	int nextState = 0;
@@ -135,20 +155,20 @@ int main(int argc, char** argv)
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
 						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-							nextState = SM_Grasp_Normal_Objects;
+							nextState = SM_GRASP_OBJECT_R;
 						}
 					} 
 					else{
 						std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-						nextState = SM_Grasp_Normal_Objects;
+						nextState = SM_GRASP_OBJECT_R;
 					}
 				} 
 				else {
 					std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-					nextState = SM_Grasp_Normal_Objects;
+					nextState = SM_GRASP_OBJECT_R;
 				}
             	std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-				nextState = SM_Grasp_Normal_Objects;
+				nextState = SM_GRASP_OBJECT_R;
 
 			break;
 
@@ -173,13 +193,105 @@ int main(int argc, char** argv)
                 }
 			break;*/
 
-			case SM_Grasp_Normal_Objects:
+			/*case SM_Grasp_Normal_Objects:
 				//estados de Reynaldo
 				std::cout << "P & G Test...->moving to the table" << std::endl;
 				cont = 2;
 				contObj = 2;
 				nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
-				break;
+				break;*/
+
+			case SM_GRASP_OBJECT_R:
+                std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
+                if(objsToGrasp.size() > 0){
+                    idObject = objsToGrasp[0];
+                    if(!alignWithTable && !JustinaTasks::alignWithTable(0.4)){
+                        std::cout << "I can´t align with table   :´(" << std::endl;
+                        JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+                        JustinaTasks::alignWithTable(0.4);
+                        JustinaTasks::alignWithTable(0.4);
+                    }
+                    alignWithTable = true;
+                    if(attempsGrasp <= maxAttempsGrasp){
+                        attempsGrasp++;
+                        if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
+                            // index 0 is right arm index 1 is left arm
+                            /*if(!(withLeftOrRightArm && armsFree[1]))
+                              withLeftOrRightArm = false;
+                              else if(!(!withLeftOrRightArm && armsFree[0]))
+                              withLeftOrRightArm = true;*/
+                            if(withLeftOrRightArm){
+                                if(!armsFree[1])
+                                    withLeftOrRightArm = false;
+                            }
+                            else{
+                                if(!armsFree[0])
+                                    withLeftOrRightArm = true;
+                            }
+                            //if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
+                            // If we want to use another frame we need to pass de id how not empty
+                            if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true)){
+                                if(withLeftOrRightArm){
+                                    objsToDeliv[1] = idObject;
+                                    armsFree[1] = false;
+                                }else{
+                                    objsToDeliv[0] = idObject;
+                                    armsFree[0] = false;
+                                }
+                                objsToGrasp.erase(objsToGrasp.begin());
+                                objsToTake.erase(objsToTake.begin());
+                            }
+                        }
+                    }
+                    else{
+                        alignWithTable = false;
+                        attempsGrasp = 1;
+                        nextState = SM_WAIT_OBJECT_R;
+                    }
+                }
+                else{
+                    alignWithTable = false;
+                    attempsGrasp = 1;
+                    nextState = SM_WAIT_OBJECT_R;
+                }
+                break;
+
+            case SM_WAIT_OBJECT_R:
+                std::cout << "State machine: SM_WAIT_OBJECT" << std::endl;
+                if(objsToTake.size() > 0){
+                    idObject = objsToTake[0];
+                    ss.str("");
+                    ss << "I can not take the " << idObject << ", but i will take the " << idObject << " if you put it in my gripper";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
+                    if(armsFree[0]){
+                        JustinaManip::raGoTo("navigation", 3000);
+                        JustinaTasks::detectObjectInGripper(idObject, false, 7000);
+                        objsToDeliv[0] = idObject;
+                        armsFree[0] = false;
+                        contObj++;
+                    }else if(armsFree[1]){
+                        JustinaManip::laGoTo("navigation", 3000);
+                        objsToDeliv[1] = idObject;
+                        JustinaTasks::detectObjectInGripper(idObject, true, 7000);
+                        armsFree[1] = false;
+                        contObj++;
+                    }
+                    objsToTake.erase(objsToTake.begin());
+                    std::vector<std::string>::iterator it = std::find(objsToGrasp.begin(), objsToGrasp.end(), idObject);
+                    if(it != objsToGrasp.end())
+                        objsToGrasp.erase(it);
+                    nextState = SM_WAIT_OBJECT_R;
+                    if(objsToGrasp.size() > 0)
+                        nextState = SM_GRASP_OBJECT_R;
+                }
+                else{
+                    // THIS IS FOR NAVIGATION TO THE DISH WASHER
+
+					cont = 2;
+					contObj = 2;
+					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+                }
+                break;
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
@@ -426,14 +538,17 @@ int main(int argc, char** argv)
 
       		case SM_NAVIGATE_TO_THE_DISHWASHER:
 
-			  	JustinaHRI::say("Human i need your hel, please, open the dishwasher");
-				ros::Duration(0.5).sleep();
-				JustinaHRI::say("then pull off the rack");
-				ros::Duration(0.5).sleep();
-				JustinaHRI::say("finally, close the dishwasher until its door touches the rack");
-				ros::Duration(5.0).sleep();
-				JustinaHRI::say("thank you");
-				ros::Duration(0.5).sleep();
+			  	if(openDWFlag){
+					JustinaHRI::say("Human i need your hel, please, open the dishwasher");
+					ros::Duration(0.5).sleep();
+					JustinaHRI::say("then pull off the rack");
+					ros::Duration(0.5).sleep();
+					JustinaHRI::say("finally, close the dishwasher until its door touches the rack");
+					ros::Duration(5.0).sleep();
+					JustinaHRI::say("thank you");
+					ros::Duration(0.5).sleep();
+					openDWFlag = false;
+				}
 
 			  	JustinaNavigation::moveDist(-0.35, 3000);
 			  	JustinaManip::startTorsoGoTo(0.1, 0, 0);
