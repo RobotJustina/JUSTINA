@@ -15,8 +15,8 @@
 #include "string"
 
 #define MAX_FIND_PERSON_COUNT 1
-#define MAX_FIND_PERSON_RESTART 2
-#define MAX_FIND_PERSON_ATTEMPTS 2
+#define MAX_FIND_PERSON_RESTART 0
+#define MAX_FIND_PERSON_ATTEMPTS 1
 #define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
 #define MAX_DELAY_AFTER_SAY 300
@@ -36,6 +36,9 @@
 
 enum STATE{
     SM_INIT,
+    SM_SAY_WAIT_FOR_DOOR,
+    SM_WAIT_FOR_DOOR,
+    SM_GOTO_RECEPTIONIST_POINT,
     SM_NAVIGATE_TO_ENTRANCE_DOOR,
     SM_NAVIGATE_TO_RECO_LOC,
     SM_SAY_OPEN_DOOR,
@@ -163,8 +166,21 @@ int main(int argc, char **argv){
     while(ros::ok() && !success){
 
         switch(state){
-            case SM_INIT:
+            case SM_SAY_WAIT_FOR_DOOR:
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
+                JustinaManip::startHdGoTo(0.0, 0.0);
+                JustinaHRI::say("I'm ready for receptionist test");
+                JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+                state = SM_WAIT_FOR_DOOR;
+                break;
+
+            case SM_WAIT_FOR_DOOR:
+                if (!JustinaNavigation::obstacleInFront())
+                    state = SM_INIT;
+                break;
+            
+            case SM_INIT:
+                std::cout << test << "SM_INIT" << std::endl;
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -175,7 +191,30 @@ int main(int argc, char **argv){
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+                JustinaNavigation::moveDist(1.0, 4000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                // JustinaHRI::say("I'm ready for storing groseries test");
+                // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
+                // JustinaHRI::asyncSpeech();
+                state = SM_GOTO_RECEPTIONIST_POINT;
+                // ------ This is for not attempt open the cupboard
+                // nextState = SM_OPEN_DOOR;
+                break;
+
+            
+            case SM_GOTO_RECEPTIONIST_POINT:
+                std::cout << test << "SM_GOTO_RECEPTIONIST_POINT" << std::endl;
+                // JustinaHRI::say("I am going to navigate to the kitchen cabinet");
+                //JustinaHRI::insertAsyncSpeech("I am going to navigate to the kitchen cabinet", 3000);
+                //JustinaHRI::asyncSpeech();
+                JustinaManip::startTorsoGoTo(0.1, 0, 0);
+                JustinaHRI::say("I will navigate to the receptionist point");
+                if(!JustinaNavigation::getClose("receptionist_point",200000))
+                    if(!JustinaNavigation::getClose("receptionist_point",200000))
+                        JustinaNavigation::getClose("receptionist_point",200000);
+                //JustinaHRI::insertAsyncSpeech("I Have reached the kitchen cabinet", 3000);
+                //JustinaHRI::asyncSpeech();
                 state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
 
