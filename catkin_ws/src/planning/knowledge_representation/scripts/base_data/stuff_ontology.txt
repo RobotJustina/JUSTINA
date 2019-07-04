@@ -95,8 +95,6 @@
 (desk	is_kind_of      place)
 (dishwasher	is_kind_of      place)
 (display_cabinet	is_kind_of      place)
-(entrance	is_kind_of      place)
-(exit	is_kind_of      place)
 (fridge	is_kind_of      place)
 (island	is_kind_of      place)
 (kitchen_cabinet	is_kind_of      place)
