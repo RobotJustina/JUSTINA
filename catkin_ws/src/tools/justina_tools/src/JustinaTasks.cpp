@@ -7771,7 +7771,7 @@ bool JustinaTasks::introduceOneToPeople(std::string name_person, std::string loc
     return find;
 }
 
-bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float maxHtorso, float minHTorso){
+bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float maxHtorso, float minHTorso, bool isDish, bool left_arm){
     std::cout << "JustinaTasks::place object on dish washer..." << std::endl;
     float torsoSpine, torsoWaist, torsoShoulders;
     float movTorsoFromCurrPos;
@@ -7806,8 +7806,19 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float maxHt
     JustinaManip::waitForLaGoalReached(5000);
     JustinaManip::waitForRaGoalReached(5000);
 
-    JustinaManip::startLaGoTo("place_dishwasher");
-    JustinaManip::startRaGoTo("place_dishwasher");
+    if(isDish && left_arm){
+        JustinaManip::startLaGoTo("place_dishwasher_2");
+        JustinaManip::startRaGoTo("place_dishwasher");
+    }
+    
+    else if(isDish && !left_arm){
+        JustinaManip::startLaGoTo("place_dishwasher");
+        JustinaManip::startRaGoTo("place_dishwasher_2");
+    }
+    else{
+        JustinaManip::startLaGoTo("place_dishwasher");
+        JustinaManip::startRaGoTo("place_dishwasher");
+    }
 
     JustinaManip::waitForLaGoalReached(5000);
     JustinaManip::waitForRaGoalReached(5000);
