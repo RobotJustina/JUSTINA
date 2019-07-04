@@ -370,7 +370,7 @@ int main(int argc, char** argv)
                 JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 
                 attemptsWaitConfirmation=0;
-                nextState = SM_Recognize_Gender;
+                nextState = SM_GoCoatRack;
                 attemptsFindLady++;
                 break;
             
@@ -507,8 +507,8 @@ int main(int argc, char** argv)
             
             case SM_GoCoatRack:
                 std::cout << "Farewell Test...-> SM_GoCoatRack" << std::endl;
-                JustinaHRI::say("I am going to guide you to the coat hanger");
-                //ros::Duration(1.0).sleep();
+                JustinaHRI::say("Hello, My name is Justina, I am going to guide you to the coat hanger");
+                ros::Duration(1.0).sleep();
                 //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 //ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
