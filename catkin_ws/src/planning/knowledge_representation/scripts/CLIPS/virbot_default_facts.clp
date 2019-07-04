@@ -136,8 +136,8 @@
 	;( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
 	;( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
 
-	( item (type Door) (name entrance)(possession office)(attributes no_visited)(room office) (pose -3.55 -3.0 0.0))
-	( item (type Door) (name exit)(possession kitchen)(attributes no_visited)(room kitchen)(pose -1.87 8.64 0.0))
+	( item (type Door) (name entrance)(possession Dummy)(attributes no_visited)(room Dummy) (pose -3.55 -3.0 0.0))
+	( item (type Door) (name exit)(possession Dummy)(attributes no_visited)(room Dummy)(pose -1.87 8.64 0.0))
 
 
 	

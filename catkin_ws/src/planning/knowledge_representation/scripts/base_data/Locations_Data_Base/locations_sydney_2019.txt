@@ -2,14 +2,12 @@ Furniture armchair 1 living_room
 Furniture bed 1 bedroom
 Room bedroom 0 nil
 Furniture bedroom_chest 1 bedroom
-Furniture coat_hanger 1 office
+Furniture coat_hanger 1 Dummy
 Furniture coffee_table 1 living_room
 Furniture couch 1 living_room
 Furniture desk 1 office
 Furniture dishwasher 1 kitchen
 Furniture display_cabinet 1 living_room
-Furniture entrance 1 office
-Furniture exit 1 kitchen
 Furniture fridge 1 kitchen
 Furniture island 1 kitchen
 Room kitchen 0 nil
@@ -23,7 +21,7 @@ Furniture shoe_rack 1 office
 Furniture sideboard 1 living_room
 Furniture sidetable 1 bedroom
 Furniture sink 1 kitchen
-Furniture trash_bin 1 kitchen
-Furniture trash_bin_1 1 kitchen
-Furniture trash_bin_2 1 living_room
-Furniture tv 1 living_room
+Furniture trash_bin 1 Dummy
+Furniture trash_bin_1 1 Dummy
+Furniture trash_bin_2 1 Dummy
+Furniture tv 1 Dummy

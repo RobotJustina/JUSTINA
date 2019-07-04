@@ -275,6 +275,7 @@
 	?f <- (task ?plan remind_person ?person ?place ?step)
 	?f1 <- (item (name ?person))
 	?f2 <- (item (name finish_objetive))
+	?f3 <- (item (name person))
 	=>
 	(retract ?f)
 	(printout t "Conoce y recuerda a una person task" crlf)
@@ -283,6 +284,7 @@
 	(assert (task premind_person ?person ?place ?step))
 	;(modify ?f1 (status remind))
 	(modify ?f2 (status nil))
+	(modify ?f3 (status nil))
 )
 
 (defrule task_greet_known_person
@@ -709,12 +711,13 @@
 	=>
 	(retract ?goal)
 	(bind ?speech(str-cat "Now I am going to meet you at the " ?place ))
-	(assert (plan (name ?name) (number 1) (actions make_task ?name ?person went) (actions_num_params 2 4) (duration 6000)))
+	(assert (plan (name ?name) (number 1) (actions make_task ?name ?person went) (actions_num_params 2 5) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions train_person ?person) (duration 6000)))
 	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name ?name) (number 4) (actions update_status ?person reminded) (duration 6000)))
-	(assert (plan (name ?name) (number 5) (actions update_status finish_objetive finaly_reminded) (duration 6000)))
-	(assert (finish-planner ?name 5))
+	(assert (plan (name ?name) (number 5) (actions update_status person reminded) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions update_status finish_objetive finaly_reminded) (duration 6000)))
+	(assert (finish-planner ?name 6))
 )
 
 (defrule plan_remind-person_v2
@@ -761,14 +764,15 @@
 )
 
 (defrule plan_greet-known-person
-	?goal <- (objetive greet_known_person ?name ?person ?place ?step)
+	?goal <- (objetive greet_known_person ?name person ?place ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1)(actions make_task ?name ?person reminded)(actions_num_params 2 3)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions make_task ?name person reminded)(actions_num_params 2 3)(duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions find-reminded-person ?person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 4) (actions update_status finish_objetive finaly_greeted) (duration 6000)))
-	(assert (finish-planner ?name 4))
+	(assert (plan (name ?name) (number 3) (actions find-reminded-person person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions update_status person nil) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions update_status finish_objetive finaly_greeted) (duration 6000)))
+	(assert (finish-planner ?name 5))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; before split tasks
@@ -968,9 +972,9 @@
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)
 	?f1 <- (task pgreet_known_person ?place ?step)
-	(item (name ?person) (status reminded))
+	;(item (name ?person) (status reminded))
 	=>
 	(retract ?f1)
-	(assert (objetive greet_known_person task_greet_known_person ?person ?place ?step))
+	(assert (objetive greet_known_person task_greet_known_person person ?place ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
