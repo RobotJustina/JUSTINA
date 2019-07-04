@@ -588,7 +588,6 @@ void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstP
 
     JustinaHRI::waitAfterSay("Hello Barman, please put the available drinks on the bar", 6000);
     JustinaHRI::waitAfterSay("I wil try to remember the drinks", 6000);
-    boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
     JustinaHRI::waitAfterSay("Thank you", 6000);
 
     if(!JustinaTasks::alignWithTable(0.35)){
@@ -751,7 +750,7 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 
     JustinaHRI::waitAfterSay("guest please not move, and look at me", 6000);
     JustinaHRI::waitAfterSay("I will try to remember you", 6000);
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     
     // This is the last changes for the train
     std::vector<vision_msgs::VisionFaceObject> faces;
@@ -1189,7 +1188,7 @@ int main(int argc, char **argv) {
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 ros::spinOnce();*/
 
-                state = SM_SAY_WAIT_FOR_DOOR;
+                state = SM_SEND_INIT_CLIPS;
                 break;
             case SM_SEND_INIT_CLIPS:
                 initSpeech.params = "Final";
