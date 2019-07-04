@@ -17,6 +17,7 @@
 #define MAX_FIND_PERSON_COUNT 1
 #define MAX_FIND_PERSON_RESTART 0
 #define MAX_FIND_PERSON_ATTEMPTS 1
+#define MAX_CHECK_DOOR 2
 #define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
 #define MAX_DELAY_AFTER_SAY 300
@@ -86,6 +87,7 @@ int main(int argc, char **argv){
     int attemptsConfirmation = 0;
     int attemptsWaitConfirmation = 0;
     int attemptsMemorizing = 0;
+    int attemptsCheckDoor = 0;
     float pitchAngle;
     int genderRecog;
     int gender = 2;
@@ -235,6 +237,7 @@ int main(int argc, char **argv){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
+                    attemptsCheckDoor = 0;
                 }
                 else
                 {   
@@ -250,6 +253,7 @@ int main(int argc, char **argv){
                 findPersonCount = 0;
                 findPersonAttemps = 0;
                 findPersonRestart = 0;
+                attemptsCheckDoor = 0;
                 JustinaHRI::waitAfterSay("John, I'm going to find you", 5000);
                 //JustinaHRI::insertAsyncSpeech("John, I'm going to find you", 5000, ros::Time::now().sec, 10);
                 state = SM_FIND_TO_HOST;
@@ -264,14 +268,28 @@ int main(int argc, char **argv){
 
             case SM_WAIT_FOR_OPEN_DOOR:
                 std::cout << test << ".-> State SM_WAIT_FOR_OPEN_DOOR: Wait for the open the door." << std::endl;
-                opened = JustinaNavigation::doorIsOpen(0.9, 2000);
-                /*
-                if(!JustinaNavigation::obstacleInFront())
-                    nextState = SM_NAVIGATE_TO_INSPECTION;
-                break;
-                */
-                state = SM_SAY_OPEN_DOOR;
-                if(opened){
+                if(attemptsCheckDoor <= MAX_CHECK_DOOR){
+                    attemptsCheckDoor++;
+                    opened = JustinaNavigation::doorIsOpen(0.9, 2000);
+                    /*
+                       if(!JustinaNavigation::obstacleInFront())
+                       nextState = SM_NAVIGATE_TO_INSPECTION;
+                       break;
+                       */
+                    state = SM_SAY_OPEN_DOOR;
+                    if(opened){
+                        JustinaHRI::waitAfterSay("Hello human, please enter to the house", 6000, MIN_DELAY_AFTER_SAY);
+                        //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
+                        JustinaManip::hdGoTo(0.0, -0.3, 4000);
+                        state = SM_WAIT_FOR_PERSON_ENTRANCE;
+                        findPersonCount = 0;
+                        findPersonAttemps = 0;
+                        findPersonRestart = 0;
+                    }
+                    else
+                        ros::Duration(3).sleep();
+                }
+                else{
                     JustinaHRI::waitAfterSay("Hello human, please enter to the house", 6000, MIN_DELAY_AFTER_SAY);
                     //JustinaHRI::insertAsyncSpeech("Hello human, please enter to the house", 5000, ros::Time::now().sec, 10);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
@@ -280,8 +298,7 @@ int main(int argc, char **argv){
                     findPersonAttemps = 0;
                     findPersonRestart = 0;
                 }
-                else
-                    ros::Duration(3).sleep();
+
                 break;
 
             case SM_WAIT_FOR_PERSON_ENTRANCE:
