@@ -357,7 +357,7 @@ void callbackCmdConfirmation(
 			}
 			else{
 				num_speech_intents++;
-				if (num_speech_intents > 3){
+				if (num_speech_intents > 1){
 					JustinaHRI::waitAfterSay("please use a Q R code and I try to understand the command ", 5000);
 				}
 				else
