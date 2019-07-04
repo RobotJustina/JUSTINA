@@ -7777,16 +7777,16 @@ bool JustinaTasks::placeObjectDishWasher(float distanceToDishWasher, float maxHt
     float movTorsoFromCurrPos;
     int waitTime;
 
-    if (!JustinaTasks::alignWithTable(distanceToDishWasher)){
+    /*if (!JustinaTasks::alignWithTable(distanceToDishWasher)){
         std::cout << "cannot align with table" <<std::endl;
         if(!JustinaTasks::alignWithTable(distanceToDishWasher));{
             std::cout << "failed to excecute the task" <<std::endl;
             return false;
         }
-    }       
-
-
+    }*/
     
+    JustinaNavigation::moveDist(distanceToDishWasher, 4000);
+
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
     movTorsoFromCurrPos = maxHtorso - torsoSpine;
