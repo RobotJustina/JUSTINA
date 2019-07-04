@@ -119,6 +119,9 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
+
+				JustinaHRI::waitAfterSay("Human, please remove all the chairs from the kitchen table",6000);
+				
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
 					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {

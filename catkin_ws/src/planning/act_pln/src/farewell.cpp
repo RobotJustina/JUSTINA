@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
     
-  	int nextState = 0;
+  	int nextState = 2;
     bool fail = false;
     bool success = false;
   	bool recog=false;
@@ -217,9 +217,20 @@ int main(int argc, char** argv)
             
             case SM_INIT:
                 std::cout << "Farewell Test...->navigate to initial point " << std::endl;
-                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
-				std::cout << "Farewell Test...->First attempt to move" << std::endl;
-            	JustinaNavigation::moveDist(1.0, 4000);
+                //JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				//std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	//JustinaNavigation::moveDist(1.0, 4000);
+
+                std::cout << "P & G Test...-> start Farewell test" << std::endl;
+                JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaHRI::loadGrammarSpeechRecognized(grammarFollowID, GRAMMAR_POCKET_FOLLOW);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+        		JustinaManip::startHdGoTo(0.0, 0.0);
+        		JustinaHRI::say("I am ready for the Farewell test");
+        		ros::Duration(2.0).sleep();
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
