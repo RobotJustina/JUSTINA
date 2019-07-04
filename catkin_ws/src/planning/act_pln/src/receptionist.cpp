@@ -640,7 +640,8 @@ int main(int argc, char **argv){
                 if(attemptsMemorizing < MAX_ATTEMPTS_MEMORIZING){
                     JustinaManip::hdGoTo(0, 0, 2000);
                     //JustinaHRI::waitAfterSay("Human, please stay in front of me", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaHRI::waitAfterSay("Human, please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Human, please not move, and look at me. I'm memorizing your face", 6000, MIN_DELAY_AFTER_SAY);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                     JustinaVision::faceTrain(names[names.size() - 1], 4);//findPerson = 
 
                     // TODO Get service of the face and gender
@@ -654,8 +655,8 @@ int main(int argc, char **argv){
 
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
-                JustinaHRI::waitAfterSay("I'm memorizing your face", 6000, MIN_DELAY_AFTER_SAY);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                //JustinaHRI::waitAfterSay("I'm memorizing your face", 6000, MIN_DELAY_AFTER_SAY);
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                 if(JustinaVision::waitForTrainingFace(TIMEOUT_MEMORIZING)){
                     memorizingOperators.push_back(true);
@@ -894,7 +895,7 @@ int main(int argc, char **argv){
                     goaly = gy_w;
                     guest_z = gz_w;
                     std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
-                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
+                    //JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
                     if (thetaToGoal < 0.0f)
