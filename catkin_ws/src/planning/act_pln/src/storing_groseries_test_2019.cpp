@@ -587,8 +587,10 @@ int main(int argc, char** argv)
                             float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
                             std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
                             // JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
-                            float confidence = recoObjForTake[i].confidence; 
-                            confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
+                            /*float confidence = recoObjForTake[i].confidence; 
+                            confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();*/
+
+                            float confidence = 1.0;
                             
                             std::size_t found = recoObjForTake[i].id.find("unknown");
                             countKnownObjects = 0;
