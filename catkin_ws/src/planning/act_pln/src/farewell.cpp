@@ -347,8 +347,8 @@ int main(int argc, char** argv)
                 JustinaKnowledge::getKnownLocation(centroids_loc[0], goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 0.75, 90000);
-                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.75, 90000);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 1.2, 30000);
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -508,11 +508,11 @@ int main(int argc, char** argv)
             case SM_GoCoatRack:
                 std::cout << "Farewell Test...-> SM_GoCoatRack" << std::endl;
                 JustinaHRI::say("I am going to guide you to the coat hanger");
-                ros::Duration(1.0).sleep();
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
-                ros::Duration(1.0).sleep();
+                //ros::Duration(1.0).sleep();
+                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                //ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             
                 JustinaTasks::guideAPerson("coat_hanger", 120000, 1.5);
 
