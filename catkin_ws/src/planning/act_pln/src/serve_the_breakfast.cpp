@@ -95,6 +95,7 @@ int main(int argc, char **argv){
     bool withLeft = false;
     bool findSeat = false;
     bool doorOpenFlag = false;
+    bool flagNoBowl= false;
 
     bool onlyBowl = false;
 
@@ -103,6 +104,9 @@ int main(int argc, char **argv){
     int findSeatCount = 0;
     int attempsDoorOpend = 0;
     int attempsGrasp = 0;
+    int findObjectAttemps = 0;
+    int attempsBowlPour = 0;
+
     
     //SPEACH AND GRAMAR
     std::string param, typeOrder;
@@ -124,13 +128,16 @@ int main(int argc, char **argv){
 
     //FOR GRASP OBJECTS (CUTLERY)
     vision_msgs::VisionObjectList my_cutlery;     
-    my_cutlery.ObjectList.resize(6);  
-    my_cutlery.ObjectList[0].id="red";
-    my_cutlery.ObjectList[1].id="green";
-    my_cutlery.ObjectList[2].id="blue";
-    my_cutlery.ObjectList[3].id="purple";
-    my_cutlery.ObjectList[4].id="yellow";
-    my_cutlery.ObjectList[5].id="orange";
+    my_cutlery.ObjectList.resize(8);  
+    
+    my_cutlery.ObjectList[0].id="green";    
+    my_cutlery.ObjectList[1].id="lemon";
+    my_cutlery.ObjectList[2].id="melon";
+    my_cutlery.ObjectList[3].id="blue";
+    my_cutlery.ObjectList[4].id="pink_1";
+    my_cutlery.ObjectList[5].id="yellow";
+    my_cutlery.ObjectList[6].id="red";
+    my_cutlery.ObjectList[7].id="green_2";
 
     std::vector<vision_msgs::VisionObject> recoObjForTake;
     std::vector<vision_msgs::VisionObject> recoObjList;
@@ -229,14 +236,14 @@ int main(int argc, char **argv){
 
                 break;
             case SM_NAVIGATE_TO_TABLEWARE:
+                
                 std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
+                
                 JustinaNavigation::moveDist(2.5,5000);
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
-                JustinaHRI::waitAfterSay("I have reached ", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I have reached. ", 4000, MIN_DELAY_AFTER_SAY);
 
-                
-                
                 state = SM_ALIGN_WITH_TABLE;       
                 break;
 
@@ -261,6 +268,7 @@ int main(int argc, char **argv){
 
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
                 state = SM_FIND_OBJECTS_ON_TABLE;
+                findObjectAttemps = 0;
             
             break;
             case SM_FIND_OBJECTS_ON_TABLE:
@@ -274,7 +282,24 @@ int main(int argc, char **argv){
                 if(!JustinaVision::getObjectSeg(my_cutlery))
                 {
                         std::cout << ".-> Can not detect any object" << std::endl;
-                        state = SM_FIND_OBJECTS_ON_TABLE;
+                        //state = SM_FIND_OBJECTS_ON_TABLE;
+                        
+                        if( findObjectAttemps++ > 3  )
+                        {
+                            if(flagOnce)
+                            {
+                                //JustinaHRI::waitAfterSay("Human, Could place the bowl on  the table ", 4000, MIN_DELAY_AFTER_SAY);
+                                state = SM_ALIGN_WITH_TABLE;
+                                flagOnce=false;
+                                flagNoBowl= true;
+                            }else
+                            {
+                                state = SM_LOOK_FOR_TABLE;  
+                            }
+                        }else
+                        {
+                            JustinaNavigation::moveDist(-0.05,3000);
+                        }
                 }
                 else
                 {
@@ -443,7 +468,8 @@ int main(int argc, char **argv){
                 if(!JustinaVision::getObjectSeg(my_cutlery))
                 {
                         std::cout << ".-> Can not detect any object" << std::endl;
-                        state = SM_PLACE_SPOON;
+                        JustinaTasks::placeObject(withLeft);
+                        state = SM_GO_FOR_CEREAL;
                 }
                 else
                 {
@@ -543,8 +569,14 @@ int main(int argc, char **argv){
                 //alignWithTable();
 
                 //JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals inside the bowl", 4000, MIN_DELAY_AFTER_SAY);
-                
+                if(flagNoBowl == true)
+                {
+                    JustinaHRI::waitAfterSay("Human, can you place a bowl on the table ?", 4000, MIN_DELAY_AFTER_SAY);
+                    
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
+                }
                 state = SM_SEARCH_BOWL;
+                attempsBowlPour = 0;
             break;
 
             case SM_SEARCH_BOWL:
@@ -556,8 +588,9 @@ int main(int argc, char **argv){
                 alignWithTable();
 
                 JustinaManip::hdGoTo(0, -.8, 2000);
-                if(!JustinaVision::getObjectSeg(my_cutlery))
+                if( !JustinaVision::getObjectSeg(my_cutlery) && attempsBowlPour++ < 3 )
                 {
+                        JustinaNavigation::moveDist(-0.05,3000);
                         std::cout << ".-> Can not detect any object" << std::endl;
                         state = SM_SEARCH_BOWL;
                 }
@@ -867,12 +900,12 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             std::vector<float> articular;            
             
             if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            {   
                 JustinaManip::startLaGoToArticular(articular);
-            else
-                std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
-            
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             JustinaManip::startLaOpenGripper(0.5);
+
 
             articular.clear();
             if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.15, objToGraspZ, articular)){
@@ -895,6 +928,15 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 JustinaManip::startLaGoToArticular(articular);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
             }
+                
+            }
+            else
+            {
+                std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
+                JustinaManip::laGoToCartesianTraj(objToGraspX - 0.05, objToGraspY - 0.02, objToGraspZ, 5000);
+            }
+            
+            
         }
 
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -977,35 +1019,41 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             std::vector<float> articular;            
             
             if(JustinaManip::inverseKinematics(objToGraspX - 0.12, objToGraspY - 0.25, objToGraspZ, articular))
+            {
                 JustinaManip::startRaGoToArticular(articular);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                JustinaManip::startRaOpenGripper(0.5);
+
+                articular.clear();
+                if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.15, objToGraspZ, articular)){
+                    JustinaManip::waitForRaGoalReached(2500);
+                    JustinaManip::startRaGoToArticular(articular);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }
+
+                articular.clear();
+                if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY , objToGraspZ, articular)){
+                    JustinaManip::waitForRaGoalReached(2500);
+                    JustinaManip::startRaGoToArticular(articular);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }
+
+                articular.clear();
+                if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
+                    JustinaManip::waitForRaGoalReached(3500);
+                    JustinaManip::startRaGoToArticular(articular);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }
+
+                JustinaManip::waitForRaGoalReached(2500);
+
+            }
             else
+            {    
+                JustinaManip::raGoToCartesianTraj(objToGraspX - 0.05, objToGraspY - 0.0, objToGraspZ, 5000);          
                 std::cout << "JustinaTask.->Can not calculate inverse kinematics." << std::endl;
+            }
             
-            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-            JustinaManip::startRaOpenGripper(0.5);
-
-            articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.15, objToGraspZ, articular)){
-                JustinaManip::waitForRaGoalReached(2500);
-                JustinaManip::startRaGoToArticular(articular);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-            }
-
-            articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY , objToGraspZ, articular)){
-                JustinaManip::waitForRaGoalReached(2500);
-                JustinaManip::startRaGoToArticular(articular);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-            }
-
-            articular.clear();
-            if(JustinaManip::inverseKinematics(objToGraspX - 0.08, objToGraspY - 0.0, objToGraspZ, articular)){
-                JustinaManip::waitForRaGoalReached(3500);
-                JustinaManip::startRaGoToArticular(articular);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-            }
-
-            JustinaManip::waitForRaGoalReached(2500);
 
         }
         
