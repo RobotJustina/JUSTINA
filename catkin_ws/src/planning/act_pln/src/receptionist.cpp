@@ -411,7 +411,7 @@ int main(int argc, char **argv){
                                     }
                                     lastName = ss2.str();
                                     //names.push_back(ss2.str());
-                                    ss << ", please tell me justina yes or justina no";
+                                    ss << ", tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
                                     JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
                                     if(JustinaHRI::usePocketSphinx)
@@ -440,7 +440,7 @@ int main(int argc, char **argv){
                                     }
                                     lastDrink = ss2.str();
                                     //drinks.push_back(ss2.str());
-                                    ss << ", please tell me justina yes or justina no";
+                                    ss << ", tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
                                     JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
                                     if(JustinaHRI::usePocketSphinx)
@@ -941,10 +941,12 @@ int main(int argc, char **argv){
                 JustinaManip::waitForLaGoalReached(8000);
                  
                 JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                ss.str("");
-                ss << names[names.size() - 1] << "Please, look at me";
-                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                
+
+                //ss.str("");
+                //ss << names[names.size() - 1] << "Please, look at me";
+                //JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
