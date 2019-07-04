@@ -588,7 +588,7 @@ void callbackCmdObjectsOnLocation(const knowledge_msgs::PlanningCmdClips::ConstP
 
     JustinaHRI::waitAfterSay("Hello Barman, please put the available drinks on the bar", 6000);
     JustinaHRI::waitAfterSay("I wil try to remember the drinks", 6000);
-    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
     JustinaHRI::waitAfterSay("Thank you", 6000);
 
     if(!JustinaTasks::alignWithTable(0.35)){
