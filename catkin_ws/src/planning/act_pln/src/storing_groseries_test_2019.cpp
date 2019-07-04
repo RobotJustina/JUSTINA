@@ -292,6 +292,7 @@ int main(int argc, char** argv)
                     //JustinaHRI::asyncSpeech();
                     JustinaManip::startTorsoGoTo(0.1, 0, 0);
                     JustinaHRI::say("I will navigate to the kitchen cabinet");
+                    JustinaHRI::say("human, help me please, remove all chairs for me in the kitchen table");
                     if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
                         if(!JustinaNavigation::getClose("kitchen_cabinet",200000))
                             JustinaNavigation::getClose("kitchen_cabinet",200000);

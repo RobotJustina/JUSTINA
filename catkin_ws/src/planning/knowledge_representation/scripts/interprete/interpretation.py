@@ -1527,6 +1527,7 @@ meaning_mapping_patterns_eegpsr2 = [
 	# deliver to person
 	{"params": ["Action_deliver", "Person"],
 	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
+	"It": [["it"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
                                 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
@@ -1536,8 +1537,9 @@ meaning_mapping_patterns_eegpsr2 = [
 	"planner_not_confirmed": ''},
 
 	# deliver to person 2 parametros
-	{"params": ["Action_deliver", "Person", "Location"],
+	{"params": ["Action_deliver", "It", "Person", "Location"],
 	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
+	"It": [["it"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Location": [[], [], ["place", "room"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" +
