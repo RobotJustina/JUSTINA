@@ -138,7 +138,7 @@ int main(int argc, char **argv){
     
     std::vector<std::string> tokens;
 
-    STATE state = SM_SAY_WAIT_FOR_DOOR;//SM_INIT;
+    STATE state = SM_INIT;//SM_SAY_WAIT_FOR_DOOR;//SM_INIT;
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
@@ -193,13 +193,18 @@ int main(int argc, char **argv){
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
-                JustinaNavigation::moveDist(1.0, 4000);
+                
+                //JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+                //JustinaNavigation::moveDist(1.0, 4000);
+                
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 // JustinaHRI::say("I'm ready for storing groseries test");
                 // JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                 // JustinaHRI::asyncSpeech();
-                state = SM_GOTO_RECEPTIONIST_POINT;
+
+                //state = SM_GOTO_RECEPTIONIST_POINT;
+                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                
                 // ------ This is for not attempt open the cupboard
                 // nextState = SM_OPEN_DOOR;
                 break;
