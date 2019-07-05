@@ -2747,7 +2747,7 @@ meaning_mapping_patterns_where_is_this = [
 	{"params": ["Where", "Is", "Place"],
 	"Where": [["where"], [], [], []],
 	"Is": [["Is"], [], [], []],
-	"Place": [[], [], ["place"], []],
+	"Place": [[], [], ["place", "room"], []],
 	"conceptual_dependency": "-Place-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',

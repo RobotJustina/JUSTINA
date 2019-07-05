@@ -502,6 +502,15 @@
 	(printout t ?command)
 )
 
+(defrule where_is_this_room
+	?f <- (where_is_this_place ?room 1)
+	(item (type Room)(name ?room) (room ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "" ?room ""))
+	(printout t ?command)
+)
+
 ;$arenaq = How many doors has the {room}?
 (defrule how_many_doors
         ?f <- (cmd_many_doors ?room 1)
