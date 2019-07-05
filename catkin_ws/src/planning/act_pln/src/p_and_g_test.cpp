@@ -288,6 +288,7 @@ int main(int argc, char** argv)
                 else{
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
 
+					openDWFlag = true;
 					cont = 2;
 					contObj = 2;
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
@@ -296,11 +297,11 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 							if(objTaken==4)
 								nextState = SM_InspectTheObjetcs;
 							else
