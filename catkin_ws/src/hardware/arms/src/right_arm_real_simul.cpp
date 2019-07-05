@@ -18,7 +18,7 @@ float goalPos_simul[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 float goalSpeeds_simul[7] = {0.1, 0.1, 0.1, 0.1,};
 float goalGripper_simul = 0.0;
 
-int zero_arm[7] = {1402, 1546, 1893, 1951, 2024, 2282, 1922};
+int zero_arm[7] = {1402, 1546, 1893, 1951, 2024, 2383, 1922};
 // int zero_gripper[2] = {1200, 395}; // To the old Gripper
 int zero_gripper[2] = {1506, 500}; // To new Gripper
 
@@ -181,7 +181,7 @@ int main(int argc, char ** argv){
         dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
     }
 
-    uint16_t curr_position[9] = {1402, 1546, 1893, 1951, 2024, 2282, 1922, 1200, 395};
+    uint16_t curr_position[9] = {1402, 1546, 1893, 1951, 2024, 2383, 1922, 1200, 395};
 
     //float bitsPerRadian = (4095)/((360)*(3.141592/180));
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
@@ -331,7 +331,7 @@ int main(int argc, char ** argv){
             jointStates.position[6] = float(-(zero_arm[6]-curr_position[6])/bitsPerRadian);
             jointStates.position[7] = float( (zero_gripper[0]-curr_position[7])/bitsPerRadian);
             jointStates.position[8] = float(-(zero_gripper[1]-curr_position[8])/bitsPerRadian);
-            // std::cout << "right_arm_node.->curr_position[0]:" << curr_position[3] << std::endl;
+            //std::cout << "right_arm_node.->curr_position[0]:" << curr_position[5] << std::endl;
             
             if(!enableTorque){
             	std::cout << "left_arm_node.-> ";

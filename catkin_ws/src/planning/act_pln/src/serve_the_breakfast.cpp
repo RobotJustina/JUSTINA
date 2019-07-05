@@ -143,8 +143,8 @@ int main(int argc, char **argv){
     vision_msgs::VisionObjectList my_spoon;     
     my_spoon.ObjectList.resize(2);      
     
-    my_cutlery.ObjectList[0].id="red";
-    my_cutlery.ObjectList[1].id="green_2";
+    my_spoon.ObjectList[0].id="red";
+    my_spoon.ObjectList[1].id="green_2";
 
     std::vector<vision_msgs::VisionObject> recoObjForTake;
     std::vector<vision_msgs::VisionObject> recoObjList;
@@ -207,7 +207,7 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_ALIGN_WITH_TABLE;//SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
+    STATE state = SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
 
 
     while(ros::ok() && !success){
@@ -245,7 +245,7 @@ int main(int argc, char **argv){
             case SM_NAVIGATE_TO_TABLEWARE:
                 
                 std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
-                JustinaHRI::waitAfterSay("Human remove the chairs arund the  kitchen table", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Human remove the chairs around the  kitchen table", 4000, MIN_DELAY_AFTER_SAY);
                 JustinaNavigation::moveDist(2.5,5000);
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
@@ -294,7 +294,7 @@ int main(int argc, char **argv){
                         {
                                 std::cout << ".-> Can not detect any object" << std::endl;
                                 //state = SM_FIND_OBJECTS_ON_TABLE;
-                                if( findObjectAttemps++ < 3  )
+                                if( findObjectAttemps++ > 3  )
                                 {
                                         //JustinaHRI::waitAfterSay("Human, Could place the bowl on  the table ", 4000, MIN_DELAY_AFTER_SAY);
                                         state = SM_ALIGN_WITH_TABLE;
@@ -335,6 +335,8 @@ int main(int argc, char **argv){
                                         }
                                     
                                 } 
+
+
                             }
                 }
                 else
@@ -344,7 +346,7 @@ int main(int argc, char **argv){
                                         std::cout << ".-> Can not detect any object" << std::endl;
                                         //state = SM_FIND_OBJECTS_ON_TABLE;
                                         
-                                        if( findObjectAttemps++ < 3  )
+                                        if( findObjectAttemps++ > 3  )
                                         {
                                             
                                             {
@@ -354,6 +356,7 @@ int main(int argc, char **argv){
                                         {
                                             JustinaNavigation::moveDist(-0.05,3000);
                                         }
+                                         state = SM_LOOK_FOR_TABLE; 
                                 }
                                 else
                                 {
@@ -385,6 +388,7 @@ int main(int argc, char **argv){
 
                                             
                                         } 
+                                         state = SM_LOOK_FOR_TABLE; 
                                     }
                     
                 }
@@ -589,7 +593,7 @@ int main(int argc, char **argv){
                 JustinaManip::startRaOpenGripper(0.3);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
-                JustinaHRI::waitAfterSay("Human please put the cereals in my gripper", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Human please put the cereals in my right  gripper", 4000, MIN_DELAY_AFTER_SAY);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
                 
                 JustinaManip::startRaCloseGripper(0.5);
@@ -1068,7 +1072,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 }
 
                 articular.clear();
-                if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.0, objToGraspZ, articular)){
+                if(JustinaManip::inverseKinematics(objToGraspX - 0.06, objToGraspY - 0.05, objToGraspZ, articular)){
                     JustinaManip::waitForRaGoalReached(3500);
                     JustinaManip::startRaGoToArticular(articular);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -1467,6 +1471,8 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
         JustinaManip::startTorsoGoTo(torsoSpine+.4, 0, 0);
         JustinaManip::waitForTorsoGoalReached(waitTime);
+
+        JustinaNavigation::moveDist(0.15,3000);
 
         if (currPose.size() == 7) 
         {
