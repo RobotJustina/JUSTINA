@@ -73,7 +73,8 @@ int main(int argc, char** argv)
 	std::stringstream ss;
 
   	//int nextState = SM_WaitBlindGame;
-  	int nextState = 0;
+  	//int nextState = 0;
+	int nextState = SM_NAVIGATE_TO_THE_ARENA;
   	
   	//set the KINECT as the input device 
   	JustinaHRI::setInputDevice(JustinaHRI::RODE);
@@ -149,11 +150,11 @@ int main(int argc, char** argv)
 
 				JustinaHRI::waitAfterSay("Human, please remove all the chairs from the kitchen table",6000);
 				
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
 							nextState = SM_GRASP_OBJECT_R;
 						}
