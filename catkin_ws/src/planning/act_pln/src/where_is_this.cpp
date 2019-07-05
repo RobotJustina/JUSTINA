@@ -260,12 +260,15 @@ int main(int argc, char **argv){
                 
                 lastRecoSpeech="where is the kitchen cabinet";
 
-                //if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
-                if(1)
+                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
+                //if(1)
                 {
-                  //  if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
-                    if(1)
+                  if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                    //if(1)
                     {
+                        std::cout << ":::::::: " << lastInteSpeech;
+
+                        /*
                         if( lastRecoSpeech == "where is the tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace="in front of the sofas" ;  }
                         else if ( lastRecoSpeech == "where is the couch")  { placeLoc = "couch"; place=" couch "; roomPlace=" living room "; insidePlace=""; }
                         else if ( lastRecoSpeech == "where is the armchair") { placeLoc = "armchair"; place=" armchair "; roomPlace=" living room "; insidePlace="in fron of the coffe table";}
@@ -294,8 +297,9 @@ int main(int argc, char **argv){
                         else if ( lastRecoSpeech == "where is the kitchen cabinet") { placeLoc = "kitchen_cabinet"; place=" kitchen cabinet "; roomPlace=" kitchen "; insidePlace="in the corner near to the exit door"; }
                         else if ( lastRecoSpeech == "where is the island") { placeLoc = "island"; place=" island "; roomPlace=" kitchen "; insidePlace=" nex to the exit door"; }
                         else if ( lastRecoSpeech == "where is the kitchen") { placeLoc = "kitchen"; place=" kitchen "; roomPlace=" kitchen "; insidePlace=""; }
-
+                        
                         state = SM_INTERMEDIATE;
+                        */
                     }
                     else{}
                 }

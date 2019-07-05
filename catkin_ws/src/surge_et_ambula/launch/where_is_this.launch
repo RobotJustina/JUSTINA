@@ -1,0 +1,10 @@
+<launch>
+
+	<group ns="knowledge">
+		<node name="where_is_this" pkg="act_pln"  type="where_is_this" output="screen" />
+
+		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping where_is_this"/>
+	</group>
+
+	
+</launch>
