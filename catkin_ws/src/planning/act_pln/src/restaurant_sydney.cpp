@@ -154,8 +154,10 @@ int main(int argc, char** argv)
         switch(nextState){
             case SM_INIT:
                 std::cout << "State machine: SM_INIT" << std::endl;	
+                JustinaManip::hdGoTo(0, 0, 2000);
+                JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
+                JustinaHRI::waitAfterSay("I'm ready for the restaurant test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 nextState = SM_WAIT_FOR_INIT_COMMAND;
                 break;
 
@@ -163,9 +165,6 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
 				if(JustinaHRI::waitForSpecificSentence("justina start", timeoutspeech)){
                     JustinaHRI::enableSpeechRecognized(false);
-                    JustinaManip::hdGoTo(0, 0, 2000);
-                    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
-                    JustinaHRI::waitAfterSay("I'm ready for the restaurant test", timeoutspeech, maxDelayAfterSay);
                     JustinaHRI::waitAfterSay("I will search the bar", 3500, minDelayAfterSay);
                     nextState = SM_SEARCH_BAR;
                 }else
