@@ -3573,23 +3573,24 @@ void callbackCmdGuideToTaxi(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
 	}
 	else{
 		
-		JustinaHRI::say("I am going to guide you to the coat rack");
+		JustinaHRI::say("I am going to guide you to the coat hanger");
 		ros::Duration(1.0).sleep();
 		JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
 		ros::Duration(1.0).sleep();
 		JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	    
-		JustinaTasks::guideAPerson("entrance", 300000, 1.5);
+		JustinaTasks::guideAPerson("coat_hanger_2", 300000, 1.5);
 		
 		JustinaHRI::say("It is rainning outside and I think we will need an umbrella");
 		ros::Duration(1.0).sleep();
-		JustinaHRI::say("Please human take the umbrella, it is close to the coat rack");
+		JustinaHRI::say("Please human take the umbrella, it is close to the coat hanger");
 		ros::Duration(1.0).sleep();
 		JustinaHRI::say("hey guest, do not forget to take your coat");
 		ros::Duration(2.0).sleep();
 
 		JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
+		JustinaHRI::say("please open the exit door for me");
 		ros::Duration(1.0).sleep();
 
 		JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);/// revizar este giro, creo que hay que quitarlo
