@@ -40,8 +40,8 @@ def set_mapping(mapping):
         meaning_mapping_patterns = meaning_mapping_patterns_servingdrinks 
     elif mapping == 'spr': 
         meaning_mapping_patterns = meaning_mapping_patterns_spr
-    elif mapping == 'high': 
-        meaning_mapping_patterns = meaning_mapping_patterns_high_gpsr
+    elif mapping == 'where_is_this': 
+        meaning_mapping_patterns = meaning_mapping_patterns_where_is_this
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
@@ -2731,10 +2731,24 @@ meaning_mapping_patterns_servingdrinks = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+
         #Only drink
 	{"params": ["Favorite_drink"],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "-Favorite_drink-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
+        ]
+
+meaning_mapping_patterns_where_is_this = [
+        ##patron where is this SYDNEY 2019
+        #Only drink
+	{"params": ["Where", "Is", "Place"],
+	"Where": [["where"], [], [], []],
+	"Is": [["Is"], [], [], []],
+	"Place": [[], [], ["place"], []],
+	"conceptual_dependency": "-Place-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
