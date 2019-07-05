@@ -66,7 +66,6 @@ std::string test("serve the breakfast");
 void ArmLiving1()
 {
     
-
     std::vector<float> currPose;
     JustinaManip::getRaCurrentPos(currPose);
     if (currPose.size() == 7) 
@@ -127,6 +126,182 @@ void here()
             
 }
 
+bool pointingInOffice(int n)
+{
+    switch(n){
+
+        case 0:
+        JustinaNavigation::moveDistAngle(0,0.5,2000);
+        ArmLiving1();
+        JustinaHRI::waitAfterSay("Here is the  office, there is a desk and a chair on my left ", 4000, MIN_DELAY_AFTER_SAY);
+        
+        break;
+        case 1:
+            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("Here, there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
+            std::cout << "Here, there is the coat hanger next to the entrance door" << std::endl;
+        break;
+        case 2:
+            //JustinaNavigation::moveDistAngle(0,-0.5,2000); 
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("The entrance is in this room, also a coat hanger",4000,MIN_DELAY_AFTER_SAY);
+        break;
+        case 3:
+            //JustinaNavigation::moveDistAngle(0,0.5,2000); 
+            ArmLiving2();
+            JustinaHRI::waitAfterSay("On my left there is the desk, next to it there is the shoe rack ",4000,MIN_DELAY_AFTER_SAY);
+        break;
+        case 4:
+            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("In this place are a one desk, a shoe rack and  the  entrance door",4000,MIN_DELAY_AFTER_SAY);
+            std::cout << "Here, there is the coat hanger next to the entrance door" << std::endl;
+        break;
+        default:
+            JustinaNavigation::moveDistAngle(0,0.5,2000);
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("Here is the  office, there is a desk and a chair on my left ", 4000, MIN_DELAY_AFTER_SAY);
+            return false;
+        break;
+    }
+    JustinaManip::startLaGoTo("navigation");
+    JustinaManip::startRaGoTo("navigation");
+    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+    return true;
+}
+
+bool pointingInLivingRoom(int n)
+{
+        JustinaManip::startLaGoTo("navigation");
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+        switch(n){
+
+        case 0:
+            
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("Here is the living room you can rest on the sofa,", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            JustinaNavigation::moveDistAngle(0,0.5,3000);
+
+            JustinaManip::startLaGoTo("navigation");
+            ArmLiving2();
+            JustinaHRI::waitAfterSay("You also can watch a movie on this tv.", 4000, MIN_DELAY_AFTER_SAY);              
+            
+        break;
+        case 1:
+            here();
+            JustinaHRI::waitAfterSay("Here is the living in front there is the coffe table", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            
+        break;
+        case 2:
+            here();
+            JustinaHRI::waitAfterSay("Here is the living in front there is the couch", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        break;
+        default:
+            JustinaNavigation::moveDistAngle(0,0.5,3000);
+
+            JustinaManip::startLaGoTo("navigation");
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("here is the living room and there is an armchair  and a coffe table.", 4000, MIN_DELAY_AFTER_SAY); 
+            return false;
+        break;
+    }
+
+    JustinaManip::startLaGoTo("navigation");
+    JustinaManip::startRaGoTo("navigation");
+    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+    return true;
+}
+
+
+bool pointingInKitchen(int n)
+{
+        JustinaManip::startLaGoTo("navigation");
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+        switch(n){
+
+        case 0:
+            
+            here();
+            JustinaHRI::waitAfterSay("Here is the kitchen in front there is the  table", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));             
+            
+        break;
+        case 1:
+            here();
+            JustinaHRI::waitAfterSay("Here is the kitchen in front at the corner there is the cabinet", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000)); 
+            
+        break;
+        case 2:
+            ArmLiving2();
+            JustinaHRI::waitAfterSay("Here is the kitchen on the left there is the sink and the dishwasher", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        break;
+        default:
+           ArmLiving2();
+            JustinaHRI::waitAfterSay("Here is the kitchen on the left there is the fridge", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000)); 
+            return false;
+        break;
+    }
+
+    JustinaManip::startLaGoTo("navigation");
+    JustinaManip::startRaGoTo("navigation");
+    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+    return true;
+}
+
+
+
+bool pointingInBedRoom(int n)
+{
+        JustinaManip::startLaGoTo("navigation");
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+        switch(n){
+
+        case 0:
+            
+            here();
+            JustinaHRI::waitAfterSay("Here is the bedroom in front of me there is the bed", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));             
+            
+        break;
+        case 1:
+            ArmLiving1();
+            JustinaHRI::waitAfterSay("Here is the bedroom, on the right at the corner there is the shelf", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000)); 
+            
+        break;
+        default:
+           ArmLiving1();
+            JustinaHRI::waitAfterSay("Here is the kitchen on the right there is the sidetable", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaManip::startRaGoTo("navigation");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            return false;
+        break;
+    }
+
+    JustinaManip::startLaGoTo("navigation");
+    JustinaManip::startRaGoTo("navigation");
+    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+    return true;
+}
 
 int main(int argc, char **argv){
 
@@ -150,9 +325,11 @@ int main(int argc, char **argv){
     int countGraspAttemps = 0;
     int findSeatCount = 0;
     int attempsDoorOpend = 0;
-    int attempsGrasp = 0;
-    int findObjectAttemps = 0;
-    int attempsBowlPour = 0;
+    
+    int kitchenCounter=0;
+    int livingRoomCounter=0;
+    int officeCounter=0;
+    int bedRoomCounter=0;  
 
     
     //SPEACH AND GRAMAR
@@ -163,10 +340,6 @@ int main(int argc, char **argv){
     std::string grammarNamesID = "receptionistNames";
     std::string grammarDrinksID = "serve_the_breakfastDrinks";
     std::string grammarCommandsID = "serve_the_breakfastCommands";
-    
-
-
-
     
     std::stringstream ss;
     
@@ -206,6 +379,7 @@ int main(int argc, char **argv){
     std::string place = " tv ";
     std::string roomPlace=" living room "; 
     std::string insidePlace="in front of the sofas";
+    std::string stringLocation="";
 
         //LOCATIONS
     std::string startLoc = "bed";// "start_point";
@@ -222,7 +396,6 @@ int main(int argc, char **argv){
 
         switch(state){
             case SM_INIT:
-
 
                 //JustinaNavigation::getRaCurrentPos()
                 //JustinaKnowledge::addOrUpdateLocation()
@@ -258,7 +431,7 @@ int main(int argc, char **argv){
                 
                 std::cout << test << ".-> State SM_NAVIGATE_TO_START: Navigate to the start point " << std::endl;
                 
-                JustinaHRI::waitAfterSay("Human, Please tell me where is information point, for example  at the coffe table ", 8000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Please tell me where is information point, for example at the coffe table ", 8000, MIN_DELAY_AFTER_SAY);
                 
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_PLACES);
                 JustinaHRI::enableSpeechRecognized(true);
@@ -277,8 +450,8 @@ int main(int argc, char **argv){
                         boost::replace_all(lastInteSpeech,"_"," ");
 
                         
-                        ss.str();
-                        ss << "Human, Did you say " << lastInteSpeech << "please tell me robot yes or robot no.";
+                        ss.str("");
+                        ss << "Is the information point at the " << lastInteSpeech << ", say robot yes or robot no.";
                         
 
                         JustinaHRI::enableSpeechRecognized(false);
@@ -292,7 +465,7 @@ int main(int argc, char **argv){
                             {
                                 JustinaHRI::enableSpeechRecognized(false);
                                 ss.str("");
-                                ss << "Ok, I am going to the " << place << " information point ";
+                                ss << "Ok, I am going to the " << lastInteSpeech << " information point ";
                                 JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);  
                                 state = SM_GO_TO_INFO_POINT;          
                             }
@@ -300,7 +473,6 @@ int main(int argc, char **argv){
                             {
                                 std::cout << "DOSSS" << std::endl;
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
-                                
                             }
                         }
                         else
@@ -329,7 +501,17 @@ int main(int argc, char **argv){
                     JustinaNavigation::getClose(startLoc, 80000); 
                 
 
-                JustinaHRI::waitAfterSay("I have reached the information point. ", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I have reached to the information point. ", 4000, MIN_DELAY_AFTER_SAY);
+
+                if( lastInteSpeech == "tv"  || lastInteSpeech == "couch"  || lastInteSpeech == "armchair" || lastInteSpeech == "coffe_table" || lastInteSpeech == "trash_bin" || lastInteSpeech == "sideboard" || lastInteSpeech == "display_cabinet" || lastInteSpeech == "living_room" ) 
+                    whereIm = LIVINGROOM;
+                else if ( lastInteSpeech == "shoe_rack" || lastInteSpeech == "safe"|| lastInteSpeech == "coat_hanger"|| lastInteSpeech == "desk"|| lastInteSpeech == "office" ) 
+                    whereIm = OFFICE;
+                else if ( lastInteSpeech =="bed" || lastInteSpeech =="bedroom_chest"  || lastInteSpeech =="sidetable" || lastInteSpeech =="shelf" || lastInteSpeech =="bedroom" )
+                    whereIm = BEDROOM;
+                else if ( lastInteSpeech == "sink" || lastInteSpeech == "dishwasher"  || lastInteSpeech == "fridge"  || lastInteSpeech == "kitchen_table"  || lastInteSpeech == "kitchen_cabinet" || lastInteSpeech == "island"  || lastInteSpeech == "kitchen" )
+                    whereIm = KITCHEN;
+            
 
                 state = SM_TALK_TO_OPERATOR;       
             break;
@@ -337,7 +519,8 @@ int main(int argc, char **argv){
 
             case SM_TALK_TO_OPERATOR:
                                 
-                JustinaHRI::waitAfterSay("Human, Ask me for a place in the arena", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::waitAfterSay("Im ready for attending your questions, please tell me for example where is the bed ", 4000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::enableSpeechRecognized(true);
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_QUESTIONS);
                 
@@ -381,30 +564,48 @@ int main(int argc, char **argv){
                         else if ( lastInteSpeech == "island") { placeLoc = "island"; place=" island "; roomPlace=" kitchen "; insidePlace=" nex to the exit door"; }
                         else if ( lastInteSpeech == "kitchen") { placeLoc = "kitchen"; place=" kitchen "; roomPlace=" kitchen "; insidePlace=""; }
                         
-                        state = SM_INTERMEDIATE;
+                        
                         
                     }
                     else{}
                 }
                 else{}
 
-                JustinaManip::startTorsoGoTo(0.10, 0, 0);
+                ss.str("");
+                ss << "Do you want information for the" << place << ", please tell me robot yes or robot no.";     
+
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
+                JustinaHRI::enableSpeechRecognized(true);
+
+                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
+                {
+                    if(lastRecoSpeech.find("yes") != std::string::npos)
+                    {
+                        JustinaHRI::enableSpeechRecognized(false);
+                        ss.str("");
+                        ss << "Ok ";
+                        JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);  
+                        state = SM_INTERMEDIATE;          
+                    }
+                    else
+                    {
+                        std::cout << "DOSSS" << std::endl;
+                        JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                    }
+                }
                 
             break;
 
 
             case SM_INTERMEDIATE:
 
-                //JustinaKnowledge::getRobotPoseRoom(stringLocation);
-
                 ss.str("");
                 ss << "(assert (where_is_this_place " <<  placeLoc << " 1))";
                 
                 JustinaRepresentation::strQueryKDB(ss.str(),query ,1000);
                 std::cout << "-----------the " << place << "is in " << query <<std::endl;
-
-
-
 
                 std::cout << ".-> SM_TALK_TO_OPERATOR" << std::endl;
 
@@ -417,111 +618,73 @@ int main(int argc, char **argv){
                 if( whereIm == OFFICE && roomPlace == " office ")
                 {}
                 if( whereIm == OFFICE && roomPlace == " bedroom ")
-                {}
+                {
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
+                }
                 if( whereIm == OFFICE && roomPlace == " living room ")
-                {}
+                {
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
+                }
                 if( whereIm == OFFICE && roomPlace == " kitchen ")
                 {
                     
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
+
                     if(!gui) 
                         JustinaTasks::guideAPerson("living_room", 90000, 1.75); 
                     else
                         JustinaNavigation::getClose("living_room", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    ArmLiving1();
-                    JustinaHRI::waitAfterSay("Here is the living room you can rest on the sofa,", 4000, MIN_DELAY_AFTER_SAY);
-                    std::cout << "Here is the living room you can rest on the sofa," << std::endl;
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaNavigation::moveDistAngle(0,0.5,3000);
 
-                    JustinaManip::startLaGoTo("navigation");
-                    ArmLiving2();
-                    JustinaHRI::waitAfterSay("You also can watch a movie on this tv.", 4000, MIN_DELAY_AFTER_SAY);
-                    std::cout << "You also can watch a movie on this tv." << std::endl;
-                    JustinaManip::startLaGoTo("navigation");
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;
 
                 }
 
 
                 if( whereIm == BEDROOM && roomPlace == " office ")
-                {}
+                {
+                    if(!pointingInBedRoom(bedRoomCounter++))
+                        bedRoomCounter=0;
+                }
                 if( whereIm == BEDROOM && roomPlace == " bedroom ")
                 {}
                 if( whereIm == BEDROOM && roomPlace == " living room ")
                 {
-                    if(!gui)
-                        JustinaTasks::guideAPerson("receptionist_point", 90000, 1.75);
-                    else
-                        JustinaNavigation::getClose("receptionist_point", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                     
-                    if(first){
-                        JustinaNavigation::moveDistAngle(0,0.5,2000);
-                        ArmLiving1();
-                        JustinaHRI::waitAfterSay("Here is the  office there is a desk and a chair ,", 4000, MIN_DELAY_AFTER_SAY);
-                        std::cout << "Here is the  office there is a desk and a chair" << std::endl;
-                    }
-                    else
-                        {
-                            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
-                            ArmLiving1();
-                            JustinaHRI::waitAfterSay("Here, there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
-                            std::cout << "Here, there is the coat hanger next to the entrance door" << std::endl;
-                        }
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    if(!pointingInBedRoom(bedRoomCounter++))
+                        bedRoomCounter=0;
 
+                    if(!gui)
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("office_", 80000);
+
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
+                    
                 }
                 if( whereIm == BEDROOM && roomPlace == " kitchen ")
                 {
                     if(!gui)
-                        JustinaTasks::guideAPerson("receptionist_point", 90000, 1.75);
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
                     else
-                        JustinaNavigation::getClose("receptionist_point", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    
-                    if(first){
-                        JustinaNavigation::moveDistAngle(0,0.5,2000);
-                        ArmLiving1();
-                        JustinaHRI::waitAfterSay("Here is the  office there is a desk and a chair ,", 4000, MIN_DELAY_AFTER_SAY);
-                        std::cout << "Here is the  office there is a desk and a chair" << std::endl;
-                    }
-                    else
-                        {
-                            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
-                            ArmLiving1();
-                            JustinaHRI::waitAfterSay("Here there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
-                        }
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                        JustinaNavigation::getClose("office_", 80000);
 
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
 
 
                     if(!gui) 
                         JustinaTasks::guideAPerson("living_room", 90000, 1.75); 
                     else
                         JustinaNavigation::getClose("living_room", 80000); 
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    ArmLiving1();
-                    JustinaHRI::waitAfterSay("Here is the living room you can rest on the sofa,", 4000, MIN_DELAY_AFTER_SAY);
-                    std::cout << "Here is the living room you can rest on the sofa," << std::endl;
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaNavigation::moveDistAngle(0,0.5,3000);
 
-                    JustinaManip::startLaGoTo("navigation");
-                    ArmLiving2();
-                    JustinaHRI::waitAfterSay("You also can watching a movie on this tv.", 4000, MIN_DELAY_AFTER_SAY);
-                    JustinaManip::startLaGoTo("navigation");
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;
 
                 }
 
@@ -530,28 +693,12 @@ int main(int argc, char **argv){
                 if( whereIm == LIVINGROOM && roomPlace == " bedroom ")
                 {
                     if(!gui)
-                        JustinaTasks::guideAPerson("receptionist_point", 90000, 1.75);
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
                     else
-                        JustinaNavigation::getClose("receptionist_point", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                        JustinaNavigation::getClose("office_", 80000);
                     
-                    if(first){
-                        JustinaNavigation::moveDistAngle(0,0.5,2000);
-                        ArmLiving1();
-                        JustinaHRI::waitAfterSay("Here is the  office there is a desk and a chair ,", 4000, MIN_DELAY_AFTER_SAY);
-                        std::cout << "Here is the  office there is a desk and a chair" << std::endl;
-                    }
-                    else
-                        {
-                            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
-                            ArmLiving1();
-                            JustinaHRI::waitAfterSay("Here there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
-                        }
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
 
                 }
                 if( whereIm == LIVINGROOM && roomPlace == " living room ")
@@ -563,24 +710,16 @@ int main(int argc, char **argv){
 
                 if( whereIm == KITCHEN && roomPlace == " office ")
                 {
+                    if(!pointingInKitchen(kitchenCounter++))
+                        kitchenCounter=0;
+                    
                     if(!gui) 
                         JustinaTasks::guideAPerson("living_room", 90000, 1.75); 
                     else
                         JustinaNavigation::getClose("living_room", 80000); 
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    ArmLiving1();
-                    JustinaHRI::waitAfterSay("Here is the living room you can rest on the sofa,", 4000, MIN_DELAY_AFTER_SAY);
-                    std::cout << "Here is the living room you can rest on the sofa," << std::endl;
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaNavigation::moveDistAngle(0,0.5,3000);
-
-                    JustinaManip::startLaGoTo("navigation");
-                    ArmLiving2();
-                    JustinaHRI::waitAfterSay("You also can watching a movie on this tv.", 4000, MIN_DELAY_AFTER_SAY);
-                    JustinaManip::startLaGoTo("navigation");
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                    
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;
 
                 }
                 if( whereIm == KITCHEN && roomPlace == " bedroom ")
@@ -589,49 +728,23 @@ int main(int argc, char **argv){
                         JustinaTasks::guideAPerson("living_room", 90000, 1.75); 
                     else
                         JustinaNavigation::getClose("living_room", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    ArmLiving1();
-                    JustinaHRI::waitAfterSay("Here is the living room you can rest on the sofa,", 4000, MIN_DELAY_AFTER_SAY);
-                    std::cout << "Here is the living room you can rest on the sofa," << std::endl;
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaNavigation::moveDistAngle(0,0.5,3000);
-
-                    JustinaManip::startLaGoTo("navigation");
-                    ArmLiving2();
-                    JustinaHRI::waitAfterSay("also You can watching a movie on this tv.", 4000, MIN_DELAY_AFTER_SAY);
-                    JustinaManip::startLaGoTo("navigation");
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
-
-
+                    
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;
 
                     if(!gui)
-                        JustinaTasks::guideAPerson("receptionist_point", 90000, 1.75);
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
                     else
-                        JustinaNavigation::getClose("receptionist_point", 80000);
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    
-                    if(first){
-                        JustinaNavigation::moveDistAngle(0,0.5,2000);
-                        ArmLiving1();
-                        JustinaHRI::waitAfterSay("Here is the  office there is a desk and a chair ,", 4000, MIN_DELAY_AFTER_SAY);
-                        std::cout << "Here is the  office there is a desk and a chair" << std::endl;
-                    }
-                    else
-                        {
-                            JustinaNavigation::moveDistAngle(0,-0.5,2000); 
-                            ArmLiving1();
-                            JustinaHRI::waitAfterSay("Here there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
-                        }
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaHRI::waitAfterSay("Please follow me ,", 4000, MIN_DELAY_AFTER_SAY);
+                        JustinaNavigation::getClose("office_", 80000);
+                    if(!pointingInOffice(officeCounter++))
+                        officeCounter=0;
 
                 }
                 if( whereIm == KITCHEN && roomPlace == " living room ")
-                {}
+                {
+                    if(!pointingInKitchen(kitchenCounter++))
+                        kitchenCounter=0;
+                }
                 if( whereIm == KITCHEN && roomPlace == " kitchen ")
                 {
                    
@@ -656,8 +769,8 @@ int main(int argc, char **argv){
             
             case SM_EXPLAIN:
                 
-                JustinaHRI::waitAfterSay("human, Whe have reached.", 4000, MIN_DELAY_AFTER_SAY);
-                std::cout << "human, Whe have reached." << std::endl;
+                JustinaHRI::waitAfterSay(" Whe have reached to the location", 4000, MIN_DELAY_AFTER_SAY);
+                std::cout << "Whe have reached to the location" << std::endl;
                 ros::Duration(2.0).sleep();
                 ss.str("");
                 ss << "We are in the " << roomPlace << " and here is the " << place ;
