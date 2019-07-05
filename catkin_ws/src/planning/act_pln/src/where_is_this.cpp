@@ -28,6 +28,8 @@
 #define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
 #define GRAMMAR_QUESTIONS "where_is_this.xml"
+#define GRAMMAR_PLACES "incomplete_place.xml"
+#define GRAMMAR_COMMANDS "commands.xml"
 
 /**
 ss.str("")
@@ -52,7 +54,8 @@ enum STATE{
     SM_GO_TO_PLACE,
     SM_EXPLAIN,
     SM_RETURN,
-    SM_FINISH_TEST
+    SM_FINISH_TEST,
+    SM_GO_TO_INFO_POINT
 };
 
 std::string lastRecoSpeech;
@@ -132,7 +135,7 @@ int main(int argc, char **argv){
     ros::Rate rate(10);
 
     //FLAGS
-    bool gui =false;//true;
+    bool gui = true;
     bool flagOnce = true;
     bool success = false;
     bool withLeft = false;
@@ -185,7 +188,6 @@ int main(int argc, char **argv){
     confirmCommands.push_back("robot no");
 
 
-
     JustinaHRI::setNodeHandle(&nh);
     JustinaTools::setNodeHandle(&nh);
     JustinaTasks::setNodeHandle(&nh);
@@ -212,7 +214,7 @@ int main(int argc, char **argv){
     std::string query;
 
 
-    STATE state = SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
+    STATE state = SM_NAVIGATE_TO_START;//SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
    
     JustinaRepresentation::initKDB("",false,20000);
 
@@ -243,7 +245,7 @@ int main(int argc, char **argv){
                 if( JustinaNavigation::doorIsOpen(0.9, 2000) || attempsDoorOpend >= MAX_ATTEMPTS_DOOR )
                 {
                     state = SM_NAVIGATE_TO_START;
-
+                    JustinaNavigation::moveDist(2.5,5000);
                     //JustinaHRI::waitAfterSay("Thank you, I will navigate to the start point", 4000, MIN_DELAY_AFTER_SAY);
                 }
                 else
@@ -251,16 +253,83 @@ int main(int argc, char **argv){
 
             break;
 
+
             case SM_NAVIGATE_TO_START:
                 
-                std::cout << test << ".-> State SM_NAVIGATE_TO_STARTCHEN: Navigate to the start point." << std::endl;
+                std::cout << test << ".-> State SM_NAVIGATE_TO_START: Navigate to the start point " << std::endl;
                 
-                JustinaNavigation::moveDist(2.5,5000);
-                //if(!JustinaNavigation::getClose(startLoc, 80000) )
-                //    JustinaNavigation::getClose(startLoc, 80000); 
+                JustinaHRI::waitAfterSay("Human, Please tell me where is information point, for example  at the coffe table ", 8000, MIN_DELAY_AFTER_SAY);
+                
+                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_PLACES);
+                JustinaHRI::enableSpeechRecognized(true);
                 
 
-                JustinaHRI::waitAfterSay("I have reached. ", 4000, MIN_DELAY_AFTER_SAY);
+                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
+                {
+                    if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                    {
+                        JustinaHRI::enableSpeechRecognized(false);
+                        
+                        std::cout << "UUUNOO" << std::endl;
+
+                        startLoc = lastInteSpeech;
+
+                        boost::replace_all(lastInteSpeech,"_"," ");
+
+                        
+                        ss.str();
+                        ss << "Human, Did you say " << lastInteSpeech << "please tell me robot yes or robot no.";
+                        
+
+                        JustinaHRI::enableSpeechRecognized(false);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                        JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
+                        JustinaHRI::enableSpeechRecognized(true);
+
+                        if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
+                        {
+                            if(lastRecoSpeech.find("yes") != std::string::npos)
+                            {
+                                JustinaHRI::enableSpeechRecognized(false);
+                                ss.str("");
+                                ss << "Ok, I am going to the " << place << " information point ";
+                                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);  
+                                state = SM_GO_TO_INFO_POINT;          
+                            }
+                            else
+                            {
+                                std::cout << "DOSSS" << std::endl;
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                                
+                            }
+                        }
+                        else
+                        {
+                            std::cout << "TRESS" << std::endl;
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                            break;
+                        }
+                   
+                    }
+                }else{
+                    std::cout << "CCCUAAATRRROO" << std::endl;
+                    JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                    break;
+                }
+
+                std::cout << " CIIIINCOO " << std::endl;
+                
+
+            break;
+
+
+            case SM_GO_TO_INFO_POINT:
+
+                if(!JustinaNavigation::getClose(startLoc, 80000) )
+                    JustinaNavigation::getClose(startLoc, 80000); 
+                
+
+                JustinaHRI::waitAfterSay("I have reached the information point. ", 4000, MIN_DELAY_AFTER_SAY);
 
                 state = SM_TALK_TO_OPERATOR;       
             break;
@@ -268,11 +337,11 @@ int main(int argc, char **argv){
 
             case SM_TALK_TO_OPERATOR:
                                 
-                JustinaHRI::waitAfterSay("Human, Ask me for something in the arena", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Human, Ask me for a place in the arena", 4000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::enableSpeechRecognized(true);
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_QUESTIONS);
                 
-                lastRecoSpeech="where is the kitchen cabinet";
+                //lastRecoSpeech="where is the kitchen cabinet";
 
                 if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
                 //if(1)
@@ -283,7 +352,7 @@ int main(int argc, char **argv){
                         std::cout << ":::::::: " << lastInteSpeech;
 
                         //coat_hanger   trash bitn     
-                        if( lastInteSpeech == "where is the tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace="in front of the sofas" ;  }
+                        if( lastInteSpeech == "tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace="in front of the sofas" ;  }
                         else if ( lastInteSpeech == "couch")  { placeLoc = "couch"; place=" couch "; roomPlace=" living room "; insidePlace=""; }
                         else if ( lastInteSpeech == "armchair") { placeLoc = "armchair"; place=" armchair "; roomPlace=" living room "; insidePlace="in fron of the coffe table";}
                         else if ( lastInteSpeech == "coffe_table") { placeLoc = "coffe_table"; place=" coffe table "; roomPlace=" living room "; insidePlace="in front of the sofas"; }

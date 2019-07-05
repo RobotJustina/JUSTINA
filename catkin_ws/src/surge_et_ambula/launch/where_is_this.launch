@@ -1,10 +1,15 @@
 <launch>
+	<include file="$(find surge_et_ambula)/launch/justina_simul.launch">
+			
+		<!--arg name="initial_pose_x" default="3.19"/>
+		<arg name="initial_pose_y" default="2.22"/>
+		<arg name="initial_pose_a" default="0.03"/>
+		<arg name="head_offset" value="-0.02"/-->
+	</include>
 
 	<group ns="knowledge">
-		<node name="where_is_this" pkg="act_pln"  type="where_is_this" output="screen" />
+		<!--node name="where_is_this" pkg="act_pln"  type="where_is_this" output="screen" /-->
 
-		<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-		
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping where_is_this"/>
 	</group>
 
