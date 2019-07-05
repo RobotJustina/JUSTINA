@@ -484,6 +484,15 @@
         (printout t ?command)
 )
 
+(defrule where_is_this_placement
+        ?f <- (where_is_this_place ?place 1)
+        (item (type ?fd&:(or (eq ?fd Furniture) (eq ?fd Door))) (name ?place) (room ?location))
+        =>
+        (retract ?f)
+        (bind ?command (str-cat  "" ?location ""))
+        (printout t ?command)
+)
+
 (defrule where_placement_room
 	?f <- (cmd_what_place ?room 1)
 	(item (type Room)(name ?room) (room ?location))
