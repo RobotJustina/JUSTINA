@@ -53,6 +53,7 @@ int main(int argc, char** argv)
 	bool success = false;
 	bool door_open = false;
 	bool plate = false;
+	bool flagPlate = false;
 
 
 	//Reynaldo vars
@@ -73,8 +74,8 @@ int main(int argc, char** argv)
 	std::stringstream ss;
 
   	//int nextState = SM_WaitBlindGame;
-  	//int nextState = 0;
-	int nextState = SM_NAVIGATE_TO_THE_ARENA;
+  	int nextState = 0;
+	//int nextState = SM_NAVIGATE_TO_THE_ARENA;
   	
   	//set the KINECT as the input device 
   	JustinaHRI::setInputDevice(JustinaHRI::RODE);
@@ -543,9 +544,9 @@ int main(int argc, char** argv)
 
 			  	if(openDWFlag){
 					JustinaHRI::say("Human i need your hel, please, open the dishwasher");
-					ros::Duration(0.5).sleep();
+					ros::Duration(0.8).sleep();
 					JustinaHRI::say("then pull off the rack");
-					ros::Duration(0.5).sleep();
+					ros::Duration(0.8).sleep();
 					JustinaHRI::say("finally, close the dishwasher until its door touches the rack");
 					ros::Duration(5.0).sleep();
 					JustinaHRI::say("thank you");
@@ -586,6 +587,7 @@ int main(int argc, char** argv)
       					std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
 						JustinaNavigation::moveDist(0.1, 3000);  
 						nextState = SM_DeliverObject;
+						flagPlate=true;
 						break;
 					}
 
