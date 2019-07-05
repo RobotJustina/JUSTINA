@@ -357,7 +357,7 @@
 
 (defrule exe-plan-find-reminded-person
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-reminded-person person ?place) (duration ?t))
-	?f <- (item (name ?person)(status reminded))
+	?f <- (item (name ?person&:(neq ?person person))(status reminded))
 	=>
 	(bind ?command (str-cat "" ?person " " ?place ""))
 	(assert (send-blackboard ACT-PLN find_reminded_person ?command ?t 4))
