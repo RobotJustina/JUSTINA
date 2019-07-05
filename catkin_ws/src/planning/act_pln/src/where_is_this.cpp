@@ -387,6 +387,8 @@ int main(int argc, char **argv){
 
     std::string query;
 
+    int infopointAttemps =0;
+    int placeAttemps =0;
 
     STATE state = SM_NAVIGATE_TO_START;//SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
    
@@ -461,7 +463,7 @@ int main(int argc, char **argv){
 
                         if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
                         {
-                            if(lastRecoSpeech.find("yes") != std::string::npos)
+                            if(lastRecoSpeech.find("yes") != std::string::npos ||  infopointAttemps >= 2)
                             {
                                 JustinaHRI::enableSpeechRecognized(false);
                                 ss.str("");
@@ -473,20 +475,21 @@ int main(int argc, char **argv){
                             {
                                 std::cout << "DOSSS" << std::endl;
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                                infopointAttemps++;
                             }
                         }
                         else
                         {
                             std::cout << "TRESS" << std::endl;
                             JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
-                            break;
+                             infopointAttemps++;
                         }
                    
                     }
                 }else{
                     std::cout << "CCCUAAATRRROO" << std::endl;
                     JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
-                    break;
+                     infopointAttemps++;
                 }
 
                 std::cout << " CIIIINCOO " << std::endl;
@@ -542,19 +545,19 @@ int main(int argc, char **argv){
                         else if ( lastInteSpeech == "trash_bin") { placeLoc = "trash_bin"; place=" trash bin "; roomPlace=" living room "; insidePlace=""; }
                         else if ( lastInteSpeech == "sideboard") { placeLoc = "sideboard"; place=" side board "; roomPlace=" living room ";  insidePlace="";}
                         else if ( lastInteSpeech == "display_cabinet") { placeLoc = "display_cabinet"; place=" display cabinet "; roomPlace=" living room "; insidePlace="and tv is on it."; }
-                        else if ( lastInteSpeech == "living_room") { placeLoc = "living_room"; place=" living room "; roomPlace=" arena of Robo cup at home";insidePlace=""; }
+                        else if ( lastInteSpeech == "living_room") { placeLoc = "living_room"; place=" living room "; roomPlace=" arena";insidePlace=""; }
 
                         else if ( lastInteSpeech == "shoe_rack") { placeLoc = "shoe_rack"; place=" shoe rack "; roomPlace=" office "; insidePlace="near to the entrance"; }
                         else if ( lastInteSpeech == "safe") { placeLoc = "safe"; place=" safe "; roomPlace=" office "; insidePlace=""; }
                         else if ( lastInteSpeech == "coat_hanger") { placeLoc = "coat_hanger_2"; place=" coat hanger "; roomPlace=" office "; insidePlace="near to the shoe rack"; }
                         else if ( lastInteSpeech == "desk") { placeLoc = "desk"; place=" desk "; roomPlace=" office "; insidePlace="near to the door"; }
-                        else if ( lastInteSpeech == "office") { placeLoc = "office "; place=" office "; roomPlace=" arena of Robo cup at home"; insidePlace=""; }
+                        else if ( lastInteSpeech == "office") { placeLoc = "office "; place=" office "; roomPlace=" arena "; insidePlace=""; }
                         
                         else if ( lastInteSpeech =="bed") { placeLoc = "bed"; place=" bed "; roomPlace=" bedroom "; insidePlace="in front of shelf";  }
                         else if ( lastInteSpeech =="bedroom_chest") { placeLoc = "bedroom_chest"; place=" bedroom chest "; roomPlace=" bedroom "; insidePlace=" in a the corner"; }
                         else if ( lastInteSpeech =="sidetable") { placeLoc = "sidetable"; place=" side table "; roomPlace=" bedroom ";insidePlace="next to the shelf "; }
                         else if ( lastInteSpeech =="shelf") { placeLoc = "shelf"; place=" shelf "; roomPlace=" bedroom "; insidePlace="next to the side table"; }
-                        else if ( lastInteSpeech =="bedroom") { placeLoc = "bedroom "; place=" bedroom " ; roomPlace=" arena of robocup at home";insidePlace="";}
+                        else if ( lastInteSpeech =="bedroom") { placeLoc = "bedroom "; place=" bedroom " ; roomPlace=" arena ";insidePlace="";}
 
                         else if ( lastInteSpeech == "sink") { placeLoc = "sink"; place=" sink "; roomPlace=" kitchen "; insidePlace="next to the dish washer"; }
                         else if ( lastInteSpeech == "dishwasher") { placeLoc = "dishwasher"; place=" dishwasher "; roomPlace=" kitchen "; insidePlace="between the sink and the fridge";}
@@ -562,7 +565,10 @@ int main(int argc, char **argv){
                         else if ( lastInteSpeech == "kitchen_table") { placeLoc = "kitchen_table"; place=" kitchen table "; roomPlace=" kitchen "; insidePlace="in the center of the kitchen"; }
                         else if ( lastInteSpeech == "kitchen_cabinet") { placeLoc = "kitchen_cabinet"; place=" kitchen cabinet "; roomPlace=" kitchen "; insidePlace="in the corner near to the exit door"; }
                         else if ( lastInteSpeech == "island") { placeLoc = "island"; place=" island "; roomPlace=" kitchen "; insidePlace=" nex to the exit door"; }
-                        else if ( lastInteSpeech == "kitchen") { placeLoc = "kitchen"; place=" kitchen "; roomPlace=" kitchen "; insidePlace=""; }
+                        else if ( lastInteSpeech == "kitchen") { placeLoc = "kitchen"; place=" kitchen "; roomPlace=" arena "; insidePlace=""; }
+                        
+                        else if ( lastInteSpeech == "exit") { placeLoc = "exit"; place=" exit "; roomPlace=" kitchen "; insidePlace=""; }
+                        else if ( lastInteSpeech == "entrance") { placeLoc = "entrance"; place=" entrance "; roomPlace=" office "; insidePlace=""; }
                         
                         
                         
@@ -581,20 +587,22 @@ int main(int argc, char **argv){
 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
                 {
-                    if(lastRecoSpeech.find("yes") != std::string::npos)
+                    if(lastRecoSpeech.find("yes") != std::string::npos || placeAttemps >= 2)
                     {
                         JustinaHRI::enableSpeechRecognized(false);
                         ss.str("");
                         ss << "Ok ";
                         JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);  
-                        state = SM_INTERMEDIATE;          
+                        state = SM_INTERMEDIATE;    
+                        placeAttemps=0;      
                     }
                     else
                     {
                         std::cout << "DOSSS" << std::endl;
                         JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
+                        placeAttemps++;
                     }
-                }
+                }else{placeAttemps++;}
                 
             break;
 
@@ -619,11 +627,21 @@ int main(int argc, char **argv){
                 {}
                 if( whereIm == OFFICE && roomPlace == " bedroom ")
                 {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("office_", 80000);
+
                     if(!pointingInOffice(officeCounter++))
                         officeCounter=0;
                 }
                 if( whereIm == OFFICE && roomPlace == " living room ")
                 {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("office_", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("office_", 80000);
+
                     if(!pointingInOffice(officeCounter++))
                         officeCounter=0;
                 }
@@ -647,6 +665,11 @@ int main(int argc, char **argv){
 
                 if( whereIm == BEDROOM && roomPlace == " office ")
                 {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("bedroom", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("bedroom", 80000);
+
                     if(!pointingInBedRoom(bedRoomCounter++))
                         bedRoomCounter=0;
                 }
@@ -654,7 +677,11 @@ int main(int argc, char **argv){
                 {}
                 if( whereIm == BEDROOM && roomPlace == " living room ")
                 {
-                    
+                    if(!gui)
+                        JustinaTasks::guideAPerson("bedroom", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("bedroom", 80000);
+
                     if(!pointingInBedRoom(bedRoomCounter++))
                         bedRoomCounter=0;
 
@@ -689,7 +716,15 @@ int main(int argc, char **argv){
                 }
 
                 if( whereIm == LIVINGROOM && roomPlace == " office ")
-                {}
+                {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("living_room", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("living_room", 80000);
+
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;
+                }
                 if( whereIm == LIVINGROOM && roomPlace == " bedroom ")
                 {
                     if(!gui)
@@ -705,11 +740,22 @@ int main(int argc, char **argv){
                 {}
                 if( whereIm == LIVINGROOM && roomPlace == " kitchen ")
                 {
-                   
+                    if(!gui)
+                        JustinaTasks::guideAPerson("living_room", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("living_room", 80000);
+
+                    if(!pointingInLivingRoom(livingRoomCounter++))
+                        livingRoomCounter=0;  
                 }
 
                 if( whereIm == KITCHEN && roomPlace == " office ")
                 {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("kitchen", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("kitchen", 80000);
+
                     if(!pointingInKitchen(kitchenCounter++))
                         kitchenCounter=0;
                     
@@ -739,9 +785,16 @@ int main(int argc, char **argv){
                     if(!pointingInOffice(officeCounter++))
                         officeCounter=0;
 
+
+
                 }
                 if( whereIm == KITCHEN && roomPlace == " living room ")
                 {
+                    if(!gui)
+                        JustinaTasks::guideAPerson("kitchen", 90000, 1.75);
+                    else
+                        JustinaNavigation::getClose("kitchen", 80000);
+
                     if(!pointingInKitchen(kitchenCounter++))
                         kitchenCounter=0;
                 }
