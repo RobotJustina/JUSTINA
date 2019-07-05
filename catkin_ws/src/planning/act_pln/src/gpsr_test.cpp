@@ -3045,10 +3045,10 @@ void callbackCmdTrainPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& ms
         JustinaManip::hdGoTo(0.0, 0.0, 5000);
 
     ss.str("");
-    ss << tokens[0] << " please not move, and look at me, I try to remember you";
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    ss << tokens[0] << " please stand up and put in front of me, I will memorize your face";
+    JustinaHRI::waitAfterSay(ss.str(), 10000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 
-    JustinaHRI::waitAfterSay(ss.str(), 6000);
     JustinaVision::faceTrain(tokens[0], 4);
     
     while(!finish_train && count < 4){
