@@ -258,7 +258,7 @@ int main(int argc, char **argv){
                 
                 std::cout << test << ".-> State SM_NAVIGATE_TO_START: Navigate to the start point " << std::endl;
                 
-                JustinaHRI::waitAfterSay("Human, Please tell me where is information point, for example  at the coffe table ", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("Human, Please tell me where is information point, for example  at the coffe table ", 8000, MIN_DELAY_AFTER_SAY);
                 
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_PLACES);
                 JustinaHRI::enableSpeechRecognized(true);
@@ -293,17 +293,21 @@ int main(int argc, char **argv){
                                 JustinaHRI::enableSpeechRecognized(false);
                                 ss.str("");
                                 ss << "Ok, I am going to the " << place << " information point ";
-                                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);            
+                                JustinaHRI::waitAfterSay(ss.str(), 6000, MAX_DELAY_AFTER_SAY);  
+                                state = SM_GO_TO_INFO_POINT;          
                             }
-                            else{
+                            else
+                            {
                                 std::cout << "DOSSS" << std::endl;
                                 JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
-                                break;
+                                
                             }
-                        }else{
+                        }
+                        else
+                        {
                             std::cout << "TRESS" << std::endl;
                             JustinaHRI::waitAfterSay("Sorry I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
-                                break;
+                            break;
                         }
                    
                     }
@@ -313,7 +317,8 @@ int main(int argc, char **argv){
                     break;
                 }
 
-                state = SM_GO_TO_INFO_POINT;
+                std::cout << " CIIIINCOO " << std::endl;
+                
 
             break;
 
