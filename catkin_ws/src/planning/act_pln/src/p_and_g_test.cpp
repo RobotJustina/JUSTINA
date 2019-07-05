@@ -53,7 +53,8 @@ int main(int argc, char** argv)
 	bool success = false;
 	bool door_open = false;
 	bool plate = false;
-	bool flagPlate = false;
+	bool flagPlate = true;
+	bool flagEnd = false;
 
 
 	//Reynaldo vars
@@ -303,21 +304,21 @@ int main(int argc, char** argv)
 					if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
 						if (JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
-							if(contObj==4)
+							if(!flagPlate)
 								nextState = SM_InspectTheObjetcs;
 							else
 								nextState = SM_Ask_Plate;
 						}
 					} 
 					else{
-						if(contObj==4)
+						if(!flagPlate)
 							nextState = SM_InspectTheObjetcs;
 						else
 							nextState = SM_Ask_Plate;
 					}
 				} 
 				else {
-					if(contObj==4)
+					if(!flagPlate)
 						nextState = SM_InspectTheObjetcs;
 					else
 						nextState = SM_Ask_Plate;
@@ -335,6 +336,7 @@ int main(int argc, char** argv)
                 JustinaTasks::detectObjectInGripper("plate", true, 10000);
 				contObj ++;
 				nextState = SM_Take_Cutlery;
+				flagPlate = false;
 				
 
 				break;
@@ -402,6 +404,8 @@ int main(int argc, char** argv)
 				break;
 
       		case SM_InspectTheObjetcs:
+
+			  	flagEnd = true;
 
 			  	JustinaManip::startTorsoGoTo(0.1, 0, 0);
 				JustinaManip::waitForTorsoGoalReached(0.5);
@@ -535,6 +539,12 @@ int main(int argc, char** argv)
       				else
       					nextState = SM_InspectTheObjetcs;
 				}
+				if(flagEnd){
+					JustinaManip::startTorsoGoTo(0.1, 0, 0);
+					JustinaManip::waitForTorsoGoalReached(0.5);
+					cont ++;
+					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
+				}
 
 				attempts ++;
 
@@ -612,7 +622,7 @@ int main(int argc, char** argv)
 					}
 				
 
-      				if(contObj == 5){
+      				if(contObj == 5 || flagEnd){
       					nextState = SM_NAVIGATE_TO_THE_EXIT;
 						JustinaHRI::say("human close the diswasher, please");
 						ros::Duration(0.5).sleep();
