@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 
 					openDWFlag = true;
 					cont = 2;
-					contObj = 2;
+					//contObj = 2;
 					nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
                 }
                 break;
@@ -302,21 +302,21 @@ int main(int argc, char** argv)
 					if (!JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
 						if (JustinaTasks::sayAndSyncNavigateToLoc("table_4", 120000)) {
-							if(objTaken==4)
+							if(contObj==4)
 								nextState = SM_InspectTheObjetcs;
 							else
 								nextState = SM_Ask_Plate;
 						}
 					} 
 					else{
-						if(objTaken==4)
+						if(contObj==4)
 							nextState = SM_InspectTheObjetcs;
 						else
 							nextState = SM_Ask_Plate;
 					}
 				} 
 				else {
-					if(objTaken==4)
+					if(contObj==4)
 						nextState = SM_InspectTheObjetcs;
 					else
 						nextState = SM_Ask_Plate;
@@ -332,6 +332,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("please take the plate and put in my gripper");
                 ros::Duration(1.5).sleep();
                 JustinaTasks::detectObjectInGripper("plate", true, 10000);
+				contObj ++;
 				nextState = SM_Take_Cutlery;
 				
 
@@ -579,16 +580,6 @@ int main(int argc, char** argv)
 
       		case SM_DeliverObject:
       			std::cout << "P & G Test...-> delivering the objects" << std::endl;
-				if(openDWFlag){
-					JustinaHRI::say("Human, please, open the dishwasher just until the half");
-					ros::Duration(0.5).sleep();
-					JustinaHRI::say("for example just open it 45 degrees");
-					ros::Duration(0.5).sleep();
-					JustinaHRI::say("Human, please, pull off the rack");
-					ros::Duration(5.0).sleep();
-					JustinaHRI::say("thank you");
-					ros::Duration(0.5).sleep();
-				}
 
       			if(plate){
 					if(!JustinaTasks::placeObjectDishWasher(0.275, 0.2, 0.075, true, true)){
@@ -605,7 +596,7 @@ int main(int argc, char** argv)
 						JustinaManip::startTorsoGoTo(0.1, 0, 0);
 						JustinaManip::waitForTorsoGoalReached(0.5);
 						nextState = SM_NAVIGATE_TO_THE_TABLE;
-						contObj = contObj + 2;
+						//contObj = contObj + 2;
 						plate = false;
 					}
 				}
