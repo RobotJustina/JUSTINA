@@ -2751,6 +2751,17 @@ meaning_mapping_patterns_where_is_this = [
 	"conceptual_dependency": "-Place-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        ####
+	### GET LOCATION NAMES
+	###
+	{"params": ["At", "Place"],
+	"At": [["at", "in"], [], [], []],
+	"Place": [[], [], ["place", "room"], []],
+	"conceptual_dependency": "-Place-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
         ]
 
