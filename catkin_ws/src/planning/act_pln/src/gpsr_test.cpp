@@ -2520,19 +2520,23 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else if(tokens[0] == "standing"){
                 std::cout << "Searching standing person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[1]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[1]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, tokens[1]);
             }
             else if(tokens[0] == "sitting"){
                 std::cout << "searching sitting person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[1]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[1]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::SITTING, false, tokens[1]);
             }
             else if(tokens[0] == "lying"){
                 std::cout << "searching lying person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[1]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[1]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[1]);
             }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[1]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[1]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
             }
     }
 
@@ -2560,19 +2564,23 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else if(tokens[1] == "standing"){
                 std::cout << "Searching standing person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[2]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[2]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, tokens[2]);
             }
             else if(tokens[1] == "sitting"){
                 std::cout << "searching sitting person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[2]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[2]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::SITTING, false, tokens[2]);
             }
             else if(tokens[1] == "lying"){
                 std::cout << "searching lying person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[2]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[2]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[2]);
             }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[2]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[2]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[2]);
             }
 
         //buscar persona con pose
@@ -2609,19 +2617,23 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else if(tokens[1] == "standing"){
                 std::cout << "Searching standing person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[3]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[3]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, tokens[3]);
             }
             else if(tokens[1] == "sitting"){
                 std::cout << "searching sitting person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[3]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[3]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::SITTING, false, tokens[3]);
             }
             else if(tokens[1] == "lying"){
                 std::cout << "searching lying person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[3]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[3]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[3]);
             }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[3]);
             }
 
     }
@@ -2651,19 +2663,23 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else if(tokens[1] == "standing"){
                 std::cout << "Searching standing person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[4]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[4]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, tokens[4]);
             }
             else if(tokens[1] == "sitting"){
                 std::cout << "searching sitting person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[4]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[4]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::SITTING, false, tokens[4]);
             }
             else if(tokens[1] == "lying"){
                 std::cout << "searching lying person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[4]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[4]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[4]);
             }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
-                fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[4]);
+                //fp = JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[4]);
+		        fp = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[4]);
             }
     }
 
