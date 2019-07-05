@@ -158,6 +158,10 @@ add_executable(follow_me_test
   src/follow_me_test.cpp
 )
 
+add_executable(where_is_this
+  src/where_is_this.cpp
+)
+
 add_executable(helpMeCarry_test
   src/helpMeCarry_test.cpp
 )
@@ -323,6 +327,7 @@ add_executable(welcoming_visitor_test
 #add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(monitor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(where_is_this ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -372,6 +377,10 @@ target_link_libraries(monitor
 )
 
 target_link_libraries(follow_me_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(where_is_this
   ${catkin_LIBRARIES}
 )
 
