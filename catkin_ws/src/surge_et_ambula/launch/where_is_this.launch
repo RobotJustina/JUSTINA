@@ -1,10 +1,9 @@
 <launch>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
 			
-		<!--arg name="initial_pose_x" default="3.19"/>
-		<arg name="initial_pose_y" default="2.22"/>
-		<arg name="initial_pose_a" default="0.03"/>
-		<arg name="head_offset" value="-0.02"/-->
+		<arg name="initial_pose_x" value="5.69"/>
+		<arg name="initial_pose_y" value="2.85"/>
+		<arg name="initial_pose_a" value="1.5708"/>
 	</include>
 
 	<group ns="knowledge">
