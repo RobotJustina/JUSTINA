@@ -1,5 +1,5 @@
 <launch>
-	<include file="$(find surge_et_ambula)/launch/justina_simul.launch">
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
 			
 		<!-- arg name="initial_pose_x" value="5.69"/>
 		<arg name="initial_pose_y" value="2.85"/>

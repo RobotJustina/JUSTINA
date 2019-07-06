@@ -30,6 +30,8 @@ enum STATE{
     SM_DELIVER_OBJECT,
     SM_REPETE_RULE,
     SM_WAIT_TO_REPETE_RULE,
+    SM_REPETE_RULE_2,
+    SM_WAIT_TO_REPETE_RULE_2,
     SM_FINAL_STATE
 };
 
@@ -286,6 +288,8 @@ int main(int argc, char** argv)
                     nextState = SM_CLOSE_TO_GUEST;
                 }else
                     nextState = SM_SearchPeopleForDrink;
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                ros::spinOnce();
                 break;
             
             case SM_CLOSE_TO_GUEST:
@@ -294,8 +298,8 @@ int main(int argc, char** argv)
                 JustinaKnowledge::getKnownLocation(centroids_loc[0], goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 0.9, 120000);
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 1.5, 30000);
-                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.5, 30000);
+                //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(centroids_loc[0], 1.5, 30000);
+                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.5, 60000);
                 reachedGoal = true;
                 
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -326,7 +330,7 @@ int main(int argc, char** argv)
                 //TODO Preguntar que bebida quiere, cargar gramatica de bebidas, pedir que le pongan la bebida en el griper y dar bebida al guest
                 nextState = SM_GRASP_OBJECT_R;
                 break;
-
+            
             case SM_GRASP_OBJECT_R:
                 std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 JustinaHRI::say("Hey barman, i need a juice for the guest, please put the juice in front of me");
@@ -415,8 +419,8 @@ int main(int argc, char** argv)
                 }
                 else{
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
-                    JustinaNavigation::moveDistAngle(0.0, M_PI, 3000);
-                    JustinaNavigation::moveDist(0.1, 3000);
+                    JustinaNavigation::moveDistAngle(0.0, 3.1416, 4000);
+                    JustinaNavigation::moveDist(0.1, 4000);
                     JustinaHRI::say("Human please, go back one step");
                     nextState = SM_DELIVER_OBJECT;
                 }
@@ -426,7 +430,8 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
                 if(armsFree[0] && armsFree[1]){
                     JustinaHRI::waitAfterSay("Human enjoy the party", 4000, minDelayAfterSay);
-                    nextState = SM_FINAL_STATE; 
+                    countRepetOrder = 0;
+                    nextState = SM_REPETE_RULE_2; 
                 }
                 else{
                     if(!armsFree[0]){
@@ -441,9 +446,43 @@ int main(int argc, char** argv)
                     }
                 }
                 break;
+            
+            case SM_REPETE_RULE_2:
+                std::cout << "State machine: SM_REPETE_RULE" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::waitAfterSay("Please tell me, robot yes or robot no, if you understand the rule", 5000, 400);
+                JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);//load the grammar
+                JustinaHRI::enableSpeechRecognized(true);
+                /* CHANGE **************** */ 
+                /* ---------------- */
+                // JustinaHRI::waitAfterSay("you understood the order, tell me robot yes", 5000, maxDelayAfterSay);
+                // JustinaHRI::enableSpeechRecognized(true);
+                countRepetOrder++;
+                nextState = SM_WAIT_TO_REPETE_RULE_2;
+                break;
+
+            case SM_WAIT_TO_REPETE_RULE_2:
+                std::cout << "State machine: SM_WAIT_FOR_REPETE_ORDER" << std::endl;
+                if(countRepetOrder <= maxCountRepetOrder){
+                    if(JustinaHRI::waitForSpecificSentence("robot yes", 4000)){
+                        JustinaHRI::enableSpeechRecognized(false);
+                        JustinaHRI::waitAfterSay("Ok, you need to drink all time along", 3000);
+                        //JustinaHRI::enableSpeechRecognized(true);
+                        nextState = SM_FINAL_STATE;
+                    }else
+                        nextState = SM_REPETE_RULE_2;
+                }
+                else{
+                    JustinaHRI::enableSpeechRecognized(false);
+                    JustinaHRI::waitAfterSay("Ok, you need to drink all time along", 3000);
+                    nextState = SM_FINAL_STATE;
+                }
+                break;
 
              case SM_FINAL_STATE:
                 std::cout << "State machine: SM_FINAL_STATE" << std::endl;
+                JustinaHRI::say("I will navigate to the exit");
+                JustinaNavigation::getClose("exitdoor", 60000);
                 JustinaHRI::say("I have finished the test");
                 success = true;
                 break;
