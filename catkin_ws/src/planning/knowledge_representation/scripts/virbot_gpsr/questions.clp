@@ -781,5 +781,12 @@
 	(retract ?f)
 	(printout t "" ?def_loc "")
 )
+(defrule object_or_place
+	?f <- (place_or_object ?obj 1)
+	(item (type Objects)(name ?obj) (zone ?def_loc))
+	=>
+	(retract ?f)
+	(printout t "object")
+)
 
 ;;;;;

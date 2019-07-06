@@ -2752,6 +2752,16 @@ meaning_mapping_patterns_where_is_this = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+        
+        #Only drink
+	{"params": ["Where", "Is", "Object"],
+	"Where": [["where"], [], [], []],
+	"Is": [["Is"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"conceptual_dependency": "-Object-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 	
         ####
 	### GET LOCATION NAMES

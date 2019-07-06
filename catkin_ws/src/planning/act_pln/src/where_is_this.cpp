@@ -31,6 +31,9 @@
 #define GRAMMAR_PLACES "incomplete_place.xml"
 #define GRAMMAR_COMMANDS "commands.xml"
 
+bool where_object = false;
+std::string object;
+
 /**
 ss.str("")
 ss << "(assert (where_is_this " <<  nameObject << " 1))";
@@ -550,7 +553,25 @@ int main(int argc, char **argv){
                   if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
                     //if(1)
                     {
+                        where_object = false;
                         std::cout << ":::::::: " << lastInteSpeech;
+                        ss.str("");
+                        ss << "(assert (place_or_object " <<  lastInteSpeech << " 1))";
+                        JustinaRepresentation::strQueryKDB(ss.str(),query ,1000);
+                        std::cout << "-----------the " << lastInteSpeech << "is in " << query <<std::endl;
+                        if (query == "object"){
+                            object = lastInteSpeech;
+                            ss.str("");
+                            ss << "(assert (get_obj_default_loc " <<  lastInteSpeech << " 1))";
+                            JustinaRepresentation::strQueryKDB(ss.str(),query ,1000);
+                            std::cout << "-----------the " << lastInteSpeech << "is in " << query <<std::endl;
+                            ss.str("");
+                            ss << "you can find the " <<  lastInteSpeech << " in the " << query;
+                            JustinaHRI::waitAfterSay(ss.str(), 10000);
+                            lastInteSpeech = query;
+                            where_object = true;
+                        }
+
 
                         //coat_hanger   trash bitn     
                         if( lastInteSpeech == "tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace=", in front of the sofas" ;  }
@@ -591,13 +612,19 @@ int main(int argc, char **argv){
                     else{}
                 }
                 else{}
-
-                ss.str("");
-                ss << "Do you want information for the" << place << ", please tell me robot yes or robot no.";     
+                if(!where_object){
+                    ss.str("");
+                    ss << "Do you want information for the" << place << ", please tell me robot yes or robot no.";
+                }
+                else{
+                    ss.str("");
+                    ss << "Do you want information for the" << object << ", please tell me robot yes or robot no.";
+                    //where_object = false;
+                }
 
                 JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
                 
                 JustinaHRI::enableSpeechRecognized(true);
@@ -618,6 +645,7 @@ int main(int argc, char **argv){
                         std::cout << "DOSSS" << std::endl;
                         JustinaHRI::waitAfterSay(" I did not understand you.", 3000, MAX_DELAY_AFTER_SAY);
                         placeAttemps++;
+                        where_object = false;
                     }
                 }else{placeAttemps++;}
                 
@@ -634,8 +662,14 @@ int main(int argc, char **argv){
 
                 std::cout << ".-> SM_TALK_TO_OPERATOR" << std::endl;
 
-                ss.str("");
-                ss << "The " << place << ", is in the" << roomPlace << " " << insidePlace  <<std::endl;
+                if(!where_object){
+                    ss.str("");
+                    ss << "The " << place << ", is in the" << roomPlace << " " << insidePlace;
+                }
+                else{
+                    ss.str("");
+                    ss << "The " << object << ", is in the " << roomPlace << " " << insidePlace;
+                }
                 //JustinaHRI::say(ss.str());
 
                 
