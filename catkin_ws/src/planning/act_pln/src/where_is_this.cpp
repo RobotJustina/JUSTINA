@@ -134,29 +134,29 @@ bool pointingInOffice(int n)
         case 0:
         JustinaNavigation::moveDistAngle(0,0.5,2000);
         ArmLiving2();
-        JustinaHRI::waitAfterSay("there is a desk and a chair on my left ", 4000, MIN_DELAY_AFTER_SAY);
+        JustinaHRI::waitAfterSay("there is a desk and a chair   on my left ", 4000, MIN_DELAY_AFTER_SAY);
         
         break;
         case 1:
             JustinaNavigation::moveDistAngle(0,-0.5,2000); 
             ArmLiving1();
-            JustinaHRI::waitAfterSay("Here, there is the coat hanger next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("Here, is the coat hanger,  next to the entrance door",4000,MIN_DELAY_AFTER_SAY);
             std::cout << "Here, there is the coat hanger next to the entrance door" << std::endl;
         break;
         case 2:
             //JustinaNavigation::moveDistAngle(0,-0.5,2000); 
             ArmLiving1();
-            JustinaHRI::waitAfterSay("The entrance is in this room, also a coat hanger",4000,MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("The entrance is in this room, also  there is a coat hanger",4000,MIN_DELAY_AFTER_SAY);
         break;
         case 3:
             //JustinaNavigation::moveDistAngle(0,0.5,2000); 
             ArmLiving2();
-            JustinaHRI::waitAfterSay("On my left there is the desk, next to it there is the shoe rack ",4000,MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("On my left there is the desk, next to it   is the shoe rack ",4000,MIN_DELAY_AFTER_SAY);
         break;
         case 4:
             JustinaNavigation::moveDistAngle(0,-0.5,2000); 
             ArmLiving1();
-            JustinaHRI::waitAfterSay("In this place are a one desk, a shoe rack and  the  entrance door",4000,MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("In this place is the desk,  and  there is a  shoe rack   near  the  entrance door",4000,MIN_DELAY_AFTER_SAY);
             std::cout << "Here, there is the coat hanger next to the entrance door" << std::endl;
         break;
         default:
@@ -184,24 +184,24 @@ bool pointingInLivingRoom(int n)
         case 0:
             
             ArmLiving1();
-            JustinaHRI::waitAfterSay("there is a sofa", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("here,  there is a sofa", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             JustinaManip::startLaGoTo("navigation");
             JustinaNavigation::moveDistAngle(0,0.5,3000);       
             ArmLiving2();
-            JustinaHRI::waitAfterSay("Also  here is the tv", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("Also,  here is the tv.", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             
         break;
         case 1:
             here();
-            JustinaHRI::waitAfterSay("In front there is the coffe table", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("In front of me, is the coffee table", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             
         break;
         case 2:
             here();
-            JustinaHRI::waitAfterSay("here there is the couch", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("here,  is the couch ", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
         break;
         default:
@@ -209,7 +209,7 @@ bool pointingInLivingRoom(int n)
 
             JustinaManip::startLaGoTo("navigation");
             ArmLiving1();
-            JustinaHRI::waitAfterSay("here there is an armchair  and a coffe table.", 4000, MIN_DELAY_AFTER_SAY); 
+            JustinaHRI::waitAfterSay("here,  there is an armchair, and a coffee table.", 4000, MIN_DELAY_AFTER_SAY); 
             return false;
         break;
     }
@@ -234,24 +234,24 @@ bool pointingInKitchen(int n)
         case 0:
             
             here();
-            JustinaHRI::waitAfterSay("in front there is the  table", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("In front of me is the table, and behind it, is the cabinet", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");            
             
         break;
         case 1:
             here();
-            JustinaHRI::waitAfterSay("At the corner, there is the cabinet", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("At the corner, next to the door, is the cabinet", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             
         break;
         case 2:
             ArmLiving2();
-            JustinaHRI::waitAfterSay("on the left there is the sink and the dishwasher", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("On the left,  is the sink, and the dishwasher", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
         break;
         default:
            ArmLiving2();
-            JustinaHRI::waitAfterSay("on the left there is the fridge", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("on the left,  is the fridge, in the corner", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             return false;
         break;
@@ -277,19 +277,19 @@ bool pointingInBedRoom(int n)
         case 0:
             
             here();
-            JustinaHRI::waitAfterSay("In front of me is the bed", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("In front of me, is the bed", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");           
             
         break;
         case 1:
             ArmLiving1();
-            JustinaHRI::waitAfterSay("On the right at the corner there is the shelf", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("On the right  corner,  is the shelf", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             
         break;
         default:
            ArmLiving1();
-            JustinaHRI::waitAfterSay("On the right there is the sidetable", 4000, MIN_DELAY_AFTER_SAY);
+            JustinaHRI::waitAfterSay("On the right, there is the sidetable", 4000, MIN_DELAY_AFTER_SAY);
             JustinaManip::startRaGoTo("navigation");
             
             return false;
@@ -553,33 +553,33 @@ int main(int argc, char **argv){
                         std::cout << ":::::::: " << lastInteSpeech;
 
                         //coat_hanger   trash bitn     
-                        if( lastInteSpeech == "tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace="in front of the sofas" ;  }
+                        if( lastInteSpeech == "tv" ) { placeLoc = "tv"; place=" tv "; roomPlace=" living room "; insidePlace=", in front of the sofas" ;  }
                         else if ( lastInteSpeech == "couch")  { placeLoc = "couch"; place=" couch "; roomPlace=" living room "; insidePlace=""; }
-                        else if ( lastInteSpeech == "armchair") { placeLoc = "armchair"; place=" armchair "; roomPlace=" living room "; insidePlace="in fron of the coffe table";}
-                        else if ( lastInteSpeech == "coffe_table") { placeLoc = "coffe_table"; place=" coffe table "; roomPlace=" living room "; insidePlace="in front of the sofas"; }
-                        else if ( lastInteSpeech == "trash_bin") { placeLoc = "trash_bin"; place=" trash bin "; roomPlace=" living room "; insidePlace=""; }
+                        else if ( lastInteSpeech == "armchair") { placeLoc = "armchair"; place=" armchair "; roomPlace=" living room "; insidePlace=", in fron of the coffe table";}
+                        else if ( lastInteSpeech == "coffe_table") { placeLoc = "coffe_table"; place=" coffe table "; roomPlace=" living room "; insidePlace=", in front of the sofas"; }
+                        else if ( lastInteSpeech == "trash_bin") { placeLoc = "trash_bin"; place=" trash bin "; roomPlace=" living room "; insidePlace=", there are two trash bin, I will show you the one which is in the living room"; }
                         else if ( lastInteSpeech == "sideboard") { placeLoc = "sideboard"; place=" side board "; roomPlace=" living room ";  insidePlace="";}
-                        else if ( lastInteSpeech == "display_cabinet") { placeLoc = "display_cabinet"; place=" display cabinet "; roomPlace=" living room "; insidePlace="and tv is on it."; }
-                        else if ( lastInteSpeech == "living_room") { placeLoc = "living_room"; place=" living room "; roomPlace=" is the room between the kitchen and the office ";insidePlace=""; }
+                        else if ( lastInteSpeech == "display_cabinet") { placeLoc = "display_cabinet"; place=" display cabinet "; roomPlace=" living room "; insidePlace=", and tv is on it."; }
+                        else if ( lastInteSpeech == "living_room") { placeLoc = "living_room"; place=" living room "; roomPlace=", is the room between the kitchen and the office ";insidePlace=""; }
 
-                        else if ( lastInteSpeech == "shoe_rack") { placeLoc = "shoe_rack"; place=" shoe rack "; roomPlace=" office "; insidePlace="near to the entrance"; }
+                        else if ( lastInteSpeech == "shoe_rack") { placeLoc = "shoe_rack"; place=" shoe rack "; roomPlace=" office "; insidePlace=", near to the entrance"; }
                         else if ( lastInteSpeech == "safe") { placeLoc = "safe"; place=" safe "; roomPlace=" office "; insidePlace=""; }
-                        else if ( lastInteSpeech == "coat_hanger") { placeLoc = "coat_hanger_2"; place=" coat hanger "; roomPlace=" office "; insidePlace="near to the shoe rack"; }
-                        else if ( lastInteSpeech == "desk") { placeLoc = "desk"; place=" desk "; roomPlace=" office "; insidePlace="near to the door"; }
+                        else if ( lastInteSpeech == "coat_hanger") { placeLoc = "coat_hanger_2"; place=" coat hanger "; roomPlace=" office "; insidePlace=", near to the shoe rack"; }
+                        else if ( lastInteSpeech == "desk") { placeLoc = "desk"; place=" desk "; roomPlace=" office "; insidePlace=", near to the door"; }
                         else if ( lastInteSpeech == "office") { placeLoc = "office "; place=" office "; roomPlace=" the first room at the entrance "; insidePlace=""; }
                         
-                        else if ( lastInteSpeech =="bed") { placeLoc = "bed"; place=" bed "; roomPlace=" bedroom "; insidePlace="in front of shelf";  }
-                        else if ( lastInteSpeech =="bedroom_chest") { placeLoc = "bedroom_chest"; place=" bedroom chest "; roomPlace=" bedroom "; insidePlace=" in a the corner"; }
-                        else if ( lastInteSpeech =="sidetable") { placeLoc = "sidetable"; place=" side table "; roomPlace=" bedroom ";insidePlace="next to the shelf "; }
-                        else if ( lastInteSpeech =="shelf") { placeLoc = "shelf"; place=" shelf "; roomPlace=" bedroom "; insidePlace="next to the side table"; }
+                        else if ( lastInteSpeech =="bed") { placeLoc = "bed"; place=" bed "; roomPlace=" bedroom "; insidePlace=", in front of shelf";  }
+                        else if ( lastInteSpeech =="bedroom_chest") { placeLoc = "bedroom_chest"; place=" bedroom chest "; roomPlace=" bedroom "; insidePlace=", in a corner"; }
+                        else if ( lastInteSpeech =="sidetable") { placeLoc = "sidetable"; place=" side table "; roomPlace=" bedroom ";insidePlace=", next to the shelf "; }
+                        else if ( lastInteSpeech =="shelf") { placeLoc = "shelf"; place=" shelf "; roomPlace=" bedroom "; insidePlace=", next to the side table"; }
                         else if ( lastInteSpeech =="bedroom") { placeLoc = "bedroom "; place=" bedroom " ; roomPlace=" room between the kitchen and the office ";insidePlace="";}
 
-                        else if ( lastInteSpeech == "sink") { placeLoc = "sink"; place=" sink "; roomPlace=" kitchen "; insidePlace="next to the dish washer"; }
-                        else if ( lastInteSpeech == "dishwasher") { placeLoc = "dishwasher"; place=" dishwasher "; roomPlace=" kitchen "; insidePlace="between the sink and the fridge";}
-                        else if ( lastInteSpeech == "fridge") { placeLoc = "fridge"; place=" fridge "; roomPlace=" kitchen "; insidePlace="in the corner next to the dish washer"; }
-                        else if ( lastInteSpeech == "kitchen_table") { placeLoc = "table_breakfast"; place=" kitchen table "; roomPlace=" kitchen "; insidePlace="in the center of the room"; }
-                        else if ( lastInteSpeech == "kitchen_cabinet") { placeLoc = "kitchen_cabinet"; place=" kitchen cabinet "; roomPlace=" kitchen "; insidePlace="in the corner near to the exit door"; }
-                        else if ( lastInteSpeech == "island") { placeLoc = "island"; place=" island "; roomPlace=" kitchen "; insidePlace=" nex to the exit door"; }
+                        else if ( lastInteSpeech == "sink") { placeLoc = "sink"; place=" sink "; roomPlace=" kitchen "; insidePlace=", next to the dish washer"; }
+                        else if ( lastInteSpeech == "dishwasher") { placeLoc = "dishwasher"; place=" dishwasher "; roomPlace=" kitchen "; insidePlace=", between the sink and the fridge";}
+                        else if ( lastInteSpeech == "fridge") { placeLoc = "fridge"; place=" fridge "; roomPlace=" kitchen "; insidePlace=", in the corner next to the dish washer"; }
+                        else if ( lastInteSpeech == "kitchen_table") { placeLoc = "table_breakfast"; place=" kitchen table "; roomPlace=" kitchen "; insidePlace=", in the center of the room"; }
+                        else if ( lastInteSpeech == "kitchen_cabinet") { placeLoc = "kitchen_cabinet"; place=" kitchen cabinet "; roomPlace=" kitchen "; insidePlace=", in the corner near to the exit door"; }
+                        else if ( lastInteSpeech == "island") { placeLoc = "island"; place=" island "; roomPlace=" kitchen "; insidePlace=", nex to the exit door"; }
                         else if ( lastInteSpeech == "kitchen") { placeLoc = "kitchen"; place=" kitchen "; roomPlace=" room between the living room and the bedroom "; insidePlace=""; }
                         
                         else if ( lastInteSpeech == "exit") { placeLoc = "exit"; place=" exit "; roomPlace=" kitchen "; insidePlace=""; }
@@ -635,19 +635,28 @@ int main(int argc, char **argv){
                 std::cout << ".-> SM_TALK_TO_OPERATOR" << std::endl;
 
                 ss.str("");
-                ss << "The " << place << "is in the" << roomPlace << " " << insidePlace << ", Im going to give you a tour to the " << place  <<std::endl;
+                ss << "The " << place << ", is in the" << roomPlace << " " << insidePlace  <<std::endl;
                 //JustinaHRI::say(ss.str());
-                JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                 
-
-
+    
+                JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
 
                 std::cout << "Im here ---> " << whereIm << std::endl;
 
                 if( whereIm == OFFICE && roomPlace == " office ")
-                {}
+                {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
+                }
                 if( whereIm == OFFICE && roomPlace == " bedroom ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("office_", 120000);
                     else
@@ -655,9 +664,14 @@ int main(int argc, char **argv){
 
                     if(!pointingInOffice(officeCounter++))
                         officeCounter=0;
+
                 }
                 if( whereIm == OFFICE && roomPlace == " living room ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("office_", 120000);
                     else
@@ -665,10 +679,15 @@ int main(int argc, char **argv){
 
                     if(!pointingInOffice(officeCounter++))
                         officeCounter=0;
+
                 }
                 if( whereIm == OFFICE && roomPlace == " kitchen ")
                 {
-                    
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the living room, then go to the kitchen", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui) 
                         JustinaTasks::guideAPerson("office_", 120000); 
                     else
@@ -691,6 +710,10 @@ int main(int argc, char **argv){
 
                 if( whereIm == BEDROOM && roomPlace == " office ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("bedroom", 120000);
                     else
@@ -700,9 +723,18 @@ int main(int argc, char **argv){
                         bedRoomCounter=0;
                 }
                 if( whereIm == BEDROOM && roomPlace == " bedroom ")
-                {}
+                {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+                }
                 if( whereIm == BEDROOM && roomPlace == " living room ")
                 {
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the office, then go to the living room", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("bedroom", 120000);
                     else
@@ -722,6 +754,12 @@ int main(int argc, char **argv){
                 }
                 if( whereIm == BEDROOM && roomPlace == " kitchen ")
                 {
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the office, then go to the living_room, and then to the kitchen", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
+
                     if(!gui)
                         JustinaTasks::guideAPerson("office_", 120000);
                     else
@@ -743,6 +781,11 @@ int main(int argc, char **argv){
 
                 if( whereIm == LIVINGROOM && roomPlace == " office ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
+
                     if(!gui)
                         JustinaTasks::guideAPerson("living_room", 120000);
                     else
@@ -753,6 +796,11 @@ int main(int argc, char **argv){
                 }
                 if( whereIm == LIVINGROOM && roomPlace == " bedroom ")
                 {
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the office, then go to the bedroom", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("office_", 120000);
                     else
@@ -763,9 +811,17 @@ int main(int argc, char **argv){
 
                 }
                 if( whereIm == LIVINGROOM && roomPlace == " living room ")
-                {}
+                {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+                }
                 if( whereIm == LIVINGROOM && roomPlace == " kitchen ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("living_room_", 120000);
                     else
@@ -777,7 +833,11 @@ int main(int argc, char **argv){
 
                 if( whereIm == KITCHEN && roomPlace == " office ")
                 {
-                    
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the living room, then go to the office", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui) 
                         JustinaTasks::guideAPerson("living_room", 120000); 
                     else
@@ -789,6 +849,11 @@ int main(int argc, char **argv){
                 }
                 if( whereIm == KITCHEN && roomPlace == " bedroom ")
                 {
+                    JustinaHRI::waitAfterSay(",to get there, you have to go to the living room, then go to the office, then go to the bedroom", 3000, MAX_DELAY_AFTER_SAY);
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui) 
                         JustinaTasks::guideAPerson("living_room", 120000); 
                     else
@@ -809,6 +874,10 @@ int main(int argc, char **argv){
                 }
                 if( whereIm == KITCHEN && roomPlace == " living room ")
                 {
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
+
                     if(!gui)
                         JustinaTasks::guideAPerson("kitchen", 120000);
                     else
@@ -819,7 +888,9 @@ int main(int argc, char **argv){
                 }
                 if( whereIm == KITCHEN && roomPlace == " kitchen ")
                 {
-                   
+                    ss.str("");
+                    ss << " Im going to give you a tour to the " << place  <<std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, MAX_DELAY_AFTER_SAY);
                 }
 
                 state = SM_GO_TO_PLACE;
