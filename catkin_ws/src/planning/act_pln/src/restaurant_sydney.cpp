@@ -199,7 +199,7 @@ int main(int argc, char** argv)
                 }
                 findGestureOrAttendOrder = true;
                 numberTable = 1;
-                JustinaHRI::waitAfterSay("I will find a customer", 5000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("I will find a waving customer", 5000, minDelayAfterSay);
                 JustinaVision::startSkeletonFinding();
                 nextState = SM_SEARCH_WAVING;     
                 break;
@@ -215,7 +215,7 @@ int main(int argc, char** argv)
                 objsToDeliv[2] = "";
                 armsFree[0] = 0;
                 armsFree[1] = 0;
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.1, 0.1f, 9.0, centroidGestures, "", true);
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, M_PI_2, 2 * M_PI, 9.0, centroidGestures, "", true);
                 // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "", true);
                 if(findGesture){
                     JustinaVision::stopSkeletonFinding();
@@ -673,7 +673,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_REPETE_ORDER" << std::endl;
                 
                 /* CHANGE **************** */ 
-                JustinaHRI::waitAfterSay("please, put the order in front of me, on the kitchen bar", 10000, maxDelayAfterSay);
+                JustinaHRI::waitAfterSay("please, put only the order in front of me, on the kitchen bar", 10000, maxDelayAfterSay);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 nextState = SM_WAIT_TO_PUT_ORDER;
 
@@ -918,7 +918,7 @@ int main(int argc, char** argv)
             case SM_VERIFY_OBJECT:
                 std::cout << "State machine: SM_VERIFY_OBJECT" << std::endl;
                 /* CHANGE **************** */ 
-                objsToDeliv[2] = objsToGuide[2];
+                objsToDeliv[2] = objsToGuide[0];
                 JustinaHRI::waitAfterSay("Barman thank you, i will guide you to the client", 6000, minDelayAfterSay);
                 objsToGuide = std::vector<std::string>();
                 nextState = SM_GUIDE_TABLE;
