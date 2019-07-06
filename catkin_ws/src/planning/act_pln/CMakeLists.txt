@@ -317,6 +317,10 @@ add_executable(stickler_for_the_rules
 	src/stickler_for_the_rules.cpp
 )
 
+add_executable(final_robocup2019
+	src/final_robocup2019
+)
+
 #add_executable(catering_comfort_test
 #	src/catering_comfort_test.cpp
 #)
@@ -367,6 +371,7 @@ add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 #add_dependencies(getting_to_know_my_home ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(serve_the_breakfast ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(stickler_for_the_rules ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(final_robocup2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -401,6 +406,10 @@ target_link_libraries(helpMeCarry_test
 #)
 
 target_link_libraries(restaurant
+	${catkin_LIBRARIES}
+)
+
+target_link_libraries(final_robocup2019
 	${catkin_LIBRARIES}
 )
 
@@ -542,5 +551,9 @@ target_link_libraries(serve_the_breakfast
 
 
 target_link_libraries(stickler_for_the_rules
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(final_robocup2019
  ${catkin_LIBRARIES}
 )
