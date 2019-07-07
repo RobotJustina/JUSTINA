@@ -130,7 +130,7 @@ int main(int argc, char** argv)
                 //JustinaNavigation::moveDist(1.0, 4000);
                 //JustinaHRI::say("I'm waiting for the door bell");
                 //ros::Duration(1.0).sleep();
-                nextState = SM_WaitingDoorBell;
+                nextState = SM_WAIT_FOR_ORDER;
                 
       		break;
 
@@ -146,8 +146,8 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                    JustinaNavigation::getClose("bar", 4000);
-                    nextState = SM_NAVIGATE_TO_BAR;
+                    JustinaNavigation::getClose("living_room", 4000);
+                    nextState = SM_WAIT_FOR_ORDER;
                 }
 
             break; 
@@ -156,21 +156,23 @@ int main(int argc, char** argv)
                 std::cout << "SM_WAIT_FOR_ORDER...->wating for order.." << std::endl;
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                     boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
-                    if(JustinaRepresentation::stringInterpretation(tokens[0], drink))
+                    if(JustinaRepresentation::stringInterpretation(tokens[1], drink))
                         std::cout << "last int: " << drink << std::endl;
-                    if(JustinaRepresentation::stringInterpretation(tokens[1], name))
+                    if(JustinaRepresentation::stringInterpretation(tokens[0], name))
                         std::cout << "last int: " << name << std::endl;
                     objsToGrasp = std::vector<std::string>();
+                    objsToTake = std::vector<std::string>();
                     objsToGrasp.push_back(drink);
-                }
-                if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+                    objsToTake.push_back(drink);
                     nextState = SM_NAVIGATE_TO_BAR;
                 }
                 break;
 
             case SM_NAVIGATE_TO_BAR:
                 std::cout << "SM_NAVIGATE_TO_THE_BAR...->navigate to the bar.." << std::endl;
-                JustinaHRI::say("I've noticed that the door bell is ringing");
+                ss.str("");
+                ss << "I notice that " << name << " is arriving to the party, please serve the " << drink << " in the bar";
+                JustinaHRI::say(ss.str());
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("bar", 120000)) {
 					std::cout << "Final Test...->Second attempt to move" << std::endl;
 					if (!JustinaTasks::sayAndSyncNavigateToLoc("bar", 120000)) {
@@ -268,8 +270,8 @@ int main(int argc, char** argv)
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
                     JustinaNavigation::getClose("living_room", 40000);
                     ss.str("");
-                    ss << name << " i'am going  to find you to deliver your favorite drink ";;
-                    JustinaHRI::say("");
+                    ss << name << " i am going  to find you to deliver your favorite drink ";;
+                    JustinaHRI::say(ss.str());
                     nextState = SM_FIND_TO_HOST;
                 }
                 break;
@@ -278,9 +280,11 @@ int main(int argc, char** argv)
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
                 faceCentroids = std::vector<Eigen::Vector3d>();
                 // TODO Change the name and favorite drink
-                findPerson = JustinaTasks::turnAndRecognizeFace("charly", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace(name, -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "living_room");
                 if(findPerson){
-                    JustinaHRI::waitAfterSay("charly, I found you", 3000);
+                    ss.str("");
+                    ss << name << ", I found you" << std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 3000);
                     JustinaHRI::waitAfterSay("i am getting close to you", 3000);
                     findPersonCount = 0;
                     findPersonAttemps = 0;
@@ -318,9 +322,11 @@ int main(int argc, char** argv)
             case SM_DELIVER_OBJECT:
                 std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
                 if(armsFree[0] && armsFree[1]){
-                    JustinaHRI::waitAfterSay("Human enjoy it, thanks for your preference", 4000);
+                    ss.str("");
+                    ss << name << " enjoy the party" << std::endl;
+                    JustinaHRI::waitAfterSay(ss.str(), 4000);
                     JustinaNavigation::getClose("living_room", 60000);
-                    nextState = SM_WaitingDoorBell; 
+                    nextState = SM_WAIT_FOR_ORDER; 
                 }
                 else{
                     if(!armsFree[0]){
