@@ -124,7 +124,8 @@ int main(int argc, char** argv)
            
     		case SM_InitialState:
       			std::cout << "SM_InitialState...->start Initial state" << std::endl;
-               
+                JustinaHRI::say("Hello my name is justina, i am at your service");
+                JustinaHRI::say("I am waiting for my friend takeshi");
                 JustinaManip::startHdGoTo(0.0, 0.0);
                 ros::Duration(1.0).sleep();
                 //JustinaNavigation::moveDist(1.0, 4000);
@@ -158,6 +159,8 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                     if(lastReco.compare("place cutlery") == 0){
                         // To place the cutlery
+                        JustinaHRI::say("I am going to place the cutleries");
+                        JustinaNavigation::getClose("living_room", 4000);
                     }
                     else{
                         boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
@@ -274,6 +277,7 @@ int main(int argc, char** argv)
                 }
                 else{
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
+                    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                     JustinaNavigation::getClose("living_room", 40000);
                     ss.str("");
                     ss << name << " i am going  to find you to deliver the " << drink;
@@ -332,6 +336,7 @@ int main(int argc, char** argv)
                 if(armsFree[0] && armsFree[1]){
                     ss.str("");
                     ss << name << " enjoy the party" << std::endl;
+                    JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
                     JustinaHRI::waitAfterSay(ss.str(), 4000);
                     JustinaNavigation::getClose("living_room", 60000);
                     nextState = SM_WAIT_FOR_ORDER; 
