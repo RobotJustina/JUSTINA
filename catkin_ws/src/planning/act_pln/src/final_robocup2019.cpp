@@ -144,6 +144,7 @@ int main(int argc, char** argv)
                 //JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
                 //*JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
+                if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                 if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     JustinaNavigation::getClose("living_room", 4000);
@@ -154,17 +155,23 @@ int main(int argc, char** argv)
             
             case SM_WAIT_FOR_ORDER:
                 std::cout << "SM_WAIT_FOR_ORDER...->wating for order.." << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
-                    boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
-                    if(JustinaRepresentation::stringInterpretation(tokens[1], drink))
-                        std::cout << "last int: " << drink << std::endl;
-                    if(JustinaRepresentation::stringInterpretation(tokens[0], name))
-                        std::cout << "last int: " << name << std::endl;
-                    objsToGrasp = std::vector<std::string>();
-                    objsToTake = std::vector<std::string>();
-                    objsToGrasp.push_back(drink);
-                    objsToTake.push_back(drink);
-                    nextState = SM_NAVIGATE_TO_BAR;
+                    if(lastReco.compare("place cutlery") == 0){
+                        // To place the cutlery
+                    }
+                    else{
+                        boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
+                        if(JustinaRepresentation::stringInterpretation(tokens[1], drink))
+                            std::cout << "last int: " << drink << std::endl;
+                        if(JustinaRepresentation::stringInterpretation(tokens[0], name))
+                            std::cout << "last int: " << name << std::endl;
+                        objsToGrasp = std::vector<std::string>();
+                        objsToTake = std::vector<std::string>();
+                        objsToGrasp.push_back(drink);
+                        objsToTake.push_back(drink);
+                        nextState = SM_NAVIGATE_TO_BAR;
+                    }
                 }
                 break;
 
@@ -270,7 +277,7 @@ int main(int argc, char** argv)
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
                     JustinaNavigation::getClose("living_room", 40000);
                     ss.str("");
-                    ss << name << " i am going  to find you to deliver your favorite drink ";;
+                    ss << name << " i am going  to find you to deliver the " << drink;
                     JustinaHRI::say(ss.str());
                     nextState = SM_FIND_TO_HOST;
                 }
@@ -292,7 +299,7 @@ int main(int argc, char** argv)
                     JustinaTools::transformPoint("/base_link", faceCentroids[0](0, 0), faceCentroids[0](1, 0) , faceCentroids[0](2, 0), "/map", gx_w, gy_w, gz_w);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaKnowledge::addUpdateKnownLoc("charly", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
-                    JustinaTasks::closeToLoclWithDistanceTHR("charly", 1.5, 40000);
+                    JustinaTasks::closeToLoclWithDistanceTHR("charly", 1.2, 40000);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                     dist_to_head = sqrt(pow(gx_w - robot_x, 2) + pow(gy_w - robot_y, 2));
@@ -314,7 +321,9 @@ int main(int argc, char** argv)
                     }
                     else
                         findPersonAttemps++;
-                    JustinaHRI::waitAfterSay("John, I'm going to find you again", 5000);
+                    ss.str("");
+                    ss << name << " i am going  to find you again to deliver the " << drink;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
                     //JustinaHRI::insertAsyncSpeech("John, I'm going to find you again", 5000, ros::Time::now().sec, 10);
                 }
                 break;
