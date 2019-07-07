@@ -16,7 +16,7 @@
 #include "string"
 
 enum State{
-    SM_WatingPrepare, SM_InitialState, SM_WaitingDoorBell, SM_NAVIGATE_TO_BAR, SM_FinalState, SM_WAIT_OBJECT_R, SM_GRASP_OBJECT_R, SM_FINAL_STATE, SM_FIND_TO_HOST, SM_WAIT_FOR_ORDER, SM_DELIVER_OBJECT
+    SM_WatingPrepare, SM_InitialState, SM_WaitingDoorBell, SM_NAVIGATE_TO_BAR, SM_FinalState, SM_WAIT_OBJECT_R, SM_GRASP_OBJECT_R, SM_FINAL_STATE, SM_FIND_TO_HOST, SM_WAIT_FOR_ORDER, SM_DELIVER_OBJECT, SM_CA_R, SM_CF_R, SM_CT_R, SM_PLACE_CUTLERY
 };
 
 std::vector<std::string> tokens;
@@ -67,6 +67,8 @@ int main(int argc, char** argv)
 
     bool fail = false;
 	bool success = false;
+    bool found;
+    bool isAlign;
 
   	int nextState = SM_InitialState;
     
@@ -99,6 +101,12 @@ int main(int argc, char** argv)
     std::string lastInt;
     std::string drink;
     std::string name;
+    
+    // Grasp
+    vision_msgs::VisionObjectList objects;
+    vision_msgs::VisionObject object;
+    object.id = "green";
+    objects.ObjectList.push_back(object);
     
     std::string test("finalrobocup_2019");
 
@@ -160,7 +168,8 @@ int main(int argc, char** argv)
                     if(lastReco.compare("place cutlery") == 0){
                         // To place the cutlery
                         JustinaHRI::say("I am going to place the cutleries");
-                        JustinaNavigation::getClose("living_room", 4000);
+                        JustinaNavigation::getClose("bar", 4000);
+                        nextState = SM_CA_R;
                     }
                     else{
                         boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
@@ -353,6 +362,45 @@ int main(int argc, char** argv)
                         armsFree[1] = true;
                     }
                 }
+                break;
+            
+            case SM_CA_R:
+                isAlign = JustinaTasks::alignWithTable(0.42);
+                std::cout << "Align With table " << std::endl;
+                if(!isAlign){
+                    std::cout << "Can not align with table." << std::endl;
+                    nextState = SM_CA_R;
+                }
+                else
+                    nextState = 2;
+                break;
+            case SM_CF_R:
+                found = JustinaVision::getObjectSeg(objects);
+                withLeftOrRightArm = true; 
+                if(!found){
+                    std::cout << "Not found a object" << std::endl;
+                    nextState = SM_CF_R;
+                }
+                else{
+                    object = objects.ObjectList[0];
+                    if(object.pose.position.y > 0)
+                        withLeftOrRightArm = true;
+                    else
+                        withLeftOrRightArm = false;
+                    std::cout << "Found a object" << std::endl;
+                    nextState = SM_PLACE_CUTLERY;
+                }
+                break;
+            case SM_CT_R:
+                //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+                //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+                JustinaTasks::graspObjectColorFeedback(object, withLeftOrRightArm, object.id, true);
+                nextState = SM_PLACE_CUTLERY;
+                break;
+
+            case SM_PLACE_CUTLERY:
+                JustinaNavigation::getClose("kitchen_table", 4000);   
+                nextState = SM_FINAL_STATE;
                 break;
 
             case SM_FINAL_STATE:
