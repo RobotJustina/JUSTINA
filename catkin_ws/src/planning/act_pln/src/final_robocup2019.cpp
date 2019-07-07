@@ -144,7 +144,6 @@ int main(int argc, char** argv)
                 //JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
                 //*JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
-                if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                 if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     JustinaNavigation::getClose("living_room", 4000);
