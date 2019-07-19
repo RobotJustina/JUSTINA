@@ -961,6 +961,13 @@ int main(int argc, char **argv){
             break;
 
             case SM_RETURN:
+                if(where_object){
+                    ss.str("");
+                    ss << "here you can find the " << object;
+                    JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+
+                }
+                
                 JustinaHRI::waitAfterSay("The tour has finished, see you soon", 4000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::waitAfterSay("I am going back to the start point", 4000, MIN_DELAY_AFTER_SAY);
                 std::cout << "I am going back to the start point" << std::endl;
