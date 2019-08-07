@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
     
-  	int nextState = 2;
+  	int nextState = 0;
     bool fail = false;
     bool success = false;
   	bool recog=false;
@@ -195,7 +195,7 @@ int main(int argc, char** argv)
         switch(nextState)
     	{
             case SM_SAY_WAIT_FOR_DOOR:
-                std::cout << "P & G Test...-> start Farewell test" << std::endl;
+                std::cout << "Farewell Test...-> start Farewell test" << std::endl;
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -217,11 +217,11 @@ int main(int argc, char** argv)
             
             case SM_INIT:
                 std::cout << "Farewell Test...->navigate to initial point " << std::endl;
-                //JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
-				//std::cout << "Farewell Test...->First attempt to move" << std::endl;
-            	//JustinaNavigation::moveDist(1.0, 4000);
+                JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	JustinaNavigation::moveDist(1.0, 4000);
 
-                std::cout << "P & G Test...-> start Farewell test" << std::endl;
+                std::cout << "Farewell Test...-> start Farewell test" << std::endl;
                 JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
@@ -233,11 +233,11 @@ int main(int argc, char** argv)
         		ros::Duration(2.0).sleep();
 
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 							std::cout << "Farewell...->moving to the initial point" << std::endl;
 						}
 					} 
@@ -484,11 +484,11 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaNavigation::startMoveDistAngle(-0.2, 1.15);
 
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 							std::cout << "Farewell...->moving to the initial point" << std::endl;
 							nextState = SM_SEARCH_WAVING;
 						}
@@ -514,7 +514,7 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             
-                JustinaTasks::guideAPerson("coat_hanger", 120000, 1.5);
+                JustinaTasks::guideAPerson("arena", 120000, 1.5);
 
                 
                 if(numberGuest<maxNumberGuest){
@@ -542,13 +542,14 @@ int main(int argc, char** argv)
 
                 //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 //ros::Duration(1.0).sleep();
-                
+                JustinaHRI::say("Do not forget use the umbrella to protect us");
+				ros::Duration(1.0).sleep();
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
-                JustinaTasks::guideAPerson("exit", 120000, 1.5);
+                JustinaTasks::guideAPerson("corridor", 120000, 1.5);
                 
-                nextState = SM_Wait_Door_Opened;
+                nextState = SM_SearchTaxiDriver;
                 
                 break;
 
@@ -638,7 +639,7 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaHRI::say("hey taxi driver, please drive carefully, good bye");
                 ros::Duration(1.5).sleep();
-                nextState = SM_Go_Inside;
+                nextState = SM_RETURN_INITIAL_POINT;
 
                 /*if(numberGuest<maxNumberGuest){
                     JustinaHRI::say("Hey guest someone else are waiting for me inside, could you please lend me the umbrella");
@@ -713,11 +714,11 @@ int main(int argc, char** argv)
             case SM_RETURN_INITIAL_POINT:
                 std::cout << "Farewell Test...-> SM_RETURN_INITIAL_POINT" << std::endl;
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 			    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 			    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-			    		if (JustinaTasks::sayAndSyncNavigateToLoc("living_room", 120000)) {
+			    		if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 			    			std::cout << "Farewell...->moving to the initial point" << std::endl;
 			    		}
 			    	} 
