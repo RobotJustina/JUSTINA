@@ -9,7 +9,7 @@
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
 		<arg name="initial_pose_x" value="3.74251"/>
 		<arg name="initial_pose_y" value="-2.01374"/>
-		<arg name="initial_pose_a" value="2.35"/-->
+		<arg name="initial_pose_a" value="2.35"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping receptionist"/>
