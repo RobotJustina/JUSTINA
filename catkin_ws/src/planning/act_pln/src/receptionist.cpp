@@ -99,7 +99,7 @@ int main(int argc, char **argv){
     std::string grammarCommandsID = "receptionisCommands";
     std::string grammarDrinksID = "receptionistDrinks";
     std::string grammarNamesID = "receptionistNames";
-    std::string recogLoc = "living_room";
+    std::string recogLoc = "kitchen";
     std::string entranceLoc = "entrance_door";
     std::string hostDrink = "coke";
 
