@@ -100,6 +100,7 @@ int main(int argc, char **argv){
     std::string grammarDrinksID = "receptionistDrinks";
     std::string grammarNamesID = "receptionistNames";
     std::string recogLoc = "kitchen";
+    std::string seatPlace = "kitchen";
     std::string entranceLoc = "entrance_door";
     std::string hostDrink = "coke";
 
@@ -138,7 +139,7 @@ int main(int argc, char **argv){
     
     std::vector<std::string> tokens;
 
-    STATE state = SM_INIT;//SM_SAY_WAIT_FOR_DOOR;//SM_INIT;
+    STATE state = SM_SAY_WAIT_FOR_DOOR;//SM_INIT;
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
@@ -177,7 +178,7 @@ int main(int argc, char **argv){
                 break;
 
             case SM_WAIT_FOR_DOOR:
-                if (!JustinaNavigation::obstacleInFront())
+                if (JustinaNavigation::doorIsOpen(0.9, 2000))
                     state = SM_INIT;
                 break;
             
@@ -693,7 +694,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to John." << std::endl;
                 theta = 0;
                 faceCentroids = std::vector<Eigen::Vector3d>();
-                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace("john", -1, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 1.0f, 1.0f, faceCentroids, genderRecog, seatPlace);
                 if(findPerson){
                     JustinaHRI::waitAfterSay("John, I found you", 3000);
                     //JustinaHRI::insertAsyncSpeech("John, I found you", 5000, ros::Time::now().sec, 10);
@@ -725,7 +726,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FIND_TO_GUEST: Finding to ." << std::endl;
                 theta = 0;
                 faceCentroids = std::vector<Eigen::Vector3d>();
-                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, faceCentroids, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace(names[names.size() - 1], -1, -1, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, faceCentroids, genderRecog, seatPlace);
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
@@ -882,7 +883,7 @@ int main(int argc, char **argv){
                 std::cout << test << ".-> State SM_FIND_EMPTY_SEAT: Finding empty seat" << std::endl;
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
                     centroids.clear();
-                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "living_room");
+                    findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeat, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, seatPlace);
                     if(!findSeat){
                         findSeatCount++;
                         JustinaHRI::waitAfterSay("I'm going to find a empty seat for you again", 5000);
