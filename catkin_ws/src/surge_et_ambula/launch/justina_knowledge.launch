@@ -1,7 +1,7 @@
 <launch>
 	<group ns="knowledge">
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    			args="-f $(find knowledge)/navigation/known_locations_sydney_2.txt -d $(find knowledge)/navigation/known_delimitation_sydney_2.txt"/>
+    			args="-f $(find knowledge)/navigation/known_locations_pre_sydney_2.txt -d $(find knowledge)/navigation/known_delimitation_pre_sydney_2.txt"/>
 		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
 		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
@@ -11,9 +11,9 @@
 			<param name="modelsPath" value="$(find env_des)/models/"/>
 		</node>
 		<node name="kdb_node" pkg="knowledge_representation" type="kdb_node" output="screen"
-			args="-l $(find knowledge_representation)/scripts/base_data/Locations_Data_Base/locations_sydney_2019.txt 
-			-o $(find knowledge_representation)/scripts/base_data/Objects_Data_Base/objects_sydney_2019.txt 
-			-c $(find knowledge_representation)/scripts/base_data/Categorys_Data_Base/categoryes_sydney_2019.txt 
-			-p $(find knowledge_representation)/scripts/base_data/Peoples_Data_Base/people_sydney_2019.txt" />
+			args="-l $(find knowledge_representation)/scripts/base_data/Locations_Data_Base/locations_pre_sydney_2019.txt 
+			-o $(find knowledge_representation)/scripts/base_data/Objects_Data_Base/objects_pre_sydney_2019.txt 
+			-c $(find knowledge_representation)/scripts/base_data/Categorys_Data_Base/categoryes_pre_sydney_2019.txt 
+			-p $(find knowledge_representation)/scripts/base_data/Peoples_Data_Base/people_pre_sydney_2019.txt" />
 	</group>
 </launch>

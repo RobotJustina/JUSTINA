@@ -1,27 +1,27 @@
-apple fruits bookcase living_room 1 4 yellow 1 nil nil nil nil
-bag containers end_table living_room 1 4 yellow 1 nil nil nil nil
-basket containers end_table living_room 1 4 yellow 1 nil nil nil nil
-bowl tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil
-cascade_pod cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil
-cereal food cupboard kitchen 1 4 yellow 1 nil nil nil nil
-chocolate_drink drinks counter kitchen 1 4 yellow 1 nil nil nil nil
-cloth cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil
-coke drinks counter kitchen 1 4 yellow 1 nil nil nil nil
-crackers snacks bookcase living_room 1 4 yellow 1 nil nil nil nil
-cup tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil
-dish tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil
-fork cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil
-grape_juice drinks counter kitchen 1 4 yellow 1 nil nil nil nil
-knife cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil
-noodles food cupboard kitchen 1 4 yellow 1 nil nil nil nil
-orange fruits bookcase living_room 1 4 yellow 1 nil nil nil nil
-orange_juice drinks counter kitchen 1 4 yellow 1 nil nil nil nil
-paprika fruits bookcase living_room 1 4 yellow 1 nil nil nil nil
-potato_chips snacks bookcase living_room 1 4 yellow 1 nil nil nil nil
-pringles snacks bookcase living_room 1 4 yellow 1 nil nil nil nil
-sausages food cupboard kitchen 1 4 yellow 1 nil nil nil nil
-scrubby cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil
-sponge cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil
-spoon cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil
-sprite drinks counter kitchen 1 4 yellow 1 nil nil nil nil
-tray containers end_table living_room 1 4 yellow 1 nil nil nil nil
+apple fruits bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+bag containers end_table living_room 1 4 yellow 1 nil nil nil nil nil nil
+basket containers end_table living_room 1 4 yellow 1 nil nil nil nil nil nil
+bowl tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+cascade_pod cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil nil nil
+cereal food cupboard kitchen 1 4 yellow 1 nil nil nil nil nil nil
+chocolate_drink drinks counter kitchen 1 4 yellow 1 nil nil nil nil nil nil
+cloth cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil nil nil
+coke drinks counter kitchen 1 4 yellow 1 nil nil nil nil nil nil
+crackers snacks bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+cup tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+dish tableware storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+fork cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+grape_juice drinks counter kitchen 1 4 yellow 1 nil nil nil nil nil nil
+knife cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+noodles food cupboard kitchen 1 4 yellow 1 nil nil nil nil nil nil
+orange fruits bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+orange_juice drinks counter kitchen 1 4 yellow 1 nil nil nil nil nil nil
+paprika fruits bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+potato_chips snacks bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+pringles snacks bookcase living_room 1 4 yellow 1 nil nil nil nil nil nil
+sausages food cupboard kitchen 1 4 yellow 1 nil nil nil nil nil nil
+scrubby cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil nil nil
+sponge cleaning_stuff side_table bedroom 1 4 yellow 1 nil nil nil nil nil nil
+spoon cutlery storage_table kitchen 1 4 yellow 1 nil nil nil nil nil nil
+sprite drinks counter kitchen 1 4 yellow 1 nil nil nil nil nil nil
+tray containers end_table living_room 1 4 yellow 1 nil nil nil nil nil nil
