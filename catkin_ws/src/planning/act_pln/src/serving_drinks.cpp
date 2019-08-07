@@ -79,7 +79,7 @@ float theta = 0, thetaToGoal = 0, angleHead = 0;
 float dist_to_head;
 std::vector<std::string> centroids_loc;
 float torsoSpine, torsoWaist, torsoShoulders;
-std::string location = "living_room";
+std::string location = "kitchen";
 
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltQueryKDB;
