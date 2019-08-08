@@ -120,10 +120,10 @@ int main(int argc, char **argv){
 
     //LOCATIONS
     std::string recogLoc = "kitchen";
-    std::string cutleryLoc = "kitchen_cabinet";
-    std::string tableLoc = "table_breakfast";
+    std::string cutleryLoc = "cupboard";//"kitchen_cabinet";
+    std::string tableLoc = "storage_table";"table_breakfast";
     std::string cerealsLoc = "dishwasher";
-    std::string milkLoc = "sideboard";
+    std::string milkLoc = "dishwasher";
 
 
     //FOR GRASP OBJECTS (CUTLERY)
@@ -258,17 +258,17 @@ int main(int argc, char **argv){
 
                 if( flagOnce )
                 {
-                    JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
-                    ros::Duration(5.0).sleep();
-                    JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+                    //JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
+                    //ros::Duration(5.0).sleep();
+                    //JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
                 }
 
                 
                 std::cout << ".-> Aligning with table" << std::endl;
                 
                 
-                if( !flagOnce )
-                    JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
+                //if( !flagOnce )
+                    //JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
                 alignWithTable();
 
                 JustinaNavigation::moveDist(-0.2,3000);

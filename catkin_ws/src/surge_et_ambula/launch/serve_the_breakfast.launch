@@ -8,9 +8,9 @@
 	<arg name="_output" value="_output:=/sphinx_result"/>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
 			
-		<!--arg name="initial_pose_x" default="7.91014"/>
-		<arg name="initial_pose_y" default="5.09505"/>
-		<arg name="initial_pose_a" default="1.56163"/>
+		<!--arg name="initial_pose_x" default="0.0"/>
+		<arg name="initial_pose_y" default="0.0"/>
+		<arg name="initial_pose_a" default="0.0"/>
 		<arg name="head_offset" value="-0.02"/-->
 	</include>
 	
