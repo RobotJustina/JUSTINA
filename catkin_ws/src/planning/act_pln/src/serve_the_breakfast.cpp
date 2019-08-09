@@ -309,6 +309,13 @@ int main(int argc, char **argv){
 
         switch(state){
             case SM_INIT:
+
+                while(true)
+                {
+                    JustinaVision::getObjectSeg(my_cutlery);
+                }
+
+
                 
                 printSmTitle("> State SM_INIT: Init the test.");
                 
