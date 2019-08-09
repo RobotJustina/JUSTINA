@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype>
 #include <stdlib.h>
 #include "ros/ros.h"
 #include "string"
@@ -27,18 +28,21 @@
 #define MAX_ATTEMPTS_MEMORIZING 2
 #define MAX_FIND_SEAT_COUNT 4
 #define TIMEOUT_MEMORIZING 3000
+#define MAX_ATTEMPTS_FIND_BOWL 4
+#define MAX_ATTEMPTS_FIND_SPOON 2
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 
-enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS};
+enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS,EMPTY};
 
 enum STATE{
     SM_INIT,
     SM_FINISH_TEST,
     SM_WAIT_FOR_OPEN,
-    SM_NAVIGATE_TO_TABLEWARE,
+    SM_CHECK_IF_DOOR,
+    SM_NAVIGATE_TO_CUTLERY_LOC,
     SM_NAVIGATE_TO_ENTRANCE_DOOR,
     SM_GO_TO_TABLEWARE,
     SM_FIND_OBJECTS_ON_TABLE,
@@ -56,32 +60,122 @@ enum STATE{
     SM_SEARCH_BOWL,
     SM_POURING_CEREAL,
     SM_PLACE_MILK,
-    SM_TAKE_MILK
+    SM_TAKE_MILK,
+    SM_FIND_BOWL,
+    SM_TAKE_BOWL,
+    SM_FIND_SPOON,
+    SM_TAKE_SPOON,
+    SM_GO_TO_TABLE
 };
+
+enum arms{RIGHT_ARM,LEFT_ARM };
 
 std::string lastRecoSpeech;
 std::string lastInteSpeech;
 
 std::string test("serve the breakfast");
 
+void printSmTitle(const std::string& input)
+{
+    std::cout << "\x1b[1;36m"  << test << input << "\x1b[0m" << std::endl;
+}
+
+void printWarning(const std::string& input)
+{
+    std::cout << "\x1b[1;33m WARNING: "  << test << input << " ... \x1b[0m" << std::endl;
+}
+
+void printError(const std::string& input)
+{
+    std::cout << "\x1b[1;31m ERROR: "  << test << input << " U_U \x1b[0m" << std::endl;
+}
+
+void printSuccess(const std::string& input)
+{
+    std::cout << "\x1b[1;32m ERROR: "  << test << input << " U_U \x1b[0m" << std::endl;
+}
+
+
 bool alignWithTable()
 {
     int countAlign = 0;
-    while(!JustinaTasks::alignWithTable(0.42))
+    while(!JustinaTasks::alignWithTable(0.42) && countAlign < MAX_ATTEMPTS_ALIGN )
     {   
-        std::cout << ".-> Can not align with table." << std::endl;
-        if(countAlign++ < MAX_ATTEMPTS_ALIGN)
+        printWarning("Cant align trying again");
+        JustinaNavigation::moveDistAngle(0.1, 0, 2000);
+        if( countAlign % 3 == 0)
         {
-            JustinaNavigation::moveDistAngle(0.1, 0, 2000);
-        }else
-        {
-            countAlign = 0;
-            JustinaNavigation::moveDistAngle(-0.25, 0, 2000);
-            break;
+            JustinaNavigation::moveDistAngle(-0.25, 0, 2000);    
         }
+        countAlign++;
     }
+
+    if(countAlign < MAX_ATTEMPTS_ALIGN)
+        printError("The robot could not align with the table");
+    else
+        printSuccess("The robot has aligned with the table");
 }
 
+int left_arm = EMPTY;
+int right_arm = EMPTY;
+
+int reciveObject(int arm = RIGHT_ARM,const std::string& object="Object")
+{
+    int final_arm ; // 0 = right and 1 = left
+    std::stringstream ss;
+    if( left_arm != EMPTY && right_arm != EMPTY)
+    {
+        printError("Ambos brazos ocupados ??");
+        return 0;
+    }
+
+    if( arm == RIGHT_ARM )
+        final_arm = right_arm == EMPTY ? RIGHT_ARM:LEFT_ARM;
+    else
+        final_arm = left_arm == EMPTY ? LEFT_ARM:RIGHT_ARM;
+
+    if(final_arm == RIGHT_ARM)
+    {
+        if (!JustinaManip::isRaInPredefPos("navigation"))
+            JustinaManip::startRaGoTo("navigation");
+                                    
+        JustinaManip::startRaOpenGripper(0.3);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+        ss.str("");
+        ss << "Sorry, please give me the " << object << " in my right gripper";
+        JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+
+        JustinaManip::startRaCloseGripper(0.5);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        
+        return RIGHT_ARM;
+    }
+    else
+    {
+        if (!JustinaManip::isLaInPredefPos("navigation"))
+            JustinaManip::startLaGoTo("navigation");
+
+        JustinaManip::startLaOpenGripper(0.3);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+        ss.str("");
+        ss << "Sorry, please give me the " << object << "in my left gripper" ;
+        JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+
+        JustinaManip::startLaCloseGripper(0.5);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        
+        return LEFT_ARM;
+    }
+
+    return 1;
+
+}
+
+    
 
 int main(int argc, char **argv){
 
@@ -151,7 +245,7 @@ int main(int argc, char **argv){
 
     int type;
     int graspObjectID = BOWL;
-    std::string id_cutlery;
+    std::string id_cutlery = "";
     std::string graspObject = " bowl "; // To say object, First Justina will take the bowl
 
 // !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!// !!!!!!!!1CHANGE FOR CEREAL !!!!!!!!!!!!!!!!!!!!!
@@ -206,299 +300,340 @@ int main(int argc, char **argv){
     JustinaNavigation::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
 
-    JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_INIT;////SM_PLACE_MILK;//SM_LEAVE_CEREAL;//SM_GO_FOR_CEREAL;//SM_LOOK_FOR_TABLE;//SM_INIT;//SM_SEARCH_BOWL;//SM_PLACE_SPOON;//SM_GO_TO_KITCHEN;//
 
+    int countAlign;
+
+
+    JustinaHRI::usePocketSphinx = true;
+    STATE state = SM_INIT;
 
     while(ros::ok() && !success){
-
-        //pouringCereal(.4,0,.76,false,"yellow",true);
-        //exit (0);
 
         switch(state){
             case SM_INIT:
                 
-                std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
+                printSmTitle("> State SM_INIT: Init the test.");
                 
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
                 JustinaManip::waitForTorsoGoalReached(3000);
                 JustinaHRI::waitAfterSay("I am ready for the serve the breakfast test", 6000, MIN_DELAY_AFTER_SAY);
-                state = SM_WAIT_FOR_OPEN;
                 
+                state = SM_WAIT_FOR_OPEN;
                 break;
 
             case SM_WAIT_FOR_OPEN:
                 
-                std::cout << test << ".-> State SM_WAIT_FOR_OPEN: Wait for open the door." << std::endl;
+                printSmTitle("> State SM_WAIT_FOR_OPEN: Wait for open the door.");
                 
-                JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
-                if( JustinaNavigation::doorIsOpen(0.9, 2000) || attempsDoorOpend >= MAX_ATTEMPTS_DOOR )
+                while( !JustinaNavigation::doorIsOpen(0.9, 2000) && attempsDoorOpend < MAX_ATTEMPTS_DOOR   )
                 {
-                    state = SM_NAVIGATE_TO_TABLEWARE;
-                    JustinaHRI::waitAfterSay("Thank you, I will navigate to the cabinet", 4000, MIN_DELAY_AFTER_SAY);
-                }
-                else
+                    JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
                     attempsDoorOpend++;
+                }
 
+                if(attempsDoorOpend > 0)
+                    JustinaHRI::waitAfterSay("Thaks", 2000, MIN_DELAY_AFTER_SAY);
+                    
+                state = SM_NAVIGATE_TO_CUTLERY_LOC;
                 break;
-            case SM_NAVIGATE_TO_TABLEWARE:
+
+            case SM_NAVIGATE_TO_CUTLERY_LOC:
                 
-                std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
-                JustinaHRI::waitAfterSay("Human remove the chairs around the  kitchen table", 4000, MIN_DELAY_AFTER_SAY);
-                JustinaNavigation::moveDist(2.5,5000);
+                printSmTitle("> State SM_NAVIGATE_TO_CUTLERY_LOC: Navigate to the kitchen.");
+                
+                ss.str("");
+                ss << "I will navigate to the " << cutleryLoc ;
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
+
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
-                JustinaHRI::waitAfterSay("I have reached. ", 4000, MIN_DELAY_AFTER_SAY);
 
-                state = SM_ALIGN_WITH_TABLE;       
+                JustinaHRI::waitAfterSay("I have reached. ", 4000, MIN_DELAY_AFTER_SAY);
+                
+                state = SM_CHECK_IF_DOOR;
                 break;
 
-            case SM_ALIGN_WITH_TABLE:
+            case SM_CHECK_IF_DOOR:
 
-                if( flagOnce )
+                printSmTitle("> State SM_CHECK_IF_DOORS: Check if there is a door in front of cutlery.");
+
+                if(false)
                 {
-                    //JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
-                    //ros::Duration(5.0).sleep();
-                    //JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Human, Could you open the cabinet door, please", 4000, MIN_DELAY_AFTER_SAY);
+                    ros::Duration(5.0).sleep();
+                    JustinaHRI::waitAfterSay("Thank you", 4000, MIN_DELAY_AFTER_SAY);
                 }
+                
+                state = SM_FIND_BOWL;
+                break;
+            
+            case SM_FIND_BOWL:
+                
+                printSmTitle("> SM_FIND_BOWL: Trying to detect a bowl");
 
-                
-                std::cout << ".-> Aligning with table" << std::endl;
-                
-                
-                //if( !flagOnce )
-                    //JustinaHRI::waitAfterSay("Human, Could you open the drawer, please", 4000, MIN_DELAY_AFTER_SAY);
                 alignWithTable();
 
-                JustinaNavigation::moveDist(-0.2,3000);
-
-                JustinaManip::startTorsoGoTo(0.10, 0, 0);
-                state = SM_FIND_OBJECTS_ON_TABLE;
                 findObjectAttemps = 0;
-            
-            break;
-            
-            case SM_FIND_OBJECTS_ON_TABLE:
-
-                std::cout << ".-> trying to detect the objects" << std::endl;
-                ss.str("");
-                ss << "I'm looking for a" << graspObject ;
-                JustinaHRI::say(ss.str());
-                ros::Duration(2.0).sleep();
                 JustinaManip::hdGoTo(0, -.8, 2000);
 
-                if(flagOnce)
+                ss.str("");
+                ss << "I'm looking for a bowl"  ;
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+                
+                while(!JustinaVision::getObjectSeg(my_cutlery) && findObjectAttemps < MAX_ATTEMPTS_FIND_BOWL)
                 {
-                        if(!JustinaVision::getObjectSeg(my_cutlery))
-                        {
-                                std::cout << ".-> Can not detect any object" << std::endl;
-                                //state = SM_FIND_OBJECTS_ON_TABLE;
-                                if( findObjectAttemps++ > 3  )
-                                {
-                                        //JustinaHRI::waitAfterSay("Human, Could place the bowl on  the table ", 4000, MIN_DELAY_AFTER_SAY);
-                                        state = SM_ALIGN_WITH_TABLE;
-                                        flagOnce=false;
-                                        flagNoBowl= true;
-                                    
-                                }else
-                                {
-                                    JustinaNavigation::moveDist(-0.05,3000);
-                                }
-                        }
-                        else
-                        {
-                            std::cout << ".-> sorting the objects" << std::endl;
-                                if(!JustinaTasks::sortObjectColor(my_cutlery))
-                                    if(!JustinaTasks::sortObjectColor(my_cutlery)) 
+                    printWarning("Cant find cutlery trying again");
+                    JustinaNavigation::moveDist(-0.05,3000);
+                    findObjectAttemps++;
+                }
 
-                                std::cout << ".-> selecting one object" << std::endl;
+                if( !(findObjectAttemps < MAX_ATTEMPTS_FIND_BOWL) )
+                {
+                    printError("The robot could not find object");
 
-                                for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
-                                {
-                                    
-
-                                        if(my_cutlery.ObjectList[i].graspable == true && ( my_cutlery.ObjectList[i].type_object == graspObjectID  || my_cutlery.ObjectList[i].type_object == 3  ) )
-                                        {
-                                            std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
-                                            pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
-                                            pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
-                                            pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
-                                            id_cutlery = my_cutlery.ObjectList[i].id;
-                                            type = my_cutlery.ObjectList[i].type_object;
-                                            ss.str("");
-                                            ss << "I've found a" << graspObject;
-                                            JustinaHRI::say(ss.str());
-                                            ros::Duration(2.0).sleep();
-                                            state = SM_TAKE_OBJECT;
-                                            break;
-                                        }
-                                    
-                                } 
-
-
-                            }
+                    if (reciveObject(RIGHT_ARM,"bowl") == RIGHT_ARM )
+                        right_arm = BOWL;
+                    else
+                        left_arm = BOWL;
+                    
+                    state = SM_FIND_SPOON;                
                 }
                 else
                 {
-                                if(!JustinaVision::getObjectSeg(my_spoon))
-                                {
-                                        std::cout << ".-> Can not detect any object" << std::endl;
-                                        //state = SM_FIND_OBJECTS_ON_TABLE;
-                                        
-                                        if( findObjectAttemps++ > 3  )
-                                        {
-                                            
-                                            {
-                                                state = SM_LOOK_FOR_TABLE;  
-                                            }
-                                        }else
-                                        {
-                                            JustinaNavigation::moveDist(-0.05,3000);
-                                        }
-                                         state = SM_LOOK_FOR_TABLE; 
-                                }
-                                else
-                                {
-                                    std::cout << ".-> sorting the objects" << std::endl;
-                                        if(!JustinaTasks::sortObjectColor(my_spoon))
-                                            if(!JustinaTasks::sortObjectColor(my_spoon)) 
+                    std::cout << ".-> sorting the objects" << std::endl;
+                    if(!JustinaTasks::sortObjectColor(my_cutlery))
+                        if(!JustinaTasks::sortObjectColor(my_cutlery)) 
 
-                                        std::cout << ".-> selecting one object" << std::endl;
+                    std::cout << ".-> selecting one object" << std::endl;
 
-                                        for(int i=0; i < my_spoon.ObjectList.size(); i ++)
-                                        {
-                
-
-                                                if( my_spoon.ObjectList[i].graspable == true && my_spoon.ObjectList[i].type_object == graspObjectID )
-                                                {
-                                                    std::cout << ".-> detect the " << my_spoon.ObjectList[i].id << " object" << std::endl;
-                                                    pose.position.x = my_spoon.ObjectList[i].pose.position.x;
-                                                    pose.position.y = my_spoon.ObjectList[i].pose.position.y;
-                                                    pose.position.z = my_spoon.ObjectList[i].pose.position.z;
-                                                    id_cutlery = my_spoon.ObjectList[i].id;
-                                                    type = my_spoon.ObjectList[i].type_object;
-                                                    ss.str("");
-                                                    ss << "I've found a" << graspObject;
-                                                    JustinaHRI::say(ss.str());
-                                                    ros::Duration(2.0).sleep();
-                                                    state = SM_TAKE_OBJECT;
-                                                    break;
-                                                }
-
-                                            
-                                        } 
-                                         state = SM_LOOK_FOR_TABLE; 
-                                    }
-                    
-                }
-
-                
-
-
-
-                break;
-    
-            case SM_TAKE_OBJECT:
-                
-                std::cout << ".-> Trying to take the object" << std::endl;
-                    
-                if( flagOnce )
-                {
-                    withLeft = (pose.position.y > 0 ? true : false);
-                    state = SM_ALIGN_WITH_TABLE;
-                    graspObjectID = CUTLERY;
-                    graspObject = " spoon ";
-                    flagOnce = false;
-                }
-                else
-                {   
-                    state= SM_LOOK_FOR_TABLE;//SM_GO_TO_KITCHEN;
-                    withLeft ^= true;
-
-                    if(pose.position.y < 0 &&  withLeft == true)
+                    for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
                     {
-                        break;
-                        onlyBowl = true;
+                            if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == BOWL )
+                            {
+                                std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                                pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                                pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                                id_cutlery = my_cutlery.ObjectList[i].id;
+                                type = my_cutlery.ObjectList[i].type_object;
+                                
+                                JustinaHRI::waitAfterSay("I've found a bowl" , 4000, MIN_DELAY_AFTER_SAY);
+                                
+                                break;
+                            }
+                    }
+
+                    if( id_cutlery == "" )
+                    {
+                        printError("The robot could not find object");
+
+                        if (reciveObject(RIGHT_ARM,"bowl") == RIGHT_ARM )
+                            right_arm = BOWL;
+                        else
+                            left_arm = BOWL;
+
+                        state = SM_FIND_SPOON;
+                    }
+                    else
+                    {
+                        state = SM_TAKE_BOWL;
                     }
                 }
 
+                break;
+    
+            case SM_TAKE_BOWL:
+                
+                printSmTitle("> SM_TAKE_BOWL: Trying to take the bowl");
+
+                withLeft = (pose.position.y > 0 ? true : false);
+
                 countGraspAttemps = 0;
                 
-                while(countGraspAttemps++ <= MAX_ATTEMPTS_GRASP )
+                while( countGraspAttemps < MAX_ATTEMPTS_GRASP )
                 {
                     if(!graspObjectColorCupBoardFeedback2(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
-
-                        std::cout << ".-> cannot take the object" << std::endl;
+                    {
+                        printWarning("cannot take the object trying again");
+                    }
                     else
                         break;
+
+                    countGraspAttemps++;
                 }
-                
-                //JustinaManip::startTorsoGoTo(0, 0, 0);
-                //JustinaManip::waitForTorsoGoalReached(4000);
+
+                if( !(countGraspAttemps < MAX_ATTEMPTS_GRASP) )
+                {
+                    printError("The robot could not take the bowl");
+
+                    if(withLeft)
+                    {
+                        if (reciveObject(LEFT_ARM,"bowl") == LEFT_ARM )
+                            left_arm = BOWL;
+                        else
+                            right_arm = BOWL;
+                    }
+                    else
+                    {
+                        if (reciveObject(RIGHT_ARM,"bowl") == RIGHT_ARM )
+                            right_arm = BOWL;
+                        else
+                            left_arm = BOWL;
+                    }
+                    JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
+                }
+
+                state = SM_FIND_SPOON;
                 break;
-        
-            case SM_GO_TO_KITCHEN:
-                std::cout << test << ".-> State SM_NAVIGATE_TO_KITCHEN: Navigate to the kitchen." << std::endl;
+
+            case SM_FIND_SPOON:
                 
+                printSmTitle("> SM_FIND_SPOON: Trying to detect a spoon");
 
-                if(!JustinaNavigation::getClose(recogLoc, 80000) )
-                    JustinaNavigation::getClose(recogLoc, 80000); 
+                alignWithTable();
 
-                JustinaHRI::waitAfterSay("I have reached the kitchen", 4000, MIN_DELAY_AFTER_SAY);
-                state = SM_LOOK_FOR_TABLE;       
+                findObjectAttemps = 0;
+                JustinaManip::hdGoTo(0, -.8, 2000);
+
+                ss.str("");
+                ss << "I'm looking for a spoon"  ;
+                JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+                
+                while(!JustinaVision::getObjectSeg(my_cutlery) && findObjectAttemps < MAX_ATTEMPTS_FIND_SPOON)
+                {
+                    printWarning("Cant find cutlery trying again");
+                    JustinaNavigation::moveDist(-0.05,3000);
+                    findObjectAttemps++;
+                }
+
+                if( !(findObjectAttemps < MAX_ATTEMPTS_FIND_SPOON) )
+                {
+                    printError("The robot could not find object");
+
+                    if (reciveObject(RIGHT_ARM,"spoon") == RIGHT_ARM )
+                        right_arm = CUTLERY;
+                    else
+                        left_arm = CUTLERY;
+                    
+                    state = SM_GO_TO_TABLE;            
+                } 
+                else
+                {
+                    std::cout << ".-> sorting the objects" << std::endl;
+                    if(!JustinaTasks::sortObjectColor(my_cutlery))
+                        if(!JustinaTasks::sortObjectColor(my_cutlery)) 
+
+                    std::cout << ".-> selecting one object" << std::endl;
+
+                    for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
+                    {
+                            if(my_cutlery.ObjectList[i].graspable == true && my_cutlery.ObjectList[i].type_object == CUTLERY )
+                            {
+                                std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                                pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                                pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                                pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                                id_cutlery = my_cutlery.ObjectList[i].id;
+                                type = my_cutlery.ObjectList[i].type_object;
+                                
+                                JustinaHRI::waitAfterSay("I've found a spoon" , 4000, MIN_DELAY_AFTER_SAY);
+                                
+                                break;
+                            }
+                    }
+
+                    if( id_cutlery == "" )
+                    {
+                        printError("The robot could not find object");
+
+                        if ( reciveObject(RIGHT_ARM,"spoon") == RIGHT_ARM )
+                            right_arm = CUTLERY;
+                        else
+                            left_arm = CUTLERY;
+
+                        state = SM_GO_TO_TABLE; 
+                    }
+                    else
+                    {
+                        state = SM_TAKE_SPOON;
+                    }
+                }
+
                 break;
-            break;
 
-            case SM_LOOK_FOR_TABLE:
+            case SM_TAKE_SPOON:
+                
+                printSmTitle("> SM_TAKE_SPOON: Trying to take the spoon");
+
+                countGraspAttemps = 0;
+
+                if(left_arm == EMPTY)
+                    withLeft = true;
+                else
+                    withLeft = false; 
+                
+                while( countGraspAttemps < MAX_ATTEMPTS_GRASP )
+                {
+                    if(!graspObjectColorCupBoardFeedback2(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
+                    {
+                        printWarning("cannot take the object trying again");
+                    }
+                    else
+                        break;
+
+                    countGraspAttemps++;
+                }
+
+                if( !(countGraspAttemps < MAX_ATTEMPTS_GRASP) )
+                {
+                    printError("The robot could not take the bowl");
+
+                    if(withLeft)
+                    {
+                        if (reciveObject(LEFT_ARM,"spoon") == LEFT_ARM )
+                            left_arm = CUTLERY;
+                        else
+                            right_arm = CUTLERY;
+                    }
+                    else
+                    {
+                        if (reciveObject(RIGHT_ARM,"spoon") == RIGHT_ARM )
+                            right_arm = CUTLERY;
+                        else
+                            left_arm = CUTLERY;
+                    }
+                    JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
+                }
+
+                state = SM_GO_TO_TABLE;
+                break;
+
+
+            case SM_GO_TO_TABLE:
+
+                printSmTitle("> SM_GO_TO_TABLE: go to table");
+
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
-                JustinaHRI::waitAfterSay("I have reached the table", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I have reached the table.", 4000, MIN_DELAY_AFTER_SAY);
 
-
-                
-                /*
-                JustinaHRI::waitAfterSay("I'm looking for the table", 4000, MIN_DELAY_AFTER_SAY);
-                centroids.clear();
-                findSeat = JustinaTasks::turnAndRecognizeYolo(idsSeatTable, JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, "kitchen");
-                if(!findSeat)
-                {
-                    findSeatCount++;
-                    JustinaHRI::waitAfterSay("I'm going to find the table", 5000);
-                    break;
-                }
-                centroid = centroids[0];
-                JustinaHRI::waitAfterSay("Please wait", 4000, MIN_DELAY_AFTER_SAY);
-                JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
-                goalx = gx_w;
-                goaly = gy_w;
-                guest_z = gz_w;
-                JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 0.3, 30000);
-                withLeft = true;
-                */
                 state = SM_PLACE_BOWL;
                 
             break;
 
             case SM_PLACE_BOWL:
-                JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
 
-                //JustinaHRI::waitAfterSay("I belive there is a chair", 4000, MIN_DELAY_AFTER_SAY);
+                printSmTitle("> SM_PLACE_BOWL: place bowl");
+
+                JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
                 
                 alignWithTable();
 
-                if(!JustinaTasks::placeObject(!withLeft))
+                if(!JustinaTasks::placeObject( right_arm == BOWL ? true : false ))
                     state = SM_PLACE_BOWL;
                 else
-                {
-                    if(onlyBowl)
-                        state = SM_GO_FOR_CEREAL;
-                    else
-                        state = SM_PLACE_SPOON;
-                    //withLeft = false;
-                }
+                    state = SM_PLACE_SPOON;
 
                 JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
@@ -508,59 +643,75 @@ int main(int argc, char **argv){
             break;
 
             case SM_PLACE_SPOON:
+
+                printSmTitle("> SM_PLACE_SPOON: place spoon");
+
+                if(right_arm == CUTLERY || left_arm == CUTLERY)
+                {
+                    state = SM_GO_FOR_CEREAL;
+                    break;
+                }    
+
                 JustinaHRI::waitAfterSay("I'm going to place the spoon", 4000, MIN_DELAY_AFTER_SAY);
 
                 alignWithTable();
 
                 JustinaManip::hdGoTo(0, -.8, 2000);
+
+                id_cutlery == "";
+
                 if(!JustinaVision::getObjectSeg(my_cutlery))
                 {
-                        std::cout << ".-> Can not detect any object" << std::endl;
-                        JustinaTasks::placeObject(withLeft);
-                        state = SM_GO_FOR_CEREAL;
+                    
                 }
                 else
                 {
                     std::cout << ".-> sorting the objects" << std::endl;
-                        if(!JustinaTasks::sortObjectColor(my_cutlery))
-                            if(!JustinaTasks::sortObjectColor(my_cutlery)) 
+                    if(!JustinaTasks::sortObjectColor(my_cutlery))
+                        if(!JustinaTasks::sortObjectColor(my_cutlery)) 
 
-                        std::cout << ".-> selecting one object" << std::endl;
+                    std::cout << ".-> selecting one object" << std::endl;
 
-                        for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
+                    for(int i=0; i < my_cutlery.ObjectList.size(); i ++)
+                    {
+                        if(my_cutlery.ObjectList[i].graspable == true && ( my_cutlery.ObjectList[i].type_object == BOWL ) )
                         {
-                            if(my_cutlery.ObjectList[i].graspable == true && ( my_cutlery.ObjectList[i].type_object == BOWL || my_cutlery.ObjectList[i].type_object == GLASS ) )
-                            {
-                                std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
-                                pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
-                                pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
-                                pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
-                                id_cutlery = my_cutlery.ObjectList[i].id;
-                                type = my_cutlery.ObjectList[i].type_object;
-                                ros::Duration(2.0).sleep();
-                                state = SM_TAKE_OBJECT;
-                                break;
-                            }
-                        } 
-                    }
-
-
-
-                if(!placeSpoon(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true) )
-                    state = SM_PLACE_SPOON;
-                else
-                {
-                    state = SM_GO_FOR_CEREAL;
-                    withLeft = false;
+                            std::cout << ".-> detect the " << my_cutlery.ObjectList[i].id << " object" << std::endl;
+                            pose.position.x = my_cutlery.ObjectList[i].pose.position.x;
+                            pose.position.y = my_cutlery.ObjectList[i].pose.position.y;
+                            pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
+                            id_cutlery = my_cutlery.ObjectList[i].id;
+                            type = my_cutlery.ObjectList[i].type_object;
+                            break;
+                        }
+                    } 
                 }
 
+                if(id_cutlery == "")
+                {
+                    printWarning(".-> Can not detect any object" );;
+                    JustinaTasks::placeObject(withLeft);
+                    state = SM_GO_FOR_CEREAL;
+                }
+                else
+                {
+                    if( !placeSpoon(pose.position.x, pose.position.y, pose.position.z, left_arm == CUTLERY ? true : false, id_cutlery, true) )
+                    {
+                        printWarning(".-> Can not detect any object" );;
+                        JustinaTasks::placeObject(withLeft);
+                        state = SM_GO_FOR_CEREAL;
+                    }
+                }
+                
+            
                 JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
                 
-
+                state = SM_GO_FOR_CEREAL;
             break;
 
             case SM_GO_FOR_CEREAL:
-                withLeft = false;
+                printSmTitle("> SM_GO_FOR_CEREAL: go for ceral");
+
                 JustinaHRI::waitAfterSay("I'm going to the dish washer", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(cerealsLoc, 80000) )
@@ -573,17 +724,7 @@ int main(int argc, char **argv){
 
             case SM_TAKE_CEREAL:
 
-                //alignWithTable();
-                //JustinaHRI::waitAfterSay("I'm going to take the cereal", 4000, MIN_DELAY_AFTER_SAY);
-                
-                //if(JustinaTasks::findObject(idObjectGrasp, poseCereal, withLeft) )
-                //{
-                //    state = SM_RETURN_TO_TABLE;
-                 //   JustinaTasks::graspObject(poseCereal.position.x, poseCereal.position.y, poseCereal.position.z, withLeft, idObjectGrasp, true, false);
-                //}else
-                //{
-                 //   state = SM_TAKE_CEREAL;
-                //}
+                printSmTitle("> SM_TAKE_CEREAL: take cereal");
 
                 if (!JustinaManip::isRaInPredefPos("navigation"))
                     JustinaManip::startRaGoTo("navigation");
@@ -608,29 +749,22 @@ int main(int argc, char **argv){
             break;
             case SM_RETURN_TO_TABLE:
 
+                printSmTitle("> SM_RETURN_TO_TABLE:  ");
 
                 JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(tableLoc, 80000) )
                     JustinaNavigation::getClose(tableLoc, 80000); 
 
-                //alignWithTable();
-
-                //JustinaHRI::waitAfterSay("I'm going to pouring  the  cereals inside the bowl", 4000, MIN_DELAY_AFTER_SAY);
-                if(flagNoBowl == true)
-                {
-                    JustinaHRI::waitAfterSay("Human, can you place a bowl on the table ?", 4000, MIN_DELAY_AFTER_SAY);
-                    
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
-                }
+                
                 state = SM_SEARCH_BOWL;
-                attempsBowlPour = 0;
             break;
 
             case SM_SEARCH_BOWL:
 
                 std::cout << ".-> trying to detect the objects" << std::endl;
 
+                attempsBowlPour = 0;
                 graspObjectID = BOWL;
                 
                 alignWithTable();
@@ -669,8 +803,7 @@ int main(int argc, char **argv){
 
             case SM_POURING_CEREAL:
 
-                //withLeft = (pose.position.y > 0 ? true : false);
-                 
+
                 countGraspAttemps = 0;
                 
                 JustinaHRI::waitAfterSay("I am going to pour the cereal carefully inside the bowl.", 6000, MIN_DELAY_AFTER_SAY);
@@ -683,15 +816,13 @@ int main(int argc, char **argv){
                     else
                         break;
                 }
-                state = SM_LEAVE_CEREAL;//SM_FINISH_TEST;
+                state = SM_LEAVE_CEREAL;
             break;
 
             case SM_LEAVE_CEREAL:
                 
-                ////alignWithTable();
+              
                 JustinaTasks::placeObject(false);
-
-
                 JustinaHRI::waitAfterSay("I'm going for the milk ", 4000, MIN_DELAY_AFTER_SAY);
                 
                 if(!JustinaNavigation::getClose(milkLoc, 80000) )
