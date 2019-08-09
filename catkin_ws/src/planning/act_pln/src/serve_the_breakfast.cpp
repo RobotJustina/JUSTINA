@@ -16,7 +16,7 @@
 #include "justina_tools/JustinaRepresentation.h"
 
 #define MAX_ATTEMPTS_GRASP 3
-#define MAX_ATTEMPTS_ALIGN 3
+#define MAX_ATTEMPTS_ALIGN 4
 #define MAX_ATTEMPTS_DOOR 5
 #define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
@@ -92,13 +92,13 @@ void printError(const std::string& input)
 
 void printSuccess(const std::string& input)
 {
-    std::cout << "\x1b[1;32m ERROR: "  << test << input << " U_U \x1b[0m" << std::endl;
+    std::cout << "\x1b[1;32m "  << test << input << " n_n \x1b[0m" << std::endl;
 }
 
 
 bool alignWithTable()
 {
-    int countAlign = 0;
+    int countAlign = 1;
     while(!JustinaTasks::alignWithTable(0.42) && countAlign < MAX_ATTEMPTS_ALIGN )
     {   
         printWarning("Cant align trying again");
@@ -111,10 +111,10 @@ bool alignWithTable()
     }
 
     if(countAlign < MAX_ATTEMPTS_ALIGN)
-        printError("The robot could not align with the table");
+        printSuccess("The robot has aligned with the table");    
     else
-        printSuccess("The robot has aligned with the table");
-}
+        printError("The robot could not align with the table");
+    }
 
 int left_arm = EMPTY;
 int right_arm = EMPTY;
@@ -126,7 +126,7 @@ int reciveObject(int arm = RIGHT_ARM,const std::string& object="Object")
     if( left_arm != EMPTY && right_arm != EMPTY)
     {
         printError("Ambos brazos ocupados ??");
-        return 0;
+        return -1;
     }
 
     if( arm == RIGHT_ARM )
@@ -149,7 +149,7 @@ int reciveObject(int arm = RIGHT_ARM,const std::string& object="Object")
 
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-        
+        JustinaHRI::waitAfterSay("Thank you.", 6000, MIN_DELAY_AFTER_SAY);
         return RIGHT_ARM;
     }
     else
@@ -167,11 +167,9 @@ int reciveObject(int arm = RIGHT_ARM,const std::string& object="Object")
 
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-        
+        JustinaHRI::waitAfterSay("Thank you.", 6000, MIN_DELAY_AFTER_SAY);
         return LEFT_ARM;
     }
-
-    return 1;
 
 }
 
@@ -349,7 +347,9 @@ int main(int argc, char **argv){
                 if(!JustinaNavigation::getClose(cutleryLoc, 80000) )
                     JustinaNavigation::getClose(cutleryLoc, 80000); 
 
-                JustinaHRI::waitAfterSay("I have reached. ", 4000, MIN_DELAY_AFTER_SAY);
+                ss.str("");
+                ss << "I have reached to the " << cutleryLoc ;
+                JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 
                 state = SM_CHECK_IF_DOOR;
                 break;
@@ -629,8 +629,8 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
                 
                 alignWithTable();
-
-                if(!JustinaTasks::placeObject( right_arm == BOWL ? true : false ))
+                std::cout <<  "RIGT¨¨¨ "<< right_arm << std::endl;
+                if(!JustinaTasks::placeObject( left_arm == BOWL ? true : false ))
                     state = SM_PLACE_BOWL;
                 else
                     state = SM_PLACE_SPOON;
