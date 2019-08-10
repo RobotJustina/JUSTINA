@@ -931,6 +931,8 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     JustinaNavigation::moveLateral(movLateral, 3000);
     //JustinaNavigation::moveDist(movFrontal, 3000);
 
+    JustinaManip::startTorsoGoTo(.20, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(4000)
     if ( z > 1.1 )
     {
         JustinaManip::startTorsoGoTo(.25, 0, 0);
@@ -969,7 +971,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             // This to the bowls
             case 1:
             case 3:
-                objToGraspX = objects.ObjectList.at(0).pose.position.x + 0.03 + 0.03;
+                objToGraspX = objects.ObjectList.at(0).pose.position.x + 0.03 + 0.06;
                 if (withLeftArm)
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;//maxPoint.y;
                 else
@@ -1079,13 +1081,15 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
 
-        //JustinaNavigation::moveDist(.03,3000);
+        //
 
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
         JustinaManip::startTorsoGoTo(0.2, 0, 0);
         JustinaManip::waitForTorsoGoalReached(waitTime);
+
+        JustinaNavigation::moveDist(-0.2,3000);
 
         JustinaManip::laGoTo("navigation", 3500);
            
@@ -1193,7 +1197,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         
         JustinaManip::startTorsoGoTo(0.2, 0, 0);
         JustinaManip::waitForTorsoGoalReached(waitTime);
-
+        JustinaNavigation::moveDist(.2,3000);
         JustinaManip::raGoTo("navigation", 2000);
     
         JustinaManip::startTorsoGoTo(0.1, 0, 0);
