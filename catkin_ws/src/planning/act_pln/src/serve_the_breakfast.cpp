@@ -309,13 +309,6 @@ int main(int argc, char **argv){
 
         switch(state){
             case SM_INIT:
-
-                while(true)
-                {
-                    JustinaVision::getObjectSeg(my_cutlery);
-                }
-
-
                 
                 printSmTitle("> State SM_INIT: Init the test.");
                 
@@ -489,6 +482,13 @@ int main(int argc, char **argv){
                             left_arm = BOWL;
                     }
                     JustinaHRI::waitAfterSay("Thank you.", 4000, MIN_DELAY_AFTER_SAY);
+                }
+                else
+                {
+                    if ( withLeft)
+                            left_arm = BOWL;
+                        else
+                            right_arm = BOWL;
                 }
 
                 state = SM_FIND_SPOON;
@@ -969,7 +969,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             // This to the bowls
             case 1:
             case 3:
-                objToGraspX = objects.ObjectList.at(0).pose.position.x+0.03;
+                objToGraspX = objects.ObjectList.at(0).pose.position.x + 0.03 + 0.03;
                 if (withLeftArm)
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;//maxPoint.y;
                 else
@@ -1079,17 +1079,18 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
 
-        JustinaNavigation::moveDist(.03,3000);
+        //JustinaNavigation::moveDist(.03,3000);
 
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-        
-            JustinaManip::laGoTo("navigation", 3500);
-            //}
+        JustinaManip::startTorsoGoTo(0.2, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
 
-            JustinaManip::startTorsoGoTo(0.1, 0, 0);
-            JustinaManip::waitForTorsoGoalReached(waitTime);
+        JustinaManip::laGoTo("navigation", 3500);
+           
+        JustinaManip::startTorsoGoTo(0.1, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
         
             if (!JustinaVision::isStillOnTable(objects.ObjectList.at(0))) {
                 JustinaNavigation::moveDist(-0.35, 3000);
@@ -1190,6 +1191,9 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         
+        JustinaManip::startTorsoGoTo(0.2, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+
         JustinaManip::raGoTo("navigation", 2000);
     
         JustinaManip::startTorsoGoTo(0.1, 0, 0);
