@@ -921,22 +921,21 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     int maxIteration = 10;
     float movTorsoFromCurrPos;
     std::cout << "JustinaTasks.->ObjToGrasp: " << "  " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
-//    float movFrontal = -(idealX - objToGraspX);
     float movLateral = -(idealY - objToGraspY);
 
     float lastRobotX, lastRobotY, lastRobotTheta;
-    //JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
     JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY, lastRobotTheta);
         
     JustinaNavigation::moveLateral(movLateral, 3000);
-    //JustinaNavigation::moveDist(movFrontal, 3000);
 
     JustinaManip::startTorsoGoTo(.20, 0, 0);
-        JustinaManip::waitForTorsoGoalReached(4000)
+        JustinaManip::waitForTorsoGoalReached(4000);
+
     if ( z > 1.1 )
     {
         JustinaManip::startTorsoGoTo(.25, 0, 0);
         JustinaManip::waitForTorsoGoalReached(4000);
+
     }
 
     bool found = false;
@@ -960,15 +959,15 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         std::cout << "The object was found again, update the new coordinates." << std::endl;
         typeCutlery = objects.ObjectList.at(0).type_object;
         
-        switch (typeCutlery) {
+        switch (typeCutlery) 
+        {
             //Cutlery objects
             case 0:
                 objToGraspX = objects.ObjectList.at(0).pose.position.x;
                 objToGraspY = objects.ObjectList.at(0).pose.position.y;
                 objToGraspZ = objects.ObjectList.at(0).minPoint.z  + .3 ;//+ currentTorso - lastTorso ;
-                //dz = minTorso;
                 break;
-            // This to the bowls
+            // This for bowls
             case 1:
             case 3:
                 objToGraspX = objects.ObjectList.at(0).pose.position.x + 0.03 + 0.06;
@@ -978,19 +977,21 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;//minPoint.y;
 
                 objToGraspZ = objects.ObjectList.at(0).minPoint.z + 0.1;// + currentTorso -lastTorso;
-                //dz = minTorso;
                 break;
             default:
                 break;
         }
         std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
-    } else {
+    }
+    else
+    {
         return false;
     }
 
     //The position it is adjusted and converted to coords wrt to the corresponding arm
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
-    if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY, objToGraspZ, destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
+    if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY, objToGraspZ, destFrame, objToGraspX, objToGraspY, objToGraspZ)) 
+    {
         std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
         return false;
     }
