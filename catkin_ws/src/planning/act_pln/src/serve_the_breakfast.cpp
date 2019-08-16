@@ -885,7 +885,7 @@ int main(int argc, char **argv){
 
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) {
-    float idealX = 0.8;
+    float idealX = 0.55;
     int n_movements_bowl = 6;
     bool found = false;
     int typeCutlery;
@@ -930,7 +930,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     std::cout << "Adjusting pose to grasp object ..." << std::endl;
     JustinaNavigation::moveLateral(movLateral, 3000);
     
-    JustinaNavigation::moveDist(  x > idealX ? x - idealX : idealX -x ,3000);
+    JustinaNavigation::moveDist(  x > idealX ? x - idealX : -(idealX -x) ,3000);
 
     std::cout << "Adjusting height to grasp object" << std::endl;
     if ( objToGraspZ > 1.1 )
@@ -979,7 +979,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                     objToGraspY = objects.ObjectList.at(0).pose.position.y-0.05;
                 else
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  ;//+0.17 ;// 15 si no esta en el borde 18 si esta en el borde
+                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.0 ;// 15 si no esta en el borde 18 si esta en el borde
                 break;
             default:
                 break;
@@ -1026,6 +1026,13 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         else if (typeCutlery == 1 ) 
         {
 
+
+            if( withLeftArm ) 
+                JustinaManip::startLaOpenGripper(0.5); 
+            else
+                JustinaManip::startRaOpenGripper(0.5);
+
+
             if ( z > 1.1 )
             {
                 JustinaManip::laGoTo("take_bowl_1", 3500);
@@ -1042,17 +1049,27 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 }else
-                printError("fail");
-                exit(0);
+                    printError("fail");
+                
+                if( withLeftArm )
+                    JustinaManip::startLaCloseGripper(0.5);
+                else
+                {
+                    printWarning(" * Aqui toi perro");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    JustinaManip::startRaCloseGripper(0.5);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                }
+
+                JustinaManip::laGoTo("take_bowl_2", 3500);
+                JustinaManip::laGoTo("take_bowl_1", 3500);
+
+
+                //exit(0);
             }
-           
+            
 
-            if( withLeftArm ) 
-                JustinaManip::startLaOpenGripper(0.5); 
-            else
-                JustinaManip::startRaOpenGripper(0.5); 
-
-            for(int i = 0; i < n_movements_bowl; ++i)
+            for(int i = 0; i > n_movements_bowl; ++i)
             {
                 articular.clear();
                 if(JustinaManip::inverseKinematics(objToGraspX + distance_bowl[i][0], objToGraspY + distance_bowl[i][1], objToGraspZ + distance_bowl[i][2] , articular))
