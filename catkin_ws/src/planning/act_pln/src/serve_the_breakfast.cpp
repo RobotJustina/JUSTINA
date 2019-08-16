@@ -372,7 +372,7 @@ int main(int argc, char **argv){
                 
                 printSmTitle("> SM_FIND_BOWL: Trying to detect a bowl");
 
-                //alignWithTable();
+                alignWithTable();
 
                 findObjectAttemps = 0;
                 JustinaManip::hdGoTo(0, -.8, 2000);
@@ -885,7 +885,8 @@ int main(int argc, char **argv){
 
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) {
-    float idealX = 0.45;
+    float idealX = 0.8;
+    int n_movements_bowl = 6;
     bool found = false;
     int typeCutlery;
     int waitTime = 3000;
@@ -896,13 +897,14 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     float torsoSpine, torsoWaist, torsoShoulders;
     float movTorsoFromCurrPos;
     float movLateral = -(idealY - objToGraspY);
-    float distance_bowl[7][3] = {   {-0.12,-0.25,0.0},
-                                    {-0.03,-0.15,0.0},
+    float distance_bowl[7][3] = {   {-0.10,-0.25,0.0},
+                                    {-0.03,-0.20,0.0},
                                     {-0.02,-0.05,0.0},
                                     {0.0,0.0,0.0},
-                                    {-0.02,-0.05,0.0},
-                                    {-0.03,-0.15,0.0},
-                                    {-0.12,-0.25,0.0} };
+                                    {-0.03,-0.20,0.0},
+                                    {-0.10,-0.25,0.0},
+                                    {-0.07,-0.20,0.0}
+                                     };
     vision_msgs::VisionObjectList objects;
     vision_msgs::VisionObject object_aux;
     std::vector<float> articular;
@@ -937,7 +939,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         JustinaManip::waitForTorsoGoalReached(4000);
     }else
     {
-        JustinaManip::startTorsoGoTo(.15, 0, 0);
+        JustinaManip::startTorsoGoTo(.20, 0, 0);
         JustinaManip::waitForTorsoGoalReached(4000);
     }
     
@@ -973,8 +975,11 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             
             case 1: // This for bowls
                 objToGraspX = objects.ObjectList.at(0).pose.position.x ;
-                objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.2 ;
+                if(withLeftArm)
+                    objToGraspY = objects.ObjectList.at(0).pose.position.y-0.05;
+                else
+                    objToGraspY = objects.ObjectList.at(0).pose.position.y;
+                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.17 ;// 15 si no esta en el borde 18 si esta en el borde
                 break;
             default:
                 break;
@@ -1025,7 +1030,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             else
                 JustinaManip::startRaOpenGripper(0.5); 
 
-            for(int i = 0; i < 7; ++i)
+            for(int i = 0; i < n_movements_bowl; ++i)
             {
                 articular.clear();
                 if(JustinaManip::inverseKinematics(objToGraspX + distance_bowl[i][0], objToGraspY + distance_bowl[i][1], objToGraspZ + distance_bowl[i][2] , articular))
@@ -1065,12 +1070,13 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             
         }
 
-        JustinaManip::startTorsoGoTo(0.1, 0, 0);
-        JustinaManip::waitForTorsoGoalReached(waitTime);
         if( withLeftArm )
             JustinaManip::laGoTo("navigation", 3500);
         else
             JustinaManip::raGoTo("navigation", 3500);
+
+        JustinaManip::startTorsoGoTo(0.1, 0, 0);
+        JustinaManip::waitForTorsoGoalReached(waitTime);
         ros::spinOnce();
         printSuccess( "The object was successfully grasp.");
         exit(0);
