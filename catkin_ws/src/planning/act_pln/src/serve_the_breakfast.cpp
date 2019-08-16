@@ -912,7 +912,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     
     if( z > 1.1)
     {
-        idealX = 0.7;
+        idealX = 0.65;
     }else
     {
         idealX = 0.5;
@@ -1044,35 +1044,73 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             if ( z > 1.1 )
             {
-                JustinaManip::laGoTo("take_bowl_1", 3500);
-                JustinaManip::laGoTo("take_bowl_2", 3500);
-
-                articular.clear();
-                if(JustinaManip::inverseKinematics(objToGraspX , objToGraspY , objToGraspZ , articular))
+                objToGraspX = objToGraspX-0.08;
+                if(withLeftArm)
                 {
-                    
+                    JustinaManip::laGoTo("take_bowl_1", 3500);
+                    JustinaManip::laGoTo("take_bowl_2", 3500);
+                }
+                else
+                {
+                    JustinaManip::raGoTo("take_bowl_1", 3500);
+                    JustinaManip::raGoTo("take_bowl_2", 3500);
+                }
+                
+                articular.clear();
+                if(JustinaManip::inverseKinematics(objToGraspX-0.13 , objToGraspY-0.1 , objToGraspZ , articular))
+                {
                     if( withLeftArm )
                         JustinaManip::startLaGoToArticular(articular);
                     else
                         JustinaManip::startRaGoToArticular(articular);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+
+                    if(JustinaManip::inverseKinematics(objToGraspX-0.13 , objToGraspY-.05 , objToGraspZ , articular))
+                    {
+                        if( withLeftArm )
+                            JustinaManip::startLaGoToArticular(articular);
+                        else
+                            JustinaManip::startRaGoToArticular(articular);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    }
+
                 }else
+                {
                     printError("fail");
+                    JustinaManip::laGoToCartesianTraj(objToGraspX , objToGraspY - 0.0, objToGraspZ, 5000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+            
+                }
                 
-                if( withLeftArm )
+                if( withLeftArm ){
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                     JustinaManip::startLaCloseGripper(0.5);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                }
                 else
                 {
                     printWarning(" * Aqui toi perro");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
                     JustinaManip::startRaCloseGripper(0.5);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 }
 
-                JustinaManip::laGoTo("take_bowl_2", 3500);
-                JustinaManip::laGoTo("take_bowl_1", 3500);
-
+                if(withLeftArm)
+                {
+                    JustinaManip::laGoTo("take_bowl_2", 3500);
+                    JustinaManip::laGoTo("take_bowl_1", 3500);
+                }
+                else
+                {
+                    JustinaManip::raGoTo("take_bowl_2", 3500);
+                    JustinaManip::raGoTo("take_bowl_1", 3500);
+                }
+                
 
                 //exit(0);
             }
