@@ -935,11 +935,11 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     std::cout << "Adjusting height to grasp object" << std::endl;
     if ( objToGraspZ > 1.1 )
     {
-        JustinaManip::startTorsoGoTo(.25, 0, 0);
+        JustinaManip::startTorsoGoTo(0.30, 0, 0);
         JustinaManip::waitForTorsoGoalReached(4000);
     }else
     {
-        JustinaManip::startTorsoGoTo(.20, 0, 0);
+        JustinaManip::startTorsoGoTo(0.20, 0, 0);
         JustinaManip::waitForTorsoGoalReached(4000);
     }
     
@@ -979,7 +979,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                     objToGraspY = objects.ObjectList.at(0).pose.position.y-0.05;
                 else
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.17 ;// 15 si no esta en el borde 18 si esta en el borde
+                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  ;//+0.17 ;// 15 si no esta en el borde 18 si esta en el borde
                 break;
             default:
                 break;
@@ -1025,6 +1025,28 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
         }
         else if (typeCutlery == 1 ) 
         {
+
+            if ( z > 1.1 )
+            {
+                JustinaManip::laGoTo("take_bowl_1", 3500);
+                JustinaManip::laGoTo("take_bowl_2", 3500);
+
+                articular.clear();
+                if(JustinaManip::inverseKinematics(objToGraspX , objToGraspY , objToGraspZ , articular))
+                {
+                    
+                    if( withLeftArm )
+                        JustinaManip::startLaGoToArticular(articular);
+                    else
+                        JustinaManip::startRaGoToArticular(articular);
+
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                }else
+                printError("fail");
+                exit(0);
+            }
+           
+
             if( withLeftArm ) 
                 JustinaManip::startLaOpenGripper(0.5); 
             else
