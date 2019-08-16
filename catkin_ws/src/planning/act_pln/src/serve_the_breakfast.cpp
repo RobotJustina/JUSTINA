@@ -885,7 +885,7 @@ int main(int argc, char **argv){
 
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) {
-    float idealX = 0.55;
+    float idealX = 0.5;
     int n_movements_bowl = 6;
     bool found = false;
     int typeCutlery;
@@ -910,6 +910,15 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
     std::vector<float> articular;
     std::stringstream ss; ss.str("");
     
+    if( z > 1.1)
+    {
+        idealX = 0.7;
+    }else
+    {
+        idealX = 0.5;
+    }
+
+
     if (withLeftArm) 
     {
         std::cout << "Using left arm" << std::endl;
