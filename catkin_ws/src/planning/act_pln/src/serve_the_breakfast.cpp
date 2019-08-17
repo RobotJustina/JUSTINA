@@ -988,7 +988,10 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                     objToGraspY = objects.ObjectList.at(0).pose.position.y-0.05;
                 else
                     objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.0 ;// 15 si no esta en el borde 18 si esta en el borde
+                //if( z > 1.1)
+                  //  objToGraspZ =  objects.ObjectList.at(0).minPoint.z   ;
+                //else
+                    objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.17 ;// 15 si no esta en el borde 18 si esta en el borde
                 break;
             default:
                 break;
@@ -1044,7 +1047,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
             if ( z > 1.1 )
             {
-                objToGraspX = objToGraspX-0.08;
+                objToGraspX = objToGraspX-0.02;
                 if(withLeftArm)
                 {
                     JustinaManip::laGoTo("take_bowl_1", 3500);
@@ -1057,7 +1060,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 }
                 
                 articular.clear();
-                if(JustinaManip::inverseKinematics(objToGraspX-0.13 , objToGraspY-0.1 , objToGraspZ , articular))
+                if(JustinaManip::inverseKinematics(objToGraspX , objToGraspY-0.1 , objToGraspZ , articular))
                 {
                     if( withLeftArm )
                         JustinaManip::startLaGoToArticular(articular);
@@ -1067,7 +1070,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
                     boost::this_thread::sleep(boost::posix_time::milliseconds(400));
 
-                    if(JustinaManip::inverseKinematics(objToGraspX-0.13 , objToGraspY-.05 , objToGraspZ , articular))
+                    if(JustinaManip::inverseKinematics(objToGraspX , objToGraspY-.06 , objToGraspZ , articular))
                     {
                         if( withLeftArm )
                             JustinaManip::startLaGoToArticular(articular);
@@ -1115,41 +1118,44 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 //exit(0);
             }
             
-
-            for(int i = 0; i > n_movements_bowl; ++i)
+            else
             {
-                articular.clear();
-                if(JustinaManip::inverseKinematics(objToGraspX + distance_bowl[i][0], objToGraspY + distance_bowl[i][1], objToGraspZ + distance_bowl[i][2] , articular))
-                {
-                    std::cout << "Execuying move " << i << std::endl;
-                    if(i != 0) 
-                        if(withLeftArm)
-                            JustinaManip::waitForLaGoalReached(2500);
-                        else
-                            JustinaManip::waitForRaGoalReached(2500);
-                    
-                    if( withLeftArm )
-                        JustinaManip::startLaGoToArticular(articular);
-                    else
-                        JustinaManip::startRaGoToArticular(articular);
 
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                }else
+                for(int i = 0; i < n_movements_bowl; ++i)
                 {
-                    ss.str("");
-                    ss <<  "Can not achive movement: " << i << " X: " << distance_bowl[i][0] << " Y: " << distance_bowl[i][1] << " Z: " << distance_bowl[i][2];
-                    printWarning(ss.str() );
-                }
-                if(i == 3)
-                {   
-                    if( withLeftArm )
-                        JustinaManip::startLaCloseGripper(0.5);
-                    else
+                    articular.clear();
+                    if(JustinaManip::inverseKinematics(objToGraspX + distance_bowl[i][0], objToGraspY + distance_bowl[i][1], objToGraspZ + distance_bowl[i][2] , articular))
                     {
-                        printWarning(" * Aqui toi perro");
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                        JustinaManip::startRaCloseGripper(0.5);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                        std::cout << "Execuying move " << i << std::endl;
+                        if(i != 0) 
+                            if(withLeftArm)
+                                JustinaManip::waitForLaGoalReached(2500);
+                            else
+                                JustinaManip::waitForRaGoalReached(2500);
+                        
+                        if( withLeftArm )
+                            JustinaManip::startLaGoToArticular(articular);
+                        else
+                            JustinaManip::startRaGoToArticular(articular);
+
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+                    }else
+                    {
+                        ss.str("");
+                        ss <<  "Can not achive movement: " << i << " X: " << distance_bowl[i][0] << " Y: " << distance_bowl[i][1] << " Z: " << distance_bowl[i][2];
+                        printWarning(ss.str() );
+                    }
+                    if(i == 3)
+                    {   
+                        if( withLeftArm )
+                            JustinaManip::startLaCloseGripper(0.5);
+                        else
+                        {
+                            printWarning(" * Aqui toi perro");
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                            JustinaManip::startRaCloseGripper(0.5);
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                        }
                     }
                 }
             }
