@@ -303,7 +303,7 @@ int main(int argc, char **argv){
 
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_FIND_BOWL; //SM_INIT;
+    STATE state = SM_FIND_SPOON;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
 
@@ -885,6 +885,8 @@ int main(int argc, char **argv){
 
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) {
+    //y += 0.5;
+    withLeftArm = false;
     float idealX = 0.5;
     int n_movements_bowl = 6;
     bool found = false;
@@ -979,7 +981,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
             case 0: //Cutlery objects
                 objToGraspX = objects.ObjectList.at(0).pose.position.x;
                 objToGraspY = objects.ObjectList.at(0).pose.position.y;
-                objToGraspZ = objects.ObjectList.at(0).minPoint.z  + .3 ;//+ currentTorso - lastTorso ;
+                objToGraspZ = objects.ObjectList.at(0).minPoint.z  +0.17 ;//+ currentTorso - lastTorso ;
                 break;
             
             case 1: // This for bowls
@@ -991,7 +993,7 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
                 //if( z > 1.1)
                   //  objToGraspZ =  objects.ObjectList.at(0).minPoint.z   ;
                 //else
-                    objToGraspZ =  objects.ObjectList.at(0).minPoint.z  +0.17 ;// 15 si no esta en el borde 18 si esta en el borde
+                    objToGraspZ =  objects.ObjectList.at(0).minPoint.z +0.17 ;// 15 si no esta en el borde 18 si esta en el borde
                 break;
             default:
                 break;
@@ -1011,29 +1013,39 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 
         if ( typeCutlery == 0 ) 
         {
-            JustinaManip::laGoToCartesianTraj(objToGraspX + 0.03, objToGraspY - 0.02, objToGraspZ, 5000);
+            if( withLeftArm ) 
+                JustinaManip::laGoToCartesianTraj(objToGraspX , objToGraspY, objToGraspZ, 5000);
+            else
+                JustinaManip::raGoToCartesianTraj(objToGraspX , objToGraspY, objToGraspZ, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-            JustinaManip::startLaOpenGripper(0.3);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-            JustinaManip::laGoToCartesian(objToGraspX + 0.00, objToGraspY + 0.0, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
-            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine-.07, 0, 0);
-                JustinaManip::waitForTorsoGoalReached(waitTime);
-
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-
-            JustinaManip::startLaCloseGripper(0.5);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-
-            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-            if ( usingTorse )
-                JustinaManip::startTorsoGoTo(torsoSpine+.2, 0, 0);
             
-            if ( usingTorse )
-            JustinaManip::waitForTorsoGoalReached(waitTime+3000);
+            if( withLeftArm ) 
+                JustinaManip::startLaOpenGripper(0.3);
+            else
+                JustinaManip::startRaOpenGripper(0.3);
 
-        JustinaNavigation::moveDist(-.3, 2000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+            
+            if( withLeftArm)
+                JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+            else
+                JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ,objects.ObjectList[0].roll, objects.ObjectList[0].pitch,objects.ObjectList[0].yaw, 0.1, 5000);
+
+            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+            JustinaManip::startTorsoGoTo(torsoSpine-.07, 0, 0);
+            JustinaManip::waitForTorsoGoalReached(waitTime);
+
+            if(withLeftArm )
+                JustinaManip::startLaCloseGripper(0.5);
+            else
+                JustinaManip::startRaCloseGripper(0.5);
+            
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+            JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+            JustinaManip::startTorsoGoTo(torsoSpine+.07, 0, 0);
+            JustinaManip::waitForTorsoGoalReached(waitTime);
+            JustinaNavigation::moveDist(-.3, 2000);
         }
         else if (typeCutlery == 1 ) 
         {
