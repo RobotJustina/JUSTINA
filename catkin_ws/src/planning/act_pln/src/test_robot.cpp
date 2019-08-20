@@ -23,7 +23,8 @@ enum SMState {
 	SM_DETECT_OBJECT,
 	SM_HANDLER,
 	SM_GRASP_OBJECT,
-	SM_FINAL_STATE,
+	SM_DELIVER_OBJECT,
+	SM_FINAL_STATE
 };
 
 SMState state = SM_INIT;
@@ -215,16 +216,10 @@ int main(int argc, char** argv){
                 std::cout << "recoObj: " << recoObj.size() << std::endl;
                 std::cout << "Index: " << index << std::endl;
                 std::cout << "ObjectDetected: " << objectDetected << std::endl;   
-	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
+	        	//state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
+	        	state = SM_HANDLER;
     			break;
 
-			case SM_HANDLER:
-				JustinaHRI::waitAfterSay("Sorry i could not grasp the object", 5000);
-                JustinaHRI::waitAfterSay("Please put the object in my gripper", 5000);
-                JustinaManip::raGoTo("navigation", 3000);
-                JustinaTasks::detectObjectInGripper("coke", false, 7000);
-                state = SM_FINAL_STATE;
-				break;
 
 			case SM_GRASP_OBJECT:
 				std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
@@ -346,8 +341,27 @@ int main(int argc, char** argv){
 			                }   
 			            }
 			        }*/
-				state = SM_FINAL_STATE;		        
+				state = SM_DELIVER_OBJECT;		        
 				break;
+
+			case SM_HANDLER:
+				std::cout << "State machine: SM_HANDLER" << std::endl;
+				JustinaHRI::waitAfterSay("Sorry i could not grasp the object", 5000);
+                JustinaHRI::waitAfterSay("Please put the object in my gripper", 5000);
+                JustinaManip::raGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper("coke", false, 7000);
+                state = SM_DELIVER_OBJECT;
+				break;
+
+			case SM_DELIVER_OBJECT:
+				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
+				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
+				JustinaHRI::waitAfterSay("Human, please take the object from my gripper", 5000);
+                JustinaManip::raGoTo("take", 3000);
+                JustinaTasks::dropObject("", false, 10000);
+                state = SM_FINAL_STATE;
+				break;
+
         	
         	case SM_FINAL_STATE:
         		//Final state
