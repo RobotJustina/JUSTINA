@@ -124,6 +124,7 @@ int main(int argc, char** argv){
     sensor_msgs::Image image;
     int index;
     std::string lastReco;
+	recoObj = std::vector<vision_msgs::VisionObject>();
 
     while(ros::ok() && !fail && !success){
         switch(state){
@@ -197,7 +198,7 @@ int main(int argc, char** argv){
     			if(objectDetected){
 		            JustinaHRI::waitAfterSay("I am looking for the object on the kitchen table", 5000);
 		            //Obtiene la lista de objetos a detectar
-		            recoObj = std::vector<vision_msgs::VisionObject>();
+		            //recoObj = std::vector<vision_msgs::VisionObject>();
 
 		            objectDetected = false;
 		            //Detecta los objetos en la mesa
