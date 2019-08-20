@@ -34,6 +34,7 @@
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
+bool placeObject(bool withLeftArm, float h=0, bool placeBag=false);
 
 enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS,EMPTY};
 
@@ -305,7 +306,7 @@ int main(int argc, char **argv){
 
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_FIND_BOWL; //SM_INIT;
+    STATE state = SM_PLACE_BOWL;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
 
@@ -419,7 +420,6 @@ int main(int argc, char **argv){
                                 pose.position.z = my_cutlery.ObjectList[i].pose.position.z;
                                 id_cutlery = my_cutlery.ObjectList[i].id;
                                 type = my_cutlery.ObjectList[i].type_object;
-                                
                                 JustinaHRI::waitAfterSay("I've found the bowl" , 4000, MIN_DELAY_AFTER_SAY);
                                 
                                 break; 
@@ -488,9 +488,9 @@ int main(int argc, char **argv){
                 else
                 {
                     if ( withLeft)
-                            left_arm = BOWL;
-                        else
-                            right_arm = BOWL;
+                        left_arm = BOWL;
+                    else
+                        right_arm = BOWL;
                 }
 
                 state = SM_FIND_SPOON;
@@ -578,10 +578,10 @@ int main(int argc, char **argv){
 
                 countGraspAttemps = 0;
 
-                //if(left_arm == EMPTY)
+                if(left_arm == EMPTY)
                     withLeft = true;
-                //else
-                  //  withLeft = false; 
+                else
+                    withLeft = false; 
                 
                 while( countGraspAttemps < MAX_ATTEMPTS_GRASP )
                 {
@@ -637,20 +637,25 @@ int main(int argc, char **argv){
 
                 printSmTitle("> SM_PLACE_BOWL: place bowl");
 
-                JustinaHRI::waitAfterSay("I'm going to place the bowl", 4000, MIN_DELAY_AFTER_SAY);
+                JustinaHRI::waitAfterSay("I'm going to place the bowl and spoon", 4000, MIN_DELAY_AFTER_SAY);
                 
                 alignWithTable();
                 std::cout <<  "RIGT¨¨¨ "<< right_arm << std::endl;
-                if(!JustinaTasks::placeObject( left_arm == BOWL ? true : false ))
+                if(!placeObject( left_arm == BOWL ? true : false ))
                     state = SM_PLACE_BOWL;
                 else
                     state = SM_PLACE_SPOON;
 
+                if (left_arm == BOWL)
+                    left_arm = EMPTY;
+                else
+                    right_arm = EMPTY;
+
+                exit(0);
                 JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
                 JustinaManip::startTorsoGoTo(0.10, 0, 0);
                 JustinaManip::waitForTorsoGoalReached(3000);
 
-                
             break;
 
             case SM_PLACE_SPOON:
@@ -664,10 +669,17 @@ int main(int argc, char **argv){
                 }    
 
                 JustinaHRI::waitAfterSay("I'm going to place the spoon", 4000, MIN_DELAY_AFTER_SAY);
+                if( !placeObject(left_arm == CUTLERY ? true : false) )
+                {
+                    printWarning(".-> Can not detect any object" );;
+                    JustinaTasks::placeObject(withLeft);
+                    state = SM_GO_FOR_CEREAL;
+                }
 
-                alignWithTable();
+                /*
+                //alignWithTable();
 
-                JustinaManip::hdGoTo(0, -.8, 2000);
+                //JustinaManip::hdGoTo(0, -.8, 2000);
 
                 id_cutlery == "";
 
@@ -713,7 +725,7 @@ int main(int argc, char **argv){
                         state = SM_GO_FOR_CEREAL;
                     }
                 }
-                
+                */
             
                 JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
                 
@@ -1198,6 +1210,9 @@ bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftA
 }
 
 
+
+
+
 bool placeSpoon(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse) 
 {
     std::cout << "JustinaTasks.->Moving to a good-pose for grasping objects with ";
@@ -1652,4 +1667,261 @@ bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colo
 
     return true;
 
+}
+
+
+
+bool placeObject(bool withLeftArm, float h, bool placeBag) {
+    std::cout << "JustinaTasks::placeObject..." << std::endl;
+    std::vector<float> vacantPlane;
+    std::vector<int> inliers;
+    std::vector<int> inliersRight;
+    std::vector<int> inliersLeft;
+    std::vector<float> xRight;
+    std::vector<float> yRight;
+    std::vector<float> zRight;
+    std::vector<float> xLeft;
+    std::vector<float> yLeft;
+    std::vector<float> zLeft;
+    std::vector<float> distance;
+    float maximunInliers = 0;
+    float objToGraspX;
+    float objToGraspY;
+    float objToGraspZ;
+    float lateral;
+
+    int maxInliersIndex;
+
+    int aux = 0;
+    int contLeft = 0;
+    int contRight = 0;
+
+    JustinaManip::hdGoTo(0, -0.7, 5000);
+    if (!JustinaTasks::alignWithTable(0.32))
+        JustinaTasks::alignWithTable(0.32);
+
+    if (!JustinaVision::findVacantPlane(vacantPlane, inliers)) {
+        JustinaNavigation::moveDist(0.04, 1000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+        if (!JustinaVision::findVacantPlane(vacantPlane, inliers)) {
+            JustinaNavigation::moveDist(-0.06, 1000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+            if (!JustinaTasks::alignWithTable(0.32)) {
+                if (!JustinaVision::findVacantPlane(vacantPlane, inliers))
+                    return false;
+            } else {
+                if (!JustinaVision::findVacantPlane(vacantPlane, inliers))
+                    return false;
+            }
+        }
+    }
+
+    for (int i = 0; i < (vacantPlane.size()); i = i + 3) {
+        if (vacantPlane[i + 1] >= 0.0) {
+            xLeft.push_back(vacantPlane[i]);
+            yLeft.push_back(vacantPlane[i + 1]);
+            zLeft.push_back(vacantPlane[i + 2]);
+            inliersLeft.push_back(inliers[aux]);
+            contLeft++;
+            std::cout << "Justina::Tasks->PlaceObject plano lado izquierdo "
+                << std::endl;
+        } else {
+            xRight.push_back(vacantPlane[i]);
+            yRight.push_back(vacantPlane[i + 1]);
+            zRight.push_back(vacantPlane[i + 2]);
+            inliersRight.push_back(inliers[aux]);
+            contRight++;
+            std::cout << "Justina::Tasks->PlaceObject plano lado derecho "
+                << std::endl;
+        }
+        aux++;
+    }
+
+    if (contLeft == 0 && contRight > 0) {
+        std::cout
+            << "Justina::Tasks->PlaceObject: No hay planos libres del lado izquierdo, se usaran los del derecho "
+            << std::endl;
+        for (int i = 0; i < xRight.size(); i++) {
+            xLeft.push_back(xRight[i]);
+            yLeft.push_back(yRight[i]);
+            zLeft.push_back(zRight[i]);
+            inliersLeft.push_back(inliersRight[i]);
+        }
+    } else if (contRight == 0 && contLeft > 0) {
+        std::cout
+            << "Justina::Tasks->PlaceObject: No hay planos libres del lado derecho, se usaran los del izquierdo "
+            << std::endl;
+        for (int i = 0; i < xLeft.size(); i++) {
+            xRight.push_back(xLeft[i]);
+            yRight.push_back(yLeft[i]);
+            zRight.push_back(zLeft[i]);
+            inliersRight.push_back(inliersLeft[i]);
+        }
+    } else if (contLeft == 0 && contRight == 0)
+        std::cout << "Justina::Tasks->PlaceObject: No hay planos libres"
+            << std::endl;
+    else
+        std::cout
+            << "Justina::Tasks->PlaceObject: Planos libres en el lado izquierdo y derecho"
+            << std::endl;
+
+    if (withLeftArm) {
+        for (int i = 0; i < xLeft.size(); i++) {
+            if (inliersLeft[i] > maximunInliers) {
+                maximunInliers = inliersLeft[i];
+                maxInliersIndex = i;
+            }
+        }
+        std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex
+            << "]:  (" << xLeft[maxInliersIndex] << ", "
+            << yLeft[maxInliersIndex] << ", " << zLeft[maxInliersIndex]
+            << " + " << h << ")" << std::endl;
+        std::cout << "Justina::Tasks->PlaceObject  inliers_max["
+            << maxInliersIndex << "]:  " << inliersLeft[maxInliersIndex]
+            << std::endl;
+    } else {
+        for (int i = 0; i < xRight.size(); i++) {
+            if (inliersRight[i] > maximunInliers) {
+                maximunInliers = inliersRight[i];
+                maxInliersIndex = i;
+            }
+        }
+        std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex
+            << "]:  (" << xRight[maxInliersIndex] << ", "
+            << yRight[maxInliersIndex] << ", " << zRight[maxInliersIndex]
+            << " + " << h << ")" << std::endl;
+        std::cout << "Justina::Tasks->PlaceObject  inliers_max["
+            << maxInliersIndex << "]:  " << inliersRight[maxInliersIndex]
+            << std::endl;
+    }
+
+    std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
+
+    if (withLeftArm) {
+        lateral = yLeft[maxInliersIndex] - 0.225;
+        JustinaNavigation::moveLateral(lateral, 3000);
+        yLeft[maxInliersIndex] = 0.22;
+        if (!JustinaTools::transformPoint("base_link", xLeft[maxInliersIndex],
+                    yLeft[maxInliersIndex],
+                    zLeft[maxInliersIndex] + (zLeft[maxInliersIndex] * 0.05) + h,
+                    destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
+            std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+            return false;
+        }
+        std::cout << "Moving left arm to P[wrtr]:  (" << xLeft[maxInliersIndex]
+            << ", " << yLeft[maxInliersIndex] << ", "
+            << zLeft[maxInliersIndex] + (zLeft[maxInliersIndex] * 0.05) + h
+            << ")" << std::endl;
+        if (!JustinaManip::isLaInPredefPos("navigation")) {
+            std::cout << "Left Arm is not already on navigation position"
+                << std::endl;
+            JustinaManip::laGoTo("navigation", 7000);
+        }
+
+        // Verify if the height of plane is longer than 1.2 if not calculate the
+        // inverse kinematic.
+        if (zLeft[maxInliersIndex] > 1.2) {
+            
+
+        } else {
+            JustinaManip::laGoTo("put1", 6000);
+            if (placeBag) {
+
+            } else
+            {   JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,objToGraspZ + 0.1, 0, 0, 1.5708, 0, 5000);
+
+                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ - 0.1,0.0, 0.0, 1.5708, -0.1, 5000);
+                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ - 0.1,0.0, 0.0,0.0, -0.1, 5000);
+            }
+
+
+            std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", "
+                << objToGraspY << ", " << objToGraspZ << ")" << std::endl;
+            if (placeBag) {
+               
+            } else {
+                //JustinaNavigation::moveDist(0.05, 1000);
+                JustinaManip::startLaOpenGripper(0.5);
+                JustinaManip::startRaOpenGripper(0.5);
+                ros::spinOnce();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+                JustinaNavigation::moveDist(-0.2, 5000);
+                JustinaManip::laGoTo("navigation", 5000);
+                JustinaManip::raGoTo("navigation", 5000);
+                JustinaManip::startLaOpenGripper(0.0);
+                JustinaManip::startRaOpenGripper(0.0);
+                JustinaManip::laGoTo("home", 5000);
+                JustinaManip::raGoTo("home", 5000);
+                
+
+                //JustinaManip::startLaGoTo("home");
+                JustinaManip::startHdGoTo(0.0, 0.0);
+            }
+
+        }
+    } else {
+        lateral = yRight[maxInliersIndex] + 0.225;
+        JustinaNavigation::moveLateral(lateral, 3000);
+        yRight[maxInliersIndex] = -0.22;
+        if (!JustinaTools::transformPoint("base_link", xRight[maxInliersIndex],
+                    yRight[maxInliersIndex],
+                    zRight[maxInliersIndex] + (zRight[maxInliersIndex] * 0.05) + h,
+                    destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
+            std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+            return false;
+        }
+        std::cout << "Moving right arm to P[wrtr]:  ("
+            << xRight[maxInliersIndex] << ", " << yRight[maxInliersIndex]
+            << ", "
+            << zRight[maxInliersIndex] + (zRight[maxInliersIndex] * 0.05)
+            + h << ")" << std::endl;
+        if (!JustinaManip::isRaInPredefPos("navigation")) {
+            std::cout << "Right Arm is not already on navigation position"
+                << std::endl;
+            JustinaManip::raGoTo("navigation", 7000);
+        }
+
+        if (zRight[maxInliersIndex] > 1.2) {
+          
+        } else {
+            JustinaManip::raGoTo("put1", 6000);
+            if (placeBag) {
+               
+            } else
+            {
+                JustinaManip::raGoToCartesian(objToGraspX, objToGraspY,objToGraspZ -0.1, 0, 0, 1.5708, 0, 5000);
+                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ + 0.1,0.0, 0.0, 1.5708, -0.1, 5000);
+                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ + 0.1,0.0,0.0,0.0, -0.1, 5000);
+            }
+
+            std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX
+                << ", " << objToGraspY << ", " << objToGraspZ << ")"
+                << std::endl;
+            if (placeBag) {
+               
+            } else {
+                //JustinaNavigation::moveDist(0.05, 1000);
+                JustinaManip::startRaOpenGripper(0.5);
+                JustinaManip::startLaOpenGripper(0.5);
+                ros::spinOnce();
+                boost::this_thread::sleep(
+                        boost::posix_time::milliseconds(1000));
+
+                JustinaNavigation::moveDist(-0.2, 5000);
+                JustinaManip::raGoTo("navigation", 5000);
+                JustinaManip::laGoTo("navigation", 5000);
+                JustinaManip::startRaOpenGripper(0.0);
+                JustinaManip::startLaOpenGripper(0.0);
+                JustinaManip::raGoTo("home", 5000);
+                JustinaManip::laGoTo("home", 5000);
+
+
+                //JustinaManip::startRaGoTo("home");
+                JustinaManip::startHdGoTo(0.0, 0.0);
+            }
+        }
+    }
+
+    return true;
 }
