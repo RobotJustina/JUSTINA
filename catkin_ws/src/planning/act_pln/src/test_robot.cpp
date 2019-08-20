@@ -21,6 +21,7 @@ enum SMState {
 	SM_NAVIGATE_TO_INSPECTION,
 	SM_ALIGN_TABLE,
 	SM_DETECT_OBJECT,
+	SM_HANDLER,
 	SM_GRASP_OBJECT,
 	SM_FINAL_STATE,
 };
@@ -210,8 +211,16 @@ int main(int argc, char** argv){
 		                }
 		            } 
 		        }   
-	        	state = SM_GRASP_OBJECT;
+	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
     			break;
+
+			case SM_HANDLER:
+				JustinaHRI::waitAfterSay("Sorry i could not grasp the object", 5000);
+                JustinaHRI::waitAfterSay("Please put the object in my gripper", 5000);
+                JustinaManip::raGoTo("navigation", 3000);
+                JustinaTasks::detectObjectInGripper("coke", false, 7000);
+                state = SM_FINAL_STATE;
+				break;
 
 			case SM_GRASP_OBJECT:
 				std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
@@ -222,10 +231,9 @@ int main(int argc, char** argv){
                     // This is for grasp with two frames //false for right true for left, "", true torso 
                     JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
 
-                    state = SM_FINAL_STATE;
-                }
 
-		             
+                }
+               
 		            /*if(!objectDetected){
 			            JustinaNavigation::startMoveDist(-0.15);
 			            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
@@ -331,7 +339,7 @@ int main(int argc, char** argv){
 			                }   
 			            }
 			        }*/
-		        
+				state = SM_FINAL_STATE;		        
 				break;
         	
         	case SM_FINAL_STATE:
