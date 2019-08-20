@@ -217,8 +217,8 @@ int main(int argc, char** argv){
                 std::cout << "recoObj: " << recoObj.size() << std::endl;
                 std::cout << "Index: " << index << std::endl;
                 std::cout << "ObjectDetected: " << objectDetected << std::endl;   
-	        	//state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
-	        	state = SM_HANDLER;
+	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
+	        	//state = SM_HANDLER;
     			break;
 
 
