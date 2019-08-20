@@ -81,10 +81,11 @@ int main(int argc, char** argv){
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
     //Setting nodeHandle
-    JustinaHardware::setNodeHandle(&n);
     JustinaHRI::setNodeHandle(&n);
+    JustinaHardware::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
     JustinaNavigation::setNodeHandle(&n);
+    JustinaTasks::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
     ros::Rate loop(10);
