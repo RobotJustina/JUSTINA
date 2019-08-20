@@ -180,7 +180,7 @@ int main(int argc, char** argv){
         			std::cout << "Cannot move to kitchen_table" << std::endl;
         		}
         		JustinaHRI::say("I have arrived to the kitchen table");
-        		state = SM_ALIGN_TABLET;
+        		state = SM_ALIGN_TABLE;
         		break;	
 
     		case SM_ALIGN_TABLE:
