@@ -329,6 +329,10 @@ add_executable(final_robocup2019
 #	src/getting_to_know_my_home.cpp
 #)
 
+add_executable(test_robot
+	src/test_robot.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -372,6 +376,8 @@ add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 add_dependencies(serve_the_breakfast ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(stickler_for_the_rules ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(final_robocup2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(test_robot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -555,5 +561,9 @@ target_link_libraries(stickler_for_the_rules
 )
 
 target_link_libraries(final_robocup2019
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_robot
  ${catkin_LIBRARIES}
 )
