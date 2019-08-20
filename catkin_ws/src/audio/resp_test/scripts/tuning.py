@@ -118,6 +118,9 @@ class Tuning:
     def set_vad_threshold(self, db):
         self.write('GAMMAVAD_SR', db)
 
+    def get_vad_threshold(self):
+        self.read('GAMMAVAD_SR')
+
     def set_stationary_noise_suppression(self):
         self.write('STATNOISEONOFF_SR', 1)
 
