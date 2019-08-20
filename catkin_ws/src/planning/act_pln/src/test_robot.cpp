@@ -187,6 +187,7 @@ int main(int argc, char** argv){
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
+        		objectDetected = true;
         		state = SM_DETECT_OBJECT;
     			break;
 
