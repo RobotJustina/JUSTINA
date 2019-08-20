@@ -191,14 +191,14 @@ int main(int argc, char** argv){
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
-        		objectDetected = true;
+        		//objectDetected = true;
         		state = SM_DETECT_OBJECT;
     			break;
 
 			case SM_DETECT_OBJECT:
     			std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
     			if(objectDetected){
-		            JustinaHRI::waitAfterSay("I am looking for the object on the kitchen table", 5000);
+		            JustinaHRI::waitAfterSay("I am looking for the coke on the kitchen table", 5000);
 		            //Obtiene la lista de objetos a detectar
 		            //recoObj = std::vector<vision_msgs::VisionObject>();
 
@@ -213,10 +213,7 @@ int main(int argc, char** argv){
 		                    }
 		                }
 		            } 
-		        }
-                std::cout << "recoObj: " << recoObj.size() << std::endl;
-                std::cout << "Index: " << index << std::endl;
-                std::cout << "ObjectDetected: " << objectDetected << std::endl;   
+		        }   
 	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
 	        	//state = SM_HANDLER;
     			break;
@@ -225,12 +222,12 @@ int main(int argc, char** argv){
 			case SM_GRASP_OBJECT:
 				std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 if(objectDetected && recoObj.size() > 0){
-                    JustinaHRI::waitAfterSay("I have found the object", 5000);
+                    JustinaHRI::waitAfterSay("I have found the coke", 5000);
                     //JustinaTasks::alignWithTable(0.35);
-                    JustinaHRI::waitAfterSay("I am going to take the object", 5000);
+                    JustinaHRI::waitAfterSay("I am going to take the coke", 5000);
                     // This is for grasp with two frames //false for right true for left, "", true torso 
-                    std::cout << "Index: " << index << std::endl;
-                    std::cout << "recoObj: " << recoObj.size() << std::endl;
+                    //std::cout << "Index: " << index << std::endl;
+                    //std::cout << "recoObj: " << recoObj.size() << std::endl;
 
                     JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
 
@@ -347,8 +344,8 @@ int main(int argc, char** argv){
 
 			case SM_HANDLER:
 				std::cout << "State machine: SM_HANDLER" << std::endl;
-				JustinaHRI::waitAfterSay("Sorry i could not grasp the object", 5000);
-                JustinaHRI::waitAfterSay("Please put the object in my gripper", 5000);
+				JustinaHRI::waitAfterSay("Sorry i could not grasp the coke", 5000);
+                JustinaHRI::waitAfterSay("Please put the coke in my gripper", 5000);
                 JustinaManip::raGoTo("navigation", 3000);
                 JustinaTasks::detectObjectInGripper("coke", false, 7000);
                 state = SM_DELIVER_OBJECT;
@@ -357,7 +354,7 @@ int main(int argc, char** argv){
 			case SM_DELIVER_OBJECT:
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
-				JustinaHRI::waitAfterSay("Human, please take the object from my gripper", 5000);
+				JustinaHRI::waitAfterSay("Human, please take the coke from my gripper", 5000);
                 JustinaManip::raGoTo("take", 3000);
                 JustinaTasks::dropObject("", false, 10000);
                 state = SM_FINAL_STATE;
