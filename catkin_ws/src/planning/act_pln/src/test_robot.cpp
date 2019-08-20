@@ -211,6 +211,8 @@ int main(int argc, char** argv){
 		                }
 		            } 
 		        }
+                std::cout << "recoObj: " << recoObj.size() << std::endl;
+                std::cout << "Index: " << index << std::endl;
                 std::cout << "ObjectDetected: " << objectDetected << std::endl;   
 	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
     			break;
@@ -231,6 +233,8 @@ int main(int argc, char** argv){
                     JustinaHRI::waitAfterSay("I am going to take the object", 5000);
                     // This is for grasp with two frames //false for right true for left, "", true torso 
                     std::cout << "Index: " << index << std::endl;
+                    std::cout << "recoObj: " << recoObj.size() << std::endl;
+
                     JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
 
 
