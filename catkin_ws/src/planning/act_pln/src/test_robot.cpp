@@ -368,8 +368,14 @@ int main(int argc, char** argv){
 				std::cout << "State machine: SM_HANDLER" << std::endl;
 				JustinaHRI::waitAfterSay("Sorry i could not grasp the coke", 5000);
                 JustinaHRI::waitAfterSay("Please put the coke in my gripper", 5000);
-                JustinaManip::raGoTo("navigation", 3000);
-                JustinaTasks::detectObjectInGripper("coke", false, 7000);
+                if(drop){
+                	JustinaManip::raGoTo("navigation", 3000);
+                	JustinaTasks::detectObjectInGripper("coke", false, 7000);
+                }
+                else{
+                	JustinaManip::laGoTo("navigation", 3000);
+                	JustinaTasks::detectObjectInGripper("coke", true, 7000);
+                }
                 state = SM_DELIVER_OBJECT;
 				break;
 
