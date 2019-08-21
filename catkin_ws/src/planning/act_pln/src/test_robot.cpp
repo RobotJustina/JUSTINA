@@ -15,6 +15,7 @@
 
 enum SMState {
 	SM_INIT,
+	SM_INIT_TABLE,
 	SM_WAIT_FOR_COMMAND,
 	SM_REPEAT_COMMAND,
 	SM_PARSE_SPOKEN_COMMAND,
@@ -27,7 +28,7 @@ enum SMState {
 	SM_FINAL_STATE
 };
 
-SMState state = SM_INIT;
+SMState state = SM_INIT_TABLE;
 /*
 #define SM_INIT 0
 //#define SM_WAIT_FOR_DOOR 10
@@ -138,6 +139,15 @@ int main(int argc, char** argv){
         		JustinaHRI::waitAfterSay("I am ready for the robot test", 4000);
             	JustinaHRI::waitAfterSay("Please, tell me justina start to go to the kitchen table",4000);
         		state = SM_WAIT_FOR_COMMAND;
+        		break;
+
+    		case SM_INIT_TABLE:
+        		//Init case
+        		std::cout << "State machine: SM_INIT_TABLE" << std::endl;	
+        		JustinaManip::startHdGoTo(0.0, 0.0);
+        		JustinaHRI::waitAfterSay("I am ready for the robot test", 4000);
+            	JustinaHRI::waitAfterSay("I am going to the kitchen table",4000);
+        		state = SM_ALIGN_TABLE;
         		break;
 
     		case SM_WAIT_FOR_COMMAND:
