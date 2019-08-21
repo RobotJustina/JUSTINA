@@ -306,7 +306,7 @@ int main(int argc, char **argv){
 
 
     JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_PLACE_BOWL;//SM_FIND_BOWL; //SM_INIT;
+    STATE state = SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
 
@@ -1828,10 +1828,13 @@ bool placeObject(bool withLeftArm, float h, bool placeBag) {
             if (placeBag) {
 
             } else
-            {   JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,objToGraspZ + 0.1, 0, 0, 1.5708, 0, 5000);
+            {   
+                JustinaManip::raGoTo("navigation", 7000);
+                JustinaManip::raGoToCartesianTraj(objToGraspX-0.1 , objToGraspY, objToGraspZ, 8000);
+                JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,objToGraspZ + 0.1, 0, 0, 1.5708, 0, 5000);
 
-                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ - 0.1,0.0, 0.0, 1.5708, -0.1, 5000);
-                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ - 0.1,0.0, 0.0,0.0, -0.1, 5000);
+                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.2, objToGraspY - 0.0, objToGraspZ - 0.15,0.0, 0.0, 1.5708, -0.1, 5000);
+                JustinaManip::raGoToCartesian(objToGraspX + 0.03-0.1, objToGraspY - 0.0, objToGraspZ - 0.15,0.0, 0.0,0.0, -0.1, 5000);
             }
 
 
@@ -1889,10 +1892,11 @@ bool placeObject(bool withLeftArm, float h, bool placeBag) {
             if (placeBag) {
                
             } else
-            {
+            {   JustinaManip::laGoTo("navigation", 7000);
+                JustinaManip::laGoToCartesianTraj(objToGraspX -0.1, objToGraspY, objToGraspZ, 8000);
                 JustinaManip::raGoToCartesian(objToGraspX, objToGraspY,objToGraspZ -0.1, 0, 0, 1.5708, 0, 5000);
-                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ + 0.1,0.0, 0.0, 1.5708, -0.1, 5000);
-                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.27, objToGraspY - 0.08, objToGraspZ + 0.1,0.0,0.0,0.0, -0.1, 5000);
+                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.2, objToGraspY - 0.0, objToGraspZ + 0.15,0.0, 0.0, 1.5708, -0.1, 5000);
+                JustinaManip::laGoToCartesian(objToGraspX + 0.03-0.1, objToGraspY - 0.0, objToGraspZ + 0.15,0.0,0.0,0.0, -0.1, 5000);
             }
 
             std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX
