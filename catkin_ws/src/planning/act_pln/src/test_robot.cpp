@@ -122,6 +122,7 @@ int main(int argc, char** argv){
     int attemps = 0;
     bool la = false;
     bool ra = false;
+    bool drop = false;
     bool objectDetected = false;
     std::vector<vision_msgs::VisionObject> recoObj;
     sensor_msgs::Image image;
@@ -239,8 +240,19 @@ int main(int argc, char** argv){
                     //std::cout << "Index: " << index << std::endl;
                     //std::cout << "recoObj: " << recoObj.size() << std::endl;
 
-                    JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
+                    if(recoObj[index].pose.position.y > 0)
+                        ra = false;
+                    else
+                        ra = true;
 
+                    if (ra){
+                    	JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
+                    	drop = true;
+                	}
+                	else{
+						JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
+						drop = false;                		
+                	}
 
                 }
                
@@ -366,7 +378,13 @@ int main(int argc, char** argv){
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
 				JustinaHRI::waitAfterSay("Human, please take the coke from my gripper", 5000);
                 JustinaManip::raGoTo("take", 3000);
-                JustinaTasks::dropObject("", false, 10000);
+                if(drop){
+                	JustinaTasks::dropObject("", false, 10000);
+            	}
+            	else{
+            		JustinaTasks::dropObject("", true, 10000);
+            	}
+
                 state = SM_FINAL_STATE;
 				break;
 
