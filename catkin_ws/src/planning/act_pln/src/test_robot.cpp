@@ -404,11 +404,12 @@ int main(int argc, char** argv){
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
 				JustinaHRI::waitAfterSay("Human, please take the coke from my gripper", 5000);
-                JustinaManip::raGoTo("take", 3000);
                 if(drop){
+                	JustinaManip::raGoTo("take", 3000);
                 	JustinaTasks::dropObject("", false, 10000);
             	}
             	else{
+            		JustinaManip::laGoTo("take", 3000);
             		JustinaTasks::dropObject("", true, 10000);
             	}
             	JustinaHRI::waitAfterSay("Enjoy the coke", 5000);
