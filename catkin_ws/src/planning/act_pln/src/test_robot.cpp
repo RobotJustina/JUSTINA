@@ -177,7 +177,7 @@ int main(int argc, char** argv){
 
             case SM_PARSE_SPOKEN_COMMAND:
             	//Parse the command
-            	std::cout << "State machine: SM_REPEAT_COMMAND" << std::endl;
+            	std::cout << "State machine: SM_PARSE_SPOKEN_COMMAND" << std::endl;
             	if (confirm == 0){
 		            if(lastRecoSpeech.find("justina start") != std::string::npos)
 		            {
@@ -199,16 +199,14 @@ int main(int argc, char** argv){
 		            else
 		            {
 		            	cont++;
-		            	if (cont <3)
+
+		            	if (cont == 3)
 		            	{
-		            		JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
-		            		state = SM_REPEAT_COMMAND;
-		           
+		            		
+		           			state = SM_FINAL_STATE;
 		            	}
-		            	else
-		            	{
-		                	state = SM_FINAL_STATE;
-		            	}
+
+		            	state = SM_REPEAT_COMMAND;
 
 		            }
 
