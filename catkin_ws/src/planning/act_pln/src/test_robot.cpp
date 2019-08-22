@@ -120,6 +120,7 @@ int main(int argc, char** argv){
     std::vector<std::string> tokens;
     std::vector<std::string> tokens1;
     std::stringstream ss;
+    int cont = 0;
     int attemps = 0;
     int confirm = 0;
     bool la = false;
@@ -193,16 +194,25 @@ int main(int argc, char** argv){
 		        	{
 		            	JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
 		                state = SM_ALIGN_TABLE;
-		            }
-		            else if (lastRecoSpeech.find("justina no") != std::string::npos)
-		            {
-		            	state = SM_FINAL_STATE;
+		                cont = 0;
 		            }
 		            else
 		            {
-		            	JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
-		                state = SM_REPEAT_COMMAND;
+		            	cont++;
+		            	if (cont <3)
+		            	{
+		            		JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
+		            		state = SM_REPEAT_COMMAND;
+		           
+		            	}
+		            	else
+		            	{
+		                	state = SM_FINAL_STATE;
+		            	}
+
 		            }
+
+		            
 
 		        }
                 break;
