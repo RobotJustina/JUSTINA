@@ -105,7 +105,7 @@ int main(int argc, char** argv){
     validCommands.push_back("robot stop");
     validCommands.push_back("justina start");
     validCommands.push_back("justina yes");
-    //validCommands.push_back("justina no");
+    validCommands.push_back("justina no");
 
     JustinaHRI::setInputDevice(JustinaHRI::USB);
     JustinaHRI::setOutputDevice(JustinaHRI::USB);
