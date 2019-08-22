@@ -422,7 +422,7 @@ int main(int argc, char** argv){
         		confirm = 1;
         		JustinaHRI::waitAfterSay("Do you want other drink",4000);
         		JustinaHRI::waitAfterSay("Please, tell me justina yes o justina no",4000);
-
+    			state = SM_WAIT_FOR_COMMAND;
                 break;
 
 
