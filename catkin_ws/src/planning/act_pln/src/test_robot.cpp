@@ -25,6 +25,7 @@ enum SMState {
 	SM_HANDLER,
 	SM_GRASP_OBJECT,
 	SM_DELIVER_OBJECT,
+	SM_REPEAT_TASK,
 	SM_FINAL_STATE
 };
 
@@ -120,6 +121,7 @@ int main(int argc, char** argv){
     std::vector<std::string> tokens1;
     std::stringstream ss;
     int attemps = 0;
+    int confirm = 0;
     bool la = false;
     bool ra = false;
     bool drop = false;
@@ -175,15 +177,34 @@ int main(int argc, char** argv){
             case SM_PARSE_SPOKEN_COMMAND:
             	//Parse the command
             	std::cout << "State machine: SM_REPEAT_COMMAND" << std::endl;
-                if(lastRecoSpeech.find("justina start") != std::string::npos)
-                {
-                    state = SM_NAVIGATE_TO_INSPECTION;
-                }
-                else
-                {
-                	JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
-                    state = SM_REPEAT_COMMAND;
-                }
+            	if (confirm == 0){
+		            if(lastRecoSpeech.find("justina start") != std::string::npos)
+		            {
+		                state = SM_NAVIGATE_TO_INSPECTION;
+		            }
+		            else
+		            {
+		            	JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
+		                state = SM_REPEAT_COMMAND;
+		            }
+		        }
+		        else if (confirm == 1) {
+		        	if(lastRecoSpeech.find("justina yes") != std::string::npos)
+		        	{
+		            	JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
+		                state = SM_ALIGN_TABLE;
+		            }
+		            else if (lastRecoSpeech.find("justina no") != std::string::npos)
+		            {
+		            	state = SM_FINAL_STATE;
+		            }
+		            else
+		            {
+		            	JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
+		                state = SM_REPEAT_COMMAND;
+		            }
+
+		        }
                 break;
 
         	case SM_NAVIGATE_TO_INSPECTION:
@@ -390,9 +411,19 @@ int main(int argc, char** argv){
             	else{
             		JustinaTasks::dropObject("", true, 10000);
             	}
-
+            	JustinaHRI::waitAfterSay("Enjoy the coke", 5000);
                 state = SM_FINAL_STATE;
 				break;
+
+			case SM_REPEAT_TASK:
+        		//Final state
+        		std::cout << "State machine: SM_REPEAT_TASK" << std::endl;	
+        		confirm = 1;
+        		JustinaHRI::waitAfterSay("Do you want other drink",4000);
+        		JustinaHRI::waitAfterSay("Please, tell me justina yes o justina no",4000);
+
+                break;
+
 
         	
         	case SM_FINAL_STATE:
