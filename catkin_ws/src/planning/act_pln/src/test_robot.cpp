@@ -413,7 +413,7 @@ int main(int argc, char** argv){
             		JustinaTasks::dropObject("", true, 10000);
             	}
             	JustinaHRI::waitAfterSay("Enjoy the coke", 5000);
-                state = SM_FINAL_STATE;
+                state = SM_REPEAT_TASK;
 				break;
 
 			case SM_REPEAT_TASK:
