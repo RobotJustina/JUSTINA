@@ -198,15 +198,15 @@ int main(int argc, char** argv){
 		            }
 		            else
 		            {
-		            	cont++;
+		            	//cont++;
 
-		            	if (cont == 3)
-		            	{
+		            	//if (cont == 3)
+		            	//{
 		            		
 		           			state = SM_FINAL_STATE;
-		            	}
+		            	//}
 
-		            	state = SM_REPEAT_COMMAND;
+		            	//state = SM_REPEAT_COMMAND;
 
 		            }
 
