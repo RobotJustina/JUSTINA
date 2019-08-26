@@ -142,6 +142,11 @@ int main(int argc, char** argv){
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::waitAfterSay("I am ready for the robot test", 4000);
             	JustinaHRI::waitAfterSay("Please, tell me justina start to go to the kitchen table",4000);
+                
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::loadGrammarSpeechRecognized("restaurant_commands.xml");
+            	JustinaHRI::waitAfterSay("Please, tell me justina start to go to the kitchen table",4000);
+                JustinaHRI::enableSpeechRecognized(true);
         		state = SM_WAIT_FOR_COMMAND;
         		break;
 
@@ -190,23 +195,17 @@ int main(int argc, char** argv){
 		            }
 		        }
 		        else if (confirm == 1) {
-		        	if(lastRecoSpeech.find("justina yes") != std::string::npos)
+		        	if(lastRecoSpeech.find("justina yes") != std::string::npos || lastRecoSpeech.find("robot yes") != std::string::npos)
 		        	{
+		            	JustinaHRI::waitAfterSay("Ok, I will bring you a coke again", 4000);
 		            	JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
 		                state = SM_ALIGN_TABLE;
 		                cont = 0;
 		            }
 		            else
 		            {
-		            	//cont++;
-
-		            	//if (cont == 3)
-		            	//{
-		            		
-		           			state = SM_FINAL_STATE;
-		            	//}
-
-		            	//state = SM_REPEAT_COMMAND;
+		            	cont++;
+                        state = (cont >= 3) ? SM_FINAL_STATE : SM_REPEAT_COMMAND;
 
 		            }
 
@@ -228,6 +227,7 @@ int main(int argc, char** argv){
         		break;	
 
     		case SM_ALIGN_TABLE:
+                JustinaHRI::enableSpeechRecognized(false);
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
@@ -429,7 +429,10 @@ int main(int argc, char** argv){
         		std::cout << "State machine: SM_REPEAT_TASK" << std::endl;	
         		confirm = 1;
         		JustinaHRI::waitAfterSay("Do you want other drink",4000);
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
         		JustinaHRI::waitAfterSay("Please, tell me justina yes o justina no",4000);
+                JustinaHRI::enableSpeechRecognized(true);
     			state = SM_WAIT_FOR_COMMAND;
                 break;
 

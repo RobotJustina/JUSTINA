@@ -72,8 +72,8 @@
 		</node>
 		<!-- Nodes to the simulation justina robot -->
 		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
-		<node unless="$(arg simul)" name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">
-			<param name="device" value="/dev/video1"/>
+		<node name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">
+			<param name="device" value="/dev/video0"/>
 			<param name="width" value="640"/>
 			<param name="height" value="480"/>
 		</node>
