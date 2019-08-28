@@ -19,6 +19,10 @@ enum SMState {
 	SM_WAIT_FOR_COMMAND,
 	SM_REPEAT_COMMAND,
 	SM_PARSE_SPOKEN_COMMAND,
+    SM_WAIT_COMMAND,
+    SM_RESET_OBJ,
+    SM_GET_ORDER,
+    SM_WHERE_IS,
 	SM_NAVIGATE_TO_INSPECTION,
 	SM_ALIGN_TABLE,
 	SM_DETECT_OBJECT,
@@ -90,6 +94,7 @@ int main(int argc, char** argv){
     JustinaTasks::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    JustinaRepresentation::setNodeHandle(&n);
     ros::Rate loop(10);
 
     int nextState = 0;
@@ -114,6 +119,7 @@ int main(int argc, char** argv){
     JustinaManip::startTorsoGoTo(0.1, 0, 0);
 
     //Params to getOrder
+    JustinaRepresentation::initKDB("/cia_2019/cia.dat", false, 20000);
 
 
 
@@ -121,6 +127,7 @@ int main(int argc, char** argv){
     std::vector<std::string> tokens1;
     std::stringstream ss;
     int cont = 0;
+    int contdrink = 0;
     int attemps = 0;
     int confirm = 0;
     bool la = false;
@@ -132,6 +139,10 @@ int main(int argc, char** argv){
     int index;
     std::string lastReco;
 	recoObj = std::vector<vision_msgs::VisionObject>();
+    
+    std::string drink;
+    std::string query;
+	std::string str;
 
     while(ros::ok() && !fail && !success){
         switch(state){
@@ -154,9 +165,10 @@ int main(int argc, char** argv){
         		//Init case
         		std::cout << "State machine: SM_INIT_TABLE" << std::endl;	
         		JustinaManip::startHdGoTo(0.0, 0.0);
-        		JustinaHRI::waitAfterSay("I am ready for the robot test", 4000);
-            	JustinaHRI::waitAfterSay("I am going to the kitchen table",4000);
-        		state = SM_ALIGN_TABLE;
+        		JustinaHRI::waitAfterSay("Hello I am Justina", 4000);
+            	JustinaHRI::waitAfterSay("I am ready for recieve a command",4000);
+        		//state = SM_ALIGN_TABLE;
+        		state = SM_WAIT_COMMAND;
         		break;
 
     		case SM_WAIT_FOR_COMMAND:
@@ -197,9 +209,10 @@ int main(int argc, char** argv){
 		        else if (confirm == 1) {
 		        	if(lastRecoSpeech.find("justina yes") != std::string::npos || lastRecoSpeech.find("robot yes") != std::string::npos)
 		        	{
-		            	JustinaHRI::waitAfterSay("Ok, I will bring you a coke again", 4000);
-		            	JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
-		                state = SM_ALIGN_TABLE;
+		            	JustinaHRI::waitAfterSay("Ok, I am ready for recieve a command", 4000);
+		            	//JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
+		                //state = SM_ALIGN_TABLE;
+                        state = (contdrink == 3) ? SM_RESET_OBJ : SM_WAIT_COMMAND;
 		                cont = 0;
 		            }
 		            else
@@ -212,6 +225,83 @@ int main(int argc, char** argv){
 		            
 
 		        }
+                break;
+            case SM_RESET_OBJ:
+                contdrink = 0;
+                ss.str("");
+                ss << "(assert (reset_objs 1))";
+                JustinaRepresentation::sendAndRunCLIPS(ss.str());
+
+                JustinaHRI::waitAfterSay("There are no more objects on the table", 2000);
+                JustinaHRI::waitAfterSay("please put all the objects I give you on top of the table", 2000);
+                state = SM_WAIT_COMMAND;
+                break;
+            case SM_WAIT_COMMAND:
+                JustinaHRI::waitForSpeechRecognized(lastReco,400);
+                if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+                    if(JustinaRepresentation::stringInterpretation(lastReco, drink))
+                        std::cout << "last int: " << drink << std::endl;
+                    str = drink;
+	                split(tokens, str, boost::is_any_of(" "));
+
+                    if(tokens.size()>1)
+                        state = SM_GET_ORDER;
+                    else
+                        state = SM_WHERE_IS;
+                }
+                break;
+            case SM_WHERE_IS:
+                    ss.str("");
+                    ss << "(assert (get_obj_default_loc " << drink << " 1))";    
+                    JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                    if (query != "table"){
+                        ss.str("");
+                        ss << "you have the " << drink;
+                        JustinaHRI::waitAfterSay(ss.str(), 2000);
+                        alternative_drink = false;
+                    }
+                    else{
+                        ss.str("");
+                        ss << "The " << drink << " is on the table";
+                        JustinaHRI::waitAfterSay(ss.str(), 2000);
+                    }
+                    state = SM_WAIT_COMMAND;
+        		    JustinaHRI::waitAfterSay("would you like something else",4000);
+                break;    
+            case SM_GET_ORDER:
+                    ss.str("");
+                    ss << "Do you want " << tokens[1] << ", say justina yes or justina no";
+                    drink = tokens[1];
+                    
+        		    JustinaHRI::waitAfterSay(ss.str(),4000);
+                    JustinaHRI::waitForSpeechRecognized(lastReco,400);
+
+                    JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                    if(lastReco == "robot yes" || lastReco == "justina yes"){
+                            ss.str("");
+                            ss << "(assert (get_obj_default_loc " << drink << " 1))";    
+                            JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
+                            if (query != "table"){
+                                ss.str("");
+                                ss << "I am sorry, the " << drink << " is out of stock , please choose another one";
+                                JustinaHRI::waitAfterSay(ss.str(), 2000);
+                                alternative_drink = false;
+                                state = SM_WAIT_COMMAND;
+                            }
+                            else{
+                                ss.str("");
+                                ss << "Ok i will give you the " << drink;
+                                JustinaHRI::waitAfterSay(ss.str(), 2000);
+		            	        JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
+                                state = SM_ALIGN_TABLE;
+                            }
+                    }
+                    else{
+                        JustinaHRI::waitAfterSay("Do you want something else, repeat the command please", 4000);
+                        state = SM_WAIT_COMMAND;
+                    }
+                    //count++;
+
                 break;
 
         	case SM_NAVIGATE_TO_INSPECTION:
@@ -238,7 +328,9 @@ int main(int argc, char** argv){
 			case SM_DETECT_OBJECT:
     			std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
     			if(objectDetected){
-		            JustinaHRI::waitAfterSay("I am looking for the coke on the kitchen table", 5000);
+                    ss.str("");
+                    ss << "I am looking for the " << drink << " on the kitchen table";
+		            JustinaHRI::waitAfterSay(ss.str(), 5000);
 		            //Obtiene la lista de objetos a detectar
 		            //recoObj = std::vector<vision_msgs::VisionObject>();
 
@@ -247,7 +339,7 @@ int main(int argc, char** argv){
 		            if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
 		                for(int j = 0; j < recoObj.size() && !objectDetected; j++){
 		                	// id.compare es la lista de objetos a leer, en este caso es cocacola
-		                    if (recoObj[j].id.compare("coke") == 0){
+		                    if (recoObj[j].id.compare(drink) == 0){
 		                        index = j;
 		                        objectDetected = true;
 		                    }
@@ -262,9 +354,13 @@ int main(int argc, char** argv){
 			case SM_GRASP_OBJECT:
 				std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 if(objectDetected && recoObj.size() > 0){
-                    JustinaHRI::waitAfterSay("I have found the coke", 5000);
+                    ss.str("");
+                    ss << "I have found the " << drink;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
                     //JustinaTasks::alignWithTable(0.35);
-                    JustinaHRI::waitAfterSay("I am going to take the coke", 5000);
+                    ss.str("");
+                    ss << "I am going to take the " << drink;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
                     // This is for grasp with two frames //false for right true for left, "", true torso 
                     //std::cout << "Index: " << index << std::endl;
                     //std::cout << "recoObj: " << recoObj.size() << std::endl;
@@ -285,125 +381,21 @@ int main(int argc, char** argv){
 
                 }
                
-		            /*if(!objectDetected){
-			            JustinaNavigation::startMoveDist(-0.15);
-			            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
-			            JustinaNavigation::waitForGoalReached(2000);
-			            JustinaHRI::waitAfterSay("Sorry i could not grasp the object by myself", 5000);
-			            JustinaHRI::waitAfterSay("Please put the object in my gripper", 5000);
-			            if(!ra){
-			                JustinaManip::raGoTo("navigation", 3000);
-			                JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-			                ra = true;
-			                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
-			                objectDetected = JustinaTasks::alignWithTable(0.35); 
-			                if(objectDetected){
-			                    objectDetected = false;
-			                    if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
-			                        for(int j = 0; j < recoObj.size() && !objectDetected; j++){
-			                            if (recoObj[j].id.compare(tokens[i]) == 0){
-			                                index =j;
-			                                objectDetected = true;
-			                             }
-			                         }
-
-			                         if(objectDetected){
-			                             ss.str("");
-			                             ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
-			                             
-			                             JustinaNavigation::startMoveDist(-0.15);
-			                             JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
-			                             JustinaNavigation::waitForGoalReached(2000);
-			                             
-			                             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-			                             JustinaTasks::dropObject("", false, 10000);
-
-			                             ss.str("");
-			                             ss << "give me the " << tokens[i] << std::endl; 
-			                             JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-			                             JustinaTasks::detectObjectInGripper(tokens[i], false, 7000);
-
-			                             ra = true;
-			                             ss.str("");
-			                            ss << "(assert (set_object_arm " << tokens[i] << " false))";
-			                            JustinaRepresentation::sendAndRunCLIPS(ss.str());
-			                            JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
-			                        }
-			                    }
-			                }
-			                if(!objectDetected){
-			                    ra = true;
-			                    ss.str("");
-			                    ss << "(assert (set_object_arm " << tokens[i] << " false))";
-			                    JustinaRepresentation::sendAndRunCLIPS(ss.str());
-			                    JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
-			                }   
-
-			                
-			            }
-			            if(!la && tokens.size() > 3 && i >1){
-			                JustinaManip::laGoTo("navigation", 3000);
-			                JustinaTasks::detectObjectInGripper(tokens[i], true, 7000);
-			                la = true;
-			                JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
-			                objectDetected = JustinaTasks::alignWithTable(0.35);
-			                if(objectDetected){
-			                    objectDetected = false;
-			                     if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
-			                        for(int j = 0; j < recoObj.size() && !objectDetected; j++){
-			                            if (recoObj[j].id.compare(tokens[i]) == 0){
-			                                index =j;
-			                                objectDetected = true;
-			                            }
-			                        }
-
-			                        if(objectDetected){
-			                            ss.str("");
-			                            ss << "I have found the " << tokens[i] << " on the table, please give me the correct object" << std::endl; 
-			                             
-			                            JustinaNavigation::startMoveDist(-0.15);
-			                            JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
-			                            JustinaNavigation::waitForGoalReached(2000);
-			                            
-			                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-			                            JustinaTasks::dropObject("", true, 10000);
-			                            
-			                            ss.str("");
-			                            ss << "give me the " << tokens[i] << std::endl; 
-			                            JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
-			                            JustinaTasks::detectObjectInGripper(tokens[i], true, 7000);
-			                            
-			                            la = true;
-			                            ss.str("");
-			                            ss << "(assert (set_object_arm " << tokens[i] << " true))";
-			                            JustinaRepresentation::sendAndRunCLIPS(ss.str());
-			                            JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
-			                        }
-			                    }
-			                }
-			                if(!objectDetected){
-			                    la = true;
-			                    ss.str("");
-			                    ss << "(assert (set_object_arm " << tokens[i] << " true))";
-			                    JustinaRepresentation::sendAndRunCLIPS(ss.str());
-			                    JustinaHRI::waitAfterSay("thank you barman", 5000, 0);
-			                }   
-			            }
-			        }*/
 				state = SM_DELIVER_OBJECT;		        
 				break;
 
 			case SM_HANDLER:
 				std::cout << "State machine: SM_HANDLER" << std::endl;
-				JustinaHRI::waitAfterSay("Sorry i could not grasp the coke", 5000);
-                JustinaHRI::waitAfterSay("Please put the coke in my gripper", 5000);
+                ss.str("");
+                ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
                 if(drop){
                 	JustinaManip::raGoTo("navigation", 3000);
-                	JustinaTasks::detectObjectInGripper("coke", false, 7000);
+                	JustinaTasks::detectObjectInGripper(drink, false, 7000);
                 }
                 else{
                 	JustinaManip::laGoTo("navigation", 3000);
-                	JustinaTasks::detectObjectInGripper("coke", true, 7000);
+                	JustinaTasks::detectObjectInGripper(drink, true, 7000);
                 }
                 state = SM_DELIVER_OBJECT;
 				break;
@@ -411,7 +403,9 @@ int main(int argc, char** argv){
 			case SM_DELIVER_OBJECT:
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
-				JustinaHRI::waitAfterSay("Human, please take the coke from my gripper", 5000);
+                ss.str("");
+                ss << "Please take the " << drink << " from my gripper"; 
+				JustinaHRI::waitAfterSay(ss.str(), 5000);
                 if(drop){
                 	JustinaManip::raGoTo("take", 3000);
                 	JustinaTasks::dropObject("", false, 10000);
@@ -420,7 +414,13 @@ int main(int argc, char** argv){
             		JustinaManip::laGoTo("take", 3000);
             		JustinaTasks::dropObject("", true, 10000);
             	}
-            	JustinaHRI::waitAfterSay("Enjoy the coke", 5000);
+                ss.str("");
+                ss << "Enjoy the " << drink;
+            	JustinaHRI::waitAfterSay(ss.str(), 5000);
+                ss.str("");
+                ss << "(assert (set_obj_default_loc " << drink <<" no_on_table 1))";
+                JustinaRepresentation::sendAndRunCLIPS(ss.str());
+                contdrink++;
                 state = SM_REPEAT_TASK;
 				break;
 
@@ -428,7 +428,7 @@ int main(int argc, char** argv){
         		//Final state
         		std::cout << "State machine: SM_REPEAT_TASK" << std::endl;	
         		confirm = 1;
-        		JustinaHRI::waitAfterSay("Do you want other drink",4000);
+        		JustinaHRI::waitAfterSay("Do you want something else",4000);
                 JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
         		JustinaHRI::waitAfterSay("Please, tell me justina yes o justina no",4000);

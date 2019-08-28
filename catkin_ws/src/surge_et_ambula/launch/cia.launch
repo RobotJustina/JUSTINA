@@ -1,0 +1,8 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina_simul.launch"/>
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping where_is_this" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	<node name="test_robot" pkg="act_pln" type="test_robot" output="screen"/>
+	<!-- <node name="monitor" pkg="act_pln" type="monitor" output="screen"/> -->
+
+</launch>

@@ -42,6 +42,8 @@ def set_mapping(mapping):
         meaning_mapping_patterns = meaning_mapping_patterns_spr
     elif mapping == 'where_is_this': 
         meaning_mapping_patterns = meaning_mapping_patterns_where_is_this
+    elif mapping == 'cia': 
+        meaning_mapping_patterns = meaning_mapping_patterns_cia
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
@@ -2772,7 +2774,18 @@ meaning_mapping_patterns_where_is_this = [
 	"conceptual_dependency": "-Place-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
+	"planner_not_confirmed": ''},
+
+        {"params": ["Give", "Me", "Object"],
+        "Give":[["give", "bring"],[],[],[]],
+        "Me":[["me"],[],[],[]],
+        "Object":[[],[],["item"],[]],
+	"conceptual_dependency": "give -Object-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''
+        }
+
         ]
 
 meaning_mapping_patterns_catering_comfort = [
