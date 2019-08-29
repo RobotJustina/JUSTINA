@@ -330,6 +330,9 @@ int main(int argc, char** argv){
     		case SM_ALIGN_TABLE:
                 JustinaHRI::enableSpeechRecognized(false);
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
+                ss.str("");
+                ss << "Barman I need a " << drink  << " please, put the " << drink << "in front of me, on the table"; 
+                JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
         		//objectDetected = true;
@@ -340,7 +343,7 @@ int main(int argc, char** argv){
     			std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
     			if(objectDetected){
                     ss.str("");
-                    ss << "I am looking for the " << drink << " on the kitchen table";
+                    ss << "I am looking for the " << drink << " on the table";
 		            JustinaHRI::waitAfterSay(ss.str(), 5000);
 		            //Obtiene la lista de objetos a detectar
 		            //recoObj = std::vector<vision_msgs::VisionObject>();
@@ -396,6 +399,7 @@ int main(int argc, char** argv){
 				break;
 
 			case SM_HANDLER:
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
 				std::cout << "State machine: SM_HANDLER" << std::endl;
                 ss.str("");
                 ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
