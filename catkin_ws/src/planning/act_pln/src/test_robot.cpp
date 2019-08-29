@@ -227,16 +227,19 @@ int main(int argc, char** argv){
 		        }
                 break;
             case SM_RESET_OBJ:
+        		std::cout << "State machine: SM_RESET_OBJ" << std::endl;	
                 contdrink = 0;
                 ss.str("");
                 ss << "(assert (reset_objs 1))";
                 JustinaRepresentation::sendAndRunCLIPS(ss.str());
 
                 JustinaHRI::waitAfterSay("There are no more objects on the table", 2000);
-                JustinaHRI::waitAfterSay("please put all the objects I give you on top of the table", 2000);
+                JustinaHRI::waitAfterSay("please put all the objects I give you on top of the table", 4000);
+                JustinaHRI::waitAfterSay("thank you", 2000);
                 state = SM_WAIT_COMMAND;
                 break;
             case SM_WAIT_COMMAND:
+        		std::cout << "State machine: SM_WAIT_COMMAND" << std::endl;	
                 JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::loadGrammarSpeechRecognized("cia.xml");
                 JustinaHRI::enableSpeechRecognized(true);
@@ -254,6 +257,7 @@ int main(int argc, char** argv){
                 }
                 break;
             case SM_WHERE_IS:
+        		    std::cout << "State machine: SM_WHERE_IS" << std::endl;	
                     ss.str("");
                     ss << "(assert (get_obj_default_loc " << drink << " 1))";    
                     JustinaRepresentation::strQueryKDB(ss.str(), query, 1000);
@@ -269,15 +273,16 @@ int main(int argc, char** argv){
                         JustinaHRI::waitAfterSay(ss.str(), 2000);
                     }
                     state = SM_WAIT_COMMAND;
-        		    JustinaHRI::waitAfterSay("would you like something else",4000);
+        		    JustinaHRI::waitAfterSay("do you want something else",4000);
                 break;    
             case SM_GET_ORDER:
+        		    std::cout << "State machine: SM_GET_ORDER" << std::endl;	
                     ss.str("");
                     ss << "Do you want " << tokens[1] << ", say justina yes or justina no";
                     drink = tokens[1];
                     
                     JustinaHRI::enableSpeechRecognized(false);
-                    JustinaHRI::loadGrammarSpeechRecognized("restaurant_commands.xml");
+                    JustinaHRI::loadGrammarSpeechRecognized("commands.xml");
         		    JustinaHRI::waitAfterSay(ss.str(),4000);
                     JustinaHRI::enableSpeechRecognized(true);
                     JustinaHRI::waitForSpeechRecognized(lastReco,400);
