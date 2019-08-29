@@ -237,6 +237,9 @@ int main(int argc, char** argv){
                 state = SM_WAIT_COMMAND;
                 break;
             case SM_WAIT_COMMAND:
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::loadGrammarSpeechRecognized("cia.xml");
+                JustinaHRI::enableSpeechRecognized(true);
                 JustinaHRI::waitForSpeechRecognized(lastReco,400);
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                     if(JustinaRepresentation::stringInterpretation(lastReco, drink))
@@ -273,7 +276,10 @@ int main(int argc, char** argv){
                     ss << "Do you want " << tokens[1] << ", say justina yes or justina no";
                     drink = tokens[1];
                     
+                    JustinaHRI::enableSpeechRecognized(false);
+                    JustinaHRI::loadGrammarSpeechRecognized("restaurant_commands.xml");
         		    JustinaHRI::waitAfterSay(ss.str(),4000);
+                    JustinaHRI::enableSpeechRecognized(true);
                     JustinaHRI::waitForSpeechRecognized(lastReco,400);
 
                     JustinaHRI::waitForSpeechRecognized(lastReco,10000);
