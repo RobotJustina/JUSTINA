@@ -165,7 +165,7 @@ int main(int argc, char** argv){
         		//Init case
         		std::cout << "State machine: SM_INIT_TABLE" << std::endl;	
         		JustinaManip::startHdGoTo(0.0, 0.0);
-        		JustinaHRI::waitAfterSay("Hello I am Justina", 4000);
+        		JustinaHRI::waitAfterSay("Hello my name is Justina", 4000);
             	JustinaHRI::waitAfterSay("I am ready for recieve a command",4000);
         		//state = SM_ALIGN_TABLE;
         		state = SM_WAIT_COMMAND;
