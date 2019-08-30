@@ -400,6 +400,7 @@ int main(int argc, char** argv){
 
 			case SM_HANDLER:
                 JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+                JustinaNavigation::startMoveDist(-0.15);
 				std::cout << "State machine: SM_HANDLER" << std::endl;
                 ss.str("");
                 ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
@@ -419,13 +420,16 @@ int main(int argc, char** argv){
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
 				JustinaHRI::waitAfterSay("Guest, i try find you", 4000);
-				JustinaManip::hdGoTo(0.6, 0.0, 4000);
-				JustinaManip::hdGoTo(0.3, 0.0, 4000);
-				JustinaManip::hdGoTo(0.0, 0.0, 4000);
-				JustinaManip::hdGoTo(-0.3, 0.0, 4000);
-				JustinaManip::hdGoTo(-0.6, 0.0, 4000);
-				JustinaManip::hdGoTo(-0.3, 0.0, 4000);
-				JustinaManip::hdGoTo(0.0, 0.0, 4000);
+				JustinaManip::hdGoTo(0.9, 0.0, 6000);
+				JustinaManip::hdGoTo(0.6, 0.0, 6000);
+				JustinaManip::hdGoTo(0.3, 0.0, 6000);
+				JustinaManip::hdGoTo(0.0, 0.0, 6000);
+				JustinaManip::hdGoTo(-0.3, 0.0, 6000);
+				JustinaManip::hdGoTo(-0.6, 0.0, 6000);
+				JustinaManip::hdGoTo(-0.9, 0.0, 6000);
+				JustinaManip::hdGoTo(-0.6, 0.0, 6000);
+				JustinaManip::hdGoTo(-0.3, 0.0, 6000);
+				JustinaManip::hdGoTo(0.0, 0.0, 6000);
 				JustinaHRI::waitAfterSay("Guest, i find you", 6000);
                 ss.str("");
                 ss << "Please take the " << drink << " from my gripper"; 
@@ -439,6 +443,7 @@ int main(int argc, char** argv){
             		JustinaTasks::dropObject("", true, 10000);
             	}
                 ss.str("");
+                JustinaManip::hdGoTo(0.0, 0.0, 6000);
                 ss << "Enjoy the " << drink;
             	JustinaHRI::waitAfterSay(ss.str(), 5000);
                 ss.str("");
