@@ -26,7 +26,8 @@
 	<arg name="enable_torque" default="true"/>
 	<arg name="head_offset" default="0.0"/>
 
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xacro" />
+	<!--param name="robot_description" command="cat $(find knowledge)/hardware/justina.xacro" /-->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="false"/>
