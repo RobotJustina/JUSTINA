@@ -417,6 +417,9 @@ int main(int argc, char** argv){
 
 			case SM_DELIVER_OBJECT:
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
+				JustinaManip::hdGoTo(0.6, 0.0, 3000);
+				JustinaManip::hdGoTo(-0.6, 0.0, 3000);
+				JustinaManip::hdGoTo(0.0, 0.0, 3000);
 				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
                 ss.str("");
                 ss << "Please take the " << drink << " from my gripper"; 
