@@ -35,17 +35,16 @@ bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
 {
     //Control constants
-    //float alpha = 0.6548;
-    float alpha =1.2;//= 0.9;
+    float alpha =0.6548;// 0.6548 ;//= 0.9; // = 1.2
     float beta = 0.3;
-    float max_angular = 0.8;//0.7
+    float max_angular = 0.7;//0.7 // 0.8 // 0.7
 
     //Error calculation
     float angle_error = atan2(goal_y, goal_x);
     float distance    = sqrt(goal_x*goal_x + goal_y*goal_y);
     distance -= 0.7;
     if(distance <   0) distance = 0; //Robot will stop at 0.8 m from walker
-    if(distance > 0.35) distance = 0.35; //Distance is used as speed, so, robot will move at 0.5 max
+    if(distance > 0.25) distance = 0.25; //Distance is used as speed, so, robot will move at 0.5 max
     geometry_msgs::Twist result;
     if(distance > 0)
     {
@@ -79,10 +78,18 @@ void callback_legs_pose(const geometry_msgs::PointStamped::ConstPtr& msg)
     pub_cmd_vel.publish(calculate_speeds(msg->point.x, msg->point.y));
     if(move_head)
     {
-        std_msgs::Float32MultiArray head_poses;
-        head_poses.data.push_back(atan2(msg->point.y, msg->point.x));
-        head_poses.data.push_back(-0.9);
-        pub_head_pose.publish(head_poses);
+        if(sqrt(msg->point.x * msg->point.x + msg->point.y * msg->point.y) > 0.23){
+            std_msgs::Float32MultiArray head_poses;
+            head_poses.data.push_back(atan2(msg->point.y, msg->point.x));
+            head_poses.data.push_back(-0.9);
+            pub_head_pose.publish(head_poses);
+        }
+        else{
+            std_msgs::Float32MultiArray head_poses;
+            head_poses.data.push_back(0.0);
+            head_poses.data.push_back(0.0);
+            pub_head_pose.publish(head_poses);
+        }
     }
 }
 

@@ -158,6 +158,10 @@ add_executable(follow_me_test
   src/follow_me_test.cpp
 )
 
+add_executable(where_is_this
+  src/where_is_this.cpp
+)
+
 add_executable(helpMeCarry_test
   src/helpMeCarry_test.cpp
 )
@@ -209,12 +213,20 @@ add_executable(open_challenge_test
 #  src/restaurant_nagoya.cpp
 #)
 
-add_executable(restaurant_canada
-  src/restaurant_canada.cpp
+#add_executable(restaurant_canada
+#  src/restaurant_canada.cpp
+#)
+
+add_executable(restaurant
+  src/restaurant_sydney.cpp
 )
 
 add_executable(eegpsr_test
   src/eegpsr_test.cpp
+)
+
+add_executable(serve_the_breakfast
+  src/serve_the_breakfast.cpp
 )
 
 #add_executable(storing_groseries_test
@@ -225,8 +237,12 @@ add_executable(eegpsr_test
 #  src/storing_groseries_test_2.cpp
 #)
 
+#add_executable(storing_groseries_test
+#  src/storing_groseries_test_2018.cpp
+#)
+
 add_executable(storing_groseries_test
-  src/storing_groseries_test_2018.cpp
+  src/storing_groseries_test_2019.cpp
 )
 
 #add_executable(tv_azteca_test
@@ -297,6 +313,14 @@ add_executable(welcoming_visitor_test
 	src/welcoming_visitor_test.cpp
 )
 
+add_executable(stickler_for_the_rules
+	src/stickler_for_the_rules.cpp
+)
+
+add_executable(final_robocup2019
+	src/final_robocup2019
+)
+
 #add_executable(catering_comfort_test
 #	src/catering_comfort_test.cpp
 #)
@@ -305,12 +329,17 @@ add_executable(welcoming_visitor_test
 #	src/getting_to_know_my_home.cpp
 #)
 
+add_executable(test_robot
+	src/test_robot.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(monitor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(where_is_this ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -328,7 +357,7 @@ add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(restaurant_canada ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(restaurant ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -344,6 +373,11 @@ add_dependencies(carry_my_luggage ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(getting_to_know_my_home ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(serve_the_breakfast ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(stickler_for_the_rules ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(final_robocup2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(test_robot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -361,6 +395,10 @@ target_link_libraries(follow_me_test
   ${catkin_LIBRARIES}
 )
 
+target_link_libraries(where_is_this
+  ${catkin_LIBRARIES}
+)
+
 target_link_libraries(helpMeCarry_test
   ${catkin_LIBRARIES}
 )
@@ -373,7 +411,11 @@ target_link_libraries(helpMeCarry_test
 #  ${catkin_LIBRARIES}
 #)
 
-target_link_libraries(restaurant_canada
+target_link_libraries(restaurant
+	${catkin_LIBRARIES}
+)
+
+target_link_libraries(final_robocup2019
 	${catkin_LIBRARIES}
 )
 
@@ -508,3 +550,20 @@ target_link_libraries(welcoming_visitor_test
 #target_link_libraries(getting_to_know_my_home
 # ${catkin_LIBRARIES}
 #)
+
+target_link_libraries(serve_the_breakfast
+ ${catkin_LIBRARIES}
+)
+
+
+target_link_libraries(stickler_for_the_rules
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(final_robocup2019
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(test_robot
+ ${catkin_LIBRARIES}
+)

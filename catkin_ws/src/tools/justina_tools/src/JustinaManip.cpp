@@ -58,6 +58,7 @@ bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_isObjOnRightHand = false;
 bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
+ros::NodeHandle * JustinaManip::_nh;
 
 std::vector<float> JustinaManip::_laCurrentPos;
 std::vector<float> JustinaManip::_raCurrentPos;
@@ -125,7 +126,8 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     //For moving up and down torso
     JustinaManip::pubTorsoUp   = nh->advertise<std_msgs::String>("/hardware/torso/torso_up", 1);
     JustinaManip::pubTorsoDown = nh->advertise<std_msgs::String>("/hardware/torso/torso_down", 1);
-
+    JustinaManip::_nh = nh;
+    
     return true;
 }
 
@@ -224,12 +226,45 @@ bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<
 
 bool JustinaManip::inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular)
 {
-    return false;
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    srv.request.cartesian_pose.data.push_back(roll);
+    srv.request.cartesian_pose.data.push_back(pitch);
+    srv.request.cartesian_pose.data.push_back(yaw);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
+}
+    
+bool JustinaManip::inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, float elbow, std::vector<float>& articular)
+{
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    srv.request.cartesian_pose.data.push_back(roll);
+    srv.request.cartesian_pose.data.push_back(pitch);
+    srv.request.cartesian_pose.data.push_back(yaw);
+    srv.request.cartesian_pose.data.push_back(elbow);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
 }
 
 bool JustinaManip::inverseKinematics(float x, float y, float z, std::vector<float>& articular)
 {
-    return false;
+    std::cout << "JustinaManip.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data.push_back(x);
+    srv.request.cartesian_pose.data.push_back(y);
+    srv.request.cartesian_pose.data.push_back(z);
+    bool success = JustinaManip::cltIKFloatArray.call(srv);
+    articular = srv.response.articular_pose.data;
+    return success;
 }
 
 bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::string frame_id, std::vector<float>& articular)
@@ -1105,6 +1140,19 @@ void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 void JustinaManip::getTorsoCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_torsoCurrentPos;
+}
+
+void JustinaManip::setLaTrajectoryTime(float time)
+{
+    std::cout<<"New trajectory time established for left arm"<<std::endl;
+    _nh->setParam("/manipulation/la_control/trajectory_time", time);
+}
+
+void JustinaManip::setRaTrajectoryTime(float time)
+{
+    std::cout<<"New trajectory time established for right arm"<<std::endl;
+    _nh->setParam("/manipulation/ra_control/trajectory_time", time);
+
 }
 
 bool JustinaManip::isLaInPredefPos(std::string id)

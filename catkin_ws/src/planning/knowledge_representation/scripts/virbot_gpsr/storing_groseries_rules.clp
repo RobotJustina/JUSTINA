@@ -133,4 +133,14 @@
 	(printout t ?command)
 )
 
+(defrule get_one_objects_to_grasp
+	?f <- (cmd_get_objects_to_grasp 1)
+	?f1 <- (obj_to_grasp ?obj1 ?r1 ?p1 ?ind1 1)
+	(not(obj_to_grasp ?obj2 ?r2 ?p2 ?ind2 2))
+	=>
+	(retract ?f ?f1)
+	(bind ?command(str-cat "" ?ind1 " " ?ind1 ""))
+	(printout t ?command)
+)
+
 ;;;;

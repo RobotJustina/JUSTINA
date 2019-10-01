@@ -1,0 +1,9 @@
+candies desk 3 biscuit frosty_fruits biscuit frosty_fruits
+cleaning_stuff sink 4 trash_bags dishwasher_tab dishwasher_tab cloth
+containers display_cabinet 4 basket tray basket tray
+cutlery kitchen_cabinet 4 knife spoon knife spoon
+drinks sideboard 7 water coke beer coke
+food shelf 5 cereals onion cereals onion
+fruits kitchen_table 5 apple lemon apple lemon
+snacks coffee_table 5 doritos shapes_chicken doritos shapes_chicken
+tableware kitchen_cabinet 4 glass shot_glass plate shot_glass

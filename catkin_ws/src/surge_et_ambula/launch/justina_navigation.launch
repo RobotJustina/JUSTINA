@@ -18,7 +18,7 @@
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo_pre_canada.yaml"/>
+				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
 
 			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<!-- This params are for relocate the justina localization more fast --> 
@@ -99,12 +99,13 @@
 		<group ns="obs_avoid">
 			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen">
 				<!-- This is to normal navigation -->
-				<!-- param name="max_x" value="0.7" />
-				<param name="z_threshold" value="0.1" / -->
+				<param name="max_x" value="0.7" />
+				<param name="z_threshold" value="0.06" />
+				<!-- param name="z_threshold" value="0.1" / -->
 				<!-- This is to detect the small objects and closest objects -->
-				<param name="max_x" value="0.8" />
+				<!-- param name="max_x" value="0.8" />
 				<param name="z_threshold" value="0.06"/>
-				<param name="is_obst_counter" value="30" />
+				<param name="is_obst_counter" value="30" / -->
 			</node>
 			<!-- This is to normal navigation -->
 			<!-- TODO THIS FORM IS TO CONFIG A NODE WITH ARGS PARAMS, TEST IF THE NEW FORM WORKS -->
@@ -114,8 +115,10 @@
 		</group>
 		<node name="potential_fields" pkg="potential_fields" type="potential_fields_node" output="screen">
 			<param name="topic_scan" value="/hardware/scan"/>
-			<param name="distance_min" value="0.5"/>
-			<param name="k_r" value="15.7"/>
+			<param name="distance_min" value="0.35"/>
+			<!-- param name="k_r" value="15.7"/ -->
+			<!-- param name="k_r" value="5.5"/ -->
+			<param name="k_r" value="10.7"/>
 		</node>
 		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen">
 			<param name="move_lateral" value="false"/>

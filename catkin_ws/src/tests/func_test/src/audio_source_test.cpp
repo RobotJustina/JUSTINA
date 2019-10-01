@@ -12,6 +12,7 @@
 #include "justina_tools/JustinaRepresentation.h"
 #include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Float32.h"
 #include "string"
 
 #define SM_InitialState 0
@@ -24,7 +25,14 @@
 #define SM_BlindGameRepeatQ 70
 #define	SM_FinalState 80
 
+float val_grad;
+
 std::vector<std::string> questionList;
+
+void callback_angle (const std_msgs::Float32 &angle){
+	val_grad = angle.data;
+	std::cout << "val_angle:" << val_grad << std::endl;
+}
 
 int nearestFace(vision_msgs::VisionFaceObjects faces){
 	float distanceAux;
@@ -124,7 +132,8 @@ bool listenAndAnswer(const int& timeout){
 
 
 bool listenTurnAndAnswer(const int& timeout){
-	float audioSourceAngle = 0;
+	int audioSourceAngle = 0;
+	double angle_radian = 0.0;
 	std::string answer;
 	std::string lastRecoSpeech;
 	bool recogF = false;
@@ -151,11 +160,12 @@ bool listenTurnAndAnswer(const int& timeout){
 	//convert string to lower case
 	boost::to_lower(lastRecoSpeech);
 	ros::Duration(1.0).sleep();
-	audioSourceAngle = JustinaAudio::getAudioSource();
-	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
+	audioSourceAngle = val_grad;
+	std::cout << "Audio source at " << audioSourceAngle << " degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you");
+    angle_radian = (3.141592*audioSourceAngle)/180;
 	ros::Duration(1.0).sleep();
-	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
+	JustinaNavigation::moveDistAngle(0, angle_radian, 5000);
 	ros::Duration(1.0).sleep();
 	dFaces = recognizeFaces (2000,recogF);
 
@@ -204,6 +214,7 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
+	ros::Subscriber sub = n.subscribe("sound_direction", 1000, callback_angle);
 	std::stringstream auxAudio;
 	std::string str1;
 

@@ -2,12 +2,39 @@
 	<arg name="initial_pose_x" default="0.0"/>
 	<arg name="initial_pose_y" default="0.0"/>
 	<arg name="initial_pose_a" default="0.0"/>
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
+    <arg name="dynamic_map" default="true"/>
+	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_start_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="false"/>
+	<arg name="avoidance_type_obstacle" default="false"/>
+	<!-- This is for test the normal test, only comment to test the navigation with the table short -->
+	<!-- arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+    <arg name="kinect_minY" default="-0.35"/>
+	arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/ -->
+	<!-- This is only for test test -->
+    <arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="1.1"/>
+	<arg name="kinect_minY" default="-0.45"/>
+	<arg name="kinect_maxY" default="0.45"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
+	<arg name="enable_torque" default="true"/>
+	<arg name="head_offset" default="0.0"/>
+
+	<!--param name="robot_description" command="cat $(find knowledge)/hardware/justina.xacro" /-->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
 		<arg name="dynamic_map" value="true"/>
+        <arg name="enable_torque" value="$(arg enable_torque)"/>
+		<arg name="head_offset" value="$(arg head_offset)"/>
 	</include>	
 	<group ns="hri">
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>

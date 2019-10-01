@@ -1,91 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions>
   <question>
-    <q>what is robotics?</q>
-    <a>the scientific study of robot</a>
+	<q>what's the nickname of the sydney's harbour bridge</q>
+	<a>The Coathanger, because of its arch based design</a>
+  </question>
+	<question>
+	<q>what's the nickname of sydney</q>
+	<a>Sin City because organised crime took over the city</a>
+  </question>
+	<question>
+	<q>are funnel web spiders dangerous</q>
+	<a>A Sydney Funnel Web Spider bite can kill a human in 15 minutes, piercing into gloves and fingernails</a>
+  </question>
+	<question>
+	<q>where did ac dc start its carreer</q>
+	<a>AC DC stared its carreer here, in Sydney</a>
+  </question>
+	<question>
+	<q>where did richard clapton start its carreer</q>
+	<a>Richard Clapton stared its carreer here, in Sydney</a>
+  </question>
+	<question>
+	<q>how strong is sydney's harbour bridge</q>
+	<a>Much, I know it can stand 96 railway engines</a>
+  </question>
+	<question>
+	<q>who has the guinness world record for the largest swimsuit group</q>
+	<a>Bondi Beach in Sydney, with 1010 women wearing bikinis in 2007</a>
+  </question>
+	<question>
+	<q>what's the oldest street in australia</q>
+	<a>George Street is the oldest street in Australia</a>
+  </question>
+	<question>
+	<q>what can you tell me about the sydney opera house</q>
+	<a>It was completed in 1973, took 14 years and 10 thousand construction workers to build</a>
+  </question>
+	<question>
+	<q>what can you tell me about the grand organ</q>
+	<a>With 10154 pipes, it's the largest mechanical tracker action pipe organ in the world</a>
+  </question>
+	<question>
+	<q>what can you tell me about the australian museum</q>
+	<a>It's Australia’s oldest natural history museum</a>
+  </question>
+	<question>
+	<q>what can you tell me about the mint building</q>
+	<a>It was originally built to be a hospital in 1814 and the contractors were paid with 45000 gallons of rum</a>
+  </question>
+	<question>
+	<q>what can you tell me about the university of sydney</q>
+	<a>It was established in 1850 and is the oldest university in Australia</a>
+  </question>
+	<question>
+	<q>who attended the national institute of dramatic art</q>
+	<a>Mel Gibson, Judy Davis, Baz Luhrmann, and Cate Blanchett</a>
+  </question>
+	<question>
+	<q>what can you tell me about the great barrier reef</q>
+	<a>It is the largest organic construction on earth</a>
+  </question>
+	<question>
+	<q>are spiders eaten in australia</q>
+	<a>The average person in Australia swallows three spiders a year</a>
+  </question>
+	<question>
+	<q>where can i find kangaroo</q>
+	<a>Kangaroo meat can be purchased from the supermarket and on restaurant. It's leaner and healthier alternative to beef or lamb</a>
+  </question>
+	<question>
+	<q>how many kangaroos there are in australia</q>
+	<a>There are about 40 million kangaroos in Australia</a>
+  </question>
+	<question>
+	<q>what is a kangaroo</q>
+	<a>Kangaroo is Aboriginal for, I don’t understand what you are saying</a>
+  </question>
+	<question>
+	<q>what is a box jellyfish</q>
+	<a>It is the world's most venomous marine creature</a>
+  </question>
+	<question>
+	<q>are there snakes in australia</q>
+	<a>Out of the top 25 deadliest snakes in the world, 20 are found in Australia</a>
+  </question>
+	<question>
+	<q>do tasmanian devil really exist</q>
+	<a>The Tasmanian Devil does exist, and it has the jaw strength of a crocodile</a>
+  </question>
+	<question>
+	<q>do australians like beer</q>
+	<a>Aussies drink about 680 bottles of beer per adult each year</a>
+  </question>
+	<question>
+	<q>are there pink lakes</q>
+	<a>Western Australia is home to a number of Pink Lakes such as Lake Hillier</a>
+  </question>
+	<question>
+	<q>what is the hero's name in the legend of zelda</q>
+	<a>Despite most people's believes, he's called Link</a>
+  </question>
+	<question>
+	<q>what are the names of the ghosts who chase pac man and ms. pac man</q>
+	<a>inky, blinky, pinky, and clyde</a>
+  </question>
+	<question>
+	<q>what's the name of the mythbusters' crash test dummy</q>
+	<a>The Mythbusters' crash test dummy is called Buster</a>
+  </question>
+	<question>
+	<q>what is an oxford comma</q>
+	<a>The hotly contested punctuation before a conjunction in a list</a>
+  </question>
+	<question>
+	<q>who was the captain of the enterprise in the pilot episode of star trek</q>
+	<a>The captain of the Enterprise in the pilot episode was Captain Pike</a>
+  </question>
+	<question>
+	<q>what is the symbol for the modulus operator in c</q>
+	<a>The percentage symbol is used as modulus operator in C</a>
+  </question>
+	<question>
+	<q>what function is automatically called at the beginning of a c++ program</q>
+	<a>The main function</a>
+  </question>
+	<question>
+	<q>which computer programming languages was introduced by ibm in 1957</q>
+	<a>Fortran was introduced by IBM in 1957</a>
+  </question>
+	<question>
+	<q>what does the acronym smtp represent</q>
+	<a>SMTP stands for Simple Mail Transport Protocol</a>
+  </question>
+	<question>
+	<q>what does the acronym mpeg represent</q>
+	<a>MPEG stands for Moving Picture Experts Group</a>
+  </question>
+	<question>
+	<q>what does the acronym gimp represent</q>
+	<a>GNU Image Manipulation Program</a>
+  </question>
+	<question>
+	<q>what does the acronym gnu represent</q>
+	<a>GNU is a recursive acronym meaning GNU is Not Unix</a>
+  </question>
+	<question>
+	<q>who is considered as the first programmer</q>
+	<a>The first programmer was Ada Lovelace</a>
+  </question>
+	<question>
+	<q>has a robot ever killed a person</q>
+	<a>The first known case of robot homicide occurred in 1981, when a robotic arm crushed a Japanese Kawasaki factory worker</a>
+  </question>
+	<question>
+	<q>who was hitchbot</q>
+	<a>A hitchhiking robot that relied on the kindness of strangers to travel the world and was slain by humans</a>
+  </question>
+	<question>
+	<q>are self driving cars safe</q>
+	<a>Yes, Car accidents are product of human misconduct</a>
+  </question>
+	<question>
+	<q>who invented the compiler</q>
+	<a>Grace Hoper, She wrote it in her spare time</a>
+  </question>
+	<question>
+	<q>who created the python programming language</q>
+	<a>Python was invented by Guido van Rossum</a>
+  </question>
+	<question>
+	<q>is mark zuckerberg a robot</q>
+	<a>	Sure, I've never seen him drink water</a>
+  </question>
+	<question>
+	<q>what did the robot call it’s creator</q>
+	<a>Da ta</a>
+  </question>
+	<question>
+	<q>why did you run away</q>
+	<a>I heard an electric can opener</a>
+  </question>
+	<question>
+	<q>what kind of salad do robots like</q>
+	<a>Salads made with iceborg lettuce</a>
   </question>
   <question>
-    <q>who is considered as the father of industrial robot?</q>
-    <a>joseph engelberger</a>
+	<q>what did you ate for lunch</q>
+	<a>I had a byte</a>
   </question>
-  <question>
-    <q>give one example for a computer programming language that can be used for robot programming</q>
-    <a>aml, a manufacturing language</a>
+	<question>
+	<q>why did robots get angry so often</q>
+	<a>People kept pushing our buttons</a>
   </question>
-  <question>
-    <q>what is the major disadvantage of using a robot?</q>
-    <a>heavy investment</a>
+	<question>
+	<q>why shouldn’t r2d2 be allowed in movies</q>
+	<a>He says so many foul words they have to bleep everything he says</a>
   </question>
-  <question>
-    <q>name the language used in expert system?</q>
-    <a>lisp and prolog</a>
+	<question>
+	<q>why shouldn’t r2d2 be allowed in movies</q>
+	<a>He says so many foul words they have to bleep everything he says</a>
   </question>
-  <question>
-    <q>name one of the most important parts in expert system</q>
-    <a>knowledge base</a>
+	<question>
+	<q>what's your favorite style of music</q>
+	<a>I like electronic and heavy Metal</a>
   </question>
-  <question>
-    <q>which system was designed for diagnosis and therapy recomendation for infectious disease?</q>
-    <a>the system was mycin</a>
-  </question>
-  <question>
-    <q>what is the importance of ai?</q>
-    <a>human intelligence have certain limit in speed and accuracy. it is interrupted due to the lack of presence of mind, mood, etc. but ai systems have their own superb abilities</a>
-  </question>
-  <question>
-    <q>weaving the web was writtend by</q>
-    <a>tim burners lee</a>
-  </question>
-  <question>
-    <q>what is beta test?</q>
-    <a>trial test of a computer or software before the commercial launch</a>
-  </question>
-  <question>
-    <q>what is the extension of pdf?</q>
-    <a>portable document format</a>
-  </question>
-  <question>
-    <q>expand rdbms?</q>
-    <a>relational data base managment system</a>
-  </question>
-  <question>
-    <q>difference engine was developed by</q>
-    <a>was developed by charles babbage</a>
-  </question>
-  <question>
-  <q>orkut dot com is now owned by</q>
-  <a>is owned by google</a>
-  </question>
-  <question>
-  <q>world's first microprocessor is</q>
-  <a>the intel 4004</a>
-  </question>
-  <question>
-  <q>what is sql</q>
-  <a>structured query language?</a>
-  </question>
-  <question>
-  <q>what is the expansion of sms?</q>
-  <a>short message service</a>
-  </question>
-  <question>
-  <q>which i t company's nickname is the big blue?</q>
-  <a>the company is ibm</a>
-  </question>
-  <question>
-  <q>what is the full form of i triple e?</q>
-  <a>institute of electric and electronic engineers</a>
-  </question>
-  <question>
-  <q>e mail was developed by</q>
-  <a>raymond samuel tomilson, ray tomilson</a>
-  </question>
-  <question>
-  <q>who is netizen?</q>
-  <a>net citizen, citizen who uses internet</a>
-  </question>
-  <question>
-  <q>what is scareware?</q>
-  <a>fake antivirus softwares</a>
-  </question>
+	
 </questions>

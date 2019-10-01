@@ -484,12 +484,30 @@
         (printout t ?command)
 )
 
+(defrule where_is_this_placement
+        ?f <- (where_is_this_place ?place 1)
+        (item (type ?fd&:(or (eq ?fd Furniture) (eq ?fd Door))) (name ?place) (room ?location))
+        =>
+        (retract ?f)
+        (bind ?command (str-cat  "" ?location ""))
+        (printout t ?command)
+)
+
 (defrule where_placement_room
 	?f <- (cmd_what_place ?room 1)
 	(item (type Room)(name ?room) (room ?location))
 	=>
 	(retract ?f)
 	(bind ?command (str-cat "Actually the " ?room " is a room of the arena"))
+	(printout t ?command)
+)
+
+(defrule where_is_this_room
+	?f <- (where_is_this_place ?room 1)
+	(item (type Room)(name ?room) (room ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "" ?room ""))
 	(printout t ?command)
 )
 
@@ -713,12 +731,36 @@
 	(printout t "" ?s "")
 )
 
-(defrule get_height_value
+(defrule get_wide_value
 	?f <- (cmd_get_prop_value ?obj ?large&:(or (eq ?large largest) (eq ?large thinnest)) 1)
+	(item (name ?obj) (wide ?s))
+	=>
+	(retract ?f)
+	(printout t "" ?s "")
+)
+
+(defrule get_height_value
+	?f <- (cmd_get_prop_value ?obj tallest 1)
 	(item (name ?obj) (height ?s))
 	=>
 	(retract ?f)
 	(printout t "" ?s "")
+)
+
+(defrule compare_object_color 
+	?f <- (cmd_compare_color ?obj ?color 1)
+	(item (name ?obj) (color ?color))
+	=>
+	(retract ?f)
+	(printout t "true")
+)
+
+(defrule compare_object_color_false
+	?f <- (cmd_compare_color ?obj ?color 1)
+	(not (item (name ?obj) (color ?color)))
+	=>
+	(retract ?f)
+	(printout t "false")
 )
 ;;;;;;;
 (defrule get_speech
@@ -738,6 +780,13 @@
 	=>
 	(retract ?f)
 	(printout t "" ?def_loc "")
+)
+(defrule object_or_place
+	?f <- (place_or_object ?obj 1)
+	(item (type Objects)(name ?obj) (zone ?def_loc))
+	=>
+	(retract ?f)
+	(printout t "object")
 )
 
 ;;;;;

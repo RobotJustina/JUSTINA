@@ -142,12 +142,18 @@
 ;;; respuesta del comando "cmd_conf"
 (defrule conf_command
 	?f <- (received ?sender command cmd_conf ?plan ?steps 1)
+	?f1 <- (Arm (name right))
+	?f2 <- (Arm (name left))
 	=> 
 	(retract ?f)
 	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
         (printout t "Inicia modulo crear PLAN" crlf)
 	(assert (num_steps (+ ?steps 1)))
 	(assert (plan_name ?plan))
+	(assert (delate current_person))
+	(assert (delate current_place))
+	(modify ?f1 (status nil) (grasp nil))
+	(modify ?f2 (status nil) (grasp nil))
 )
 
 (defrule no_conf_command
@@ -257,13 +263,13 @@
         (retract ?f4)
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
-	(assert (name-scheduled ?plan 1 (+ ?steps 1)))
+	(assert (name-scheduled ?plan 1 (+ ?steps 2)))
 	(assert (task ?plan update_object_location algo current_loc ?steps))
-        (assert (task ?plan speech_generator speech_1 (+ ?steps 1)))
+	(assert (task ?plan review_arms (+ ?steps 1)))
+        (assert (task ?plan speech_generator speech_1 (+ ?steps 2)))
 	(modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento (+ ?intento 1)))
-	(assert (delate current_person))
 )
 
 (defrule no_task_command_exitdoor
@@ -288,7 +294,6 @@
         (modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
         (assert (intento 1))
-	(assert (delate current_person))
 )
 
 (defrule no_task_command_cero_steps
@@ -347,6 +352,7 @@
 	(assert (plan_active no))
 	
 	(retract ?f3)
+	(assert (reset_status ?object))
 )
 
 
@@ -380,10 +386,39 @@
 
 (defrule delate_not_status_current_person
 	?f <- (delate current_person)
-	?f1 <- (not (item (name ?name) (status current_person)))
+	(not (item (name ?name) (status current_person)))
 	=>
 	(retract ?f)
 )
 
 ;;;;;;;;;;;;;
+(defrule delate_current_place 
+	?f <- (delate current_place)
+	?f1 <- (item (name ?name) (image current_place))
+	=>
+	(retract ?f)
+	(modify ?f1 (image nil))
+	(assert (delate current_place))
+)
 
+(defrule delate_not_status_current_place
+	?f <- (delate current_place)
+	(not (item (name ?name) (image current_place)))
+	=>
+	(retract ?f)
+)
+;;;;;;;;;;;;;;
+(defrule reset_status_after_finish_objetive
+	?f <- (reset_status finish_objetive)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(modify ?f1 (status nil))
+)
+
+(defrule reset_status_after_finish_task
+	?f <- (reset_status ?obj&:(neq ?obj finish_objetive))
+	=>
+	(retract ?f)
+)
+;;;;;;;;

@@ -170,7 +170,7 @@
 )
 
 (defrule task_introduce_to_people
-	?f <- (task ?plan introduce_person ?php ?place ?step)
+	?f <- (task ?plan introduce_people ?php ?place ?step)
 	?f1 <- (item (name finish_objetive))
 	?f2 <- (item (name ?place))
 	?f3 <- (item (name ?person) (status current_person))
@@ -252,6 +252,20 @@
 	(assert (condition (conditional if) (arguments finish_objetive status finaly_taked_out)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (task ptake_out_garbage ?garbage ?step))
 	(modify ?f1 (status nil))
+)
+
+(defrule task_find_category_incomplete
+	?f <- (task ?plan find_category_room ?category ?step)
+	?f1 <- (item (name ?category)(type Category))
+	?f2 <- (item (type Room) (name ?room) (image current_place))
+	=>
+	(retract ?f)
+	(printout t "Find category in room")
+        (assert (state (name ?plan) (number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments ?category status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pfindobj_room) (actor robot)(obj robot)(from ?room)(to ?category)(name-scheduled ?plan)(state-number ?step)))
+        (modify ?f1 (status nil))
+	(modify ?f2 (image nil))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

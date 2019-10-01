@@ -9,10 +9,8 @@ import time
 from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
 import pyaudio
-
-import time
 import numpy as np
-#import scipy.signal as signal
+import time
 
 from std_msgs.msg import String, Bool, Int8 
 from std_srvs.srv import *
@@ -21,23 +19,13 @@ from hri_msgs.msg import RecognizedSpeech
 import os
 import commands
 
-#b,a=signal.iirdesign(0.03,0.07,5,40)
-#fulldata = np.array([])
-
+"""
 RESPEAKER_RATE = 16000
 RESPEAKER_CHANNELS = 1 # change base on firmwares, 1_channel_firmware.bin as 1 or 6_channels_firmware.bin as 6
 RESPEAKER_WIDTH = 2
 # run getDeviceInfo.py to get index
 RESPEAKER_INDEX = 2  # refer to input device id
 CHUNK = 1024
-"""
-def callback_with_filter(in_data, frame_count, time_info, flag):
-    global b,a,fulldata #global variables for filter coefficients and array
-    audio_data = np.fromstring(in_data, dtype=np.float32)
-    #do whatever with data, in my case I want to hear my data filtered in realtime
-    audio_data = signal.filtfilt(b,a,audio_data,padlen=200).astype(np.float32).tostring()
-    fulldata = np.append(fulldata,audio_data) #saves filtered data in an array
-    return (audio_data, pyaudio.paContinue)
 """
 class recognizer(object):
 
@@ -66,19 +54,6 @@ class recognizer(object):
         self.enable_mic = True
 
 
-    def callbackSetMic(self, data):
-        if self.enable_mic == data.data:
-            #print "MIC NO CHANGE"
-            return   
-        if data.data == True:
-            #print "Enable MIC"
-            self.enable_mic = True 
-            self.decoder.start_utt()
-        else:
-            #print "Disable MIC"
-            self.enable_mic = False 
-            self.decoder.end_utt()
-
     def __init__(self):
 
         # initialize ROS
@@ -91,7 +66,7 @@ class recognizer(object):
         rospy.Subscriber("/pocketsphinx/set_kws", SphinxSetFile, self.callbackSetKws)
         rospy.Subscriber("/pocketsphinx/set_jsgf", SphinxSetFile, self.callbackSetJsgf)
         rospy.Subscriber("/pocketsphinx/set_search", SphinxSetSearch, self.callbackSetSearchAndTime)
-        rospy.Subscriber("/pocketsphinx/mic", Bool, self.callbackSetMic)
+
         
 
         self._lm_param = "~lm"
@@ -100,6 +75,14 @@ class recognizer(object):
         self._jsgf_param = "~jsgf"
         self._stream_param = "~stream"
         self._wavpath_param = "~wavpath"
+
+	    # respeaker param
+
+        self._rate_param = rospy.get_param("~rate", 16000)
+        self._channel_param = rospy.get_param("~channel", 1)
+        self._width_param = rospy.get_param("~width", 2L)
+        self._index_param = rospy.get_param("~index", 2)
+        self._chunk_param = rospy.get_param("~chunk", 2048)
 
         # you may need to change publisher destination depending on what you run
         self.pub_ = rospy.Publisher('~output', String, queue_size=1)
@@ -198,8 +181,13 @@ class recognizer(object):
 	    # Pocketsphinx requires 16kHz, mono, 16-bit little-Endian audio.
 	    # See http://cmusphinx.sourceforge.net/wiki/tutorialtuning
             p = pyaudio.PyAudio()
-            stream = p.open(format=p.get_format_from_width(RESPEAKER_WIDTH), channels=RESPEAKER_CHANNELS,
-                        rate=RESPEAKER_RATE, input=True, frames_per_buffer=CHUNK*2, input_device_index=RESPEAKER_INDEX)
+            stream = p.open(format=p.get_format_from_width(self._width_param), 
+			                channels=self._channel_param,
+                            rate=self._rate_param, 
+                            input=True, 
+		                    frames_per_buffer=self._chunk_param, 
+                            input_device_index=self._index_param)
+
             stream.start_stream()
             rospy.loginfo("Done opening the audio channel")
 
@@ -217,7 +205,7 @@ class recognizer(object):
             # Main loop
             while not rospy.is_shutdown():
                 # taken as is from python wrapper
-                buf = stream.read(CHUNK*2)
+                buf = stream.read(self._chunk_param)
                 if buf and self.enable_mic:
                     self.decoder.process_raw(buf, False, False)
                     in_speech = self.decoder.get_in_speech()

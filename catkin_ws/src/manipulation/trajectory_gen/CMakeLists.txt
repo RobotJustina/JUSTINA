@@ -139,16 +139,9 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(baud_rate src/baud_rate.cpp)
+ add_executable(la_positions_test src/la_positions_test.cpp)
+ add_executable(ra_positions_test src/ra_positions_test.cpp)
 
- add_executable(elbow_constant_profile src/elbow_constant_profile.cpp)
- add_executable(elbow_triangular_profile src/elbow_triangular_profile.cpp)
- add_executable(elbow_quintic_profile src/elbow_quintic_profile.cpp)
-
- add_executable(elbow_shoulder_constant src/elbow_shoulder_constant.cpp)
- add_executable(elbow_shoulder_triangular src/elbow_shoulder_triangular.cpp)
-
- add_executable(reach_positions src/reach_positions.cpp)
- add_executable(send_positions src/send_positions.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -158,44 +151,22 @@ include_directories(
 ## Add cmake target dependencies of the executable
 ## same as for the library above
  add_dependencies(baud_rate ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
- add_dependencies(elbow_constant_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(elbow_triangular_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(elbow_quintic_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
- add_dependencies(elbow_shoulder_constant  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(elbow_shoulder_triangular ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
- add_dependencies(reach_positions ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(send_positions ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
+ add_dependencies(la_positions_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(ra_positions_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(baud_rate
    ${catkin_LIBRARIES}
  )
+ target_link_libraries(la_positions_test
+   ${catkin_LIBRARIES}
+  )
 
- target_link_libraries(elbow_constant_profile
+ target_link_libraries(ra_positions_test
    ${catkin_LIBRARIES}
- )
- target_link_libraries(elbow_triangular_profile
-   ${catkin_LIBRARIES}
- )
- target_link_libraries(elbow_quintic_profile
-   ${catkin_LIBRARIES}
- )
-
- target_link_libraries(elbow_shoulder_constant
-   ${catkin_LIBRARIES}
- )
- target_link_libraries(elbow_shoulder_triangular
-   ${catkin_LIBRARIES}
- )
- target_link_libraries(reach_positions
-   ${catkin_LIBRARIES}
- )
- target_link_libraries(send_positions
-   ${catkin_LIBRARIES}
- )
+  )
+#
+#
 #############
 ## Install ##
 #############

@@ -62,6 +62,8 @@ add_service_files(
   image_srv.srv
   OpenPoseRecognize.srv
   ObjectRecognize.srv
+  SetTrainingDir.srv
+  GetObjectsColor.srv
 )
 
 add_action_files(

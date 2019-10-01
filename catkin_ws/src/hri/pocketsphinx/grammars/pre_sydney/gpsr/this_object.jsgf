@@ -1,0 +1,10 @@
+#JSGF V1.0;
+grammar this_object;
+public <command> = (<thisobject> | <unknownobject>);
+
+<thisobject> = THIS IS THE (<kobject> | <aobject> | <sobject>);
+<unknownobject> = THIS IS AN UNKNOWN OBJECT;
+
+<kobject> = (CLOTH | SCRUBBY | SPONGE | CASCADE POD | FORK | KNIFE | SPOON | CHOCOLATE DRINK | COKE | GRAPE JUICE | ORANGE JUICE | SPRITE | CEREAL | NOODLES | SAUSAGES | PRINGLES | CRACKERS | POTATO CHIPS | DISH | BOWL | CUP); 
+<aobject> = (APPLE | ORANGE | PAPRIKA);
+<sobject> = (TRAY | BASKET | BAG);

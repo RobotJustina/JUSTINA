@@ -1,7 +1,15 @@
 <launch>
+	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/gpsr/6069.dic" />
+	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
+	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_sydney/gpsr/gpsr.jsgf"/>
+	<arg name="_stream" value="_stream:=true" />
+	<arg name="_wavpath" value="_wavpath:=none" />
+	<arg name="_output" value="_output:=/sphinx_result"/>
 	<include file="$(find surge_et_ambula)/launch/justina_simul.launch"/>
 	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping gpsr" />
 	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_pre_canada.txt 0 60 gpsr_pre_montreal.xml"/>
+	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_pre_canada.txt 0 60 gpsr_pre_sydney.xml 0"/>
+	<node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
 </launch>
 

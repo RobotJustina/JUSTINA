@@ -7,13 +7,13 @@
 	<arg name="_wavpath" value="_wavpath:=none" />
 	<arg name="_output" value="_output:=/sphinx_result"/>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="initial_pose_x" value="3.405"/>
-		<arg name="initial_pose_y" value="-2.367"/>
-		<arg name="initial_pose_a" value="1.4629"/>
+		<arg name="initial_pose_x" value="0.0"/>
+		<arg name="initial_pose_y" value="0.0"/>
+		<arg name="initial_pose_a" value="0.0"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping receptionist"/>
 	</group>
 
-	<node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" />
+	<!-- node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" /-->
 </launch>

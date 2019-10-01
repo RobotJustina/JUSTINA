@@ -565,6 +565,10 @@ bool isInLocation(knowledge_msgs::IsPointInKnownArea::Request &req, knowledge_ms
             std::cout << "ltm_node.->Validating if point is contained in location" << std::endl;
             std::cout << "ltm_node.->Vertex size:" << vertex.size() << std::endl;
             res.isInLocation = !validatePointInArea(vertex, point);
+            if(res.isInLocation)
+                std::cout << "ltm_node.->the point is in the location " << req.location  << std::endl;
+            else
+                std::cout << "ltm_node.->Sorry the point not is in the location " << req.location  << std::endl;
         }
     }
 
@@ -627,11 +631,15 @@ bool getRoomOfPoint(knowledge_msgs::GetRoomOfPoint::Request &req, knowledge_msgs
     for(iterator = delimitation.begin(); iterator != delimitation.end() && !isInLocation; iterator++){
         std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
         if(!validatePointInArea(compose.second, point)){
+            std::cout << "ltm_node.->Sorry the point not is in the location " << iterator->first << " validating if the point is in the arena" << std::endl;
             if(compose.first.compare(iterator->first) == 0){
-                if(iterator->first.compare("arena") == 0)
+                if(iterator->first.compare("arena") == 0){
+                    std::cout << "ltm_node.->The point is in the arena" << std::endl;
                     isInArena = true;
-                else
+                }else{
+                    std::cout << "ltm_node.->Sorry The point is not in the arena" << std::endl;
                     isInLocation = true;
+                }
             }
         }
     }

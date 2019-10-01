@@ -1,9 +1,10 @@
-virbot_initial_state.clp
+virbot_initial_state_v2.clp
 planning_cubes.clp
 scheduled_tasks.clp
 exe_plan.clp
 testSpeech.clp
 actions.clp
+actions_gpsr.clp
 actions_II.clp
 actions_eegpsr_2.clp
 actions_eegpsr_2i.clp

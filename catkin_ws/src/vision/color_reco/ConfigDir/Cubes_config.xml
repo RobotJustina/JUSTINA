@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<trainning_ids>
+  <blue>
+    <huemin>107</huemin>
+    <huemax>113</huemax>
+    <satmin>99</satmin>
+    <satmax>146</satmax>
+    <valmin>93</valmin>
+    <valmax>162</valmax></blue>
+  <green>
+    <huemin>58</huemin>
+    <huemax>83</huemax>
+    <satmin>38</satmin>
+    <satmax>155</satmax>
+    <valmin>95</valmin>
+    <valmax>167</valmax></green>
+  <red>
+    <huemin>170</huemin>
+    <huemax>177</huemax>
+    <satmin>160</satmin>
+    <satmax>198</satmax>
+    <valmin>95</valmin>
+    <valmax>178</valmax></red></trainning_ids>
+</opencv_storage>

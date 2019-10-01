@@ -118,11 +118,23 @@ class Tuning:
     def set_vad_threshold(self, db):
         self.write('GAMMAVAD_SR', db)
 
+    def get_vad_threshold(self):
+        self.read('GAMMAVAD_SR')
+
     def set_stationary_noise_suppression(self):
         self.write('STATNOISEONOFF_SR', 1)
 
     def is_voice(self):
         return self.read('VOICEACTIVITY')
+
+    def set_automatic_gain_control(self, value):
+        return self.write('AGCONOFF',value)
+	
+    def set_Current_AGC_gain_factor(self, value):
+        return self.write('AGCGAIN',value)
+
+    def set_AGC_power_level(self, value):
+        return self.write('AGCDESIREDLEVEL',value)
 
     @property
     def direction(self):

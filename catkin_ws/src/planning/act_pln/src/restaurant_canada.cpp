@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     std::stringstream ss;
     std::stringstream ss2;
 
-    Eigen::Vector3d centroidGesture;
+    std::vector<Eigen::Vector3d> centroidGestures;
 
     bool findGestureOrAttendOrder = false;
     bool validateCombo = true;
@@ -193,14 +193,15 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
+                centroidGestures.clear();
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGestures, "", true);
                 // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "", true);
                 if(findGesture){
                     JustinaVision::stopSkeletonFinding();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     ros::spinOnce();
                    
-                    JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
+                    JustinaTools::transformPoint("/base_link", centroidGestures[0](0, 0), centroidGestures[0](1, 0) , centroidGestures[0](2, 0), "/map", gx_w, gy_w, gz_w);
 
                     if (bar_search.compare("left") == 0)
                         JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
@@ -214,11 +215,11 @@ int main(int argc, char** argv)
                     ss.str("");
                     ss << "I noticed that somebody are asking for my service " << std::endl;
 
-                    if(centroidGesture(1, 0) > -0.4 && centroidGesture(1, 0) < 0.4)
+                    if(centroidGestures[0](1, 0) > -0.4 && centroidGestures[0](1, 0) < 0.4)
                         ss << "in front of me";
-                    else if(centroidGesture(1, 0) > 0.4)
+                    else if(centroidGestures[0](1, 0) > 0.4)
                         ss << "in my left side";
-                    else if(centroidGesture(1, 0) < -0.4)
+                    else if(centroidGestures[0](1, 0) < -0.4)
                         ss << "in my right side";
 
                     JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);

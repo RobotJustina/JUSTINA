@@ -274,24 +274,30 @@
 (defrule task_remind_person
 	?f <- (task ?plan remind_person ?person ?place ?step)
 	?f1 <- (item (name ?person))
+	?f2 <- (item (name finish_objetive))
+	?f3 <- (item (name person))
 	=>
 	(retract ?f)
 	(printout t "Conoce y recuerda a una person task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments ?person status reminded) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_reminded) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task premind_person ?person ?place ?step))
-	(modify ?f1 (status remind))
+	;(modify ?f1 (status remind))
+	(modify ?f2 (status nil))
+	(modify ?f3 (status nil))
 )
 
 (defrule task_greet_known_person
 	?f <- (task ?plan greet_known_person ?place ?step)
-	?f1 <- (item (name ?person) (status remind))
+	;?f1 <- (item (name ?person) (status remind))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Busca y saluda a una persona que conoces" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments ?person status greeted) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_greeted) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pgreet_known_person ?place ?step))
+	(modify ?f2 (status nil))
 ) 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; subtask
@@ -356,7 +362,7 @@
 	(retract ?goal)
 	(printout  t "Nuevo plan Serving Drinks")
 	(bind ?what(str-cat "Hello_what_is_your_name"))
-	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_" ?eatdrink ""))
+	(bind ?confirmation (str-cat "Hello my name is justina, Do_you_want_some_" ?eatdrink " say justina yes or justina no"))
 	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 3 10)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
 	
@@ -700,24 +706,22 @@
 	(assert (finish-planner ?name 10))
 )
 
-;(defrule plan_remind-person
-;	?goal <- (objetive remind_person ?name ?person ?place ?step)
-;	=>
-;	(retract ?goal)
-;	(bind ?speech(str-cat "Hello, please look at me, I will try to remember you"))
-;	(bind ?speech_1(str-cat "thank you very much, Now I can remember you"))
-;	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
-;	(assert (plan (name ?name) (number 2) (actions find-endurance-person person ?place)(duration 6000)))
-;	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech)(duration 6000)))
-;	(assert (plan (name ?name) (number 4) (actions remind_person ?person ?place) (duration 6000)))
-;	(assert (plan (name ?name) (number 5) (actions speech-anything ?speech_1) (duration 6000)))
-;	(assert (plan (name ?name) (number 6) (actions set_plan_status ?name dummy) (duration 6000)))
-;	(assert (plan (name ?name) (number 7) (actions update_status ?person reminded) (duration 6000)))
-;	(assert (finish-planner ?name 7))
-;)
+(defrule plan_remind-person
+	?goal <- (objetive remind_person ?name ?person ?place ?step)
+	=>
+	(retract ?goal)
+	(bind ?speech(str-cat "Now I am going to meet you at the " ?place ))
+	(assert (plan (name ?name) (number 1) (actions make_task ?name ?person went) (actions_num_params 2 5) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions train_person ?person) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions update_status ?person reminded) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions update_status person reminded) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions update_status finish_objetive finaly_reminded) (duration 6000)))
+	(assert (finish-planner ?name 6))
+)
 
 (defrule plan_remind-person_v2
-	?goal <- (objetive remind_person ?name ?person ?place ?step)
+	?goal <- (objetive remind_person_v2 ?name ?person ?place ?step)
 	=>
 	(retract ?goal)
 	(bind ?speech(str-cat "Hello " ?person ", please look at me, I will try to remember you"))
@@ -742,8 +746,8 @@
 )
 
 
-(defrule plan_greet-known-person
-	?goal <- (objetive greet_known_person ?name ?person ?place ?step)
+(defrule plan_greet-known-person_v2
+	?goal <- (objetive greet_known_person_v2 ?name ?person ?place ?step)
 	=>
 	(retract ?goal)
 	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 4 5) (duration 6000)))
@@ -757,6 +761,18 @@
 	(assert (plan (name ?name) (number 7) (actions set_plan_status ?name) (actions_num_params 4 5) (duration 6000)))
 	(assert (plan (name ?name) (number 8) (actions update_status ?person greeted) (duration 6000)))
 	(assert (finish-planner ?name 8))
+)
+
+(defrule plan_greet-known-person
+	?goal <- (objetive greet_known_person ?name person ?place ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions make_task ?name person reminded)(actions_num_params 2 3)(duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions find-reminded-person person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions update_status person nil) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions update_status finish_objetive finaly_greeted) (duration 6000)))
+	(assert (finish-planner ?name 5))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; before split tasks
@@ -956,9 +972,9 @@
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)
 	?f1 <- (task pgreet_known_person ?place ?step)
-	(item (name ?person) (status reminded))
+	;(item (name ?person) (status reminded))
 	=>
 	(retract ?f1)
-	(assert (objetive greet_known_person task_greet_known_person ?person ?place ?step))
+	(assert (objetive greet_known_person task_greet_known_person person ?place ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

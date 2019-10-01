@@ -1,7 +1,10 @@
 <launch>
-	<arg name="initial_pose_x" default="0.0"/>
-	<arg name="initial_pose_y" default="0.0"/>
-	<arg name="initial_pose_a" default="0.0"/>
+	<!-- arg name="initial_pose_x" default="6.86"/>
+	<arg name="initial_pose_y" default="-6.5"/>
+	<arg name="initial_pose_a" default="1.5708"/ -->
+	<arg name="initial_pose_x" default="0"/>
+	<arg name="initial_pose_y" default="0"/>
+	<arg name="initial_pose_a" default="0"/>
 	<arg name="dynamic_map" default="false"/>
 	<arg name="clean_goal_map" default="false"/>
 	<arg name="clean_start_map" default="false"/>
@@ -14,6 +17,8 @@
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="enable_torque" default="true"/>
+	<arg name="head_offset" default="0.0"/>
 	<arg name="calculate_diagonal_paths" default="false"/>
 	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
 	<!-- param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" / -->
@@ -21,8 +26,10 @@
 	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="true"/>
-		<arg name="simul_pcl" value="true"/>
+		<arg name="simul_pcl" value="false"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="enable_torque" value="$(arg enable_torque)"/>
+		<arg name="head_offset" value="$(arg head_offset)"/>
 	</include>	
 	<group ns="hri">
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
@@ -39,6 +46,9 @@
 	<group ns="manipulation">
 		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
 		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="speed_profiles" pkg="trajectory_gen" type="SpeedProfile_Server.py"/>
+		<node name="la_control" pkg="arms_control" type="la_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
 	</group>
 
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
@@ -82,6 +92,7 @@
 			<param name="time_elapsed_remove" value="10.0"/>
 		</node>
 		<node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" />
+		<node name="color_reco" pkg="color_reco" type="color_reco_node" output="screen" />
 	</group>
 	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
 	<!-- This is for the roah IROS refere -->

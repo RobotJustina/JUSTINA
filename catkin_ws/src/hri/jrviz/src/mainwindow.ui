@@ -464,8 +464,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>88</width>
-          <height>88</height>
+          <width>494</width>
+          <height>1315</height>
          </rect>
         </property>
         <attribute name="label">
@@ -482,8 +482,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>416</width>
-              <height>915</height>
+              <width>474</width>
+              <height>1295</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1471,8 +1471,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>88</width>
-          <height>88</height>
+          <width>612</width>
+          <height>1315</height>
          </rect>
         </property>
         <attribute name="label">
@@ -1489,8 +1489,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>352</width>
-              <height>1140</height>
+              <width>592</width>
+              <height>1295</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -2041,8 +2041,8 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>88</width>
-          <height>88</height>
+          <width>612</width>
+          <height>1315</height>
          </rect>
         </property>
         <attribute name="label">
@@ -2060,7 +2060,7 @@ Size: 0.00 0.00 0.00</string>
               <x>0</x>
               <y>0</y>
               <width>695</width>
-              <height>524</height>
+              <height>1281</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -2362,7 +2362,7 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>612</width>
+          <width>747</width>
           <height>1315</height>
          </rect>
         </property>
@@ -2421,7 +2421,7 @@ Size: 0.00 0.00 0.00</string>
                    </size>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="tab_2">
                    <attribute name="title">
@@ -2454,7 +2454,7 @@ Size: 0.00 0.00 0.00</string>
                      <rect>
                       <x>320</x>
                       <y>10</y>
-                      <width>135</width>
+                      <width>181</width>
                       <height>116</height>
                      </rect>
                     </property>
@@ -2844,12 +2844,12 @@ Size: 0.00 0.00 0.00</string>
                      <item row="1" column="0">
                       <widget class="QLabel" name="label_18">
                        <property name="text">
-                        <string>Quantity:</string>
+                        <string>Grasp:</string>
                        </property>
                       </widget>
                      </item>
                      <item row="1" column="1">
-                      <widget class="QLineEdit" name="quantCLIPSobj">
+                      <widget class="QLineEdit" name="graspCLIPSobj">
                        <property name="maximumSize">
                         <size>
                          <width>90</width>
@@ -2861,12 +2861,12 @@ Size: 0.00 0.00 0.00</string>
                      <item row="2" column="0">
                       <widget class="QLabel" name="label_19">
                        <property name="text">
-                        <string>Biggets:</string>
+                        <string>Biggest:</string>
                        </property>
                       </widget>
                      </item>
                      <item row="2" column="1">
-                      <widget class="QLineEdit" name="biggetsCLIPSobj">
+                      <widget class="QLineEdit" name="biggestCLIPSobj">
                        <property name="maximumSize">
                         <size>
                          <width>90</width>
@@ -2895,12 +2895,12 @@ Size: 0.00 0.00 0.00</string>
                      <item row="4" column="0">
                       <widget class="QLabel" name="label_21">
                        <property name="text">
-                        <string>Heaviets:</string>
+                        <string>Heaviest:</string>
                        </property>
                       </widget>
                      </item>
                      <item row="4" column="1">
-                      <widget class="QLineEdit" name="heavietsCLIPSobj">
+                      <widget class="QLineEdit" name="heaviestCLIPSobj">
                        <property name="maximumSize">
                         <size>
                          <width>90</width>
@@ -2917,7 +2917,7 @@ Size: 0.00 0.00 0.00</string>
                       </widget>
                      </item>
                      <item row="5" column="1">
-                      <widget class="QLineEdit" name="lightestCLIPSbj">
+                      <widget class="QLineEdit" name="lightestCLIPSobj">
                        <property name="maximumSize">
                         <size>
                          <width>90</width>
@@ -3033,6 +3033,38 @@ Size: 0.00 0.00 0.00</string>
                         </widget>
                        </item>
                       </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                   <widget class="QWidget" name="formLayoutWidget">
+                    <property name="geometry">
+                     <rect>
+                      <x>539</x>
+                      <y>229</y>
+                      <width>151</width>
+                      <height>71</height>
+                     </rect>
+                    </property>
+                    <layout class="QFormLayout" name="formLayout_17">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_5">
+                       <property name="text">
+                        <string>Height:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="1" column="0">
+                      <widget class="QLabel" name="label_32">
+                       <property name="text">
+                        <string>Wide:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QLineEdit" name="heightCLIPSobj"/>
+                     </item>
+                     <item row="1" column="1">
+                      <widget class="QLineEdit" name="wideCLIPSobj"/>
                      </item>
                     </layout>
                    </widget>

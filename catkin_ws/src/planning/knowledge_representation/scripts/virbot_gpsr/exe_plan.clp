@@ -117,7 +117,7 @@
 
 (defrule exe-plan-found-object
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 1)
- 	    ?f1 <- (item (name ?object))
+ 	    ?f1 <- (item (name ?object) (type Objects))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
 	    ?f3 <- (Arm (name ?arm))
         =>
@@ -140,7 +140,7 @@
 
 (defrule exe-plan-move-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?obj)(duration ?t))
- 	    (item (name ?obj) (pose ?x ?y ?z) )
+ 	    (item (type Objects) (name ?obj) (pose ?x ?y ?z) )
         (Arm (name ?arm) (status ready)(bandera ?id) (grasp ?obj))
         =>
         (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z " " ?id ""))
@@ -280,11 +280,21 @@
         ;(assert (wait plan ?name ?num-pln ?t))
 )
 
-(
-defrule exe-plan-droped-actuator
+(defrule exe-plan-release-arms 
+        (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator arm ?arm)(duration ?t))
+        ?f1 <- (item (name ?obj))
+        ?f2 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?obj))
+        =>
+        (bind ?command (str-cat "" ?actuator " " ?obj " " ?flag ""))
+        (assert (send-blackboard ACT-PLN drop ?command ?t 4))
+        ;(waitsec 1) 
+        ;(assert (wait plan ?name ?num-pln ?t))
+)
+
+(defrule exe-plan-droped-actuator
         ?f <-  (received ?sender command drop ?actuator ?object ?flag 1)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop $?params));?actuator ?object))
         ?f3 <- (item (name robot))
         ?f4 <- (Arm (bandera ?flag))
 	;?f4 <- (wait plan ?name ?num-pln ?t)
@@ -300,7 +310,7 @@ defrule exe-plan-droped-actuator
 (defrule exe-plan-no-droped-actuator
         ?f <-  (received ?sender command drop ?actuator ?object ?flag 0)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop $?params));?actuator ?object))
         ?f3 <- (item (name robot))
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>

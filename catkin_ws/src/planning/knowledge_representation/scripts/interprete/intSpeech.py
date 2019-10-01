@@ -32,6 +32,7 @@ def separaTask(cadena):
 	step = 1
 	question = 1
 	location = '' 
+	deliver_location = '' 
 	task_object = ''
 	get_object = False
 	handover_object = False
@@ -46,6 +47,8 @@ def separaTask(cadena):
         ask_info_index = 0;
         origin_place = False;
 	no_man_guide = True
+        obj_inc = False
+	set_cutlery = False
 	for i in spc:
 		temp  = i.split("(")
 		temp.remove(' ')
@@ -74,11 +77,18 @@ def separaTask(cadena):
 					find_person = True
 				elif firstparam[1] == 'deliver_in_position':
 					deliver_object = True
+				elif firstparam[1] == 'set_cutlery':
+					set_cutlery = True
+				elif firstparam[1] == 'find_object_in_room':
+					origin_place = False
 				elif firstparam[1] == 'question':
 					temp2 = firstparam[0] + " " + "question_" + str(question) + " " + firstparam[2]
 					if paramTam > 3:
 						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
+                                        obj_inc = False 
+                                        if(firstparam[2] == 'object' or firstparam[2] == 'object_place' or firstparam[2] == 'place_destiny'):
+                                            obj_inc = True  
                                 elif firstparam[1] == 'ask_info':
                                         ask_info = True;
                                         ask_info_index = ask_info_index + 1
@@ -96,6 +106,8 @@ def separaTask(cadena):
 						tu = 2
 						#print "TEST TEMPSTEP " + str(tempStep)
 				elif firstparam[2] == 'follow_place_origin':
+                                        if origin_place == False :
+                                            location = ''
 					if step == tempStep + tu:
 						#step = step -1
 						#fpush = False
@@ -130,7 +142,12 @@ def separaTask(cadena):
 				temp2 = firstparam[0] + " " + task_object #+ " " + firstparam[1]
 				for i in range(1,len(firstparam)):
                                     temp2 = temp2 + " " + firstparam[i]
+                                if len(firstparam) > 1 :
+                                    deliver_location = firstparam[1]
 				deliver_object = False
+			elif firstparam[0] == 'params' and set_cutlery:
+				temp2 = temp2 + " " + task_object + " " + deliver_location
+                                set_cutlery = False 
 				
 			s.append(temp2)
 			print "PUSH: " + temp2
@@ -138,7 +155,7 @@ def separaTask(cadena):
 			q.pushC(s)
 			planQ.pushC(s)
                 elif ask_info:
-                        if  origin_place:
+                        if  origin_place and not obj_inc:
                             origin_place = False
                             step = step - 1
                             ask_info_index = ask_info_index - 1
@@ -148,6 +165,7 @@ def separaTask(cadena):
                             q.insertElement(s, ask_info_index)
                             planQ.insertElement(s, ask_info_index)
                             ask_info = False
+                            obj_inc = False
 		fpush = True
 		s = []
         q.showQueue();

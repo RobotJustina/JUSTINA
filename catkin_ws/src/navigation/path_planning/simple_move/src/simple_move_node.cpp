@@ -91,7 +91,9 @@ geometry_msgs::Twist calculate_speeds(float robot_x, float robot_y, float robot_
 {
     //Control constants
     float alpha = 0.6548;
-    float beta = 0.1;
+    //This is for the old simple move in advance, i think that is for the old motors
+    //float beta = 0.1;
+    float beta = 0.2;
     float max_angular = 0.5;
 
     //Error calculation

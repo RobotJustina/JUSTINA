@@ -36,6 +36,7 @@
 #include "vision_msgs/FindLines.h"
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/DetectGripper.h"
+#include "vision_msgs/SetTrainingDir.h"
 
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaRepresentation.h"
@@ -79,6 +80,7 @@ bool showImgYOLO = false;
 
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
+std::string dir_type = "";
 
 ros::NodeHandle* node; 
 
@@ -105,6 +107,7 @@ ros::ServiceServer srv_trainByHeight;
 ros::ServiceServer srvDetectGripper;
 ros::ServiceServer srvExtractObjectAbovePlanes;
 ros::ServiceServer srvEXtractObjectWithPlanes;
+ros::ServiceServer srvSetTrainingDir;
 
 //YOLO object recog
 ros::ServiceServer srvDetectObjsYOLO;
@@ -137,7 +140,7 @@ bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::Fi
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindTable(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
-
+bool callback_srvSetTrainingDir(vision_msgs::SetTrainingDir::Request &req, vision_msgs::SetTrainingDir::Response &resp);
 //test
 bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvTFObjectDetect(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
@@ -323,6 +326,8 @@ int main(int argc, char** argv)
     srvDetectGripper        = n.advertiseService("/vision/obj_reco/gripper"         , callback_srvDetectGripper);
     srvExtractObjectAbovePlanes        = n.advertiseService("/vision/obj_reco/ext_objects_above_planes"      , callback_srvExtractObjectsAbovePlanes);
     srvEXtractObjectWithPlanes = n.advertiseService("/vision/obj_reco/ext_objects_with_planes", callback_srvExtractObjectsWithPlanes);
+    srvSetTrainingDir = n.advertiseService("/vision/obj_reco/set_training_dir", callback_srvSetTrainingDir);
+    //srvSetTrainingDir       = n.advertiseService("/vision/obj_reco/setTrainingDir",   callback_srvSetTrainingDir);
 
     srvFindLines            = n.advertiseService("/vision/line_finder/find_lines_ransac"    , callback_srvFindLines);
     srvFindPlane            = n.advertiseService("/vision/geometry_finder/findPlane"        , callback_srvFindPlane);
@@ -358,7 +363,7 @@ int main(int argc, char** argv)
         data_base_folder = ros::package::getPath("obj_reco") + std::string("/TrainingDir");  
 
     objReco.TrainingDir = data_base_folder; 
-    objReco.LoadTrainingDir();
+    objReco.LoadTrainingDir(data_base_folder);
     ObjExtractor::LoadValueGripper();  
     JustinaRepresentation::setNodeHandle(&n); 
 
@@ -1655,4 +1660,26 @@ void callback_subImgDetectObjsYOLO(const sensor_msgs::Image::ConstPtr &msg)
         }
         cv::imshow("YOLO V3", cv_ptr->image);
     }
+}
+
+bool callback_srvSetTrainingDir(vision_msgs::SetTrainingDir::Request &req, vision_msgs::SetTrainingDir::Response &resp)
+{
+    dir_type =  data_base_folder + req.category;
+    if( boost::filesystem::exists(dir_type) )
+    {
+    
+        objReco.LoadTrainingDir(dir_type);
+        std::cout << "obj_reco_node.->load successfully the path: " << dir_type << std::endl;
+        return true;
+        
+    }
+
+    else
+    {
+        std::cout << "obj_reco_node.-> Error!! can't load the path: " << dir_type << std::endl;
+        return false;
+    }
+
+    
+
 }

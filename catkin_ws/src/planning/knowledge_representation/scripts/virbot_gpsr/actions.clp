@@ -35,7 +35,7 @@
 	(assert (condition (conditional if) (arguments robot zone ?param2)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd ptrans) (actor robot)(obj robot)(from frontexit)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
-	(modify ?f1 (status nil))
+	(modify ?f1 (status nil) (image current_place))
 	;(modify ?f3 (status asked))
 	;(modify ?f2 (zone frontexit))
 )
@@ -58,8 +58,9 @@
 
 (defrule task_deliver_in_position
 	?f <- (task ?plan deliver_in_position ?param1 ?param2 ?step)
-	?f1 <- (item (name ?patam1))
+	?f1 <- (item (name ?param1))
 	?f2 <- (item (name finish_objetive))
+	(item (name ?param2))
 	=>
 	(retract ?f)
 	(printout t "Deliver in position" crlf)
@@ -125,13 +126,13 @@
 	(modify ?f2 (status nil))
 )
 
-(defrule task_get_object_without_place
-	?f <- (task ?plan get_object ?param1 ?step)
-	?f1 <- (item (type Objects)(name ?param1))
-	=>
-	(retract ?f)
-	(assert (task ?plan get_object ?param1 default_location ?step))
-)
+;(defrule task_get_object_without_place
+;	?f <- (task ?plan get_object ?param1 ?step)
+;	?f1 <- (item (type Objects)(name ?param1))
+;	=>
+;	(retract ?f)
+;	(assert (task ?plan get_object ?param1 default_location ?step))
+;)
 
 (defrule task_get_object_man
 	?f <- (task ?plan follow_man man ?place ?step)
@@ -241,14 +242,19 @@
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
 	(assert (plan (name ?name) (number 1)(actions ask_for ?param ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions go_to ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions attend ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions make_task ?name ?param finded)(actions_num_params 6 6)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions move manipulator ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions rev_arms right left)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions make_task ?name right ready)(actions_num_params 5 5)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions drop object arm right)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions attend ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-object ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions make_task ?name ?param finded)(actions_num_params 9 9)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions move manipulator ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 10)(actions make_task_neg ?name ?param grabed)(actions_num_params 11 11)(duration 6000)))
+	(assert (plan (name ?name) (number 11)(actions update_status ?param nil)(duration 6000)))
+	(assert (plan (name ?name) (number 12)(actions update_status finish_objetive finaly_grabed)(duration 6000)))
 	;(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)));T1 test
 	;(assert (into (name ?name)(number ?step)(next (+ ?step 1))(plan 6)))
-	(assert (finish-planner ?name 7))
+	(assert (finish-planner ?name 12))
 )
 
 

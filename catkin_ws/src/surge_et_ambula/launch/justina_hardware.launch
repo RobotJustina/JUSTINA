@@ -2,19 +2,22 @@
 	<arg name="simul" default="false"/>
 	<arg name="simul_pcl" default="false"/>
 	<arg name="dynamic_map" default="false"/>
+	<arg name="head_offset" default="0.0"/>
+	<arg name="enable_torque" default="true"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
-		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
+		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port1" value="/dev/justinaRC30"/>
 			<param name="port2" value="/dev/justinaRC15"/>
 		</node>
 		<node name="right_arm" pkg="arms" type="right_arm_real_simul_node" output="screen" respawn="true">
 			<param name="port" value="/dev/justinaRightArm"/>
-			<param name="baud" value="200000"/>
+			<param name="baud" value="1000000"/>
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="enable_torque" value="$(arg enable_torque)"/>
 		</node>
 		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="false">
 			<param name="port" value="/dev/justinaLeftArm"/>
@@ -30,6 +33,7 @@
 			<param name="sync_write_enable" value="true"/>
 			<param name="read_simul" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="head_offset" value="$(arg head_offset)"/>
 		</node>
 		<!-- node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
 			<param name="simul" value="$(arg simul)"/>
@@ -68,8 +72,8 @@
 		</node>
 		<!-- Nodes to the simulation justina robot -->
 		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
-		<node unless="$(arg simul)" name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">
-			<param name="device" value="/dev/video1"/>
+		<node name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">
+			<param name="device" value="/dev/video0"/>
 			<param name="width" value="640"/>
 			<param name="height" value="480"/>
 		</node>

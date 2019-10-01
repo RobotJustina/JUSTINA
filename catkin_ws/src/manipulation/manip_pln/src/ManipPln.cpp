@@ -548,11 +548,10 @@ void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, flo
 
 //
 //Callback for subscribers for the commands executed by this node
-//
-
+///*
 void ManipPln::callbackLaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
 {
-    std::cout << "ManipPln.->Received Left Arm goal pose: ";
+    /*std::cout << "ManipPln.->Received Left Arm goal pose: ";
     for(int i=0; i< msg->data.size(); i++)
         std::cout << msg->data[i] << " ";
     std::cout << std::endl;
@@ -571,12 +570,13 @@ void ManipPln::callbackLaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
     this->pubLaGoalReached.publish(msgGoalReached);
     this->laGoalPose = msg->data;
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
-    this->laNewGoal = true;
+    this->laNewGoal = true;*/
+	this->laNewGoal = false;
 }
-
+//
 void ManipPln::callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
 {
-    std::cout << "ManipPln.->Received Right Arm goal pose: ";
+    /*std::cout << "ManipPln.->Received Right Arm goal pose: ";
     for(int i=0; i< msg->data.size(); i++)
         std::cout << msg->data[i] << " ";
     std::cout << std::endl;
@@ -595,9 +595,11 @@ void ManipPln::callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg)
     this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = msg->data;
     this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
-    this->raNewGoal = true;
-}
+    this->raNewGoal = true;*/
+	this->raNewGoal = false;
 
+}
+//*/
 void ManipPln::callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
     if(msg->data.size() != 2)
@@ -982,87 +984,97 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
         return;
     }
-    lGoalArticularTraj.clear();
-    lGoalCartesianTraj.clear();
+    lGoalArticularTraj = std::vector<std::vector<float> >();
+    lGoalCartesianTraj = std::vector<std::vector<float> >();
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
     srv.request.cartesian_pose.data = msg->data;
     if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
-        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
-        this->laNewGoalTraj = false;
+        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose final point :'( " << std::endl;
+        // This is for not stop if can not manipulate in a final point
+        // this->laNewGoalTraj = false;
     }
-    else{
-        tf::StampedTransform transform;
-        tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
-        tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
-        float curr_gripper_x = transform.getOrigin().getX();
-        float curr_gripper_y = transform.getOrigin().getY();
-        float curr_gripper_z = transform.getOrigin().getZ();
-        float dx = msg->data[0] - curr_gripper_x;
-        float dy = msg->data[1] - curr_gripper_y;
-        float dz = msg->data[2] - curr_gripper_z;
-        float norma = sqrt(dx * dx + dy * dy + dz * dz);
 
-        int sf = 10;
-        float x = curr_gripper_x;
-        float y = curr_gripper_y;
-        float z = curr_gripper_z;
-        for(int s = 0; s < sf; s++){
-            float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
-            if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head 
-                break;
-            float a3 = -2 * xt / pow((float) sf, 3);
-            float a2 = 3 * xt / pow((float) sf, 2);
-            float t = a2 * pow(s, 2) + a3 * pow(s, 3);
-            x += dx / norma * t;
-            y += dy / norma * t;
-            z += dz / norma * t;
-            visualization_msgs::Marker marker;
-            marker.header.frame_id = "left_arm_link0";
-            marker.header.stamp = ros::Time();
-            marker.ns = "goal_marker";
-            marker.id = idMarker++;
-            marker.type = visualization_msgs::Marker::SPHERE;
-            marker.action = visualization_msgs::Marker::ADD;
-            marker.pose.position.x = x;
-            marker.pose.position.y = y;
-            marker.pose.position.z = z;
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = 0.0;
-            marker.pose.orientation.w = 1.0;
-            marker.scale.x = 0.02;
-            marker.scale.y = 0.02;
-            marker.scale.z = 0.02;
-            marker.color.a = 1.0;
-            marker.color.r = 0.6f;
-            marker.color.g = 0.0f;
-            marker.color.b = 0.0f;
-            manipMarker.markers.push_back(marker);
+    // This is for not stop if can not manipulate in a final point
+    //else{
+    tf::StampedTransform transform;
+    tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+    tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
+    float curr_gripper_x = transform.getOrigin().getX();
+    float curr_gripper_y = transform.getOrigin().getY();
+    float curr_gripper_z = transform.getOrigin().getZ();
+    float dx = msg->data[0] - curr_gripper_x;
+    float dy = msg->data[1] - curr_gripper_y;
+    float dz = msg->data[2] - curr_gripper_z;
+    float norma = sqrt(dx * dx + dy * dy + dz * dz);
 
-            std_msgs::Float32MultiArray nexPos;
-            nexPos.data = msg->data;
-            nexPos.data[0] = x;
-            nexPos.data[1] = y;
-            nexPos.data[2] = z; 
-            srv.request.cartesian_pose.data = nexPos.data;
-            if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
-                std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
-                this->lGoalArticularTraj.clear();
-                this->lGoalCartesianTraj.clear();
-                this->laNewGoalTraj = false;
-                return;
-            }
-            lGoalArticularTraj.push_back(srv.response.articular_pose.data);
-            std::vector<float> pose;
-            pose.push_back(x);
-            pose.push_back(y);
-            pose.push_back(z);
-            lGoalCartesianTraj.push_back(pose);
+    int sf = 10;
+    float x = curr_gripper_x;
+    float y = curr_gripper_y;
+    float z = curr_gripper_z;
+    for(int s = 0; s < sf; s++){
+        float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
+        if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head 
+            break;
+        float a3 = -2 * xt / pow((float) sf, 3);
+        float a2 = 3 * xt / pow((float) sf, 2);
+        float t = a2 * pow(s, 2) + a3 * pow(s, 3);
+        x += dx / norma * t;
+        y += dy / norma * t;
+        z += dz / norma * t;
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "left_arm_link0";
+        marker.header.stamp = ros::Time();
+        marker.ns = "goal_marker";
+        marker.id = idMarker++;
+        marker.type = visualization_msgs::Marker::SPHERE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = x;
+        marker.pose.position.y = y;
+        marker.pose.position.z = z;
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 0.02;
+        marker.scale.y = 0.02;
+        marker.scale.z = 0.02;
+        marker.color.a = 1.0;
+        marker.color.r = 0.6f;
+        marker.color.g = 0.0f;
+        marker.color.b = 0.0f;
+        manipMarker.markers.push_back(marker);
+
+        std_msgs::Float32MultiArray nexPos;
+        nexPos.data = msg->data;
+        nexPos.data[0] = x;
+        nexPos.data[1] = y;
+        nexPos.data[2] = z; 
+        srv.request.cartesian_pose.data = nexPos.data;
+        if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+            std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+            // This is for not stop if can not manipulate in a final point
+            //this->lGoalArticularTraj.clear();
+            //this->lGoalCartesianTraj.clear();
+            //this->laNewGoalTraj = false;
+            //return;
+            // This is for not stop if can not manipulate in a final point comments to revert
+            //this->laNewGoalTraj = true;
+            break;
         }
-        laNewGoalTraj = true;
+        lGoalArticularTraj.push_back(srv.response.articular_pose.data);
+        std::vector<float> pose;
+        pose.push_back(x);
+        pose.push_back(y);
+        pose.push_back(z);
+        lGoalCartesianTraj.push_back(pose);
     }
+    if(lGoalArticularTraj.size() > 0)
+        laNewGoalTraj = true;
+    else
+        laNewGoalTraj = false;
+    //}
 }
 
 void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
@@ -1076,87 +1088,95 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         return;
     }
 
-    rGoalArticularTraj.clear();
-    rGoalCartesianTraj.clear();
+    rGoalArticularTraj = std::vector<std::vector<float> >();
+    rGoalCartesianTraj = std::vector<std::vector<float> >();
+    //rGoalArticularTraj.clear();
+    //rGoalCartesianTraj.clear();
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
     srv.request.cartesian_pose.data = msg->data;
     if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
-        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
-        this->raNewGoalTraj = false;
+        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose for the final point :'( " << std::endl;
+        // This is for not stop if can not manipulate in a final point
+        //this->raNewGoalTraj = false;
     }
-    else{
-        tf::StampedTransform transform;
-        tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
-        tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
-        float curr_gripper_x = transform.getOrigin().getX();
-        float curr_gripper_y = transform.getOrigin().getY();
-        float curr_gripper_z = transform.getOrigin().getZ();
-        float dx = msg->data[0] - curr_gripper_x;
-        float dy = msg->data[1] - curr_gripper_y;
-        float dz = msg->data[2] - curr_gripper_z;
-        float norma = sqrt(dx * dx + dy * dy + dz * dz);
+    // This is for not stop if can not manipulate in a final point
+    //else{
+    tf::StampedTransform transform;
+    tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+    tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
+    float curr_gripper_x = transform.getOrigin().getX();
+    float curr_gripper_y = transform.getOrigin().getY();
+    float curr_gripper_z = transform.getOrigin().getZ();
+    float dx = msg->data[0] - curr_gripper_x;
+    float dy = msg->data[1] - curr_gripper_y;
+    float dz = msg->data[2] - curr_gripper_z;
+    float norma = sqrt(dx * dx + dy * dy + dz * dz);
 
-        int sf = 10;
-        float x = curr_gripper_x;
-        float y = curr_gripper_y;
-        float z = curr_gripper_z;
-        for(int s = 0; s < sf; s++){
-            float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
-            if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head
-                break;
-            float a3 = -2 * xt / pow((float) sf, 3);
-            float a2 = 3 * xt / pow((float) sf, 2);
-            float t = a2 * pow(s, 2) + a3 * pow(s, 3);
-            x += dx / norma * t;
-            y += dy / norma * t;
-            z += dz / norma * t;
-            visualization_msgs::Marker marker;
-            marker.header.frame_id = "right_arm_link0";
-            marker.header.stamp = ros::Time();
-            marker.ns = "goal_marker";
-            marker.id = idMarker++;
-            marker.type = visualization_msgs::Marker::SPHERE;
-            marker.action = visualization_msgs::Marker::ADD;
-            marker.pose.position.x = x;
-            marker.pose.position.y = y;
-            marker.pose.position.z = z;
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = 0.0;
-            marker.pose.orientation.w = 1.0;
-            marker.scale.x = 0.02;
-            marker.scale.y = 0.02;
-            marker.scale.z = 0.02;
-            marker.color.a = 1.0;
-            marker.color.r = 0.6f;
-            marker.color.g = 0.0f;
-            marker.color.b = 0.0f;
-            manipMarker.markers.push_back(marker);
+    int sf = 10;
+    float x = curr_gripper_x;
+    float y = curr_gripper_y;
+    float z = curr_gripper_z;
+    for(int s = 0; s < sf; s++){
+        float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
+        if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head
+            break;
+        float a3 = -2 * xt / pow((float) sf, 3);
+        float a2 = 3 * xt / pow((float) sf, 2);
+        float t = a2 * pow(s, 2) + a3 * pow(s, 3);
+        x += dx / norma * t;
+        y += dy / norma * t;
+        z += dz / norma * t;
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "right_arm_link0";
+        marker.header.stamp = ros::Time();
+        marker.ns = "goal_marker";
+        marker.id = idMarker++;
+        marker.type = visualization_msgs::Marker::SPHERE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = x;
+        marker.pose.position.y = y;
+        marker.pose.position.z = z;
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 0.02;
+        marker.scale.y = 0.02;
+        marker.scale.z = 0.02;
+        marker.color.a = 1.0;
+        marker.color.r = 0.6f;
+        marker.color.g = 0.0f;
+        marker.color.b = 0.0f;
+        manipMarker.markers.push_back(marker);
 
-            std_msgs::Float32MultiArray nexPos;
-            nexPos.data = msg->data;
-            nexPos.data[0] = x;
-            nexPos.data[1] = y;
-            nexPos.data[2] = z; 
-            srv.request.cartesian_pose.data = nexPos.data;
-            if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
-                std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
-                this->rGoalArticularTraj.clear();
-                this->rGoalCartesianTraj.clear();
-                this->raNewGoalTraj = false;
-                return;
-            }
-            rGoalArticularTraj.push_back(srv.response.articular_pose.data);
-            std::vector<float> pose;
-            pose.push_back(x);
-            pose.push_back(y);
-            pose.push_back(z);
-            rGoalCartesianTraj.push_back(pose);
+        std_msgs::Float32MultiArray nexPos;
+        nexPos.data = msg->data;
+        nexPos.data[0] = x;
+        nexPos.data[1] = y;
+        nexPos.data[2] = z; 
+        srv.request.cartesian_pose.data = nexPos.data;
+        if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+            std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+            //this->rGoalArticularTraj.clear();
+            //this->rGoalCartesianTraj.clear();
+            //this->raNewGoalTraj = false;
+            //return;
+            break;
         }
-        raNewGoalTraj = true;
+        rGoalArticularTraj.push_back(srv.response.articular_pose.data);
+        std::vector<float> pose;
+        pose.push_back(x);
+        pose.push_back(y);
+        pose.push_back(z);
+        rGoalCartesianTraj.push_back(pose);
     }
+    if(rGoalArticularTraj.size() > 0)
+        raNewGoalTraj = true;
+    else
+        raNewGoalTraj = false;
+    //}
 }
 
 void ManipPln::callbackLaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
@@ -1246,9 +1266,10 @@ void ManipPln::callbackRaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray:
     const std_msgs::Float32MultiArray::ConstPtr msgptr(new std_msgs::Float32MultiArray(msg_));
     this->callbackRaGoToPoseWrtArmTraj(msgptr);
 }
-
+///*
 void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
+    /*
     if(this->laPredefPoses.find(msg->data) == this->laPredefPoses.end())
     {
         std::cout << "ManipPln.->Cannot find left arm predefined position: " << msg->data << std::endl;
@@ -1266,11 +1287,13 @@ void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
     this->laGoalPose = this->laPredefPoses[msg->data];
     this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
+    */
+	this->laNewGoal = false;
 }
-
+//
 void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
-    if(this->raPredefPoses.find(msg->data) == this->raPredefPoses.end())
+    /*if(this->raPredefPoses.find(msg->data) == this->raPredefPoses.end())
     {
         std::cout << "ManipPln.->Cannot find right arm predefined position: " << msg->data << std::endl;
         return;
@@ -1286,9 +1309,10 @@ void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
     this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = this->raPredefPoses[msg->data];
     this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
-    this->raNewGoal = true;
+    this->raNewGoal = true;*/
+	this->raNewGoal = false;
 }
-
+//*/
 void ManipPln::callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
     std::cout << "ManipPln.->JE SUIS DESOLÉ. THIS COMMAND IS STILL NOT IMPLEMENTED" << std::endl;
