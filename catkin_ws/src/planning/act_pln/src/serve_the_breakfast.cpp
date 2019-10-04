@@ -323,6 +323,8 @@ int main(int argc, char **argv){
                 state = SM_WAIT_FOR_OPEN;
                 break;
 
+
+
             case SM_WAIT_FOR_OPEN:
                 
                 printSmTitle("> State SM_WAIT_FOR_OPEN: Wait for open the door.");
@@ -371,6 +373,141 @@ int main(int argc, char **argv){
                 state = SM_FIND_BOWL;
                 break;
             
+/////////////////////////////////////////////////////////////////////////////////////
+
+            case SM_FIND_GUEST
+                printSmTitle("> State SM_FIND_GUEST.");
+                JustinaHRI::waitAfterSay("I'm going to find a person", 5000);
+                if(findSeatCount < MAX_FIND_SEAT_COUNT){
+                    centroids.clear();
+                    findPerson = JustinaTasks::turnAndRecognizeYolo(idsPerson, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.3f, 0.1f, 0.1f, 9.0, centroids, seatPlace);
+                    if(!findPerson){
+                        findSeatCount++;
+                        JustinaHRI::waitAfterSay("Sorry, I will try again", 5000);
+                         break;
+                    }
+                    JustinaHRI::waitAfterSay("I found a person, I'm going to get close to you.", 5000);
+                    centroid = centroids[0];
+                    JustinaHRI::waitAfterSay("Please wait", 3000, MIN_DELAY_AFTER_SAY);
+                    JustinaTools::transformPoint("/base_link", centroid(0, 0), centroid(1, 0) , centroid(2, 0), "/map", gx_w, gy_w, gz_w);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
+                    JustinaKnowledge::addUpdateKnownLoc("guest", gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
+                    goalx = gx_w;
+                    goaly = gy_w;
+                    guest_z = gz_w;
+                    std::cout << "$$$$$$$$$$$ gx:" << gx_w << " gy :" << gy_w << std::endl;
+                    JustinaTasks::closeToGoalWithDistanceTHR(goalx, goaly, 1.2, 30000);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+                    if (thetaToGoal < 0.0f)
+                        thetaToGoal += 2 * M_PI;
+                    theta = thetaToGoal - robot_a;
+                    JustinaNavigation::moveDistAngle(0, theta, 3000);
+                    dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                    rate.sleep();
+                    ros::spinOnce();
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    angleHead = atan2(goaly - robot_y, goalx - robot_x) - robot_a;
+                    if(angleHead < -M_PI)
+                        angleHead = 2 * M_PI + angleHead;
+                    if(angleHead > M_PI)
+                        angleHead = 2 * M_PI - angleHead;
+                    JustinaManip::startHdGoTo(angleHead, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                    state = SM_INTRO_GUEST;
+                }
+                else
+                {
+                    JustinaHRI::waitAfterSay("I am going to prepare the table.", 5000);
+                    //state = ;
+                }
+                break;
+
+            case SM_INTRO_GUEST:
+                printSmTitle("> State SM_FIND_GUEST.");
+                attemptsSpeechReco = 0;
+                attemptsSpeechInt = 0;
+                lastName = "unknown";
+                JustinaHRI::enableSpeechRecognized(false);
+                JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
+                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_NAMES);
+
+                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
+                {
+                    if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                    {
+                        if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
+                        {
+                            
+                            if(recogName && typeOrder.compare("receptionist_guest_name") == 0)
+                            {
+                                ss.str("");
+                                tokens.clear();
+                                if(param.compare(" ") != 0 || param.compare("") != 0)
+                                {
+                                    ss << "Ok, your name is ";
+                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
+                                    ss2.str("");
+                                    for(int i = 0; i < tokens.size(); i++){
+                                        ss << tokens[i] << " ";
+                                        ss2 << tokens[i];
+                                        if(i < tokens.size() -1)
+                                            ss2 << " ";
+                                    }
+                                    lastName = ss2.str();
+                                    //names.push_back(ss2.str());
+                                    ss << ", tell me justina yes or justina no";
+                                    JustinaHRI::enableSpeechRecognized(false);
+                                    JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    //attemptsConfirmation = 0;
+                                    //attemptsWaitConfirmation = 0;
+                                    state = SM_PRESENTATION_CONFIRM;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+                JustinaHRI::enableSpeechRecognized(true);
+
+                break;
+
+            case SM_WAIT_FOR_PRESENTATION:
+
+                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
+                {
+                    if(lastRecoSpeech.find("yes") != std::string::npos)
+                    {
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(recogName){
+                            names.push_back(lastName);
+                            ss2.str("");
+                            ss2 << "Ok, your name is " << names[names.size() - 1];
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            recogName = false;
+                            state = SM_INTRO_GUEST;
+                        }
+
+                        }
+                    }
+                }
+
+                exit(0);
+
+                break;
+
+
+////////////////////////////////////////////////////////////////////////////
+
+
             case SM_FIND_BOWL:
                 
                 printSmTitle("> SM_FIND_BOWL: Trying to detect a bowl");
