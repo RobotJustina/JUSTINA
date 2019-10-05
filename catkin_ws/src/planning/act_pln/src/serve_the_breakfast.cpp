@@ -18,7 +18,7 @@
 #define MAX_ATTEMPTS_GRASP 3
 #define MAX_ATTEMPTS_ALIGN 4
 #define MAX_ATTEMPTS_DOOR 5
-#define TIMEOUT_SPEECH 10000
+#define TIMEOUT_SPEECH 5000
 #define MIN_DELAY_AFTER_SAY 0
 #define MAX_DELAY_AFTER_SAY 300
 #define MAX_ATTEMPTS_SPEECH_INT 3
@@ -30,6 +30,11 @@
 #define TIMEOUT_MEMORIZING 3000
 #define MAX_ATTEMPTS_FIND_BOWL 4
 #define MAX_ATTEMPTS_FIND_SPOON 2
+#define MAX_ATTEMPTS_NAME 2
+
+#define GRAMMAR_COMMANDS "commands.xml"
+#define GRAMMAR_DRINKS "order_drink.xml"
+#define GRAMMAR_NAMES "people_names.xml"
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
@@ -66,7 +71,18 @@ enum STATE{
     SM_TAKE_BOWL,
     SM_FIND_SPOON,
     SM_TAKE_SPOON,
-    SM_GO_TO_TABLE
+    SM_GO_TO_TABLE,
+    SM_FIND_GUEST,
+    SM_INTRO_GUEST,
+    SM_PRESENTATION_CONFIRM,
+    SM_WAIT_FOR_PRESENTATION,
+    SM_SAY_ACTION,
+    SM_ASK_DRINK,
+    SM_CONFIMR_DRINK,
+    SM_DETECT_OBJECT,
+    SM_GO_TO_TABLE_DRINKS,
+    SM_HANDLER
+
 };
 
 enum arms{RIGHT_ARM,LEFT_ARM };
@@ -217,6 +233,7 @@ int main(int argc, char **argv){
     std::string recogLoc = "kitchen";
     std::string cutleryLoc = "kitchen_cabinet";
     std::string tableLoc = "kitchen_table";
+    std::string tableDrinksLoc = "table_drinks_test";
     std::string cerealsLoc = "dishwasher";
     std::string milkLoc = "sideboard";
 
@@ -261,6 +278,7 @@ int main(int argc, char **argv){
     geometry_msgs::Pose poseCereal;
     
     std::stringstream ss;
+    std::stringstream ss2;
     
     float dist_to_head;
     float distanceArm = 0.6;
@@ -290,6 +308,15 @@ int main(int argc, char **argv){
 
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
+    bool findPerson = false;
+    std::vector<std::string> idsPerson;
+    idsPerson.push_back("person");
+    std::string seatPlace = "kitchen";
+    int attemptsSpeechReco,attemptsSpeechInt;
+    bool recogName = false;
+    bool once_name = true;
+    int attempsName = 0;
+
     JustinaHRI::setNodeHandle(&nh);
     JustinaTools::setNodeHandle(&nh);
     JustinaTasks::setNodeHandle(&nh);
@@ -302,11 +329,12 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
 
 
+
     int countAlign;
 
 
-    JustinaHRI::usePocketSphinx = true;
-    STATE state = SM_FIND_BOWL; //SM_INIT;
+    JustinaHRI::usePocketSphinx = false;
+    STATE state = SM_FIND_GUEST;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
 
@@ -356,7 +384,7 @@ int main(int argc, char **argv){
                 ss << "I have reached to the " << cutleryLoc ;
                 JustinaHRI::waitAfterSay(ss.str(), 4000, MIN_DELAY_AFTER_SAY);
                 
-                state = SM_CHECK_IF_DOOR;
+                state = SM_FIND_BOWL;// SM_CHECK_IF_DOOR;
                 break;
 
             case SM_CHECK_IF_DOOR:
@@ -375,7 +403,7 @@ int main(int argc, char **argv){
             
 /////////////////////////////////////////////////////////////////////////////////////
 
-            case SM_FIND_GUEST
+            case SM_FIND_GUEST:
                 printSmTitle("> State SM_FIND_GUEST.");
                 JustinaHRI::waitAfterSay("I'm going to find a person", 5000);
                 if(findSeatCount < MAX_FIND_SEAT_COUNT){
@@ -426,22 +454,38 @@ int main(int argc, char **argv){
                 break;
 
             case SM_INTRO_GUEST:
-                printSmTitle("> State SM_FIND_GUEST.");
-                attemptsSpeechReco = 0;
-                attemptsSpeechInt = 0;
-                lastName = "unknown";
-                JustinaHRI::enableSpeechRecognized(false);
-                JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
-                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_NAMES);
 
-                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
-                {
-                    if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                printSmTitle("> State SM_INTRO_GUEST.");
+
+                lastName = "unknown";
+                lastDrink = "unknown";
+                JustinaHRI::enableSpeechRecognized(false);
+                
+
+                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_NAMES);
+//                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                
+
+                 if(  attempsName < MAX_ATTEMPTS_NAME)
+                 {
+                    if( once_name )
                     {
-                        if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
+                        JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
+                        once_name = false;
+                    }
+                    else
+                    {
+                        JustinaHRI::waitAfterSay(" repeat your name", 10000, MAX_DELAY_AFTER_SAY);
+                    }
+
+                    JustinaHRI::enableSpeechRecognized(true);
+
+                    if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
+                    {
+                        if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
                         {
-                            
-                            if(recogName && typeOrder.compare("receptionist_guest_name") == 0)
+                            if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
                             {
                                 ss.str("");
                                 tokens.clear();
@@ -465,8 +509,8 @@ int main(int argc, char **argv){
                                     JustinaHRI::enableSpeechRecognized(true);
                                     //attemptsConfirmation = 0;
                                     //attemptsWaitConfirmation = 0;
-                                    state = SM_PRESENTATION_CONFIRM;
-                                    break;
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    state = SM_WAIT_FOR_PRESENTATION;
                                 }
                             }
                         }
@@ -474,35 +518,134 @@ int main(int argc, char **argv){
                 }
                 else
                 {
-
+                    names.push_back(" ");
+                    JustinaHRI::waitAfterSay("I coud't understand your name", 10000, MAX_DELAY_AFTER_SAY);
+                    state = SM_ASK_DRINK;
+                    attempsName = 0;
                 }
-                JustinaHRI::enableSpeechRecognized(true);
-
                 break;
 
             case SM_WAIT_FOR_PRESENTATION:
+               
+                printSmTitle("> State SM_WAIT_FOR_PRESENTATION.");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
 
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
                 {
                     if(lastRecoSpeech.find("yes") != std::string::npos)
                     {
                         JustinaHRI::enableSpeechRecognized(false);
-                        if(recogName){
-                            names.push_back(lastName);
-                            ss2.str("");
-                            ss2 << "Ok, your name is " << names[names.size() - 1];
-                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
-                            recogName = false;
-                            state = SM_INTRO_GUEST;
-                        }
-
-                        }
+                        names.push_back(lastName);
+                        ss2.str("");
+                        ss2 << "Ok, your name is " << names[names.size() - 1];
+                        JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            
+                        state = SM_ASK_DRINK;
+                        attempsName = 0;
+                    }
+                    else
+                    {
+                        attempsName++;
+                        JustinaHRI::waitAfterSay("Sorry. ", 10000, MAX_DELAY_AFTER_SAY);
+                        state = SM_INTRO_GUEST;
                     }
                 }
 
-                exit(0);
-
                 break;
+
+
+            case SM_ASK_DRINK:
+
+                printSmTitle("> State SM_ASK_DRINK.");
+
+                JustinaHRI::enableSpeechRecognized(false);
+            
+                JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
+               // boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                
+                
+
+                 if(  attempsName < MAX_ATTEMPTS_NAME)
+                 {
+                    JustinaHRI::waitAfterSay("please tell me, what is your favorite drink ", 10000, MAX_DELAY_AFTER_SAY);
+                    JustinaHRI::enableSpeechRecognized(true);
+
+                    if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
+                    {
+                        if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                        {
+                            if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
+                            {
+                                ss.str("");
+                                tokens.clear();
+                                if(param.compare(" ") != 0 || param.compare("") != 0){
+                                    ss << "Ok, your favorite drink is ";
+                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
+                                    ss2.str("");
+                                    for(int i = 0; i < tokens.size(); i++){
+                                        ss << tokens[i] << " ";
+                                        ss2 << tokens[i];
+                                        if(i < tokens.size() -1)
+                                            ss2 << " ";
+                                    }
+                                    lastDrink = ss2.str();
+                                    //drinks.push_back(ss2.str());
+                                    ss << ", tell me justina yes or justina no";
+                                    JustinaHRI::enableSpeechRecognized(false);
+                                    JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                                    
+                                    JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_COMMANDS);
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    //attemptsConfirmation = 0;
+                                    //attemptsWaitConfirmation = 0;
+                                    state = SM_CONFIMR_DRINK;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    names.push_back("coke");
+                    JustinaHRI::waitAfterSay("Sorry, I coud't understand your drink", 10000, MAX_DELAY_AFTER_SAY);
+                    state = SM_SAY_ACTION;
+                }
+            break;
+
+            case SM_CONFIMR_DRINK:
+               
+                printSmTitle("> State SM_WAIT_FOR_PRESENTATION.");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+
+                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH))
+                {
+                    if(lastRecoSpeech.find("yes") != std::string::npos)
+                    {
+                        JustinaHRI::enableSpeechRecognized(false);
+                            
+                            drinks.push_back(lastDrink);
+                            ss2.str("");
+                            ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
+                            state = SM_SAY_ACTION;
+                    }
+                    else
+                    {
+                        attempsName++;
+                        JustinaHRI::waitAfterSay("Sorry. ", 10000, MAX_DELAY_AFTER_SAY);
+                        state = SM_ASK_DRINK;
+                    }
+                }
+            break;
+
+            case SM_SAY_ACTION:
+                JustinaHRI::waitAfterSay(" I going to set the table for you, please wait.", 10000, MAX_DELAY_AFTER_SAY);
+
+                state = SM_NAVIGATE_TO_CUTLERY_LOC;
+            break;
+
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -788,12 +931,107 @@ int main(int argc, char **argv){
                 else
                     right_arm = EMPTY;
 
-                exit(0);
-                JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
-                JustinaManip::startTorsoGoTo(0.10, 0, 0);
-                JustinaManip::waitForTorsoGoalReached(3000);
+                
+                state = SM_GO_TO_TABLE_DRINKS;
+                //exit(0);
+                //JustinaNavigation::moveDistAngle(-0.3, 0, 2000);
+                //JustinaManip::startTorsoGoTo(0.10, 0, 0);
+                //JustinaManip::waitForTorsoGoalReached(3000);
 
             break;
+
+            case SM_GO_TO_TABLE_DRINKS:
+
+                printSmTitle("> SM_GO_TO_TABLE: go to table_drinks");
+
+                if(!JustinaNavigation::getClose(tableDrinksLoc, 80000) )
+                    JustinaNavigation::getClose(tableDrinksLoc, 80000); 
+                JustinaHRI::waitAfterSay("I have reached the table drinks .", 4000, MIN_DELAY_AFTER_SAY);
+
+                state = SM_DETECT_OBJECT;
+                
+            break;
+/*
+            case SM_DETECT_OBJECT:
+
+
+                std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
+                
+                alignWithTable();
+                {
+                    ss.str("");
+                    ss << "I am looking for the " << drinks[0] << " on the table";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
+                    //Obtiene la lista de objetos a detectar
+                    //recoObj = std::vector<vision_msgs::VisionObject>();
+
+                    objectDetected = false;
+                    //Detecta los objetos en la mesa
+                    if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
+                        for(int j = 0; j < recoObj.size() && !objectDetected; j++){
+                            // id.compare es la lista de objetos a leer, en este caso es cocacola
+                            if (recoObj[j].id.compare(drink) == 0){
+                                index = j;
+                                objectDetected = true;
+                            }
+                        }
+                    } 
+                }   
+                state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
+                //state = SM_HANDLER;
+            break;
+
+            case SM_GRASP_OBJECT:
+                std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
+                if(objectDetected && recoObj.size() > 0){
+                    ss.str("");
+                    ss << "I have found the " << drink;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
+                    //JustinaTasks::alignWithTable(0.35);
+                    ss.str("");
+                    ss << "I am going to take the " << drink;
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
+                    // This is for grasp with two frames //false for right true for left, "", true torso 
+                    //std::cout << "Index: " << index << std::endl;
+                    //std::cout << "recoObj: " << recoObj.size() << std::endl;
+
+                    if(recoObj[index].pose.position.y > 0)
+                        ra = false;
+                    else
+                        ra = true;
+
+                    if (ra){
+                        JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
+                        drop = true;
+                    }
+                    else{
+                        JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
+                        drop = false;                       
+                    }
+
+                }
+               
+                exit(0);              
+                break;
+
+            case SM_HANDLER:
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+                JustinaNavigation::startMoveDist(-0.15);
+                std::cout << "State machine: SM_HANDLER" << std::endl;
+                ss.str("");
+                ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
+                if(drop){
+                    JustinaManip::raGoTo("navigation", 3000);
+                    JustinaTasks::detectObjectInGripper(drink, false, 7000);
+                }
+                else{
+                    JustinaManip::laGoTo("navigation", 3000);
+                    JustinaTasks::detectObjectInGripper(drink, true, 7000);
+                }
+                exit(0);
+                break;
+*/
 
             case SM_PLACE_SPOON:
 
