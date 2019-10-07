@@ -81,7 +81,8 @@ enum STATE{
     SM_CONFIMR_DRINK,
     SM_DETECT_OBJECT,
     SM_GO_TO_TABLE_DRINKS,
-    SM_HANDLER
+    SM_HANDLER,
+    SM_GRASP_OBJECT
 
 };
 
@@ -317,6 +318,18 @@ int main(int argc, char **argv){
     bool once_name = true;
     int attempsName = 0;
 
+    bool objectDetected = false;
+    std::vector<vision_msgs::VisionObject> recoObj;
+    recoObj = std::vector<vision_msgs::VisionObject>();
+    sensor_msgs::Image image;
+    int index;
+    bool la = false;
+    bool ra = false;
+    bool drop = false;
+    drinks.push_back("coke");
+    names.push_back("William");
+
+
     JustinaHRI::setNodeHandle(&nh);
     JustinaTools::setNodeHandle(&nh);
     JustinaTasks::setNodeHandle(&nh);
@@ -328,13 +341,11 @@ int main(int argc, char **argv){
     JustinaNavigation::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
 
-
-
     int countAlign;
 
-
     JustinaHRI::usePocketSphinx = false;
-    STATE state = SM_FIND_GUEST;//SM_FIND_BOWL; //SM_INIT;
+    STATE state = SM_FIND_GUEST;
+    //SM_GO_TO_TABLE_DRINKS;//SM_FIND_GUEST;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
 
@@ -951,13 +962,15 @@ int main(int argc, char **argv){
                 state = SM_DETECT_OBJECT;
                 
             break;
-/*
+
+
             case SM_DETECT_OBJECT:
 
 
-                std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
+                printSmTitle("> SM_DETECT_OBJECT");
                 
                 alignWithTable();
+
                 {
                     ss.str("");
                     ss << "I am looking for the " << drinks[0] << " on the table";
@@ -970,7 +983,7 @@ int main(int argc, char **argv){
                     if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
                         for(int j = 0; j < recoObj.size() && !objectDetected; j++){
                             // id.compare es la lista de objetos a leer, en este caso es cocacola
-                            if (recoObj[j].id.compare(drink) == 0){
+                            if (recoObj[j].id.compare(drinks[drinks.size() - 1]) == 0){
                                 index = j;
                                 objectDetected = true;
                             }
@@ -985,11 +998,11 @@ int main(int argc, char **argv){
                 std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 if(objectDetected && recoObj.size() > 0){
                     ss.str("");
-                    ss << "I have found the " << drink;
+                    ss << "I have found the " << drinks[drinks.size() - 1];
                     JustinaHRI::waitAfterSay(ss.str(), 5000);
                     //JustinaTasks::alignWithTable(0.35);
                     ss.str("");
-                    ss << "I am going to take the " << drink;
+                    ss << "I am going to take the " << drinks[drinks.size() - 1];
                     JustinaHRI::waitAfterSay(ss.str(), 5000);
                     // This is for grasp with two frames //false for right true for left, "", true torso 
                     //std::cout << "Index: " << index << std::endl;
@@ -1010,8 +1023,7 @@ int main(int argc, char **argv){
                     }
 
                 }
-               
-                exit(0);              
+                state = SM_RETURN_TO_TABLE;       
                 break;
 
             case SM_HANDLER:
@@ -1019,19 +1031,46 @@ int main(int argc, char **argv){
                 JustinaNavigation::startMoveDist(-0.15);
                 std::cout << "State machine: SM_HANDLER" << std::endl;
                 ss.str("");
-                ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
+                ss << "Sorry i could not grasp the " << drinks[drinks.size() - 1] << ", please put the " << drinks[drinks.size() - 1] << " in my gripper";
                 JustinaHRI::waitAfterSay(ss.str(), 5000);
                 if(drop){
                     JustinaManip::raGoTo("navigation", 3000);
-                    JustinaTasks::detectObjectInGripper(drink, false, 7000);
+                    JustinaTasks::detectObjectInGripper(drinks[drinks.size() - 1], false, 7000);
                 }
                 else{
                     JustinaManip::laGoTo("navigation", 3000);
-                    JustinaTasks::detectObjectInGripper(drink, true, 7000);
+                    JustinaTasks::detectObjectInGripper(drinks[drinks.size() - 1], true, 7000);
                 }
-                exit(0);
+
+                state = SM_RETURN_TO_TABLE;
+                
                 break;
-*/
+
+            case SM_RETURN_TO_TABLE:
+
+                printSmTitle("> SM_RETURN_TO_TABLE:  ");
+
+                JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
+                
+                if(!JustinaNavigation::getClose(tableLoc, 80000) )
+                    JustinaNavigation::getClose(tableLoc, 80000); 
+
+                alignWithTable();
+                JustinaTasks::placeObject(!ra);
+                JustinaManip::laGoTo("home", 5000);
+                JustinaManip::raGoTo("home", 5000);
+                JustinaNavigation::moveDistAngle(-.2,0,3000);
+                JustinaNavigation::moveDistAngle(0,3.1,3000);
+
+                ss.str("");
+                ss << names[names.size()-1] << "  the table is ready. i have finish the test, thank you" ;
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
+
+
+
+                exit(0);
+            break;
+
 
             case SM_PLACE_SPOON:
 
@@ -1145,18 +1184,7 @@ int main(int argc, char **argv){
                 state = SM_RETURN_TO_TABLE;
 
             break;
-            case SM_RETURN_TO_TABLE:
-
-                printSmTitle("> SM_RETURN_TO_TABLE:  ");
-
-                JustinaHRI::waitAfterSay("I'm going to the table", 4000, MIN_DELAY_AFTER_SAY);
-                
-                if(!JustinaNavigation::getClose(tableLoc, 80000) )
-                    JustinaNavigation::getClose(tableLoc, 80000); 
-
-                
-                state = SM_SEARCH_BOWL;
-            break;
+            
 
             case SM_SEARCH_BOWL:
 
