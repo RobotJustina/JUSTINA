@@ -148,7 +148,7 @@
 
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
-	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
+	;( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
 	( Arm (name right) (bandera false))
 	( Arm (name left) (bandera true))
 	( item (name right))

@@ -111,7 +111,7 @@
         (retract ?f1);;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         (bind ?command (str-cat "" ?robot " " ?to " " ?x " " ?y " " ?z""))
         (assert (send-blackboard ACT-PLN goto ?command ?time 4))
-		(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		(modify ?f2 (zone frontexit)(room ?zone));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 )
 
 

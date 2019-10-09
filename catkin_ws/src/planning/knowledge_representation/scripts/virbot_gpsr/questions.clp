@@ -790,3 +790,13 @@
 )
 
 ;;;;;
+
+(defrule get_robot_location_rule
+	?f <- (get_robot_location 1)
+	?f1 <- (item (name robot) (room ?zone))
+	=>
+	(retract ?f)
+	(printout t "" ?zone "")
+)
+;;;;;
+

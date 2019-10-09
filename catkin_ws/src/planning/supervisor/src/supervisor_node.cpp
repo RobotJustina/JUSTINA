@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "knowledge_msgs/PlanningCmdClips.h"
+#include "knowledge_msgs/StrQueryKDB.h"
 
 //#include "knowledge_msgs/kdbFilePath.h"
 
@@ -13,6 +14,7 @@
 
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaRepresentation.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -22,6 +24,7 @@ using namespace boost::algorithm;
 bool fnav = false;
 float x, y, theta;
 float sx, sy, st;
+ros::ServiceClient srvCltQueryKDB;
 
 ros::Publisher robot_pose_pub;
 
@@ -64,6 +67,12 @@ void callbackCmdResponse(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << "params:" << msg->params << std::endl;
 	std::cout << "successful:" << msg->successful << std::endl;
 
+	float d;
+	std::string kdb_loc, sup_loc;
+	std::stringstream ss;
+        std::vector<std::string> tokens;
+        std::string str = msg->params;
+        split(tokens, str, is_any_of(" "));
 
 	if(msg->name == "goto"){
 		JustinaNavigation::getRobotPose(x, y, theta);
@@ -71,6 +80,32 @@ void callbackCmdResponse(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		JustinaNavigation::getRobotPoseFromOdom(x, y, theta);
 		std::cout << "Robot pose from Odom: " << x << ", " << y << ", " << theta << std::endl;
 		std::cout << "Location: " << sx << ", " << sy << std::endl;
+
+		d = pow(x - sx, 2) + pow(y - sy, 2);	
+
+		std::cout << "Distance: " << d << std::endl;
+
+		sup_loc = "null";
+
+		if(d < 0.25)
+			sup_loc = tokens[1];
+                    
+		ss.str("");
+                ss << "(assert (get_robot_location 1))";
+                JustinaRepresentation::strQueryKDB(ss.str(), kdb_loc, 1000);
+
+		if(kdb_loc == sup_loc){
+			std::cout << "Supervisor and Kdb have the same information" << std::endl;
+			std::cout << kdb_loc << std::endl;
+			std::cout << sup_loc << std::endl;
+		}
+		else{
+			std::cout << "Exist a difference between supervisor and kdb" << std::endl;
+			std::cout << kdb_loc << std::endl;
+			std::cout << sup_loc << std::endl;
+		}
+
+		
 	}
 	
 	/*std_msgs::Bool rp;
@@ -92,6 +127,7 @@ int main(int argc, char ** argv) {
 	
 	JustinaNavigation::setNodeHandle(&nh);
     	JustinaKnowledge::setNodeHandle(&nh);
+	JustinaRepresentation::setNodeHandle(&nh);
     
 
 	while (ros::ok()) {

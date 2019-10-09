@@ -136,7 +136,7 @@
         ?f <-(item (name robot))
         =>
         (retract ?f1)
-        (modify ?f (zone ?value))
+        (modify ?f (zone ?value) (room ?value))
 )
 
 
