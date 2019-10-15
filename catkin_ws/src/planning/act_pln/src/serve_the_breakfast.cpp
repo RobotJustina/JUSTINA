@@ -33,8 +33,8 @@
 #define MAX_ATTEMPTS_NAME 2
 
 #define GRAMMAR_COMMANDS "commands.xml"
-#define GRAMMAR_DRINKS "order_drink.xml"
-#define GRAMMAR_NAMES "people_names.xml"
+#define GRAMMAR_DRINKS "test_lab_drinks.xml"
+#define GRAMMAR_NAMES "test_lab_names.xml"
 
 bool graspObjectColorCupBoardFeedback2(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
 bool pouringCereal(float x, float y, float z, bool withLeftArm, std::string colorObject, bool usingTorse);
@@ -326,7 +326,7 @@ int main(int argc, char **argv){
     bool la = false;
     bool ra = false;
     bool drop = false;
-    drinks.push_back("coke");
+    drinks.push_back("orange juice");
     names.push_back("William");
 
 
@@ -344,7 +344,7 @@ int main(int argc, char **argv){
     int countAlign;
 
     JustinaHRI::usePocketSphinx = false;
-    STATE state = SM_FIND_GUEST;
+    STATE state = SM_INTRO_GUEST;//SM_DETECT_OBJECT;//SM_FIND_GUEST;
     //SM_GO_TO_TABLE_DRINKS;//SM_FIND_GUEST;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
@@ -574,8 +574,6 @@ int main(int argc, char **argv){
             
                 JustinaHRI::loadGrammarSpeechRecognized(GRAMMAR_DRINKS);
                // boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-
-                
                 
 
                  if(  attempsName < MAX_ATTEMPTS_NAME)
@@ -585,23 +583,24 @@ int main(int argc, char **argv){
 
                     if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH))
                     {
-                        if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
+                        //if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech))
                         {
-                            if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
+                            //if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param))
                             {
                                 ss.str("");
-                                tokens.clear();
-                                if(param.compare(" ") != 0 || param.compare("") != 0){
+                                //tokens.clear();
+                                //f(param.compare(" ") != 0 || param.compare("") != 0){
                                     ss << "Ok, your favorite drink is ";
-                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
-                                    ss2.str("");
-                                    for(int i = 0; i < tokens.size(); i++){
-                                        ss << tokens[i] << " ";
-                                        ss2 << tokens[i];
-                                        if(i < tokens.size() -1)
-                                            ss2 << " ";
-                                    }
-                                    lastDrink = ss2.str();
+                                    ss << lastRecoSpeech;
+                                 //   boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
+                                   // ss2.str("");
+                                    //for(int i = 0; i < tokens.size(); i++){
+                                     //   ss << tokens[i] << " ";
+                                       // ss2 << tokens[i];
+                                        //if(i < tokens.size() -1)
+                                          //  ss2 << " ";
+                                    //}
+                                    lastDrink = lastRecoSpeech;// ss2.str();
                                     //drinks.push_back(ss2.str());
                                     ss << ", tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
@@ -612,14 +611,14 @@ int main(int argc, char **argv){
                                     //attemptsConfirmation = 0;
                                     //attemptsWaitConfirmation = 0;
                                     state = SM_CONFIMR_DRINK;
-                                }
+                                //}
                             }
                         }
                     }
                 }
                 else
                 {
-                    names.push_back("coke");
+                    drinks.push_back("coke");
                     JustinaHRI::waitAfterSay("Sorry, I coud't understand your drink", 10000, MAX_DELAY_AFTER_SAY);
                     state = SM_SAY_ACTION;
                 }
@@ -635,7 +634,7 @@ int main(int argc, char **argv){
                     if(lastRecoSpeech.find("yes") != std::string::npos)
                     {
                         JustinaHRI::enableSpeechRecognized(false);
-                            
+                            std::replace( lastDrink.begin(), lastDrink.end(), ' ', '_');
                             drinks.push_back(lastDrink);
                             ss2.str("");
                             ss2 << "Ok, your favorite drink is " << drinks[drinks.size() - 1];
@@ -973,7 +972,7 @@ int main(int argc, char **argv){
 
                 {
                     ss.str("");
-                    ss << "I am looking for the " << drinks[0] << " on the table";
+                    ss << "I am looking for the " << drinks[drinks.size() - 1] << " on the table";
                     JustinaHRI::waitAfterSay(ss.str(), 5000);
                     //Obtiene la lista de objetos a detectar
                     //recoObj = std::vector<vision_msgs::VisionObject>();
@@ -991,7 +990,7 @@ int main(int argc, char **argv){
                     } 
                 }   
                 state = (objectDetected) ? SM_GRASP_OBJECT : SM_HANDLER;
-                //state = SM_HANDLER;
+                
             break;
 
             case SM_GRASP_OBJECT:
@@ -1047,6 +1046,7 @@ int main(int argc, char **argv){
                 break;
 
             case SM_RETURN_TO_TABLE:
+                
 
                 printSmTitle("> SM_RETURN_TO_TABLE:  ");
 
@@ -1060,7 +1060,7 @@ int main(int argc, char **argv){
                 JustinaManip::laGoTo("home", 5000);
                 JustinaManip::raGoTo("home", 5000);
                 JustinaNavigation::moveDistAngle(-.2,0,3000);
-                JustinaNavigation::moveDistAngle(0,3.1,3000);
+                JustinaNavigation::moveDistAngle(0,3.1,6000);
 
                 ss.str("");
                 ss << names[names.size()-1] << "  the table is ready. i have finish the test, thank you" ;
