@@ -227,7 +227,7 @@ bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::Tr
 { 
     if( req.name == "" )
     {
-        std::cout << "WARNING !: objects must have a name to be trained" << std::cout;
+        std::cout << "WARNING !: objects must have a name to be trained" << std::endl;
         return false;
     }
 
@@ -464,7 +464,7 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 {
     if( req.name == "" )
     {
-        std::cout << "WARNING !: objects must have a name to be trained" << std::cout;
+        std::cout << "WARNING !: objects must have a name to be trained" << std::endl;
         return false;
     }
 
@@ -703,7 +703,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 
 bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp)
 { 
-    std::cout << " >>> WARNING !!! Service not implemented, use det_objs instead" << std::cout;
+    std::cout << " >>> WARNING !!! Service not implemented, use det_objs instead" << std::endl;
     return false;
 
     boost::shared_ptr<sensor_msgs::PointCloud2 const> msg;

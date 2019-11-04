@@ -278,7 +278,8 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
 	    		h_value = (int)(sqrt(h_value_x*h_value_x + h_value_y*h_value_y));
 	    	}
 	    	else
-	    		h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
+	    		h_value = fabs((neighbors[i]%map.info.width) - goalCellX) + fabs((neighbors[i]/map.info.width) - goalCellY);
+            //h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
             //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<<neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
             if(g_value < g_values[neighbors[i]])
             {

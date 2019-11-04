@@ -814,7 +814,7 @@ int main(int argc, char** argv)
                                     justinaSay << "I am going to take the " << recoObjForTake[indexObjectGrasp].id << " with my left arm";
                             }
                             
-                            std::cout<< justinaSay <<std::endl;
+                            std::cout << justinaSay.str() <<std::endl;
                             JustinaHRI::say(justinaSay.str());
                                 
                             std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;

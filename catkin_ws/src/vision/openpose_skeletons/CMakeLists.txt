@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 	tf
 	tf_conversions
 	vision_msgs
+	kdl_parser
 	)
 
 find_package(Eigen3 REQUIRED)

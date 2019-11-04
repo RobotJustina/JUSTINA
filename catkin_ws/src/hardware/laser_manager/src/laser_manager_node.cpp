@@ -73,6 +73,7 @@ int main(int argc, char** argv)
         ros::param::get("~dynamic_map", dynamicMap);
 
     ros::Rate loop(60);
+    ros::Rate loop_simul(20);
     ros::Rate loop_bag(10);    
 
     if(!simulated)
@@ -172,6 +173,8 @@ int main(int argc, char** argv)
             else
                 pubScan1.publish(simulatedScan);
             pubScan.publish(simulatedScan);
+            ros::spinOnce();
+            loop_simul.sleep();
         }
         else
         {
@@ -189,9 +192,9 @@ int main(int argc, char** argv)
                 }
                 pubScan.publish(realLaserScan);
             }
+            ros::spinOnce();
+            loop.sleep();
         }
-        ros::spinOnce();
-        loop.sleep();
     }
     return 0;
 }
