@@ -43,6 +43,7 @@ add_message_files(
 
 add_service_files(
   FILES
+  DetectObjectInGripper.srv
   RecognizeObject.srv
   RecognizeObjects.srv
   DetectObjects.srv

@@ -24,6 +24,7 @@
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/VisionObjectList.h"
 #include "vision_msgs/GetObjectsColor.h"
+#include "vision_msgs/DetectObjectInGripper.h"
 
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/DetectObjects.h"
@@ -39,6 +40,7 @@ ros::NodeHandle* node;
 
 ros::ServiceServer srvCubesSeg;
 ros::ServiceServer srvCutlerySeg;
+ros::ServiceServer srvDetectObjGripper;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
 ros::ServiceClient cltExtObj;
@@ -60,6 +62,14 @@ string colour;
 
 std::stringstream Huemin, Huemax, Satmin, Satmax, Valmin, Valmax;
 
+geometry_msgs::Point32 refPoint;
+bool initThreshold = false;
+int umbral = 0;
+typedef struct BoundingBox {
+    float w, h, l;
+    cv::Point3f center;
+} BoundingBox;
+
 bool cropping = false;
 bool getRoi = false;
 bool getPointColor = false;
@@ -78,6 +88,47 @@ typedef struct _Data{
     double minArea;
     double maxArea;
 } Data;
+
+void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
+
+
+    cv::Mat imaBGR;
+    cv::Mat imaPCL;
+    int pclCount = 0;
+    cv::Point3f handRobotPosition;
+    handRobotPosition.x = refPoint.x;
+    handRobotPosition.y = refPoint.y;
+    handRobotPosition.z = refPoint.z;
+    BoundingBox bb;
+    bb.center = handRobotPosition;
+    bb.w = 0.15;
+    bb.h = 0.3;
+    bb.l = 0.45;
+    JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
+    for (int i = 0; i < imaPCL.rows; i++) {
+        for (int j = 0; j < imaPCL.cols; j++) {
+            cv::Point3f point = imaPCL.at<cv::Point3f>(i, j);
+            if (point.x >= bb.center.x 
+                    && point.x <= bb.center.x + bb.l / 2
+                    && point.y >= bb.center.y - bb.w / 2
+                    && point.y <= bb.center.y + bb.w / 2
+                    && point.z >= bb.center.z - bb.h / 2
+                    && point.z <= bb.center.z + bb.h / 2) {
+                pclCount++;
+            } else {
+                imaBGR.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
+            }
+        }
+    }
+    if(!initThreshold && pclCount > 300){
+        initThreshold = true;
+        umbral = pclCount;
+        std::cout << "HandDetect.->threshhold:" << umbral << std::endl; 
+        return;
+    }
+    cv::imshow("Hand Detect", imaBGR);
+    
+}
 
 void drawAxis(Mat& img, Point p, Point q, Scalar colour, const float scale = 0.2){
     double angle;
@@ -1483,7 +1534,17 @@ bool callback_srvCutlerySeg(vision_msgs::GetObjectsColor::Request &req, vision_m
     return true;
 }
 
+bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
+{
+    cv::Vec3f aux (0.0, 0.0, 0.0);
+	cv::Vec3f centroid (0.0, 0.0, 0.0); 
 
+	cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    cv::Mat bgrImgCopy;
+    cv::Mat imageHSV;
+    return true;
+}
 
 int main(int argc, char** argv)
 {
@@ -1502,6 +1563,7 @@ int main(int argc, char** argv)
     ros::Subscriber subCalibV2 = n.subscribe("/vision/color_reco/calibCubes", 1, callbackCalibrateCubes);
     ros::Subscriber subCalibCutlery = n.subscribe("/vision/color_reco/calibCutlery", 1, callbackCalibrateCutlery);
     ros::Publisher pubCubesMarker = n.advertise<visualization_msgs::MarkerArray>("/vision/color_reco/cubes_markers", 1);
+    srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvDetectObjGripper);
 
     ros::Rate loop(30);
     
