@@ -46,6 +46,7 @@ ros::ServiceClient cltFindPlane;
 ros::ServiceClient cltExtObj;
 ros::ServiceClient cltExtCut;
 ros::Subscriber subCalibColor;
+ros::Subscriber subPointCloud;
 tf::TransformListener * transformListener;
 
 
@@ -69,6 +70,8 @@ typedef struct BoundingBox {
     float w, h, l;
     cv::Point3f center;
 } BoundingBox;
+cv::Mat colorImage;
+cv::Mat xyzImage;
 
 bool cropping = false;
 bool getRoi = false;
@@ -92,8 +95,9 @@ typedef struct _Data{
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 
 
-    cv::Mat imaBGR;
-    cv::Mat imaPCL;
+   
+    cv::Mat bgrImgCopy;
+    cv::Mat imageHSV;
     int pclCount = 0;
     cv::Point3f handRobotPosition;
     handRobotPosition.x = refPoint.x;
@@ -104,10 +108,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
     bb.w = 0.15;
     bb.h = 0.3;
     bb.l = 0.45;
-    JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
-    for (int i = 0; i < imaPCL.rows; i++) {
-        for (int j = 0; j < imaPCL.cols; j++) {
-            cv::Point3f point = imaPCL.at<cv::Point3f>(i, j);
+    JustinaTools::PointCloud2Msg_ToCvMat(msg, colorImage, xyzImage);
+    for (int i = 0; i < xyzImage.rows; i++) {
+        for (int j = 0; j < xyzImage.cols; j++) {
+            cv::Point3f point = xyzImage.at<cv::Point3f>(i, j);
             if (point.x >= bb.center.x 
                     && point.x <= bb.center.x + bb.l / 2
                     && point.y >= bb.center.y - bb.w / 2
@@ -116,17 +120,17 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
                     && point.z <= bb.center.z + bb.h / 2) {
                 pclCount++;
             } else {
-                imaBGR.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
+                colorImage.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
             }
         }
     }
-    if(!initThreshold && pclCount > 300){
+    /*if(!initThreshold && pclCount > 300){
         initThreshold = true;
         umbral = pclCount;
         std::cout << "HandDetect.->threshhold:" << umbral << std::endl; 
         return;
-    }
-    cv::imshow("Hand Detect", imaBGR);
+    }*/
+    
     
 }
 
@@ -1539,11 +1543,253 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
     cv::Vec3f aux (0.0, 0.0, 0.0);
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
 
-	cv::Mat bgrImg;
-    cv::Mat xyzCloud;
+	//cv::Mat bgrImg;
+    //cv::Mat xyzCloud;
     cv::Mat bgrImgCopy;
     cv::Mat imageHSV;
-    return true;
+
+    subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+
+
+    cv::imshow("Hand Detect", colorImage);
+
+
+    colorImage.copyTo(bgrImgCopy);
+    blur(bgrImgCopy, bgrImgCopy, Size(4, 4) , Point(-1,-1) );
+    cv::cvtColor(bgrImgCopy,imageHSV,CV_BGR2HSV);
+    cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
+    cv::bitwise_not(globalmask,globalmask);
+
+    //vision_msgs::VisionObjectList cubes = req.objects_input;
+    vision_msgs::VisionObject cube;
+    cube.id=req.id;
+        
+
+    vector <cv::Point> centroidList;
+    std::vector<std::vector<cv::Point> > contoursRec;
+    std::vector<cv::Scalar> colors;
+    geometry_msgs::Point minP, maxP;
+
+    vision_msgs::DetectObjects srv;
+    if(!cltExtObj.call(srv))
+    {
+        std::cout << "color_reco_node.-> Cannot extract a object above planes" << std::endl;
+        return false;
+    }
+    sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
+    cv::Mat objExtrMask = cv_ptr->image;
+
+    colorImage.copyTo(bgrImgCopy);
+    
+    std::map<std::string, Data> data;
+    loadValuesFromFile(data, true);
+
+
+    minP.x=10.0;
+    minP.y=10.0;
+    minP.z=10.0;
+    maxP.x=0.3;
+    maxP.y=0.3;
+    maxP.z=0.3;
+    cv::Mat maskHSV;
+    //vision_msgs::VisionObject cube = cubes.ObjectList[i];
+    std::map<std::string, Data>::iterator it = data.find(cube.id);
+    //if(it == data.end())
+        //continue;
+    
+    inRange(imageHSV,Scalar(it->second.hmin, it->second.smin, it->second.vmin), Scalar(it->second.hmax, it->second.smax, it->second.vmax),maskHSV);//color rojo
+    cv::Mat maskXYZ;
+	cv::inRange(xyzImage,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
+    cv::imshow("In range image", maskXYZ);
+
+	cv::Mat mask;
+	//maskXYZ.copyTo(mask,maskHSV);
+	maskHSV.copyTo(mask);
+    cv::Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(1.5, 1.5));
+	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
+	cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
+    //cv::bitwise_and(mask, objExtrMask , mask);
+	// Compute the centorid mask
+	std::vector<std::vector<cv::Point> > contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::Mat canny_output;
+	mask.copyTo(canny_output);
+	cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+	if (contours.size() == 0){
+		cube.graspable  = false;
+		cube.pose.position.x = 0.0;
+		cube.pose.position.y = 0.0;
+		cube.pose.position.z = 0.0;
+        //resp.objects_output.ObjectList.push_back(cube);	
+        //continue;
+    }
+    double maxArea = -1;
+    int indexMaxArea = 0;
+    for (unsigned int contour = 0; contour < contours.size(); contour++) 
+    {
+        float area = cv::contourArea(contours[contour]);
+        if (area > maxArea) 
+        {
+            maxArea = area;
+            indexMaxArea = contour;
+        }
+    }
+    std::vector<cv::Point> contour_poly;
+    cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
+    //cv::boundingRect(contour_poly);
+    cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
+    cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
+    //cv::bitwise_and(mask, boundingMask , mask);
+    boundingMask.copyTo(mask);
+    //cv::imshow("Mask", mask);
+    		
+	cv::Point imgCentroid(0,0);
+	int numPoints = 0;
+    maskXYZ.copyTo(mask, mask);
+    cv::bitwise_and(mask, objExtrMask, mask);
+	bool firstData = false;
+    for (int row = 0; row < mask.rows; ++row)
+	{
+		for (int col = 0; col < mask.cols; ++col)
+		{
+			if (mask.at<uchar>(row,col)>0)
+			{
+				//centroid += xyzCloud.at<cv::Vec3f>(i,j);
+				aux = xyzImage.at<cv::Vec3f>(row,col);
+				centroid += aux;
+				imgCentroid += cv::Point(col,row);
+				++numPoints;
+
+                if(!firstData){
+                    firstData = true;
+                    minP.x = aux.val[0]; 
+                    maxP.x = aux.val[0]; 
+                    minP.y = aux.val[1]; 
+                    maxP.y = aux.val[1]; 
+                    minP.z = aux.val[2]; 
+                    maxP.z = aux.val[2]; 
+                }
+                else{
+                    if(minP.x > aux.val[0])
+                        minP.x = aux.val[0];
+                    if(minP.y > aux.val[1])
+                        minP.y = aux.val[1];
+                    if(minP.z > aux.val[2])
+                        minP.z = aux.val[2];
+                    if(maxP.x < aux.val[0])
+                        maxP.x = aux.val[0];
+                    if(maxP.y < aux.val[1])
+                        maxP.y = aux.val[1];
+                    if(maxP.z < aux.val[2])
+                        maxP.z = aux.val[2];
+                }
+            }
+		}
+	}
+
+	if (numPoints == 0)
+	{
+		std::cout<< "ColorReco.-> Cannot detect the objet in my hand " << std::endl;
+        resp.detected=false;
+        return false;
+        /*std::cout << "ColorReco.->Cannot get centroid " << std::endl;
+		cube.graspable  = false;
+		cube.pose.position.x = 0.0;
+		cube.pose.position.y = 0.0;
+		cube.pose.position.z = 0.0;*/
+	}
+	else
+	{
+        std::cout<< "ColorReco.-> detect the objet in my hand " << std::endl;
+        resp.detected=true;
+        return true;
+		/*centroid /= numPoints;
+		imgCentroid /= numPoints;
+		centroidList.push_back(imgCentroid);
+        contoursRec.push_back(contour_poly);
+		std::cout << "ColorReco.->Centroid:" << centroid << std::endl;
+		std::cout << "ColorReco.->MinP:[" << minP << "]" << std::endl;
+		std::cout << "ColorReco.->MaxP:[" << maxP << "]" << std::endl;
+		cube.graspable = true;
+		cube.pose.position.x = centroid[0];
+		cube.pose.position.y = centroid[1];
+		cube.pose.position.z = centroid[2];
+		cube.minPoint = minP;
+		cube.maxPoint = maxP;
+        tf::StampedTransform transform;
+        transformListener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
+        transformListener->lookupTransform("map", "base_link", ros::Time(0), transform);
+        tf::Vector3 cubePosWrtRobot((minP.x + maxP.x) / 2.0f, (minP.y + maxP.y) / 2.0f, (minP.z + maxP.z) / 2.0f);
+        tf::Vector3 cubePosWrtWorld = transform * cubePosWrtRobot;
+        cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
+        cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
+        colorHSV.at<cv::Vec3b>(0, 0)[0] = (it->second.hmin + it->second.hmax) / 2.0f;
+        colorHSV.at<cv::Vec3b>(0, 0)[1] = (it->second.smin + it->second.smax) / 2.0f;
+        colorHSV.at<cv::Vec3b>(0, 0)[2] = (it->second.vmin + it->second.vmax) / 2.0f;
+        cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
+        colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
+        cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+        cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+        cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;*/
+ 
+        /*std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.id);
+        if(cubeIt == cubesMapMarker.end()){
+            visualization_msgs::Marker marker;
+            marker.header.frame_id = "map";
+            marker.header.stamp = ros::Time();
+            marker.ns = "cubes_marker";
+            marker.id = i;
+            marker.type = visualization_msgs::Marker::CYLINDER;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.pose.position.x = cubePosWrtWorld.x();
+            marker.pose.position.y = cubePosWrtWorld.y();
+            marker.pose.position.z = cubePosWrtWorld.z();
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+            marker.scale.x = fabs(minP.x - maxP.x);
+            marker.scale.y = fabs(minP.y - maxP.y);
+            marker.scale.z = fabs(minP.z - maxP.z);
+            marker.color.a = 0.8;
+            marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+            marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+            marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+            cubesMapMarker[cube.id] = marker; 
+        }
+        else{
+            visualization_msgs::Marker marker = cubeIt->second;
+            marker.pose.position.x = cubePosWrtWorld.x();
+            marker.pose.position.y = cubePosWrtWorld.y();
+            marker.pose.position.z = cubePosWrtWorld.z();
+            marker.scale.x = fabs(minP.x - maxP.x);
+            marker.scale.y = fabs(minP.y - maxP.y);
+            marker.scale.z = fabs(minP.z - maxP.z);
+            cubesMapMarker[cube.id] = marker; 
+        }*/
+	}
+
+	/*cv::bitwise_not(boundingMask,boundingMask);
+    cv::bitwise_and(boundingMask,globalmask,globalmask);
+	//imshow("mask", mask);
+	
+	resp.objects_output.ObjectList.push_back(cube);	
+	//mask.copyTo(globalmask, globalmask);
+    
+    cv::bitwise_not(globalmask,globalmask);
+	//imshow("globalmask", globalmask);
+    cv::Mat maskedImage;
+	bgrImg.copyTo(maskedImage,globalmask);
+	for(int i=0; i<centroidList.size(); i++)
+	{
+		cv::circle(maskedImage, centroidList[i],5, colors[i], -1);
+        cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
+	}
+	imshow("global",maskedImage);
+    imshow("Original image", bgrImgCopy);*/
+    
+    //return true;
 }
 
 int main(int argc, char** argv)
