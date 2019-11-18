@@ -1571,7 +1571,7 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
     geometry_msgs::Point minP, maxP;
 
     vision_msgs::DetectObjects srv;
-    if(!cltExtObj.call(srv))
+    if(!cltExtCut.call(srv))
     {
         std::cout << "color_reco_node.-> Cannot extract a object above planes" << std::endl;
         return false;
@@ -1601,8 +1601,12 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
     inRange(imageHSV,Scalar(it->second.hmin, it->second.smin, it->second.vmin), Scalar(it->second.hmax, it->second.smax, it->second.vmax),maskHSV);//color rojo
     cv::Mat maskXYZ;
 	cv::inRange(xyzImage,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
-    cv::imshow("In range image", maskXYZ);
+    std::cout << "color_reco_node.-> antes de imshow" << std::endl;
 
+    cv::imshow("In range image", maskXYZ);
+    std::cout << "color_reco_node.-> despues de imshow" << std::endl;
+
+    
 	cv::Mat mask;
 	//maskXYZ.copyTo(mask,maskHSV);
 	maskHSV.copyTo(mask);
@@ -1617,29 +1621,33 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
 	mask.copyTo(canny_output);
 	cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
 	if (contours.size() == 0){
+        std::cout<< "ColorReco.-> contornos = 0 " << std::endl;
 		cube.graspable  = false;
 		cube.pose.position.x = 0.0;
 		cube.pose.position.y = 0.0;
 		cube.pose.position.z = 0.0;
-        //resp.objects_output.ObjectList.push_back(cube);	
-        //continue;
+        
     }
     double maxArea = -1;
     int indexMaxArea = 0;
-    for (unsigned int contour = 0; contour < contours.size(); contour++) 
+    for (unsigned int contour = 0; contour <= contours.size(); contour++) 
     {
+        std::cout<< "ColorReco.-> for contornos " << std::endl;
         float area = cv::contourArea(contours[contour]);
         if (area > maxArea) 
         {
+            std::cout<< "ColorReco.-> area > maxArea " << std::endl;
             maxArea = area;
             indexMaxArea = contour;
         }
     }
     std::vector<cv::Point> contour_poly;
     cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
+    std::cout<< "ColorReco.-> approxPolyDP " << std::endl;
     //cv::boundingRect(contour_poly);
     cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
     cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
+    std::cout<< "ColorReco.-> fillConvexPoly " << std::endl;
     //cv::bitwise_and(mask, boundingMask , mask);
     boundingMask.copyTo(mask);
     //cv::imshow("Mask", mask);
@@ -1649,7 +1657,7 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
     maskXYZ.copyTo(mask, mask);
     cv::bitwise_and(mask, objExtrMask, mask);
 	bool firstData = false;
-    for (int row = 0; row < mask.rows; ++row)
+    /*for (int row = 0; row < mask.rows; ++row)
 	{
 		for (int col = 0; col < mask.cols; ++col)
 		{
@@ -1686,88 +1694,20 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
                 }
             }
 		}
-	}
+	}*/
 
 	if (numPoints == 0)
 	{
 		std::cout<< "ColorReco.-> Cannot detect the objet in my hand " << std::endl;
         resp.detected=false;
         return false;
-        /*std::cout << "ColorReco.->Cannot get centroid " << std::endl;
-		cube.graspable  = false;
-		cube.pose.position.x = 0.0;
-		cube.pose.position.y = 0.0;
-		cube.pose.position.z = 0.0;*/
+        
 	}
 	else
 	{
         std::cout<< "ColorReco.-> detect the objet in my hand " << std::endl;
         resp.detected=true;
-        return true;
-		/*centroid /= numPoints;
-		imgCentroid /= numPoints;
-		centroidList.push_back(imgCentroid);
-        contoursRec.push_back(contour_poly);
-		std::cout << "ColorReco.->Centroid:" << centroid << std::endl;
-		std::cout << "ColorReco.->MinP:[" << minP << "]" << std::endl;
-		std::cout << "ColorReco.->MaxP:[" << maxP << "]" << std::endl;
-		cube.graspable = true;
-		cube.pose.position.x = centroid[0];
-		cube.pose.position.y = centroid[1];
-		cube.pose.position.z = centroid[2];
-		cube.minPoint = minP;
-		cube.maxPoint = maxP;
-        tf::StampedTransform transform;
-        transformListener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
-        transformListener->lookupTransform("map", "base_link", ros::Time(0), transform);
-        tf::Vector3 cubePosWrtRobot((minP.x + maxP.x) / 2.0f, (minP.y + maxP.y) / 2.0f, (minP.z + maxP.z) / 2.0f);
-        tf::Vector3 cubePosWrtWorld = transform * cubePosWrtRobot;
-        cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
-        cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
-        colorHSV.at<cv::Vec3b>(0, 0)[0] = (it->second.hmin + it->second.hmax) / 2.0f;
-        colorHSV.at<cv::Vec3b>(0, 0)[1] = (it->second.smin + it->second.smax) / 2.0f;
-        colorHSV.at<cv::Vec3b>(0, 0)[2] = (it->second.vmin + it->second.vmax) / 2.0f;
-        cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
-        colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
-        cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
-        cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
-        cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;*/
- 
-        /*std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.id);
-        if(cubeIt == cubesMapMarker.end()){
-            visualization_msgs::Marker marker;
-            marker.header.frame_id = "map";
-            marker.header.stamp = ros::Time();
-            marker.ns = "cubes_marker";
-            marker.id = i;
-            marker.type = visualization_msgs::Marker::CYLINDER;
-            marker.action = visualization_msgs::Marker::ADD;
-            marker.pose.position.x = cubePosWrtWorld.x();
-            marker.pose.position.y = cubePosWrtWorld.y();
-            marker.pose.position.z = cubePosWrtWorld.z();
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = 0.0;
-            marker.pose.orientation.w = 1.0;
-            marker.scale.x = fabs(minP.x - maxP.x);
-            marker.scale.y = fabs(minP.y - maxP.y);
-            marker.scale.z = fabs(minP.z - maxP.z);
-            marker.color.a = 0.8;
-            marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
-            marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
-            marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-            cubesMapMarker[cube.id] = marker; 
-        }
-        else{
-            visualization_msgs::Marker marker = cubeIt->second;
-            marker.pose.position.x = cubePosWrtWorld.x();
-            marker.pose.position.y = cubePosWrtWorld.y();
-            marker.pose.position.z = cubePosWrtWorld.z();
-            marker.scale.x = fabs(minP.x - maxP.x);
-            marker.scale.y = fabs(minP.y - maxP.y);
-            marker.scale.z = fabs(minP.z - maxP.z);
-            cubesMapMarker[cube.id] = marker; 
-        }*/
+        return true;	
 	}
 
 	/*cv::bitwise_not(boundingMask,boundingMask);
@@ -1788,8 +1728,6 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
 	}
 	imshow("global",maskedImage);
     imshow("Original image", bgrImgCopy);*/
-    
-    //return true;
 }
 
 int main(int argc, char** argv)
