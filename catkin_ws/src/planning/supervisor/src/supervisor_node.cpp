@@ -70,9 +70,9 @@ void callbackCmdResponse(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	float d;
 	std::string kdb_loc, sup_loc;
 	std::stringstream ss;
-        std::vector<std::string> tokens;
-        std::string str = msg->params;
-        split(tokens, str, is_any_of(" "));
+    std::vector<std::string> tokens;
+    std::string str = msg->params;
+    split(tokens, str, is_any_of(" "));
 
 	if(msg->name == "goto"){
 		JustinaNavigation::getRobotPose(x, y, theta);
@@ -81,7 +81,7 @@ void callbackCmdResponse(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		std::cout << "Robot pose from Odom: " << x << ", " << y << ", " << theta << std::endl;
 		std::cout << "Location: " << sx << ", " << sy << std::endl;
 
-		d = pow(x - sx, 2) + pow(y - sy, 2);	
+		d = pow(x - sx, 2) + pow(y - sy, 2);
 
 		std::cout << "Distance: " << d << std::endl;
 
@@ -104,14 +104,7 @@ void callbackCmdResponse(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			std::cout << kdb_loc << std::endl;
 			std::cout << sup_loc << std::endl;
 		}
-
-		
 	}
-	
-	/*std_msgs::Bool rp;
-	rp.data = 0;
-
-	robot_pose_pub.publish(rp);*/
 }
 
 int main(int argc, char ** argv) {
