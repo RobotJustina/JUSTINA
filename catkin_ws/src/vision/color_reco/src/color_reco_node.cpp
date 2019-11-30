@@ -1730,6 +1730,37 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
     imshow("Original image", bgrImgCopy);*/
 }
 
+bool callback_srvTest(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
+{
+    cv::Vec3f aux (0.0, 0.0, 0.0);
+	cv::Vec3f centroid (0.0, 0.0, 0.0); 
+
+	//cv::Mat bgrImg;
+    //cv::Mat xyzCloud;
+    cv::Mat bgrImgCopy;
+    cv::Mat imageHSV;
+
+    //subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+
+    bool respuesta =false;
+    //cv::imshow("Hand Detect", colorImage);
+
+    if(req.point.x !=0){
+        resp.detected =respuesta;
+        std::cout << "verdadero" << std::endl;
+        //return true;
+        
+    }
+    else{
+        resp.detected =respuesta;
+        
+        std::cout << "false" << std::endl;
+        //return false;
+    }
+    return true;
+    
+}
+
 int main(int argc, char** argv)
 {
 	
@@ -1747,7 +1778,8 @@ int main(int argc, char** argv)
     ros::Subscriber subCalibV2 = n.subscribe("/vision/color_reco/calibCubes", 1, callbackCalibrateCubes);
     ros::Subscriber subCalibCutlery = n.subscribe("/vision/color_reco/calibCutlery", 1, callbackCalibrateCutlery);
     ros::Publisher pubCubesMarker = n.advertise<visualization_msgs::MarkerArray>("/vision/color_reco/cubes_markers", 1);
-    srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvDetectObjGripper);
+    //srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvDetectObjGripper);
+    srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvTest);
 
     ros::Rate loop(30);
     
