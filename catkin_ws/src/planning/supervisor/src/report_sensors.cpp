@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "justina_tools/JustinaNavigation.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "std_msgs/Bool.h"
 
 bool nav_flag = 0;
@@ -10,6 +11,17 @@ bool nav_flag = 0;
 void callbackCmdNavigation(const std_msgs::Bool::ConstPtr& msg){
 	std::cout << "Test report robot position" << std::endl;
 	nav_flag = msg->data;	
+}
+
+void statusNav(){
+        std::map<std::string, std::vector<float> > locations;
+        JustinaKnowledge::getKnownLocations(locations);
+
+        for(std::map<std::string, std::vector<float> >::iterator it=locations.begin(); it!=locations.end(); ++it){
+            std::cout << "x: " << it->second[0] << std::endl;
+            std::cout << "y: " << it->second[1] << std::endl;
+            
+        }
 }
 
 int main(int argc, char ** argv) {
