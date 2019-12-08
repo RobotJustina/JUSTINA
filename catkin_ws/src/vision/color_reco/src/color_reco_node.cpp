@@ -121,15 +121,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
                 pclCount++;
             } else {
                 colorImage.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
+                xyzImage.at<cv::Point3f>(i, j) = cv::Point3f(0.0, 0.0, 0.0);
             }
         }
     }
-    /*if(!initThreshold && pclCount > 300){
-        initThreshold = true;
-        umbral = pclCount;
-        std::cout << "HandDetect.->threshhold:" << umbral << std::endl; 
-        return;
-    }*/
     
     
 }
@@ -1538,7 +1533,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetObjectsColor::Request &req, vision_m
     return true;
 }
 
-bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
+bool callback_srvTest(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
 {
     cv::Vec3f aux (0.0, 0.0, 0.0);
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
@@ -1700,63 +1695,123 @@ bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &r
 	{
 		std::cout<< "ColorReco.-> Cannot detect the objet in my hand " << std::endl;
         resp.detected=false;
-        return false;
+        //return false;
         
 	}
 	else
 	{
         std::cout<< "ColorReco.-> detect the objet in my hand " << std::endl;
         resp.detected=true;
-        return true;	
+        //return true;	
 	}
 
-	/*cv::bitwise_not(boundingMask,boundingMask);
+    
+
+	cv::bitwise_not(boundingMask,boundingMask);
     cv::bitwise_and(boundingMask,globalmask,globalmask);
 	//imshow("mask", mask);
 	
-	resp.objects_output.ObjectList.push_back(cube);	
+	//resp.objects_output.ObjectList.push_back(cube);	
 	//mask.copyTo(globalmask, globalmask);
     
     cv::bitwise_not(globalmask,globalmask);
 	//imshow("globalmask", globalmask);
     cv::Mat maskedImage;
-	bgrImg.copyTo(maskedImage,globalmask);
+	colorImage.copyTo(maskedImage,globalmask);
 	for(int i=0; i<centroidList.size(); i++)
 	{
 		cv::circle(maskedImage, centroidList[i],5, colors[i], -1);
         cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
 	}
 	imshow("global",maskedImage);
-    imshow("Original image", bgrImgCopy);*/
+    imshow("Original image", bgrImgCopy);
+
+    return true;
 }
 
-bool callback_srvTest(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
+bool callback_srvDetectObjGripper(vision_msgs::DetectObjectInGripper::Request &req, vision_msgs::DetectObjectInGripper::Response &resp)
 {
-    cv::Vec3f aux (0.0, 0.0, 0.0);
-	cv::Vec3f centroid (0.0, 0.0, 0.0); 
-
-	//cv::Mat bgrImg;
-    //cv::Mat xyzCloud;
     cv::Mat bgrImgCopy;
     cv::Mat imageHSV;
 
-    //subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+    refPoint.x = req.point.x;
+    refPoint.y = req.point.y;
+    refPoint.z = req.point.z; 
 
-    bool respuesta =false;
-    //cv::imshow("Hand Detect", colorImage);
+    subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
 
-    if(req.point.x !=0){
-        resp.detected =respuesta;
-        std::cout << "verdadero" << std::endl;
-        //return true;
+
+    cv::imshow("object in gripper", colorImage);
+    //cv::imshow("depth image", xyzImage);
+
+
+    colorImage.copyTo(bgrImgCopy);
+    blur(bgrImgCopy, bgrImgCopy, Size(4, 4) , Point(-1,-1) );
+    cv::cvtColor(bgrImgCopy,imageHSV,CV_BGR2HSV);
+    //cv::imshow("Image HSV", imageHSV);
+    cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
+    cv::bitwise_not(globalmask,globalmask);
+
+    vision_msgs::VisionObject cube;
+    cube.id=req.id;
         
+
+    vector <cv::Point> centroidList;
+    std::vector<std::vector<cv::Point> > contoursRec;
+    std::vector<cv::Scalar> colors;
+    geometry_msgs::Point minP, maxP;
+
+    
+    std::map<std::string, Data> data;
+    loadValuesFromFile(data, true);
+
+
+    minP.x=10.0;
+    minP.y=10.0;
+    minP.z=10.0;
+    maxP.x=0.3;
+    maxP.y=0.3;
+    maxP.z=0.3;
+    cv::Mat maskHSV;
+    cv::Mat maskColor;
+    //vision_msgs::VisionObject cube = cubes.ObjectList[i];
+    std::map<std::string, Data>::iterator it = data.find(cube.id);
+    //if(it == data.end())
+        //continue;
+    
+    cv::inRange(imageHSV,Scalar(it->second.hmin, it->second.smin, it->second.vmin), Scalar(it->second.hmax, it->second.smax, it->second.vmax),maskHSV);
+    //cv::imshow("In range image HSV", maskHSV);
+    cv::Mat maskXYZ;
+	cv::inRange(xyzImage,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
+
+    //cv::imshow("In range image", maskXYZ);
+    
+
+    cv::Mat mask;
+	//maskXYZ.copyTo(mask,maskHSV);
+	maskHSV.copyTo(mask);
+    cv::Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(1.5, 1.5));
+	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
+	cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
+    //cv::bitwise_and(mask, objExtrMask , mask);
+
+	std::vector<std::vector<cv::Point> > contours;
+	std::vector<cv::Vec4i> hierarchy;
+	cv::Mat canny_output;
+	mask.copyTo(canny_output);
+	cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+
+    
+
+	if (contours.size() == 0){
+        std::cout<< "ColorReco.-> el objeto no esta en la mano" << std::endl;
+        resp.detected = false;
     }
     else{
-        resp.detected =respuesta;
-        
-        std::cout << "false" << std::endl;
-        //return false;
+        std::cout<< "ColorReco.-> el objeto esta dentro de la mano" << std::endl;
+        resp.detected = true;
     }
+
     return true;
     
 }
@@ -1778,8 +1833,8 @@ int main(int argc, char** argv)
     ros::Subscriber subCalibV2 = n.subscribe("/vision/color_reco/calibCubes", 1, callbackCalibrateCubes);
     ros::Subscriber subCalibCutlery = n.subscribe("/vision/color_reco/calibCutlery", 1, callbackCalibrateCutlery);
     ros::Publisher pubCubesMarker = n.advertise<visualization_msgs::MarkerArray>("/vision/color_reco/cubes_markers", 1);
-    //srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvDetectObjGripper);
-    srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvTest);
+    srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvDetectObjGripper);
+    //srvDetectObjGripper = n.advertiseService("/vision/color_reco/detect_object_gripper", callback_srvTest);
 
     ros::Rate loop(30);
     
