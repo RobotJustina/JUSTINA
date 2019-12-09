@@ -94,6 +94,7 @@ ros::ServiceClient JustinaVision::cltObjectSeg;
 ros::ServiceClient JustinaVision::cltGetTray;
 ros::ServiceClient JustinaVision::cltGetDishwasher;
 ros::ServiceClient JustinaVision::cltLoadObjectCat;
+ros::ServiceClient JustinaVision::cltDetectObjGr;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -187,6 +188,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
     JustinaVision::cltGetDishwasher = nh ->serviceClient<vision_msgs::SRV_FindDishwasher>("/vision/obj_reco/dishwasher");
     JustinaVision::cltLoadObjectCat = nh ->serviceClient<vision_msgs::SetTrainingDir>("/vision/obj_reco/set_training_dir");
+    //Service for detect object in gripper
+    JustinaVision::cltDetectObjGr = nh ->serviceClient<vision_msgs::DetectObjectInGripper>("/vision/color_reco/detect_object_gripper");
 
     return true;
 }
@@ -1080,4 +1083,33 @@ bool JustinaVision::loadObjectCat(std::string category)
     }
     else
         return true;
+}
+
+bool JustinaVision::detectColorObjectGripper(std::string id, geometry_msgs::Point gripperPos)
+{
+    bool detected = false;
+    std::cout << "JustinaVision.-> Trying to state if the object is in the Justina's Gripper" << std::endl;
+   
+
+    vision_msgs::DetectObjectInGripper srvDetectObject;
+    srvDetectObject.request.id=id;
+    srvDetectObject.request.point=gripperPos;
+
+    if(!JustinaVision::cltDetectObjGr.call(srvDetectObject))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment objects service" << std::endl;
+        return false;
+    }
+
+    detected = srvDetectObject.response.detected;
+
+
+    std::cout << "JustinaVision.-> searching the object in the gripper...." <<std::endl;
+    if(detected)
+        std::cout << "JustinaVision.-> the object is in the gripper" <<std::endl;
+
+    else
+        std::cout << "JustinaVision.-> the object is NOT in the gripper" <<std::endl;
+
+    return detected;
 }

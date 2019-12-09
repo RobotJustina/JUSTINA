@@ -38,6 +38,7 @@
 #include "vision_msgs/SetTrainingDir.h"
 #include "vision_msgs/SRV_DetectPlasticTrayZones.h"
 #include "vision_msgs/SRV_FindDishwasher.h"
+#include "vision_msgs/DetectObjectInGripper.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include <boost/thread/thread.hpp>
 
@@ -140,6 +141,7 @@ private:
     static ros::ServiceClient cltGetTray;
     static ros::ServiceClient cltGetDishwasher;
     static ros::ServiceClient cltLoadObjectCat;
+    static ros::ServiceClient cltDetectObjGr;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -227,6 +229,7 @@ public:
     static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
     static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
     static bool loadObjectCat(std::string category);
+    static bool detectColorObjectGripper(std::string id, geometry_msgs::Point gripperPos);
 
 private:
     //callbacks for obj recog
