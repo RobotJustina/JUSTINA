@@ -63,7 +63,7 @@ string colour;
 
 std::stringstream Huemin, Huemax, Satmin, Satmax, Valmin, Valmax;
 
-geometry_msgs::Point32 refPoint;
+geometry_msgs::Point refPoint;
 bool initThreshold = false;
 int umbral = 0;
 typedef struct BoundingBox {
