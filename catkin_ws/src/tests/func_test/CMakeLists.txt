@@ -508,6 +508,17 @@ target_link_libraries(introduce_to_people
 add_dependencies(introduce_to_people ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ###########
+add_executable(detect_object_gripper
+	src/detectObjectInGripper.cpp
+)
+
+target_link_libraries(detect_object_gripper
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(detect_object_gripper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
 #add_executable(p_and_g_complement
 #	src/p_and_g_complement.cpp
 #)
