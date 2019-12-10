@@ -18,7 +18,7 @@ int main(int argc, char ** argv){
 	int state = 0;
 	bool finished = false;
 
-	while(ros::ok() && cv::waitKey(1) != 'q'){
+	while(ros::ok() && !finished){
 		
 
 		switch(state){
@@ -34,7 +34,7 @@ int main(int argc, char ** argv){
 				break;
 			case 1:
                 JustinaHRI::say("now, i am going to verify if the block is in my hand");
-
+                JustinaManip::laGoTo("take", 4000);
                 JustinaManip::hdGoTo(0, -0.9, 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 if (JustinaVision::getGripperPos(gripperPose)) {
