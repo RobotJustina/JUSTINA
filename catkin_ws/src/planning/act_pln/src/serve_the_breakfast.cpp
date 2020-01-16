@@ -344,7 +344,7 @@ int main(int argc, char **argv){
     int countAlign;
 
     JustinaHRI::usePocketSphinx = false;
-    STATE state = SM_INTRO_GUEST;//SM_DETECT_OBJECT;//SM_FIND_GUEST;
+    STATE state = SM_FIND_GUEST;//SM_DETECT_OBJECT;//SM_FIND_GUEST;
     //SM_GO_TO_TABLE_DRINKS;//SM_FIND_GUEST;//SM_FIND_BOWL; //SM_INIT;
 
     while(ros::ok() && !success){
