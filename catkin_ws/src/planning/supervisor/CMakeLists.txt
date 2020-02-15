@@ -47,3 +47,13 @@ add_dependencies(sensor_report_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin
 target_link_libraries(sensor_report_node
   ${catkin_LIBRARIES}
 )
+
+add_executable(async_audio_node
+	src/async_audio_sm.cpp
+)
+
+add_dependencies(async_audio_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(async_audio_node
+  ${catkin_LIBRARIES}
+)
