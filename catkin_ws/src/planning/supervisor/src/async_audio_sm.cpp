@@ -21,9 +21,24 @@ enum STATE{
     SM_SEND_SPEECH
 };
 
+//struct for queue
+typedef struct elemenQueue{
+    std::string *dato;
+    int *time;
+    int *limit_time;
+    int *ros_time;
+    struct elemenQueue *siguiente;
+}elemento;
+
+typedef struct elementUbi{
+    elemento *inicio;
+    elemento *ultimo;
+    int tam;
+}Queue;
 
 
 bool busy = false;
+Queue *tas;
 //ros::ServiceClient srvCltQueryKDB;
 
 //ros::Publisher robot_pose_pub;
@@ -107,6 +122,82 @@ bool busy = false;
 	}
 }*/
 
+void inicializaQ(){
+	if((tas = (Queue*)malloc(sizeof(Queue)))==NULL)
+        	return;
+	tas->inicio = NULL;
+	tas->ultimo = NULL;
+	tas->tam = 0;
+}
+
+void callbackPushQ(){
+
+    std::cout << "CALLBACK SET SPEECH" << std::endl;
+	
+    elemento *newelemento;
+
+	if((newelemento=(elemento*)malloc(sizeof(elemento))) == NULL)
+		return;
+	if((newelemento->time=(int*)malloc(sizeof(int))) == NULL)
+		return;
+	if((newelemento->ros_time=(int*)malloc(sizeof(int))) == NULL)
+		return;
+	if((newelemento->limit_time=(int*)malloc(sizeof(int))) == NULL)
+		return;
+
+	/*newelemento->dato = new std::string(dato);
+	newelemento->time[0] = time;
+    newelemento->ros_time[0] = ros_time;
+    newelemento->limit_time[0] = limit_time;
+	newelemento->siguiente = NULL;
+	if(tas->ultimo !=NULL)
+		tas->ultimo->siguiente = newelemento;
+	tas->ultimo = newelemento;
+	if(tas->inicio == NULL)
+		tas->inicio = newelemento;
+	tas->tam++;
+    if(!spgenbusy){
+        std_msgs::String msg;
+        msg.data = "finish_spgen";
+        pubSpGenBusy.publish(msg);
+    }*/
+
+}
+
+void popQ(){
+	elemento *sup_elemento;
+	if (tas->tam == 0)
+		return;
+
+    ros::Time time;
+	sup_elemento = tas->inicio;
+	tas->inicio = tas->inicio->siguiente;
+
+    time = ros::Time::now();
+    //std::cout << "Actual Time: " << time.sec << " Limit time: " << sup_elemento->ros_time[0] + sup_elemento->limit_time[0] << std::endl; 
+    /*if(time.sec < sup_elemento->ros_time[0] + sup_elemento->limit_time[0]){
+    	bbros_bridge::Default_ROS_BB_Bridge srv;
+	srv.request.parameters = sup_elemento->dato[0];
+        boost::this_thread::sleep(boost::posix_time::milliseconds(sup_elemento->time[0]));
+	srv.request.timeout = 10000;
+	cltSpgSay.call(srv);
+    }
+    else{
+        //std::cout << "Out of Time, Not speech: " << sup_elemento->dato[0] << std::endl;
+        std_msgs::String msg;
+        msg.data = "finish_spgen";
+        pubSpGenBusy.publish(msg);
+    }*/
+
+	delete sup_elemento->dato;//free(sup_elemento->dato);
+	free(sup_elemento);
+	if(tas->inicio == NULL)
+		tas->ultimo = NULL;
+	tas->tam--;
+	return;
+
+}
+
 int main(int argc, char ** argv) {
 	std::cout << "Supervisor Node" << std::endl;
 	ros::init(argc, argv, "supervisor");
@@ -133,6 +224,7 @@ int main(int argc, char ** argv) {
             case SM_INIT:
                 std::cout << "Test" << std::endl;
                 busy = false;
+                inicializaQ();
                 nextState = SM_EMPTY;
                 break;
             case SM_EMPTY:
