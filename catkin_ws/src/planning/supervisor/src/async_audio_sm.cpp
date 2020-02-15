@@ -122,6 +122,11 @@ Queue *tas;
 	}
 }*/
 
+void callbackSpeechState(){
+    std::cout << "Speech status" << std::endl;
+
+}
+
 void inicializaQ(){
 	if((tas = (Queue*)malloc(sizeof(Queue)))==NULL)
         	return;
