@@ -111,11 +111,15 @@ int main(int argc, char** argv)
            
     		case SM_InitialState:
       			std::cout << "SM_InitialState...->start Initial state" << std::endl;
-                JustinaHRI::say("Hello my name is justina, i am at your service");
-                //JustinaHRI::say("I am waiting for my friend takeshi");
                 JustinaManip::startHdGoTo(0.0, 0.0);
+                std::cout << "Farewell Test...->First attempt to move" << std::endl;
+            	JustinaNavigation::moveDist(1.0, 4000);
+        		JustinaHRI::say("Hello my name is justina, today i am very happy because our friends of amazon are visiting us");
+                ros::Duration(2.0).sleep();
+                JustinaHRI::say("Today i can serve you some drinks");
                 ros::Duration(1.0).sleep();
-                
+                JustinaHRI::say("If you are offered a drink, you can ask me using alexa");
+                ros::Duration(1.0).sleep();
                 nextState = SM_WAIT_FOR_ORDER;
                 
       		break;
@@ -123,6 +127,8 @@ int main(int argc, char** argv)
             
             case SM_WAIT_FOR_ORDER:
                 std::cout << "SM_WAIT_FOR_ORDER...->wating for order.." << std::endl;
+                JustinaHRI::say("I am waiting for your order");
+                ros::Duration(1.0).sleep();
                 JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
                     if(lastReco.compare("place cutlery") == 0){
@@ -175,11 +181,7 @@ int main(int argc, char** argv)
                     if(attempsGrasp <= maxAttempsGrasp){
                         attempsGrasp++;
                         if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
-                            // index 0 is right arm index 1 is left arm
-                            /*if(!(withLeftOrRightArm && armsFree[1]))
-                              withLeftOrRightArm = false;
-                              else if(!(!withLeftOrRightArm && armsFree[0]))
-                              withLeftOrRightArm = true;*/
+                            
                             if(withLeftOrRightArm){
                                 if(!armsFree[1])
                                     withLeftOrRightArm = false;
@@ -188,8 +190,7 @@ int main(int argc, char** argv)
                                 if(!armsFree[0])
                                     withLeftOrRightArm = true;
                             }
-                            //if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
-                            // If we want to use another frame we need to pass de id how not empty
+                            
                             if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", true)){
                                 if(withLeftOrRightArm){
                                     objsToDeliv[1] = idObject;
@@ -247,7 +248,7 @@ int main(int argc, char** argv)
                 else{
                     // THIS IS FOR NAVIGATION TO THE DISH WASHER
                     JustinaManip::startTorsoGoTo(0.1, 0.0, 0.0);
-                    JustinaNavigation::getClose("living_room", 40000);
+                    JustinaNavigation::getClose("kitchen", 40000);
                     ss.str("");
                     ss << name << " i am going  to find you to deliver the " << drink;
                     JustinaHRI::say(ss.str());
@@ -321,7 +322,8 @@ int main(int argc, char** argv)
                         JustinaTasks::dropObject(objsToDeliv[1], true, 10000);
                         armsFree[1] = true;
                     }
-                    nextState = SM_FINAL_STATE;
+                    nextState = SM_WAIT_FOR_ORDER;
+                    //nextState = SM_FINAL_STATE;
                 }
                 break;
             
