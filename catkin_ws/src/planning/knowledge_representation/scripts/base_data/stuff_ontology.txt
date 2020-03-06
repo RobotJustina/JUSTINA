@@ -24,6 +24,7 @@
 (knife	is_kind_of      item)
 (lemon	is_kind_of      item)
 (lemonade	is_kind_of      item)
+(milk	is_kind_of      item)
 (noodles	is_kind_of      item)
 (onion	is_kind_of      item)
 (orange	is_kind_of      item)

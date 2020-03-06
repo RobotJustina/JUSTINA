@@ -84,6 +84,7 @@ int main(int argc, char** argv)
     std::string lastInt;
     std::string drink;
     std::string name;
+    std::string location;
     
     // Grasp
     vision_msgs::VisionObjectList objects;
@@ -116,7 +117,7 @@ int main(int argc, char** argv)
             	JustinaNavigation::moveDist(1.0, 4000);
         		JustinaHRI::say("Hello my name is justina, today i am very happy because our friends of amazon are visiting us");
                 ros::Duration(2.0).sleep();
-                JustinaHRI::say("Today i can serve you some drinks");
+                JustinaHRI::say("Today i can offer you some drinks");
                 ros::Duration(1.0).sleep();
                 JustinaHRI::say("If you are offered a drink, you can ask me using alexa");
                 ros::Duration(1.0).sleep();
@@ -131,11 +132,50 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                 if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
-                    if(lastReco.compare("place cutlery") == 0){
+                    /*if(lastReco.compare("place cutlery") == 0){
                         // To place the cutlery
                         JustinaHRI::say("I am going to place the cutleries");
                         JustinaNavigation::getClose("bar", 4000);
                         nextState = SM_CA_R;
+                    }*/
+                    if(lastReco.compare("kitchen") == 0){
+                        location = "kitchen";
+                        ss.str("");
+                        ss << "I am going to navigate to the " << location;
+                        if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                            std::cout << "Final Test...->Second attempt to move" << std::endl;
+                            if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                                std::cout << "Final Test...->Third attempt to move" << std::endl;
+                                JustinaTasks::sayAndSyncNavigateToLoc(location, 120000);
+                            } 
+                        }
+                        nextState = SM_WAIT_FOR_ORDER;
+                    }
+                    else if(lastReco.compare("corridor") == 0){
+                        location = "corridor";
+                        ss.str("");
+                        ss << "I am going to navigate to the " << location;
+                        if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                            std::cout << "Final Test...->Second attempt to move" << std::endl;
+                            if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                                std::cout << "Final Test...->Third attempt to move" << std::endl;
+                                JustinaTasks::sayAndSyncNavigateToLoc(location, 120000);
+                            } 
+                        }
+                        nextState = SM_WAIT_FOR_ORDER;
+                    }
+                    else if(lastReco.compare("bedroom") == 0){
+                        location = "bedroom";
+                        ss.str("");
+                        ss << "I am going to navigate to the " << location;
+                        if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                            std::cout << "Final Test...->Second attempt to move" << std::endl;
+                            if (!JustinaTasks::sayAndSyncNavigateToLoc(location, 120000)) {
+                                std::cout << "Final Test...->Third attempt to move" << std::endl;
+                                JustinaTasks::sayAndSyncNavigateToLoc(location, 120000);
+                            } 
+                        }
+                        nextState = SM_WAIT_FOR_ORDER;
                     }
                     else{
                         boost::algorithm::split(tokens, lastReco, boost::algorithm::is_any_of(" "));
@@ -155,7 +195,7 @@ int main(int argc, char** argv)
             case SM_NAVIGATE_TO_BAR:
                 std::cout << "SM_NAVIGATE_TO_THE_BAR...->navigate to the bar.." << std::endl;
                 ss.str("");
-                ss << "I notice that " << name << " is arriving to the party, please serve the " << drink << " in the bar";
+                ss << "I notice that " << name << " want a " << drink;
                 JustinaHRI::say(ss.str());
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("bar", 120000)) {
 					std::cout << "Final Test...->Second attempt to move" << std::endl;
