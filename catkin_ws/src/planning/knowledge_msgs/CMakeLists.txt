@@ -46,6 +46,7 @@ add_message_files(
   PlanningCmdClips.msg
   RecognizedSpeech.msg
   RepeatedSentence.msg
+  AsyncSpeech.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

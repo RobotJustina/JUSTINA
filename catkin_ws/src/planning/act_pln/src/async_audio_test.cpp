@@ -13,6 +13,7 @@
 #include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
 #include "string"
+#include "knowledge_msgs/AsyncSpeech.h"
 
 JustinaHRI::Queue *tas;
 #define SM_InitialState 0
@@ -64,6 +65,7 @@ int sitting=0;
 int lying=0;
 int contCrowd=0;
 
+ros::Publisher asyncSpeech;
 
 //funcion para responder preguntas frente al robot
 
@@ -406,6 +408,21 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 	ros::Duration(1.0).sleep();
 }
 
+void insertAsyncSpeech(std::string speech, int time, int ros_time, int limit_time) {
+
+    std::cout << "test publish" << std::endl;
+
+    knowledge_msgs::AsyncSpeech asmsg;
+    asmsg.speech = speech;
+    asmsg.time = time;
+    asmsg.ros_time = ros_time;
+    asmsg.limit_time = limit_time;
+
+    asyncSpeech.publish(asmsg);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+    
+}
+
 int main(int argc, char** argv)
 {
 	std::cout << "Initializing Speech and Person Recognition Test..." << std::endl;
@@ -424,6 +441,8 @@ int main(int argc, char** argv)
 	std::stringstream auxAudio;
 	std::string str1;
 
+
+	asyncSpeech = n.advertise<knowledge_msgs::AsyncSpeech>("/AsyncSpeech", 1);
 	//JustinaRepresentation::initKDB("", true, 20000);
 
   	//ros::Rate loop(10);
@@ -480,14 +499,22 @@ int main(int argc, char** argv)
 			//JustinaHRI::inicializa();
             std::cout << "INICIA TEST" << std::endl;
             time = ros::Time::now();
-			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10);
+			/*JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10);
 			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000, time.sec, 10);
 			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000, time.sec, 20);
 			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000, time.sec, 20);
 	        JustinaHRI::insertAsyncSpeech( "hello my name is Justina, I meet another robot, its name is robbie", 3000, time.sec, 20);
             JustinaHRI::insertAsyncSpeech( "my team is pumas, since 2011, i am very happy", 2000, time.sec, 20);
 	        JustinaHRI::insertAsyncSpeech( "of the university of mexico", 2000, time.sec, 20);
-	        JustinaHRI::insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 20);
+	        JustinaHRI::insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 20);*/
+			insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10);
+			insertAsyncSpeech( "i want to play a ridle game", 2000, time.sec, 10);
+			insertAsyncSpeech("i am turning arround to find you", 3000, time.sec, 20);
+			insertAsyncSpeech("i am moving my head to find you", 2000, time.sec, 20);
+	        insertAsyncSpeech( "hello my name is Justina, I meet another robot, its name is robbie", 3000, time.sec, 20);
+            insertAsyncSpeech( "my team is pumas, since 2011, i am very happy", 2000, time.sec, 20);
+	        insertAsyncSpeech( "of the university of mexico", 2000, time.sec, 20);
+	        insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 20);
 			//JustinaHRI::asyncSpeech();
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			nextState = SM_WaitingandTurn;
