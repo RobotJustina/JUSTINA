@@ -19,6 +19,7 @@ kiwi fruits kitchen_table kitchen 21 4 brown 9 nil nil nil nil 19 10
 knife cutlery kitchen_cabinet kitchen 7 20 red 1 nil nil nil nil 17 5
 lemon fruits kitchen_table kitchen 22 5 yellow 5 nil nil nil nil 23 11
 lemonade drinks sideboard living_room 33 24 yellow 7 nil nil nil nil 30 12
+milk drinks sideboard living_room 29 27 black 9 nil nil nil nil 32 17
 noodles food shelf bedroom 16 18 yellow 8 nil nil nil nil 12 27
 onion food shelf bedroom 23 7 purple 9 nil nil nil nil 22 22
 orange fruits kitchen_table kitchen 24 9 orange 10 nil nil nil nil 26 23

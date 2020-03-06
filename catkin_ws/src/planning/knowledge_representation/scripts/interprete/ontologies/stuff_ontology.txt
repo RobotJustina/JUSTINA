@@ -135,6 +135,7 @@
 (twisties	is_kind_of      item)
 (vegemite	is_kind_of      item)
 (water	is_kind_of      item)
+(milk	is_kind_of      item)
 
 #CUBES
 (green_block		is_kind_of		item)

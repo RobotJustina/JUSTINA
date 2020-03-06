@@ -49,6 +49,8 @@
 
 (item (type Objects) (name lemonade) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 7)(weight 33)(size 24) (color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil) (height 30) (wide 12))
 
+(item (type Objects) (name milk) (zone sideboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category drinks) (room living_room)(grasp 9)(weight 29)(size 27) (color black)(biggest nil)(smallest nil) (heaviest nil) (lightest nil) (height 32) (wide 17))
+
 (item (type Objects) (name noodles) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 8)(weight 16)(size 18) (color yellow)(biggest nil)(smallest nil) (heaviest nil) (lightest nil) (height 12) (wide 27))
 
 (item (type Objects) (name onion) (zone shelf) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room bedroom)(grasp 9)(weight 23)(size 7) (color purple)(biggest nil)(smallest nil) (heaviest nil) (lightest nil) (height 22) (wide 22))
