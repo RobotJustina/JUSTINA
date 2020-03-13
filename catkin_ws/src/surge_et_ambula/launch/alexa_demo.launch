@@ -1,0 +1,16 @@
+<launch>
+	<arg name="_lm" value="_lm:=/usr/local/share/pocketsphinx/model/en-us/en-us"/>
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/knowledge_base/pre_sydney/0607.dic" />
+	<arg name="_kws" value="_kws:=$(find pocketsphinx)/knowledge_base/pre_sydney/restaurant/restaurant.kwlist" />
+	<arg name="_jsgf" value="_jsgf:=$(find pocketsphinx)/grammars/pre_sydney/commands.jsgf"/>
+	<arg name="_stream" value="_stream:=true" />
+	<arg name="_wavpath" value="_wavpath:=none" />
+	<arg name="_output" value="_output:=/sphinx_result"/>
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
+	</include>
+	<group ns="knowledge">
+		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping servingdrinks" />
+	</group>
+
+	<!-- node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _lm) $(arg _dict) $(arg _kws) $(arg _jsgf) $(arg _stream) $(arg _wavpath) $(arg _output)" /-->
+</launch>

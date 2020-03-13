@@ -342,8 +342,11 @@ int main(int argc, char ** argv){
             
             if(!enableTorque){
             	std::cout << "left_arm_node.-> ";
-            	for(int i = 0; i < 9; i++)
+            	for(int i = 0; i < 9; i++){
             		std::cout << jointStates.position[i] << " ";
+                    dynamixelManager.disableTorque(i);
+                }
+
             	std::cout << std::endl;
             }
 

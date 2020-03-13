@@ -35,9 +35,13 @@ public:
     float robotTheta;
     float headPan;
     float headTilt;
+    std::string laPoseName;
+    std::string raPoseName;
     std::vector<float> leftArmPoses;
+    std::vector<float> laCurrentPos;
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
+    std::vector<float> raCurrentPos;
     std::vector<float> rightArmTorques;
     bool laIgnoreValueChanged;
     bool raIgnoreValueChanged;
@@ -198,6 +202,15 @@ private slots:
     void on_typeView_currentIndexChanged(const QString &arg1);
 
     void on_actBtnExecRobocup_pressed();
+
+    void on_laPushButtonRecordPose_clicked();
+
+    void on_raPushButtonRecordPose_clicked();
+
+    void on_laTxtPoseName_textChanged(const QString &arg1);
+
+    void on_raTxtPoseName_textChanged(const QString &arg1);
+
 
 
 private:

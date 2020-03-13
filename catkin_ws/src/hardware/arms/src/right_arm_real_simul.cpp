@@ -334,10 +334,13 @@ int main(int argc, char ** argv){
             //std::cout << "right_arm_node.->curr_position[0]:" << curr_position[5] << std::endl;
             
             if(!enableTorque){
-            	std::cout << "left_arm_node.-> ";
-                for(int i = 0; i < 9; i++)
+            	std::cout << "right_arm_node.-> ";
+                for(int i = 0; i < 9; i++){
                 	std::cout << jointStates.position[i] << " ";
-                	std::cout << std::endl;
+                    dynamixelManager.disableTorque(i);
+                }
+                
+                std::cout << std::endl;
             }
 
             if(gripperTorqueActive){
