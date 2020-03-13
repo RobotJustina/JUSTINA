@@ -2364,7 +2364,19 @@ void MainWindow::on_laPushButtonRecordPose_clicked()
 
 void MainWindow::on_raPushButtonRecordPose_clicked()
 {
+    JustinaManip::getRaCurrentPos(raCurrentPos);
 
+    std::string config_file = ros::package::getPath("knowledge") + "/manipulation/predef_poses/right_arm_poses.txt";
+    std::stringstream ss;
+    ss.str("");
+    ss<<raPoseName;
+    for(int i=0; i < raCurrentPos.size(); i++)
+          ss<<"\t"<<raCurrentPos[i];
+
+    std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+    std::ofstream outfile;
+    outfile.open(config_file, std::ios_base::app);
+    outfile<<"\n"<<ss.str();
 }
 
 void MainWindow::on_laTxtPoseName_textChanged(const QString &arg1)
@@ -2377,5 +2389,33 @@ void MainWindow::on_raTxtPoseName_textChanged(const QString &arg1)
     raPoseName = arg1.toStdString();
 }
 
+void MainWindow::on_laCbTorqueEnable_toggled(bool checked)
+{
+    if(checked){
+        std::vector<float> goalAngles;
 
+        for(int i=0; i < laCurrentPos.size(); i++)
+            goalAngles.push_back(laCurrentPos[i]);
 
+        JustinaManip::startLaGoToArticular(goalAngles);
+        ros::param::set("/hardware/left_arm/enable_torque", true);
+    }
+    else
+        ros::param::set("/hardware/left_arm/enable_torque", false);
+}
+
+void MainWindow::on_raCbTorqueEnable_toggled(bool checked)
+{
+    if(checked){
+        std::vector<float> goalAngles;
+
+        for(int i=0; i < raCurrentPos.size(); i++){
+            std::cout << raCurrentPos[i] << std::endl;
+            goalAngles.push_back(raCurrentPos[i]);
+        }
+        JustinaManip::startRaGoToArticular(goalAngles);
+        ros::param::set("/hardware/right_arm/enable_torque", true);
+    }
+    else
+        ros::param::set("/hardware/right_arm/enable_torque", false);
+}

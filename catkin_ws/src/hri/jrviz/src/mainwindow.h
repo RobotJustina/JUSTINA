@@ -211,7 +211,9 @@ private slots:
 
     void on_raTxtPoseName_textChanged(const QString &arg1);
 
+    void on_laCbTorqueEnable_toggled(bool checked);
 
+    void on_raCbTorqueEnable_toggled(bool checked);
 
 private:
     Ui::MainWindow *ui;
