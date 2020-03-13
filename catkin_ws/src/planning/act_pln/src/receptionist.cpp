@@ -139,7 +139,7 @@ int main(int argc, char **argv){
     
     std::vector<std::string> tokens;
 
-    STATE state = SM_SAY_WAIT_FOR_DOOR;//SM_INIT;
+    STATE state = SM_INIT;//SM_SAY_WAIT_FOR_DOOR;
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
