@@ -410,6 +410,9 @@ int main(int argc, char ** argv){
 
         }
 
+        if(ros::param::has("~enable_torque"))
+            ros::param::get("~enable_torque", enableTorque);
+        
         rate.sleep();
         ros::spinOnce();
     }
