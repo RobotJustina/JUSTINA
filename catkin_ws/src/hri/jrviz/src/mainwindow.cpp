@@ -153,6 +153,10 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
+    std::string laPoseName = "";
+    std::string raPoseName = "";
+    std::vector<float> laCurrentPos;
+    std::vector<float> raCurrentPos;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
     this->initKnownLoacations = false                                                                   ;
@@ -2341,7 +2345,37 @@ void MainWindow::on_actBtnExecRobocup_pressed()
     }
 }
 
+void MainWindow::on_laPushButtonRecordPose_clicked()
+{
+    JustinaManip::getLaCurrentPos(laCurrentPos);
 
+    std::string config_file = ros::package::getPath("knowledge") + "/manipulation/predef_poses/left_arm_poses.txt";
+    std::stringstream ss;
+    ss.str("");
+    ss<<laPoseName;
+    for(int i=0; i < laCurrentPos.size(); i++)
+          ss<<"\t"<<laCurrentPos[i];
+
+    std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+    std::ofstream outfile;
+    outfile.open(config_file, std::ios_base::app);
+    outfile<<"\n"<<ss.str();
+}
+
+void MainWindow::on_raPushButtonRecordPose_clicked()
+{
+
+}
+
+void MainWindow::on_laTxtPoseName_textChanged(const QString &arg1)
+{
+    laPoseName = arg1.toStdString();
+}
+
+void MainWindow::on_raTxtPoseName_textChanged(const QString &arg1)
+{
+    raPoseName = arg1.toStdString();
+}
 
 
 
