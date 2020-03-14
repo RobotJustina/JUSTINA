@@ -1480,8 +1480,14 @@
                       </item>
                       <item row="4" column="0">
                        <widget class="QCheckBox" name="laCbTorqueEnable">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="text">
                          <string>Torque enable</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
@@ -1489,6 +1495,9 @@
                        <widget class="QCheckBox" name="raCbTorqueEnable">
                         <property name="text">
                          <string>Torque enable</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
