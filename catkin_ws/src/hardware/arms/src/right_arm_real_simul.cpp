@@ -238,10 +238,16 @@ int main(int argc, char ** argv){
         goalSpeeds_simul[i] = 0.1;
     }
     goalGripper_simul = 0.0;
-    
+	bool flagOnce = true;    
 
     while(ros::ok()){
         if(!simul){
+        	if(enableTorque && flagOnce){
+        		for(int i=0; i < 7; i++)
+		            dynamixelManager.enableTorque(i);
+		        flagOnce = false;
+        	}
+
             if(newGoalPose && enableTorque){
                 std::cout << "right_arm_pose.->send newGoalPose" << std::endl;
                 for(int i = 0; i < 7; i++){
@@ -340,6 +346,7 @@ int main(int argc, char ** argv){
                     dynamixelManager.disableTorque(i);
                 }
                 
+                flagOnce = true;
                 std::cout << std::endl;
             }
 
