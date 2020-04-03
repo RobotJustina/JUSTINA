@@ -33,7 +33,7 @@ int attempts = 0;
 bool validateCMD[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "left_arm_node.-> Reciving new goal left arm pose." << std::endl;
+    //std::cout << "left_arm_node.-> Reciving new goal left arm pose." << std::endl;
     if(!(msg->data.size() == 7 || msg->data.size() == 14))
         std::cout << "Can not process the goal poses for the left arm" << std::endl;
     else{
