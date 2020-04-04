@@ -2356,10 +2356,53 @@ void MainWindow::on_laPushButtonRecordPose_clicked()
     for(int i=0; i < laCurrentPos.size(); i++)
           ss<<"\t"<<laCurrentPos[i];
 
-    std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+    std::ifstream file(config_file);
+    std::string tempStr;
+
+    std::vector<std::string> lines, new_lines;
+    size_t line_to_remove = 0;
+
+    while(std::getline(file, tempStr)){
+        lines.push_back(tempStr);
+        new_lines.push_back(tempStr);
+    }
+
     std::ofstream outfile;
-    outfile.open(config_file, std::ios_base::app);
-    outfile<<"\n"<<ss.str();
+
+    //Extraction of lines without comments
+    for(size_t i=0; i < lines.size(); i++)
+    {
+        size_t idx = lines[i].find("//");
+        if(idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    
+        std::vector<std::string> parts;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+
+        if(parts[0] == laPoseName)
+            line_to_remove = i+1;
+    }
+
+    //std::ofstream outfile;
+    if(line_to_remove == 0){
+        outfile.open(config_file, std::ios_base::app);
+        std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+
+    else{
+
+        outfile.open(config_file, std::ios::out);
+
+        for(size_t i=1; i< new_lines.size()+1; i++){
+            if(i != line_to_remove)
+                outfile << new_lines[i-1] << "\n";
+        }
+
+        line_to_remove = 0;
+        std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
 }
 
 void MainWindow::on_raPushButtonRecordPose_clicked()
@@ -2373,10 +2416,53 @@ void MainWindow::on_raPushButtonRecordPose_clicked()
     for(int i=0; i < raCurrentPos.size(); i++)
           ss<<"\t"<<raCurrentPos[i];
 
-    std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+    std::ifstream file(config_file);
+    std::string tempStr;
+
+    std::vector<std::string> lines, new_lines;
+    size_t line_to_remove = 0;
+
+    while(std::getline(file, tempStr)){
+        lines.push_back(tempStr);
+        new_lines.push_back(tempStr);
+    }
+
     std::ofstream outfile;
-    outfile.open(config_file, std::ios_base::app);
-    outfile<<"\n"<<ss.str();
+
+    //Extraction of lines without comments
+    for(size_t i=0; i < lines.size(); i++)
+    {
+        size_t idx = lines[i].find("//");
+        if(idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    
+        std::vector<std::string> parts;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+
+        if(parts[0] == raPoseName)
+            line_to_remove = i+1;
+    }
+
+    //std::ofstream outfile;
+    if(line_to_remove == 0){
+        outfile.open(config_file, std::ios_base::app);
+        std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+
+    else{
+
+        outfile.open(config_file, std::ios::out);
+
+        for(size_t i=1; i< new_lines.size()+1; i++){
+            if(i != line_to_remove)
+                outfile << new_lines[i-1] << "\n";
+        }
+
+        line_to_remove = 0;
+        std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
 }
 
 void MainWindow::on_laTxtPoseName_textChanged(const QString &arg1)
