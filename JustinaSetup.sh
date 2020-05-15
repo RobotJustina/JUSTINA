@@ -180,6 +180,9 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
 
 		#TODO Validate that as necesary, because this is for test the kinect one installation
+		sudo apt-get -y install build-essential cmake pkg-config
+		sudo apt-get -y install libva-dev libjpeg-dev
+		sudo apt-get -y install libturbojpeg0-dev
 		cd $INSTALL_DIR
 		git clone https://github.com/OpenKinect/libfreenect2.git
 		cd libfreenect2
@@ -191,6 +194,11 @@ else
 		sudo make install
 		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 		#TODO END
+
+		sudo apt-get install -y libgflags-dev libgtest-dev libc++-dev clang
+		sudo apt-get install -y ros-melodic-sound-play
+		sudo apt-get install -y ros-melodic-map-server
+		sudo apt-get install -y ros-melodic-tf2-bullet
 
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build the Dynamixel SDK${NC}"
 		cd $INSTALL_DIR
