@@ -18,6 +18,9 @@
 #define SM_SAY_WAIT_FOR_DOOR 0
 #define SM_WAIT_FOR_DOOR 10
 #define SM_INIT 20
+#define SM_WAIT_ROOM 30
+#define SM_GO_LOCATIONS 40
+#define SM_SEARCH_OBJECTS 50
 #define SM_FINAL_STATE 100
 
 
@@ -87,6 +90,27 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
 
+
+    std::vector<std::string> locations_kitchen;
+    std::vector<std::string> type_objects_kitchen;
+
+    //definde the locations where justina could find a misplaced object in the kitchen
+    locations_kitchen.push_back("kitchen_table");
+    locations_kitchen.push_back("kitchen_cabinet");
+    locations_kitchen.push_back("sink");
+    locations_kitchen.push_back("island");
+
+    //define the type of objects that wouldn't be placed in the kitchen
+    type_objects_kitchen.push_back("drinks");
+    type_objects_kitchen.push_back("food");
+    type_objects_kitchen.push_back("snacks");
+    type_objects_kitchen.push_back("candies");
+    type_objects_kitchen.push_back("containers");
+
+    int index_location = 0;
+    int index_typeObject = 0;
+
+
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
     ros::Rate loop(10);
@@ -120,18 +144,13 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "Clean Up Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
+                
+                nextState = SM_WAIT_ROOM;
+                break;
 
-                /*std::cout << "Farewell Test...-> start Farewell test" << std::endl;
-                JustinaHRI::loadGrammarSpeechRecognized(grammarCommandsID, GRAMMAR_POCKET_COMMANDS);
-                ros::spinOnce();
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaHRI::loadGrammarSpeechRecognized(grammarFollowID, GRAMMAR_POCKET_FOLLOW);
-                ros::spinOnce();
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-        		JustinaManip::startHdGoTo(0.0, 0.0);
-        		JustinaHRI::say("I am ready for the Farewell test");
-        		ros::Duration(2.0).sleep();*/
-
+            case SM_WAIT_ROOM:
+                std::cout << "Clean Up Test...->wait to know which room to clean" << std::endl;
+                JustinaHRI::waitAfterSay("Please tell me which room do you want to clean",4000);
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
 					std::cout << "Clean Up Test...->Second attempt to move" << std::endl;
@@ -144,8 +163,49 @@ int main(int argc, char** argv)
 				}
                 //JustinaHRI::waitAfterSay("I'm ready for the farewell test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(false);
-                //nextState = SM_SEARCH_WAVING;
-                break;
+                nextState = SM_GO_LOCATIONS;
+            break;
+
+            case SM_GO_LOCATIONS:
+                std::cout << "Clean Up Test...->inspecting the locations" << std::endl;
+                JustinaHRI::waitAfterSay("I am searching for misplaced objects",4000);
+                JustinaManip::hdGoTo(0.0, 0.0, 2000);
+
+                if(index_location<locations_kitchen.size())
+                {
+                    if (!JustinaTasks::sayAndSyncNavigateToLoc(locations_kitchen[index_location], 120000)) {
+					    std::cout << "Clean Up Test...->Second attempt to move" << std::endl;
+					    if (!JustinaTasks::sayAndSyncNavigateToLoc(locations_kitchen[index_location], 120000)) {
+					    	std::cout << "Clean Up Test...->Third attempt to move" << std::endl;
+					    	if (JustinaTasks::sayAndSyncNavigateToLoc(locations_kitchen[index_location], 120000)) {
+					    		std::cout << "Clean Up...->moving to the point" << std::endl;
+					    	}
+					    } 
+				    }
+                    
+                    index_location++;
+                    nextState=SM_SEARCH_OBJECTS;
+                }
+
+                else{
+                    std::cout << "Clean Up Test...->need help to find misplaced object" << std::endl;
+                    JustinaHRI::waitAfterSay("I need help to find the misplaced object",4000);
+                    //TODO write the lines and states in case justina needs help to solve the task
+                }
+
+                
+            break;
+
+            case SM_SEARCH_OBJECTS:
+                std::cout << "Clean Up Test...->look for the misplaced object" << std::endl;
+                JustinaHRI::waitAfterSay("I am looking for a misplaced object",4000);
+                JustinaManip::hdGoTo(0.0, 0.0, 2000);
+
+                if(index_typeObject<type_objects_kitchen.size()){
+                    JustinaVision::loadObjectCat(type_objects_kitchen[index_typeObject]);
+                }
+
+            break;
 
             case SM_FINAL_STATE:
                 std::cout << "Clean UP Test...-> SM_FINAL_STATE" << std::endl;

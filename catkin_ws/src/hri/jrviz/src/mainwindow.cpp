@@ -153,6 +153,10 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
+    std::string laPoseName = "";
+    std::string raPoseName = "";
+    std::vector<float> laCurrentPos;
+    std::vector<float> raCurrentPos;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
     this->initKnownLoacations = false                                                                   ;
@@ -2341,7 +2345,163 @@ void MainWindow::on_actBtnExecRobocup_pressed()
     }
 }
 
+void MainWindow::on_laPushButtonRecordPose_clicked()
+{
+    JustinaManip::getLaCurrentPos(laCurrentPos);
 
+    std::string config_file = ros::package::getPath("knowledge") + "/manipulation/predef_poses/left_arm_poses.txt";
+    std::stringstream ss;
+    ss.str("");
+    ss<<laPoseName;
+    for(int i=0; i < laCurrentPos.size(); i++)
+          ss<<"\t"<<laCurrentPos[i];
 
+    std::ifstream file(config_file);
+    std::string tempStr;
 
+    std::vector<std::string> lines, new_lines;
+    size_t line_to_remove = 0;
 
+    while(std::getline(file, tempStr)){
+        lines.push_back(tempStr);
+        new_lines.push_back(tempStr);
+    }
+
+    std::ofstream outfile;
+
+    //Extraction of lines without comments
+    for(size_t i=0; i < lines.size(); i++)
+    {
+        size_t idx = lines[i].find("//");
+        if(idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    
+        std::vector<std::string> parts;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+
+        if(parts[0] == laPoseName)
+            line_to_remove = i+1;
+    }
+
+    //std::ofstream outfile;
+    if(line_to_remove == 0){
+        outfile.open(config_file, std::ios_base::app);
+        std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+
+    else{
+
+        outfile.open(config_file, std::ios::out);
+
+        for(size_t i=1; i< new_lines.size()+1; i++){
+            if(i != line_to_remove)
+                outfile << new_lines[i-1] << "\n";
+        }
+
+        line_to_remove = 0;
+        std::cout << "Left arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+}
+
+void MainWindow::on_raPushButtonRecordPose_clicked()
+{
+    JustinaManip::getRaCurrentPos(raCurrentPos);
+
+    std::string config_file = ros::package::getPath("knowledge") + "/manipulation/predef_poses/right_arm_poses.txt";
+    std::stringstream ss;
+    ss.str("");
+    ss<<raPoseName;
+    for(int i=0; i < raCurrentPos.size(); i++)
+          ss<<"\t"<<raCurrentPos[i];
+
+    std::ifstream file(config_file);
+    std::string tempStr;
+
+    std::vector<std::string> lines, new_lines;
+    size_t line_to_remove = 0;
+
+    while(std::getline(file, tempStr)){
+        lines.push_back(tempStr);
+        new_lines.push_back(tempStr);
+    }
+
+    std::ofstream outfile;
+
+    //Extraction of lines without comments
+    for(size_t i=0; i < lines.size(); i++)
+    {
+        size_t idx = lines[i].find("//");
+        if(idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    
+        std::vector<std::string> parts;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+
+        if(parts[0] == raPoseName)
+            line_to_remove = i+1;
+    }
+
+    //std::ofstream outfile;
+    if(line_to_remove == 0){
+        outfile.open(config_file, std::ios_base::app);
+        std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+
+    else{
+
+        outfile.open(config_file, std::ios::out);
+
+        for(size_t i=1; i< new_lines.size()+1; i++){
+            if(i != line_to_remove)
+                outfile << new_lines[i-1] << "\n";
+        }
+
+        line_to_remove = 0;
+        std::cout << "Right arm pose saved->" << ss.str() << std::endl;
+        outfile << ss.str() << "\n";
+    }
+}
+
+void MainWindow::on_laTxtPoseName_textChanged(const QString &arg1)
+{
+    laPoseName = arg1.toStdString();
+}
+
+void MainWindow::on_raTxtPoseName_textChanged(const QString &arg1)
+{
+    raPoseName = arg1.toStdString();
+}
+
+void MainWindow::on_laCbTorqueEnable_toggled(bool checked)
+{
+    if(checked){
+        std::vector<float> goalAngles;
+
+        for(int i=0; i < laCurrentPos.size(); i++)
+            goalAngles.push_back(laCurrentPos[i]);
+
+        JustinaManip::startLaGoToArticular(goalAngles);
+        ros::param::set("/hardware/left_arm/enable_torque", true);
+    }
+    else
+        ros::param::set("/hardware/left_arm/enable_torque", false);
+}
+
+void MainWindow::on_raCbTorqueEnable_toggled(bool checked)
+{
+    if(checked){
+        std::vector<float> goalAngles;
+
+        for(int i=0; i < raCurrentPos.size(); i++){
+            std::cout << raCurrentPos[i] << std::endl;
+            goalAngles.push_back(raCurrentPos[i]);
+        }
+        JustinaManip::startRaGoToArticular(goalAngles);
+        ros::param::set("/hardware/right_arm/enable_torque", true);
+    }
+    else
+        ros::param::set("/hardware/right_arm/enable_torque", false);
+}

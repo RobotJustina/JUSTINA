@@ -1,4 +1,4 @@
-/Poses must be given in articular space
+//Poses must be given in articular space
 //Format:
 //pose_name value0 value1 value2 value3 value4 value5 value6
 
@@ -44,4 +44,4 @@ put_storing_L3_P3       1.163575	0.168779	0.256237	2.0545	0.00920613	-1.10934	-0
 person_presentation	0	0	-0.3	2.1	-1.4	0.6	0
 
 take_bowl_1  0.3  0.0  0.0  2.369  0.0  0.899  0.0
-take_bowl_2  0.5  0.0  0.0  2.369  0.0 -0.999  0.0
+take_bowl_2  0.5  0.0  0.0  2.369  0.0 -0.999  0.0 

@@ -51,7 +51,7 @@ else
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Justina's dependencies ${NC}"
 		sudo apt-get -y update
 		sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
-		sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk libvtk6.2 libprotoc-dev protobuf-compiler
+		sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk libvtk6.3 libprotoc-dev protobuf-compiler
 		echo -e "${FRM}${GREEN}${BGBLUE} Jusina's dependencies have been installed ${NC}"
 
 		#TODO Validate that as necesary, because this is for test kinect one installation
@@ -86,7 +86,7 @@ else
 		sudo /bin/su -c "echo '/usr/local/lib' >> /etc/ld.so.conf.d/opencv.conf"
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3 have been installed ${NC}"
-		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
+		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/melodic/share" >> /home/$USER/.bashrc
 		source /home/$USER/.bashrc
 
 		cd $INSTALL_DIR
@@ -151,19 +151,19 @@ else
 		sudo ./install.sh
 		echo -e "${FRM}${GREEN}${BGBLUE}OpenNI have been installed to update default libraries${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing ros package's dependencies${NC}"
-		sudo apt-get -y install ros-kinetic-urg-node
-		sudo apt-get -y install ros-kinetic-joy
-		sudo apt-get -y install ros-kinetic-openni-camera
-		sudo apt-get -y install ros-kinetic-openni-launch
-		sudo apt-get -y install ros-kinetic-openni2-camera
-		sudo apt-get -y install ros-kinetic-openni2-launch
-		sudo apt-get -y install ros-kinetic-amcl
-		sudo apt-get -y install ros-kinetic-tf2-bullet
-		sudo apt-get -y install ros-kinetic-fake-localization
-		sudo apt-get -y install ros-kinetic-map-server
-		sudo apt-get -y install ros-kinetic-sound-play
-		sudo apt-get -y install ros-kinetic-gmapping
-		sudo apt-get -y install ros-kinetic-pointcloud-to-laserscan
+		sudo apt-get -y install ros-melodic-urg-node
+		sudo apt-get -y install ros-melodic-joy
+		sudo apt-get -y install ros-melodic-openni-camera
+		sudo apt-get -y install ros-melodic-openni-launch
+		sudo apt-get -y install ros-melodic-openni2-camera
+		sudo apt-get -y install ros-melodic-openni2-launch
+		sudo apt-get -y install ros-melodic-amcl
+		sudo apt-get -y install ros-melodic-tf2-bullet
+		sudo apt-get -y install ros-melodic-fake-localization
+		sudo apt-get -y install ros-melodic-map-server
+		sudo apt-get -y install ros-melodic-sound-play
+		sudo apt-get -y install ros-melodic-gmapping
+		sudo apt-get -y install ros-melodic-pointcloud-to-laserscan
 		#sudo apt-get -y install ros-kinetic-dynamixel-sdk
 		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies have been installed${NC}"
 
@@ -235,7 +235,7 @@ else
 		sudo apt-get -y install kinect-audio-setup
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyaudio lib for directional audio node${NC}"
 		sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
-		sudo apt-get -y install ffmpeg libav-tools
+		sudo apt-get -y install ffmpeg
 		sudo pip install pyaudio==0.2.9 --upgrade
 		echo -e "${FRM}${GREEN}${BGBLUE}Audio libraries have been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing the dependecies to sphinxbase${NC}"
@@ -275,7 +275,7 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE}The pocketsphinx has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Coping OpenCV libraries to ros directory${NC}"
 		FILES="/usr/local/lib/libopencv*"
-		pathCopy="/opt/ros/kinetic/lib/"
+		pathCopy="/opt/ros/melodic/lib/"
 		pattherDelete=$pathCopy"libopencv*"
 		for f in $pattherDelete
 		do
@@ -305,7 +305,7 @@ else
 			#Add user to dialout, in order to use Arduino and Texas instrument board----
 			sudo adduser $USER dialout
 		fi
-		echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+		echo "source /opt/ros/melodic/setup.bash" >> /home/$USER/.bashrc
 		echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
 		source /home/$USER/.bashrc
 		source $SOURCE_DIR/catkin_ws/devel/setup.bash
@@ -342,7 +342,7 @@ else
 			#Add user to dialout, in order to use Arduino and Texas instrument board----
 			sudo adduser $USER dialout
 		fi
-		echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+		echo "source /opt/ros/melodic/setup.bash" >> /home/$USER/.bashrc
 		echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
 		source /home/$USER/.bashrc
 		source $SOURCE_DIR/catkin_ws/devel/setup.bash

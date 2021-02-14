@@ -33,7 +33,7 @@ int attempts = 0;
 bool validateCMD[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "left_arm_node.-> Reciving new goal left arm pose." << std::endl;
+    //std::cout << "left_arm_node.-> Reciving new goal left arm pose." << std::endl;
     if(!(msg->data.size() == 7 || msg->data.size() == 14))
         std::cout << "Can not process the goal poses for the left arm" << std::endl;
     else{
@@ -245,10 +245,17 @@ int main(int argc, char ** argv){
         goalSpeeds_simul[i] = 0.1;
     }
     goalGripper_simul = 0.0;
-
+    bool flagOnce = true;
 
     while(ros::ok()){
         if(!simul){
+        	if(enableTorque && flagOnce){
+        		for(int i=0; i < 7; i++)
+		            dynamixelManager.enableTorque(i);
+		        flagOnce = false;
+        	}
+
+
             if(newGoalPose && enableTorque){
                 //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
                 for(int i = 0; i < 7; i++){
@@ -342,8 +349,12 @@ int main(int argc, char ** argv){
             
             if(!enableTorque){
             	std::cout << "left_arm_node.-> ";
-            	for(int i = 0; i < 9; i++)
+            	for(int i = 0; i < 9; i++){
             		std::cout << jointStates.position[i] << " ";
+                    dynamixelManager.disableTorque(i);
+                }
+
+                flagOnce = true;
             	std::cout << std::endl;
             }
 
@@ -407,6 +418,9 @@ int main(int argc, char ** argv){
 
         }
 
+        if(ros::param::has("~enable_torque"))
+            ros::param::get("~enable_torque", enableTorque);
+        
         rate.sleep();
         ros::spinOnce();
     }
