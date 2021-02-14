@@ -16,9 +16,10 @@
 		<material>Gazebo/Black</material>
 	</gazebo>
 	<gazebo>
-		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-			<robotNamespace>/justina</robotNamespace>
-		</plugin>
+		<!-- <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> -->
+    		<plugin name="model_push" filename="libmodel_push.so"/>
+		<!-- <robotNamespace>/justina</robotNamespace> -->
+		<!-- </plugin> -->
 	</gazebo>
 	<gazebo>
 		<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
@@ -78,7 +79,7 @@
 				</noise>
 			</ray>
 			<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
-				<topicName>/rrbot/laser/scan</topicName>
+				<topicName>/hardware/scan</topicName>
 				<frameName>laser_link</frameName>
 			</plugin>
 		</sensor>
