@@ -1,0 +1,98 @@
+<launch>
+	<!-- arg name="initial_pose_x" default="6.86"/>
+	<arg name="initial_pose_y" default="-6.5"/>
+	<arg name="initial_pose_a" default="1.5708"/ -->
+	<arg name="initial_pose_x" default="0"/>
+	<arg name="initial_pose_y" default="0"/>
+	<arg name="initial_pose_a" default="0"/>
+	<arg name="dynamic_map" default="false"/>
+	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_start_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="false"/>
+	<arg name="avoidance_type_obstacle" default="false"/>
+	<arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+	<arg name="kinect_minY" default="-0.35"/>
+	<arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="enable_torque" default="true"/>
+	<arg name="head_offset" default="0.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
+	<!-- param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" / -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
+	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
+		<arg name="simul" value="true"/>
+		<arg name="simul_pcl" value="false"/>
+		<arg name="simul_laser" value="false"/>
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="enable_torque" value="$(arg enable_torque)"/>
+		<arg name="head_offset" value="$(arg head_offset)"/>
+	</include>	
+	<group ns="hri">
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+                <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+                        args="-p $(find knowledge)/navigation/"/ -->
+                <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
+		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" args="--hyp" output="screen"/>
+		<node name="human_follower" pkg="human_follower" type="human_follower_node" args="--move_head" output="screen"/>
+	</group>
+	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+	<group ns="interoperation">
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_xone.py" output="screen" />
+	</group>
+	<group ns="manipulation">
+		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="speed_profiles" pkg="trajectory_gen" type="SpeedProfile_Server.py"/>
+		<node name="la_control" pkg="arms_control" type="la_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+	</group>
+
+	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
+		<arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+		<arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+		<arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="clean_goal_map" value="$(arg clean_goal_map)"/>
+		<arg name="clean_start_map" value="$(arg clean_start_map)"/>
+		<arg name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
+		<arg name="look_at_goal" value="$(arg look_at_goal)"/>
+		<arg name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>
+		<arg name="kinect_minX" value="$(arg kinect_minX)"/>
+		<arg name="kinect_maxX" value="$(arg kinect_maxX)"/>
+		<arg name="kinect_minY" value="$(arg kinect_minY)"/>
+		<arg name="kinect_maxY" value="$(arg kinect_maxY)"/>
+		<arg name="kinect_minZ" value="$(arg kinect_minZ)"/>
+		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
+		<arg name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
+	</include>
+
+	<group ns="vision">
+		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
+		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+		<node name="cube_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen"/>
+		
+		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
+			<param name="gesture_method" value="1"/>
+			<!-- This params are to waving detect -->
+			<param name="num_frames" value="10"/>
+			<param name="thr_waving_motion" value="0.3"/>
+			<param name="thr_to_person" value="0.3"/>
+			<param name="time_elapsed_remove" value="10.0"/>
+		</node>
+		<node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" />
+		<node name="color_reco" pkg="color_reco" type="color_reco_node" output="screen" />
+	</group>
+	<group ns="knowledge">
+		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping servingdrinks" />
+	</group>
+	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
+	<!-- This is for the roah IROS refere -->
+	<!-- include file="$(find roah_rsbb_comm_ros)/launch/test.launch"/>
+	<node name="monitor" pkg="act_pln" type="monitor" output="screen"/-->
+</launch>

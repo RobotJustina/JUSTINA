@@ -1,0 +1,74 @@
+<launch>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<arg name="simul" default="true"/>
+	<arg name="simul_pcl" default="false"/>
+	<arg name="simul_laser" default="true"/>
+	<group ns="hardware">
+		<!-- Nodes to the real justina robot -->
+		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port1" value="/dev/justinaRC30"/>
+			<param name="port2" value="/dev/justinaRC15"/>
+		</node>
+		<node name="right_arm" pkg="arms" type="right_arm_real_simul_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaRightArm"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
+			<param name="simul" value="$(arg simul)"/>
+		</node>
+		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaLeftArm"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
+			<param name="simul" value="$(arg simul)"/>
+		</node>
+		<node name="head" pkg="head" type="head_node" output="screen">
+			<param name="port" value="/dev/justinaHead"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
+			<param name="read_simul" value="false"/>
+			<param name="simul" value="$(arg simul)"/>
+		</node>
+		<node name="torso" pkg="torso" type="torso_node_pololu" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port" value="/dev/serial/by-id/usb-Pololu_Corporation_Pololu_Jrk_12v12_Motor_Controller_00191339-if00"/>
+			<param name="baud" value="9600"/>
+		</node>
+		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
+		<node unless="$(arg simul_laser)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
+			<param name="frame_id" type="string" value="laser_link" />
+		</node>
+		<!-- Nodes to the simulation justina robot -->
+		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
+		<!-- Nodes to common modes -->
+		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
+	</group>
+	<group ns="hri">
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_mapping.rviz"/>
+		<!-- <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+			args="-p $(find knowledge)/navigation/"/> -->
+		<!-- <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/> -->
+	</group>
+	<group ns="interoperation">
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_xone.py" output="screen" />
+	</group>
+	<node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
+		<param name="map_update_interval" value="1.0" />
+		<param name="maxUrange" value="5.4"/>
+		<param name="linearUpdate" value="0.3"/>
+		<param name="angularUpdate" value="0.2"/>
+		<param name="xmin" value="-50"/>
+		<param name="ymin" value="-20"/>
+		<param name="xmax" value="50"/>
+		<param name="ymax" value="20"/>
+		<param name="maxRange" value="5.5"/>
+		<param name="minimumScore" value="0.0"/>
+	</node>
+	<!-- <include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/> -->
+</launch>

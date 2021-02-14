@@ -1,0 +1,11 @@
+<launch>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find justina_plugins)/worlds/biorobotica.world"/>
+    		<!-- more default parameters can be changed here -->
+  	</include>
+	<param name="robot_description"	command="$(find xacro)/xacro.py $(find knowledge)/hardware/justina_3.xacro"/>
+	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model justina">
+		<!-- <remap from="/hardware/mobile_base/cmd_vel" to="/justina/gazebo_cmd_vel"/> -->
+		<!-- <remap from="/justina/gazebo_cmd_vel" to="/hardware/mobile_base/cmd_vel" /> -->
+	</node>
+</launch>
