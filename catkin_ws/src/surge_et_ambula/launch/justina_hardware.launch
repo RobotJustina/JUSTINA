@@ -4,6 +4,7 @@
 	<arg name="dynamic_map" default="false"/>
 	<arg name="head_offset" default="0.0"/>
 	<arg name="enable_torque" default="true"/>
+	<arg name="simul_laser" default="false"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
@@ -25,6 +26,7 @@
 			<param name="bulk_enable" value="true"/>
 			<param name="sync_write_enable" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="enable_torque" value="$(arg enable_torque)"/>
 		</node>
 		<node name="head" pkg="head" type="head_node" output="screen">
 			<param name="port" value="/dev/justinaHead"/>
@@ -58,7 +60,7 @@
 			<param name="angle_max" value="1.5708"/>
 		</node>
 		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
-			<param name="simul" value="$(arg simul)"/>
+			<param name="simul" value="$(arg simul_laser)"/>
 			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
 			<param name="dynamic_map" value="$(arg dynamic_map)"/>
 		</node>

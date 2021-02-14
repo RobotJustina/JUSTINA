@@ -10,9 +10,12 @@
 #include <exception>
 #include <algorithm>
 
-#define BASE_WIDTH 0.52
-#define TICKS_PER_METER_FRONTAL	158891.2
-#define TICKS_PER_METER_LATERAL  164352.1
+#define BASE_WIDTH 0.502 //0.52
+//#define TICKS_PER_METER_FRONTAL 158891.2
+//#define TICKS_PER_METER_LATERAL 164352.1
+
+#define TICKS_PER_METER_FRONTAL  365063.24 //420920.958 //367735.5 
+#define TICKS_PER_METER_LATERAL  365063.24 //413641.555 //372277.4  
 
 bool newData = false;
 int noNewDataCounter = 5;
@@ -222,10 +225,10 @@ void callbackCmdVel(const geometry_msgs::Twist::ConstPtr &msg)
     {
         checkSpeedRanges(leftSpeed, rightSpeed, frontSpeed, rearSpeed);
 
-        leftSpeed   = (leftSpeed    * QPPS_LEFT * 16.0 / 35.0);
-        rightSpeed  = (rightSpeed   * QPPS_RIGHT * 16.0 / 35.0);
-        frontSpeed  = -(frontSpeed   * QPPS_FRONT * 16.0 / 35.0);
-        rearSpeed   = -(rearSpeed    * QPPS_REAR * 16.0 / 35.0);
+        leftSpeed   =  (leftSpeed     * QPPS_LEFT  );// * 16.0 / 35.0);
+        rightSpeed  =  (rightSpeed    * QPPS_RIGHT );// * 16.0 / 35.0);
+        frontSpeed  = -(frontSpeed    * QPPS_FRONT );// * 16.0 / 35.0);
+        rearSpeed   = -(rearSpeed     * QPPS_REAR  );// * 16.0 / 35.0);
 
         try
         {
