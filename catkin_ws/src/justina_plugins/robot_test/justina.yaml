@@ -1,5 +1,5 @@
 justina:
-  joint_names: [head_pan_joint, head_tilt_joint, spine_connect, wheel_left_connect, wheel_right_connect]
+  joint_names: [head_pan_joint, head_tilt_joint, spine_connect]
   hardware_interface:
     joints:
        - head_pan_joint 

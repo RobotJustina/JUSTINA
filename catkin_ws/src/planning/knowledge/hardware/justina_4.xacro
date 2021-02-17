@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="justina" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="justina" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<!-- Import all Gazebo-customization elements, including Gazebo colors -->
 	<xacro:include filename="$(find knowledge)/hardware/justina.gazebo" />
 	<!-- Import Rviz colors -->
@@ -22,11 +22,6 @@
 	<xacro:property name="M_PI" value="1.5708"/>
 	<xacro:property name="PI" value="3.1416"/>
 
-  <link name="base_footprint"/>
-  <joint name="base_footprint_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
-  </joint>
 	<link name="base_link">
 		<visual>
 			<origin xyz="0 0 0.235" rpy="0 0 0"/>
