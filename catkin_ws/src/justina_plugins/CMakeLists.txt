@@ -34,8 +34,8 @@ catkin_package(
 add_library(${PROJECT_NAME} src/simple_world_plugin.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
-add_library(model_push SHARED model_push.cc)
-target_link_libraries(model_push ${GAZEBO_LIBRARIES})
+#add_library(model_push SHARED model_push.cc)
+#target_link_libraries(model_push ${GAZEBO_LIBRARIES})
 
-add_library(move_head SHARED src/move_head.cc)
-target_link_libraries(move_head ${GAZEBO_LIBRARIES})
+#add_library(move_head SHARED src/move_head.cc)
+#target_link_libraries(move_head ${GAZEBO_LIBRARIES})
