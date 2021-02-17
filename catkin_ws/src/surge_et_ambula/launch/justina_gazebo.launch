@@ -20,7 +20,7 @@
 	<arg name="enable_torque" default="true"/>
 	<arg name="head_offset" default="0.0"/>
 	<arg name="calculate_diagonal_paths" default="false"/>
-	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina_4.xacro'" />
 	<!-- param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" / -->
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
@@ -33,7 +33,6 @@
 		<arg name="head_offset" value="$(arg head_offset)"/>
 	</include>	
 	<group ns="hri">
-                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
