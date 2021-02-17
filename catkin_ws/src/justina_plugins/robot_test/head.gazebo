@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot>
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/head</robotNamespace>
+    </plugin>
+  </gazebo>
+  
+  <!-- Link1 -->
+  <gazebo reference="pan_dyn_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+</robot>

@@ -1,0 +1,17 @@
+<launch>
+
+  <arg name="position" default="true"/>  
+  <arg name="torque" default="false"/>
+  <arg name="torque_extension" default="false"/>
+
+  <!-- Include gazebo launch file rrbot_world.launch -->
+  <include file="$(find justina_plugins)/launch/head_world.launch" />
+
+
+  <!-- Run joint position controllers if true -->
+  <group if="$(arg position)">
+    <!-- Include ros_control launch file to load joint position controllers -->
+    <include file="$(find justina_plugins)/launch/head_control.launch" />
+   </group>
+
+</launch>

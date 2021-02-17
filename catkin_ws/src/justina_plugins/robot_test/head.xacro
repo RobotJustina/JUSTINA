@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<robot name="head" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<xacro:property name="neck_mass" value="0.001"/>
+	<xacro:property name="MX_106_mass" value="0.01"/>
+	<xacro:property name="MX_64_mass" value="0.01"/>
+	<xacro:property name="kinect_mass" value="0.000564"/>
+	<xacro:property name="M_PI" value="1.5708"/>
+	<xacro:property name="PI" value="3.1416"/>
+	
+	<xacro:include filename="$(find justina_plugins)/robot_test/head.gazebo" />
+	<!-- Import Rviz colors -->
+	<xacro:include filename="$(find knowledge)/hardware/materials.xacro" />
+	<xacro:include filename="$(find knowledge)/hardware/macros.xacro" />
+	
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+  
+	<joint name="pan_dyn_connect" type="fixed">
+		<parent link="world"/>
+		<child link="pan_dyn_link"/>
+	</joint>
+
+	
+  <link name="pan_dyn_link">
+    <collision>
+      <origin xyz="0 0 0.03" rpy="0 0 -1.5708"/>
+      <geometry>
+	<box size="0.06 0.04 0.06"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0.03" rpy="0 0 -1.5708"/>
+      <geometry>
+		<mesh filename="package://knowledge/hardware/stl/motores/mx64.stl"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0.03" rpy="0 0 0"/>
+      <mass value="${MX_64_mass}"/>
+      <inertia
+	  ixx="1.0" ixy="0.0" ixz="0.0"
+	  iyy="1.0" iyz="0.0"
+	  izz="1.0"/>
+    </inertial>
+  </link>
+  
+  <joint name="pan_connect" type="revolute">
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+		<parent link="pan_dyn_link"/>
+		<child link="head_link1"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.5708" lower="-1.5708" effort="100" velocity="1.2" />
+   </joint>
+   
+   <link name="head_link1"/>
+   
+   <joint name="tilt_dyn_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.0275" rpy="-1.5708 0 0"/>
+		<parent link="head_link1"/>
+		<child link="tilt_dyn_link"/>
+	</joint>
+	
+	<link name="tilt_dyn_link">
+		<collision>
+			<origin xyz= "0.0 -0.0575 0.0" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.0 -0.0575 0.0" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx106.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_106_mass}"/>
+			<origin xyz= "0.0 -0.0575 0.0" rpy="0 0 -1.5708"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		</inertial>
+	</link>
+	
+	<joint name="tilt_connect" type="revolute">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<parent link="tilt_dyn_link"/>
+		<child link="head_link2"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.0" lower="0.0" effort="1000" velocity="1.2" />
+	</joint>
+	
+	<link name="head_link2"/>
+	
+	<joint name="kinect_connect" type="fixed">
+		<origin xyz="0.0618 -0.0758 0" rpy="0 1.5708 0"/>
+		<parent link="head_link2"/>
+		<child link="kinect_link"/>
+	</joint>
+	<link name="kinect_link">
+		<visual>
+			<origin xyz= "0 -0.03 -0.04" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/kinect.dae"/>
+			</geometry>
+			<material name="black"/>
+		</visual>
+		<inertial>
+			<mass value="${kinect_mass}"/>
+			<origin xyz= "0 0 0" rpy="0 0 0"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		</inertial>
+
+	</link>	
+	
+	<transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="pan_connect">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="tilt_connect">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+</robot>

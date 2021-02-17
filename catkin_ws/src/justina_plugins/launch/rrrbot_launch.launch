@@ -1,0 +1,32 @@
+<launch>
+
+  <arg name="position" default="false"/>  
+  <arg name="torque" default="false"/>
+  <arg name="torque_extension" default="true"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find justina_plugins)/robot_test/rrrbot.rviz"/>
+  <!-- Include gazebo launch file rrbot_world.launch -->
+  <include file="$(find justina_plugins)/launch/rrrbot_world.launch" />
+
+
+  <!-- Run joint position controllers if true -->
+  <group if="$(arg position)">
+    <!-- Include ros_control launch file to load joint position controllers -->
+    <include file="$(find justina_plugins)/launch/rrrbot_control.launch" />
+   </group>
+
+   <!-- Run joint torque controllers if true -->
+     <group if="$(arg torque)">
+	<!-- Include ros_control launch file to load joint torque controllers -->
+	<include file="$(find justina_plugins)/launch/rrrbot_torque_control.launch" />
+	<!-- Create node to control joint torques using effort controller -->
+	<node name="rrrbot_joint_torques_node" pkg="justina_plugins" type="rrrbot_torques_controller.py" output="screen" respawn="true" />
+</group>
+
+	<!-- Run joint torque controllers for added mass at end if true -->
+	<group if="$(arg torque_extension)">
+		<!-- Include ros_control launch file to load joint torque controllers -->
+	       	<include file="$(find justina_plugins)/launch/rrrbot_torque_control.launch" />
+		<!-- Create node to control joint torques using effort controller -->
+		<node name="rrrbot_joint_torques_node" pkg="justina_plugins" type="rrrbot_torques_controller_extension.py" output="screen" respawn="true" />
+	</group>
+</launch>

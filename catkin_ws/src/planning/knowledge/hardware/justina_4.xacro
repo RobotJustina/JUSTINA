@@ -1,0 +1,575 @@
+<?xml version="1.0"?>
+<robot name="justina" xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://ros.org/wiki/xacro">
+	<!-- Import all Gazebo-customization elements, including Gazebo colors -->
+	<xacro:include filename="$(find knowledge)/hardware/justina.gazebo" />
+	<!-- Import Rviz colors -->
+	<xacro:include filename="$(find knowledge)/hardware/materials.xacro" />
+	<xacro:include filename="$(find knowledge)/hardware/macros.xacro" />
+
+	<xacro:property name="base_width" value="0.42"/>
+	<xacro:property name="base_depth" value="0.42"/>
+	<xacro:property name="base_height" value="0.2"/>
+	<xacro:property name="base_mass" value="10.0"/>
+	<xacro:property name="wheel_radius" value="0.06"/>
+	<xacro:property name="wheel_height" value="0.04"/>
+	<xacro:property name="wheel_mass" value="30.0"/>
+	<xacro:property name="torso_mass" value="0.6"/>
+	<xacro:property name="spine_mass" value="0.001"/>
+	<xacro:property name="neck_mass" value="0.001"/>
+	<xacro:property name="MX_106_mass" value="0.01"/>
+	<xacro:property name="MX_64_mass" value="0.01"/>
+	<xacro:property name="kinect_mass" value="0.00564"/>
+	<xacro:property name="M_PI" value="1.5708"/>
+	<xacro:property name="PI" value="3.1416"/>
+
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+	<link name="base_link">
+		<visual>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<geometry> <box size="0.42 0.42 0.2"/></geometry>
+			<material name="blue"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<geometry> <box size="0.42 0.42 0.2"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<mass value="50.00"/>
+			<!--<box_inertia m="${base_mass}" x="0.42" y="0.42" z="0.2"/>-->
+	      		<inertia ixx="0.3742" ixy="0.000434172172" ixz="0.03088" iyy="0.3436" iyz="0.01775" izz="0.1509"/>
+		</inertial>
+		</link>
+		<joint name="wheel_left_connect" type="continuous">
+			<origin xyz="0 0.24 0.065" rpy="-1.5708 0 0"/>
+			<!--<origin rpy="0.0 0.0 0.0" xyz="-0.11 0.133 0.04"/>-->
+			<parent link="base_link"/>
+			<child link="wheel_left"/>
+    			<axis xyz="0.0 0 1.0"/>
+    			<limit effort="11.067" velocity="20.8"/>
+    			<dynamics damping="1.0"/>
+		</joint>
+
+	<link name="wheel_left">
+		<visual>
+			<!--<origin rpy="1.57079632679 0.0 0.0" xyz="0.0 0.0 0.0"/>-->
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="gray"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<!--<origin rpy="1.57079632679 0.0 0.0" xyz="0.0 0.0 0.0"/>-->
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0"/>
+			<mass value="0.2"/>
+      			<inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_right_connect" type="continuous">
+		<origin xyz="0 -0.24 0.065" rpy="-1.5708 0 0"/>
+		<!--<origin rpy="0.0 0.0 0.0" xyz="-0.11 -0.133 0.04"/>-->
+		<parent link="base_link"/>
+		<child link="wheel_right"/>
+    			<axis xyz="0.0 0 1.0"/>
+    		<limit effort="11.067" velocity="20.8"/>
+    		<dynamics damping="1.0"/>
+	</joint>
+
+	<link name="wheel_right">
+		<visual>
+			<!--<origin rpy="1.57079632679 0.0 0.0" xyz="0.0 0.0 0.0"/>-->
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="black"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<!--<origin rpy="1.57079632679 0.0 0.0" xyz="0.0 0.0 0.0"/>-->
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="0.2"/>
+      			<inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_back_connect_x" type="continuous">
+		<!--<origin rpy="0.0 0.0 0.0" xyz="0.1495                 -0.055                 0.03"/>-->
+		<origin xyz="-0.24 0 0.065" rpy="-1.5708 0 -1.5708"/>
+		<parent link="base_link"/>
+		<child link="wheel_back_x"/>
+		<axis xyz="1 0 0"/>
+    		<limit effort="1.0" velocity="3.0"/>
+    		<dynamics damping="1.0"/>
+	</joint>
+
+	<link name="wheel_back_x">
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="0.2"/>
+      			<inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+		</inertial>
+	</link>
+	
+	<joint name="wheel_back_connect_y" type="continuous">
+    		<axis xyz="0 1 0"/>
+    		<limit effort="8.85" velocity="10.0"/>
+    		<parent link="wheel_back_x"/>
+    		<child link="wheel_back_y"/>
+  		</joint>
+  	<link name="wheel_back_y">
+    	<inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+
+  
+
+  <joint name="wheel_back_connect_z" type="continuous">
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="8.85" velocity="10.0"/>
+    <parent link="wheel_back_y"/>
+    <child link="wheel_back_z"/>
+  </joint>
+  <link name="wheel_back_z">
+    <visual>
+      <geometry>
+        <sphere radius="0.06"/>
+      </geometry>
+      <material name="wheel"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.06"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+
+	<joint name="wheel_front_connect_x" type="continuous">
+		<!--<origin rpy="0.0 0.0 0.0" xyz="0.1495                 0.055                 0.03"/>-->
+		<origin xyz="0.24 0 0.065" rpy="-1.5708 0 -1.5708"/>
+		<parent link="base_link"/>
+		<child link="wheel_front_x"/>
+		<axis xyz="1 0 0"/>
+    		<limit effort="1.0" velocity="3.0"/>
+    		<dynamics damping="1.0"/>
+	</joint>
+
+  <link name="wheel_front_x">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+  <joint name="wheel_front_connect_y" type="continuous">
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="8.85" velocity="10.0"/>
+    <parent link="wheel_front_x"/>
+    <child link="wheel_front_y"/>
+  </joint>
+  <link name="wheel_front_y">
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+  <joint name="wheel_front_connect_z" type="continuous">
+    <axis xyz="0.0 0.0 1.0"/>
+    <limit effort="8.85" velocity="10.0"/>
+    <parent link="wheel_front_y"/>
+    <child link="wheel_front_z"/>
+  </joint>
+  <link name="wheel_front_z">
+    <visual>
+      <geometry>
+        <sphere radius="0.06"/>
+      </geometry>
+      <material name="wheel"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.06"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+
+	<joint name="laser_connect" type="fixed">
+		<origin xyz="0.188565 0 0.41432" />
+		<parent link="base_link"/>
+		<child link="laser_link"/>
+	</joint>
+
+	<link name="laser_link">
+		<collision>
+			<origin xyz="0 0 -0.03966" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.08 0.08 0.095"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz="0 0 -0.03966" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
+			</geometry>
+		</visual>
+		<inertial>
+			<mass value="0.01"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<box_inertia m="0.01" x="0.08" y="0.08" z="0.095"/>
+		</inertial>
+	</link>
+	
+	<link name="laser_link_rear">
+		<visual>
+			<origin xyz="0 0 -0.037775" rpy="0 0 3.1416"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+	<joint name="laser_connect_rear" type="fixed">
+		<origin xyz="-0.2325 0 0.36277" rpy="0 0 3.1416"/>
+		<parent link="base_link"/>
+		<child link="laser_link_rear"/>
+	</joint>
+
+	 <joint name="torso_connect" type="fixed">
+		<origin xyz= "0 0 0.9" rpy="0 0 0"/>
+		<parent link="base_link"/>
+		<child link="torso_link"/>
+	</joint>
+
+	<link name="torso_link">
+		<collision>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+			</geometry>
+			<material name="black_gray"><color rgba="0.2 0.2 0.2 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${torso_mass}"/>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="0 0 0"/>
+			<box_inertia m="${torso_mass}" x="0.07" y="0.09" z="0.55"/>
+		</inertial>
+	</link>
+
+	<joint name="spine_connect" type="prismatic"> 
+		<origin xyz= "0.0 0 0.162" rpy="0 0 0"/>
+		<parent link="torso_link"/>
+		<child link="spine_link"/>
+		<limit effort="1000" lower="0.2" upper="0.5" velocity="0.2"/>
+		<axis xyz="0 0 1" />
+	</joint>
+
+	<link name="spine_link">
+		<collision>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+			</geometry>
+			<material name="gray_white"><color rgba="0.6 0.6 0.6 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${spine_mass}"/>
+			<origin xyz= "0 0 -0.5325" rpy="0 0 0"/>
+			<box_inertia m="${spine_mass}" x="0.07" y="0.09" z="0.54"/>
+		</inertial>
+	</link>
+
+	<joint name="neck_connect" type="fixed">
+		<origin xyz="0 0 0.1345" rpy="0 0 0"/>
+		<parent link="spine_link"/>
+		<child link="neck_link"/>
+	</joint>
+
+	<link name="neck_link">
+		<collision>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
+			<material name="white"><color rgba="1.0 1.0 1.0 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${neck_mass}"/>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.14"/>
+		</inertial>
+	</link>
+
+	<joint name="pan_dyn_connect" type="fixed">
+		<origin xyz="0.005 0.0 0.0417" rpy="0 0 0"/>
+		<parent link="neck_link"/>
+		<child link="pan_dyn_link"/>
+	</joint>
+
+	<link name="pan_dyn_link">
+		<collision>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx64.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_64_mass}"/>
+			<origin xyz= "0 0 -0.02" rpy="0 0 0"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		</inertial>
+	</link>
+	
+	<joint name="head_pan_joint" type="revolute">
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+		<parent link="pan_dyn_link"/>
+		<child link="head_link1"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.5708" lower="-1.5708" effort="100" velocity="1.2" />
+	</joint>
+
+	<link name="head_link1"/>
+	
+	<joint name="tilt_dyn_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.0275" rpy="-1.5708 0 0"/>
+		<parent link="head_link1"/>
+		<child link="tilt_dyn_link"/>
+	</joint>
+	
+	<link name="tilt_dyn_link">
+		<collision>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx106.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_106_mass}"/>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		</inertial>
+	</link>
+
+	<joint name="head_tilt_joint" type="revolute">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<parent link="tilt_dyn_link"/>
+		<child link="head_link2"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.0" lower="0.0" effort="1000" velocity="1.2" />
+	</joint>
+	
+	<link name="head_link2"/>
+	
+	<joint name="kinect_connect" type="fixed">
+		<origin xyz="0.0618 -0.0758 0" rpy="0 1.5707 0"/>
+		<parent link="head_link2"/>
+		<child link="kinect_link"/>
+	</joint>
+	<link name="kinect_link">
+		<visual>
+			<origin xyz= "0 0 -0.04" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/kinect.dae"/>
+			</geometry>
+			<material name="black"/>
+		</visual>
+		<inertial>
+			<mass value="${kinect_mass}"/>
+			<origin xyz= "0 0 0" rpy="0 0 0"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		</inertial>
+
+	</link>	
+	
+	<joint name="shoulders_connect" type="fixed">
+		<origin xyz="0.0 0.0 -0.06" rpy="0 1.5708 0"/>
+		<parent link="spine_link"/>
+		<child link="shoulders_link"/>
+	</joint>
+	
+	<link name="shoulders_link"/>
+
+	<joint name="shoulders_left_connect" type="fixed">
+		<origin xyz="0 0.145 0" rpy="0 0 0"/>
+		<parent link="shoulders_link"/>
+		<child link="shoulders_left_link"/>
+	</joint>
+	
+	<link name="shoulders_left_link">
+		<visual>
+			<origin xyz="0.035 0.085 0" rpy = "0 0 0"/>
+			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
+			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+		</visual>
+	</link>
+
+	<joint name="shoulders_right_connect" type="fixed">
+		<origin xyz="0 -0.145 0" rpy="0 0 0"/>
+		<parent link="shoulders_link"/>
+		<child link="shoulders_right_link"/>
+	</joint>
+	
+	<link name="shoulders_right_link">
+		<visual>
+			<origin xyz="0.035 -0.085 0" rpy = "0 0 0"/>
+			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
+			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+		</visual>
+	</link>
+
+
+
+
+    <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_left_connect">
+		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+		    <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran2">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_right_connect">
+		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor2">
+		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+		    <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <!--<transmission name="tran3">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_back_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor3">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission> -->
+
+    <transmission name="tran4">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_front_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor4">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>-->
+
+     <transmission name="tran5">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="spine_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor5">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <!-- <transmission name="tran6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_pan_joint">
+	    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor6">
+	    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_tilt_joint">
+	    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor7">
+	    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>-->
+
+  <transmission name="head_pan_joint_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_pan_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="head_pan_joint_actuator">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="head_tilt_joint_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_tilt_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="head_tilt_joint_actuator">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+</robot>
