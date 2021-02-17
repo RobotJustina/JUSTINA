@@ -56,14 +56,17 @@
      			<robotNamespace>/justina</robotNamespace>
 			<legacyModeNS>true</legacyModeNS>
 		</plugin>-->
+		<plugin name="gazebo_ros_control" filename="libhwi_switch_gazebo_ros_control.so">
+			<robotNamespace>/justina</robotNamespace>
+		</plugin>
 		<!--<plugin name="move_head" filename="libmove_head.so"/>-->
 		<!-- <robotNamespace>/justina</robotNamespace> -->
 		<!-- </plugin> -->
 	</gazebo>
 	<gazebo>
-    	<plugin filename="libhsrb_gazebo_ros_control.so" name="hsrb_ros_control">
+		<!--<plugin filename="libhsrb_gazebo_ros_control.so" name="hsrb_ros_control">
 	    <robotNamespace>hsrb</robotNamespace>
-    	</plugin>
+	</plugin>-->
 		<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 			<legacyMode>false</legacyMode>
 			<alwaysOn>true</alwaysOn>
@@ -76,7 +79,7 @@
 			<commandTopic>/justina/cmd_vel</commandTopic>
 			<odometryTopic>/justina/odom_diffdrive</odometryTopic>
 			<odometryFrame>odom</odometryFrame>
-			<robotBaseFrame>base_link</robotBaseFrame>
+			<robotBaseFrame>base_footprint</robotBaseFrame>
 		</plugin>
     <plugin filename="libgazebo_ros_p3d.so" name="hsrb_p3d_ground_truth">
       <robotNamespace>justina</robotNamespace>

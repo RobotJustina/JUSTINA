@@ -479,9 +479,9 @@
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="wheel_left_connect">
 		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor1">
-		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 		    <mechanicalReduction>1</mechanicalReduction>
 	    </actuator>
     </transmission>
@@ -490,9 +490,9 @@
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="wheel_right_connect">
 		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor2">
-		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 		    <mechanicalReduction>1</mechanicalReduction>
 	    </actuator>
     </transmission>
@@ -506,7 +506,7 @@
 		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 		    <mechanicalReduction>37</mechanicalReduction>
 	    </actuator>
-    </transmission> -->
+    </transmission>
 
     <transmission name="tran4">
 	    <type>transmission_interface/SimpleTransmission</type>
@@ -522,10 +522,10 @@
      <transmission name="tran5">
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="spine_connect">
-		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor5">
-		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 		    <mechanicalReduction>37</mechanicalReduction>
 	    </actuator>
     </transmission>
@@ -556,9 +556,9 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="head_pan_joint">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="head_pan_joint_actuator">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
@@ -566,9 +566,9 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="head_tilt_joint">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="head_tilt_joint_actuator">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
