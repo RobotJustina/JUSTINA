@@ -106,6 +106,7 @@ physics::LinkPtr link;
     public: void OnRosMsg(const std_msgs::BoolConstPtr &_msg)
     {
       this->fmov=_msg->data;
+      std::cout << "link: " << link << std::endl;
     }
     
     public: void cmdvelCallback(const geometry_msgs::Twist::ConstPtr &_msg)
