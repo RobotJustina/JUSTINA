@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot name="justina" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<!-- Import all Gazebo-customization elements, including Gazebo colors -->
-	<xacro:include filename="$(find knowledge)/hardware/justina.gazebo" />
+	<xacro:include filename="$(find knowledge)/hardware/justina4.gazebo" />
 	<!-- Import Rviz colors -->
 	<xacro:include filename="$(find knowledge)/hardware/materials.xacro" />
 	<xacro:include filename="$(find knowledge)/hardware/macros.xacro" />
@@ -22,6 +22,11 @@
 	<xacro:property name="M_PI" value="1.5708"/>
 	<xacro:property name="PI" value="3.1416"/>
 
+	<link name="base_footprint"/>
+	<joint name="base_footprint_joint" type="fixed">
+		<parent link="base_footprint"/>
+		<child link="base_link"/>
+	</joint>
 	<link name="base_link">
 		<visual>
 			<origin xyz="0 0 0.235" rpy="0 0 0"/>
@@ -431,6 +436,13 @@
 
 	</link>	
 	
+	<joint name="kinect_camera_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.0" rpy="1.5708 -1.5707 0"/>
+		<parent link="kinect_link"/>
+		<child link="kinect_camera_link"/>
+	</joint>
+	<link name="kinect_camera_link">
+	</link>	
 	<joint name="shoulders_connect" type="fixed">
 		<origin xyz="0.0 0.0 -0.06" rpy="0 1.5708 0"/>
 		<parent link="spine_link"/>
