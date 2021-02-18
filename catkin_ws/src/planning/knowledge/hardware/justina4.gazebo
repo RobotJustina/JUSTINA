@@ -63,12 +63,12 @@
 		<!--<plugin name="move_head" filename="libmove_head.so"/>-->
 		<!-- <robotNamespace>/justina</robotNamespace> -->
 		<!-- </plugin> -->
-	<plugin filename="libgazebo_ros_p3d.so" name="hsrb_p3d_ground_truth">
+	<!-- <plugin filename="libgazebo_ros_p3d.so" name="hsrb_p3d_ground_truth">
 		<robotNamespace>/justina</robotNamespace>
 		<topicName>odom_ground_truth</topicName>
 		<frameName>map</frameName>
 		<updateRate>30</updateRate>
-	</plugin>
+	</plugin> -->
 	</gazebo>
 	<gazebo>
 		<!--<plugin filename="libhsrb_gazebo_ros_control.so" name="hsrb_ros_control">
