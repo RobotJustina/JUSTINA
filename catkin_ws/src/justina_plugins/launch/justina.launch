@@ -13,5 +13,6 @@
     <!-- Include ros_control launch file to load joint position controllers -->
     <include file="$(find justina_plugins)/launch/justina_control.launch" />
    </group>
-
+   <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find knowledge)/navigation/occupancy_grids/arena_test.yaml"/>
+   <node name="amcl" pkg="amcl" type="amcl" output="screen"/>
 </launch>

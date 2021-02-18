@@ -27,7 +27,7 @@
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="true"/>
 		<arg name="simul_pcl" value="true"/>
-		<arg name="simul_laser" value="false"/>
+		<arg name="simul_laser" value="true"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
 		<arg name="enable_torque" value="$(arg enable_torque)"/>
 		<arg name="head_offset" value="$(arg head_offset)"/>
