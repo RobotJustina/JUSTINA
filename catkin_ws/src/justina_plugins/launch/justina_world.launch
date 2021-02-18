@@ -5,7 +5,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<!-- <arg name="world_name" value="$(find justina_plugins)/worlds/biorobotica.world"/> -->
+		<arg name="world_name" value="$(find justina_plugins)/worlds/biorobotica.world"/>
     		<!-- more default parameters can be changed here -->
   	</include>
 	<param name="robot_description"	command="$(find xacro)/xacro.py $(find knowledge)/hardware/justina_4.xacro"/>

@@ -58,6 +58,7 @@
 		</plugin>-->
 		<plugin name="gazebo_ros_control" filename="libhwi_switch_gazebo_ros_control.so">
 			<robotNamespace>/justina</robotNamespace>
+			<filterJointsParam>joint_names</filterJointsParam>
 		</plugin>
 		<!--<plugin name="move_head" filename="libmove_head.so"/>-->
 		<!-- <robotNamespace>/justina</robotNamespace> -->
@@ -79,15 +80,8 @@
 			<commandTopic>/justina/cmd_vel</commandTopic>
 			<odometryTopic>/justina/odom_diffdrive</odometryTopic>
 			<odometryFrame>odom</odometryFrame>
-			<robotBaseFrame>base_footprint</robotBaseFrame>
+			<robotBaseFrame>base_link</robotBaseFrame>
 		</plugin>
-    <plugin filename="libgazebo_ros_p3d.so" name="hsrb_p3d_ground_truth">
-      <robotNamespace>justina</robotNamespace>
-      <bodyName>base_footprint</bodyName>
-      <topicName>odom_ground_truth</topicName>
-      <frameName>map</frameName>
-      <updateRate>30</updateRate>
-    </plugin>
 	</gazebo>
 	<!-- gazebo>
 		<plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
