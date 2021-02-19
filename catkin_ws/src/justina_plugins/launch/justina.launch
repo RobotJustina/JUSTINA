@@ -13,7 +13,7 @@
     <!-- Include ros_control launch file to load joint position controllers -->
     <include file="$(find justina_plugins)/launch/justina_control.launch" />
    </group>
-   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/justina_gazebo.rviz"/>
+   <!--<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/justina_gazebo.rviz"/>
    <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find knowledge)/navigation/occupancy_grids/bio_gazebo1.yaml"/>
-   <node name="amcl" pkg="amcl" type="amcl" output="screen"/>
+   <node name="amcl" pkg="amcl" type="amcl" output="screen"/>-->
 </launch>

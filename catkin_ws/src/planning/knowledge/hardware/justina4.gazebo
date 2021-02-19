@@ -83,7 +83,7 @@
 			<wheelSeparation>0.42</wheelSeparation>
 			<wheelDiameter>0.12</wheelDiameter>
 			<torque>20</torque>
-			<commandTopic>/justina/cmd_vel</commandTopic>
+			<commandTopic>/hardware/mobile_base/cmd_vel</commandTopic>
 			<odometryTopic>/justina/odom_diffdrive</odometryTopic>
 			<odometryFrame>odom</odometryFrame>
 			<robotBaseFrame>base_link</robotBaseFrame>
@@ -131,7 +131,7 @@
 				</noise>
 			</ray>
 			<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
-				<topicName>/scan</topicName>
+				<topicName>/hardware/scan</topicName>
 				<frameName>laser_link</frameName>
 			</plugin>
 		</sensor>

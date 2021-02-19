@@ -17,8 +17,10 @@ cv::Mat depthMap;
 cv::Mat bgrImage;
 tf::TransformListener* tf_listener;
 sensor_msgs::PointCloud2::Ptr msgFromBag;
+sensor_msgs::PointCloud2 msgCloudKinectGazebo;
 bool use_oni = false;
 bool use_bag = false;
+bool gazebo = false;
 int downsample_by = 1;
 float thetaOffset = 0;
 //float zOffset = 0.12;
@@ -171,11 +173,16 @@ bool kinectRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, 
     return true;
 }
 
+void callbackGazeboCloudPoint(const sensor_msgs::PointCloud2::ConstPtr& msg){
+    msgCloudKinectGazebo.data = msg->data;
+}
+
 int main(int argc, char** argv)
 {
     std::string file_name = "";
     use_oni = false;
     use_bag = false;
+    gazebo = false;
     for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
@@ -193,6 +200,11 @@ int main(int argc, char** argv)
         {
             downsample_by = atoi(argv[++i]); 
         }
+        if(strParam.compare("--gazebo") == 0)
+        {
+            gazebo = true;
+        }
+
     }
 
     std::cout << "INITIALIZING KINECT MANAGER BY MARCOSOF ..." << std::endl;
@@ -211,6 +223,7 @@ int main(int argc, char** argv)
     ros::ServiceServer srvRgbdRobot  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);
     ros::ServiceServer srvRgbdKinectDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect_downsampled", kinectRgbdDownsampled_callback);
     ros::ServiceServer srvRgbdRobotDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled", robotRgbdDownsampled_callback);
+    ros::Subscriber subKinectFrame = n.subscribe("/camera/depth/points", 1, callbackGazeboCloudPoint);
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
     sensor_msgs::PointCloud2 msgDownsampled;
@@ -218,11 +231,12 @@ int main(int argc, char** argv)
     ros::Rate loop(30);
     tf_listener->waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(10.0));
     initialize_rosmsg(msgCloudKinect, 640, 480, "kinect_link");
+    initialize_rosmsg(msgCloudKinectGazebo, 640, 480, "kinect_link");
     int widthDownSample = (int) (640 / downsample_by);
     int heightDownSample = (int) (480 / downsample_by);
     initialize_rosmsg(msgDownsampled, widthDownSample, heightDownSample, "base_link");
 
-    if(!use_bag)
+    if(!use_bag && !gazebo)
     {
         cv::VideoCapture capture;
         if(use_oni) std::cout << "KinectMan.->Trying to open oni file: " << file_name << std::endl;
@@ -266,6 +280,28 @@ int main(int argc, char** argv)
             ros::spinOnce();
             loop.sleep();
         }
+    }
+    else if (gazebo){
+        std::cout << "KinectMan.->Gazebo Kinect sensor started :D" << std::endl;
+        while(ros::ok())
+        {
+            if(pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
+                pcl_ros::transformPointCloud("base_link", msgCloudKinectGazebo, msgCloudRobot, *tf_listener);
+
+            if(pubKinectFrame.getNumSubscribers() > 0)
+                pubKinectFrame.publish(msgCloudKinectGazebo);
+            if(pubRobotFrame.getNumSubscribers() > 0)
+                pubRobotFrame.publish(msgCloudRobot);
+            if(pubDownsampled.getNumSubscribers() > 0)
+            {
+                downsample_pcl(msgCloudRobot, msgDownsampled, downsample_by);
+                pubDownsampled.publish(msgDownsampled);
+            }
+
+            ros::spinOnce();
+            loop.sleep();
+        }
+        
     }
     else
     {

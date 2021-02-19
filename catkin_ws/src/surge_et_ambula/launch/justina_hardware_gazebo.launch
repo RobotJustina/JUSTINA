@@ -1,0 +1,29 @@
+<launch>
+	<arg name="simul" default="false"/>
+	<arg name="simul_pcl" default="false"/>
+	<arg name="dynamic_map" default="false"/>
+	<arg name="head_offset" default="0.0"/>
+	<arg name="enable_torque" default="true"/>
+	<arg name="simul_laser" default="false"/>
+	<group ns="hardware">
+		<!-- Nodes to the real justina robot -->
+		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2 --gazebo"/>
+		<!-- <node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
+			<param name="simul" value="$(arg simul_laser)"/>
+			<param name="dynamic_map" value="$(arg dynamic_map)"/>
+		</node> -->
+		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
+			<param name="simul" value="false"/>
+			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
+			<param name="dynamic_map" value="$(arg dynamic_map)"/>
+		</node>
+		<!-- Nodes to common modes -->
+		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+		<node name="kinect2laser" pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" respawn="true">
+			<remap from="/hardware/scan" to="/hardware/scan_from_kinect"/>
+			<remap from="cloud_in" to="/hardware/point_cloud_man/rgbd_wrt_robot_downsampled"/>
+			<param name="min_height" value="0.05"/>
+		</node>
+		<node name="laser_mixer" pkg="laser_mixer" type="laser_mixer_node" output="screen"/>
+	</group>
+</launch>

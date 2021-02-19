@@ -1,12 +1,12 @@
 <launch>
-	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina.xacro'" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/justina_4.xacro'" />
+	<!--<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>-->
 	<arg name="simul" default="true"/>
 	<arg name="simul_pcl" default="false"/>
 	<arg name="simul_laser" default="true"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
-		<node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
+		<!-- <node name="mobile_base" pkg="mobile_base" type="omni_base_node" output="screen">
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port1" value="/dev/justinaRC30"/>
 			<param name="port2" value="/dev/justinaRC15"/>
@@ -37,8 +37,8 @@
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port" value="/dev/serial/by-id/usb-Pololu_Corporation_Pololu_Jrk_12v12_Motor_Controller_00191339-if00"/>
 			<param name="baud" value="9600"/>
-		</node>
-		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
+		</node> -->
+		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2 --gazebo"/>
 		<node unless="$(arg simul_laser)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
@@ -47,7 +47,7 @@
 		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
 		<!-- Nodes to common modes -->
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
-		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
+		<!-- <node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/> -->
 	</group>
 	<group ns="hri">
 		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_mapping.rviz"/>
