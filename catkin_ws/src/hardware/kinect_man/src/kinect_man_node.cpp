@@ -98,15 +98,15 @@ void cvmat32fc1_2_rosmsg(cv::Mat& depth, cv::Mat& bgr, sensor_msgs::PointCloud2&
 
     for(int i=0; i < idx; i++)
     {
-    //std::cout << "INDEX: " << i << std::endl;
-    //std::cout << "X" << std::endl;
-        memcpy(&msg.data[i*16], &depth.data[3*i], 1); // x
+    std::cout << "INDEX: " << i << std::endl;
+    std::cout << "X" << std::endl;
+        memcpy(&msg.data[i*16], &depth.data[4*i+1], 1); // x
         //memcpy(&msg.data[i*16 + 1], &pc_dest.data[16*i + 1], 3);
-    //std::cout << "y" << std::endl;
-        memcpy(&msg.data[i*16 + 4], &depth.data[3*i + 1], 1); //Y
+    std::cout << "y" << std::endl;
+        memcpy(&msg.data[i*16 + 4], &depth.data[4*i + 2], 1); //Y
         //memcpy(&msg.data[i*16 + 5], &pc_dest.data[16*i + 5], 3);
-    //std::cout << "Z" << std::endl;
-        memcpy(&msg.data[i*16 + 8], &depth.data[3*i + 2], 1); //Z
+    std::cout << "Z" << std::endl;
+        memcpy(&msg.data[i*16 + 8], &depth.data[4*i + 3], 1); //Z
         //memcpy(&msg.data[i*16 + 9], &pc_dest.data[16*i + 9], 3); 
 
 
@@ -219,9 +219,39 @@ bool kinectRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, 
     return true;
 }
 
+void callbackDepthPointsGazebo(const sensor_msgs::PointCloud2& msg){
+
+    int idx = 640*480;
+    /*int x_center;
+    int y_center;
+    float X, Y, Z;*/
+
+    depthMap = cv::Mat::zeros(480, 640, CV_32FC3);
+    /*for(int i=0; i < idx; i++)
+    {
+        std::cout << "IDXPOINTS: " << i << std::endl;
+	      float* x = (float*)&msg.data[i*32];
+	      float* y = (float*)&msg.data[i*32 + 4];
+	      float* z = (float*)&msg.data[i*32 + 8];
+        depthMap.data[16*i] = *x;
+        depthMap.data[16*i + 4] = *y;
+        depthMap.data[16*i + 8] = *z;
+    }*/
+	for(int i=0; i < 640; i++)
+	  for(int j=0; j < 480; j++)
+	    {
+	      float* x = (float*)&msg.data[(j*msg.width + i)*32];
+	      float* y = (float*)&msg.data[(j*msg.width + i)*32 + 4];
+	      float* z = (float*)&msg.data[(j*msg.width + i)*32 + 8];
+	      depthMap.at<cv::Vec3f>(j, i)[0] = *x;
+	      depthMap.at<cv::Vec3f>(j, i)[1] = -1*(*y);
+	      depthMap.at<cv::Vec3f>(j, i)[2] = *z;
+	    }
+
+    first = true;
+}
 void callbackDepthGazebo(const sensor_msgs::Image::ConstPtr& msg){
     msgDepthGazebo = *msg;
-    first = true;
 }
 
 void callbackColorGazebo(const sensor_msgs::Image::ConstPtr& msg){
@@ -278,6 +308,7 @@ int main(int argc, char** argv)
     ros::ServiceServer srvRgbdRobotDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled", robotRgbdDownsampled_callback);
     ros::Subscriber subKinectImage = n.subscribe("/camera/color/image_raw", 1, callbackColorGazebo);
     ros::Subscriber subKinectDepth = n.subscribe("/camera/depth/image_raw", 1, callbackDepthGazebo);
+    ros::Subscriber subKinectDepthPoints = n.subscribe("/camera/depth/points", 1, callbackDepthPointsGazebo);
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
     sensor_msgs::PointCloud2 msgDownsampled;
@@ -350,7 +381,7 @@ int main(int argc, char** argv)
         ROS_ERROR("cv_bridge exception: %s", e.what());
         }
         cv_bridge::CvImagePtr cv_ptrd;
-        try
+        /*try
         {
         cv_ptrd = cv_bridge::toCvCopy(msgDepthGazebo, sensor_msgs::image_encodings::TYPE_32FC1);
         depthMap = cv_ptrd->image;
@@ -359,9 +390,9 @@ int main(int argc, char** argv)
         catch (cv_bridge::Exception& e)
         {
         ROS_ERROR("cv_bridge exception: %s", e.what());
-        }
+        }*/
             if(pubKinectFrame.getNumSubscribers()>0 || pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
-                cvmat32fc1_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
+                cvmat_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
 
             if(pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
                 pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
