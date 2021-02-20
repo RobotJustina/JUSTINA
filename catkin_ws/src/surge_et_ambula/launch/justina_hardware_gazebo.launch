@@ -6,12 +6,23 @@
 	<arg name="enable_torque" default="true"/>
 	<arg name="simul_laser" default="false"/>
 	<group ns="hardware">
+		<node name="head" pkg="head" type="head_node" output="screen">
+			<param name="port" value="/dev/justinaHead"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="sync_write_enable" value="true"/>
+			<param name="read_simul" value="false"/>
+			<param name="simul" value="true"/>
+			<param name="head_offset" value="$(arg head_offset)"/>
+		</node>
 		<!-- Nodes to the real justina robot -->
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2 --gazebo"/>
-		<!-- <node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
-			<param name="simul" value="$(arg simul_laser)"/>
-			<param name="dynamic_map" value="$(arg dynamic_map)"/>
-		</node> -->
+		<node name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">
+			<param name="device" value="/dev/video0"/>
+			<param name="width" value="640"/>
+			<param name="height" value="480"/>
+			<param name="gazebo" value="true"/>
+		</node>
 		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
 			<param name="simul" value="false"/>
 			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->

@@ -10,14 +10,28 @@
 
 cv::Mat frame;
 //ros::Publisher pubImageIROS;
+bool gazebo;
+bool first_image;
+sensor_msgs::Image image_gazebo;
+
 
 bool callbackGetRGB(webcam_man::GetRgb::Request &req, webcam_man::GetRgb::Response &res)
 {
-    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-    res.imageBGR = *msg;
+    if(!gazebo){
+        sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+        res.imageBGR = *msg;
+    }
+    else{
+        res.imageBGR = image_gazebo;
+    }
     //cv::imshow("Web cam", frame);
     //pubImageIROS.publish(*msg);
     return true;
+}
+
+void callbackGazeboImage(const sensor_msgs::Image::ConstPtr& msg){
+    image_gazebo = *msg;
+    first_image=true;
 }
 
 int main(int argc, char** argv)
@@ -31,6 +45,8 @@ int main(int argc, char** argv)
     std::string device = "/dev/justinaWebCam";
     int width = 640;
     int height = 480;
+    gazebo = false;
+    first_image = false;
 
     if(ros::param::has("~device"))
         ros::param::get("~device", device);
@@ -38,37 +54,54 @@ int main(int argc, char** argv)
         ros::param::get("~width", width);
     if(ros::param::has("~height"))
         ros::param::get("~height", height);
+    if(ros::param::has("~gazebo"))
+        ros::param::get("~gazebo", gazebo);
 
-    cv::VideoCapture capture(device);
-    capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
-    capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
-
-    if(!capture.isOpened())
-    {
-        std::cout << "KinectMan.->Cannot open webcam :'(" << std::endl;
-        return 1;
-    }
-    std::cout << "KinectMan.->Webcam sensor started :D" << std::endl;
 
     image_transport::ImageTransport it(n);
     image_transport::Publisher pubImage = it.advertise("/hardware/webcam_man/image_raw", 1);
+    image_transport::Publisher pubUsb = it.advertise("/usb_cam/image_raw", 1);
     ros::ServiceServer servImage = n.advertiseService("/hardware/webcam_man/image_raw", callbackGetRGB);
+    ros::Subscriber subKinectFrame = n.subscribe("/camera/color/image_raw", 1, callbackGazeboImage);
     //pubImageIROS = n.advertise<sensor_msgs::Image>("/erlc/rgb_2/image", 1);
-
-    while(ros::ok() && cv::waitKey(1) != 'q')
-    {
-        capture.read(frame);
-        
-        if(pubImage.getNumSubscribers() > 0)
+    
+    if(!gazebo){
+    cv::VideoCapture capture(device);
+    capture.set(cv::CAP_PROP_FRAME_WIDTH, width);
+    capture.set(cv::CAP_PROP_FRAME_HEIGHT, height);
+        if(!capture.isOpened())
         {
-            sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-            pubImage.publish(msg);
+            std::cout << "KinectMan.->Cannot open webcam :'(" << std::endl;
+            return 1;
         }
+        std::cout << "KinectMan.->Webcam sensor started :D" << std::endl;
 
-        //cv::imshow("Web cam", frame);
 
-        ros::spinOnce();
-        rate.sleep();
+        while(ros::ok() && cv::waitKey(1) != 'q')
+        {
+            capture.read(frame);
+            
+            if(pubImage.getNumSubscribers() > 0)
+            {
+                sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+                pubImage.publish(msg);
+            }
+
+            //cv::imshow("Web cam", frame);
+
+            ros::spinOnce();
+            rate.sleep();
+        }
+    }
+    else{
+        std::cout << "KinectMan.->Gazebo Webcam sensor started :D" << std::endl;
+        while(ros::ok())
+        {
+            if(first_image)
+                pubImage.publish(image_gazebo);
+            ros::spinOnce();
+            rate.sleep();
+        }
     }
     return 1;
 }

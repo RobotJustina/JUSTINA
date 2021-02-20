@@ -15,12 +15,16 @@
 
 cv::Mat depthMap;
 cv::Mat bgrImage;
+cv::Mat tempDepth;
 tf::TransformListener* tf_listener;
 sensor_msgs::PointCloud2::Ptr msgFromBag;
-sensor_msgs::PointCloud2 msgCloudKinectGazebo;
+sensor_msgs::Image msgColorGazebo;
+sensor_msgs::Image msgDepthGazebo;
 bool use_oni = false;
 bool use_bag = false;
 bool gazebo = false;
+bool first;
+bool firstd;
 int downsample_by = 1;
 float thetaOffset = 0;
 //float zOffset = 0.12;
@@ -66,6 +70,48 @@ void cvmat_2_rosmsg(cv::Mat& depth, cv::Mat& bgr, sensor_msgs::PointCloud2& msg)
     for(int i=0; i < idx; i++)
     {
         memcpy(&msg.data[i*16], &depth.data[12*i], 12);
+        memcpy(&msg.data[i*16 + 12], &bgr.data[3*i], 3);
+        msg.data[16*i + 15] = 255;
+        float* y = (float*)&msg.data[16*i + 4];
+        float* z = (float*)&msg.data[16*i + 8];
+        *y *= -1;
+        float yv = *y;
+        float zv = *z - zOffset;
+        //float zv = *z;
+        *y = yv * cos(thetaOffset) - zv * sin(thetaOffset);
+        *z = yv * sin(thetaOffset) + zv * cos(thetaOffset);
+        //*z -= zOffset;
+
+    }
+}
+
+void cvmat32fc1_2_rosmsg(cv::Mat& depth, cv::Mat& bgr, sensor_msgs::PointCloud2& msg)
+{
+    //This function ONLY COPIES POINT DATA. For all headers, use initialize_msg();
+    int idx = bgr.rows * bgr.cols;
+
+    /*std::cout << "ROWS" << bgr.rows << std::endl;
+    std::cout << "COLS" << bgr.cols << std::endl;
+    std::cout << "ROES" << depth.rows << std::endl;
+    std::cout << "COLS" << depth.cols << std::endl;*/
+    cv::Mat pc_dest  = cv::Mat::zeros(bgr.rows, bgr.cols, CV_32FC3);
+
+    for(int i=0; i < idx; i++)
+    {
+    //std::cout << "INDEX: " << i << std::endl;
+    //std::cout << "X" << std::endl;
+        memcpy(&msg.data[i*16], &depth.data[3*i], 1); // x
+        //memcpy(&msg.data[i*16 + 1], &pc_dest.data[16*i + 1], 3);
+    //std::cout << "y" << std::endl;
+        memcpy(&msg.data[i*16 + 4], &depth.data[3*i + 1], 1); //Y
+        //memcpy(&msg.data[i*16 + 5], &pc_dest.data[16*i + 5], 3);
+    //std::cout << "Z" << std::endl;
+        memcpy(&msg.data[i*16 + 8], &depth.data[3*i + 2], 1); //Z
+        //memcpy(&msg.data[i*16 + 9], &pc_dest.data[16*i + 9], 3); 
+
+
+    //std::cout << "RGB" << std::endl;
+        //memcpy(&msg.data[i*16 + 12], &pc_dest.data[16*i + 12], 3); 
         memcpy(&msg.data[i*16 + 12], &bgr.data[3*i], 3);
         msg.data[16*i + 15] = 255;
         float* y = (float*)&msg.data[16*i + 4];
@@ -173,8 +219,14 @@ bool kinectRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, 
     return true;
 }
 
-void callbackGazeboCloudPoint(const sensor_msgs::PointCloud2::ConstPtr& msg){
-    msgCloudKinectGazebo.data = msg->data;
+void callbackDepthGazebo(const sensor_msgs::Image::ConstPtr& msg){
+    msgDepthGazebo = *msg;
+    first = true;
+}
+
+void callbackColorGazebo(const sensor_msgs::Image::ConstPtr& msg){
+    msgColorGazebo = *msg;
+    firstd = true;
 }
 
 int main(int argc, char** argv)
@@ -206,7 +258,8 @@ int main(int argc, char** argv)
         }
 
     }
-
+    first = false;
+    firstd = false;
     std::cout << "INITIALIZING KINECT MANAGER BY MARCOSOF ..." << std::endl;
     if(use_oni) std::cout << "KinectMan.->Using ONI file: " << file_name << std::endl;
     else if(use_bag) std::cout << "KinectMan.->Using BAG file: " << file_name << std::endl;
@@ -223,7 +276,8 @@ int main(int argc, char** argv)
     ros::ServiceServer srvRgbdRobot  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);
     ros::ServiceServer srvRgbdKinectDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect_downsampled", kinectRgbdDownsampled_callback);
     ros::ServiceServer srvRgbdRobotDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled", robotRgbdDownsampled_callback);
-    ros::Subscriber subKinectFrame = n.subscribe("/camera/depth/points", 1, callbackGazeboCloudPoint);
+    ros::Subscriber subKinectImage = n.subscribe("/camera/color/image_raw", 1, callbackColorGazebo);
+    ros::Subscriber subKinectDepth = n.subscribe("/camera/depth/image_raw", 1, callbackDepthGazebo);
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
     sensor_msgs::PointCloud2 msgDownsampled;
@@ -231,7 +285,6 @@ int main(int argc, char** argv)
     ros::Rate loop(30);
     tf_listener->waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(10.0));
     initialize_rosmsg(msgCloudKinect, 640, 480, "kinect_link");
-    initialize_rosmsg(msgCloudKinectGazebo, 640, 480, "kinect_link");
     int widthDownSample = (int) (640 / downsample_by);
     int heightDownSample = (int) (480 / downsample_by);
     initialize_rosmsg(msgDownsampled, widthDownSample, heightDownSample, "base_link");
@@ -285,11 +338,36 @@ int main(int argc, char** argv)
         std::cout << "KinectMan.->Gazebo Kinect sensor started :D" << std::endl;
         while(ros::ok())
         {
+            if(first && firstd){
+        cv_bridge::CvImagePtr cv_ptr;
+        try
+        {
+        cv_ptr = cv_bridge::toCvCopy(msgColorGazebo, sensor_msgs::image_encodings::TYPE_8UC3);
+        bgrImage = cv_ptr->image;
+        }
+        catch (cv_bridge::Exception& e)
+        {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+        }
+        cv_bridge::CvImagePtr cv_ptrd;
+        try
+        {
+        cv_ptrd = cv_bridge::toCvCopy(msgDepthGazebo, sensor_msgs::image_encodings::TYPE_32FC1);
+        depthMap = cv_ptrd->image;
+        tempDepth = depthMap.reshape(3);
+        }
+        catch (cv_bridge::Exception& e)
+        {
+        ROS_ERROR("cv_bridge exception: %s", e.what());
+        }
+            if(pubKinectFrame.getNumSubscribers()>0 || pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
+                cvmat32fc1_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
+
             if(pubRobotFrame.getNumSubscribers()>0 || pubDownsampled.getNumSubscribers()>0)
-                pcl_ros::transformPointCloud("base_link", msgCloudKinectGazebo, msgCloudRobot, *tf_listener);
+                pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
 
             if(pubKinectFrame.getNumSubscribers() > 0)
-                pubKinectFrame.publish(msgCloudKinectGazebo);
+                pubKinectFrame.publish(msgCloudKinect);
             if(pubRobotFrame.getNumSubscribers() > 0)
                 pubRobotFrame.publish(msgCloudRobot);
             if(pubDownsampled.getNumSubscribers() > 0)
@@ -297,9 +375,10 @@ int main(int argc, char** argv)
                 downsample_pcl(msgCloudRobot, msgDownsampled, downsample_by);
                 pubDownsampled.publish(msgDownsampled);
             }
-
+            }
             ros::spinOnce();
             loop.sleep();
+        
         }
         
     }

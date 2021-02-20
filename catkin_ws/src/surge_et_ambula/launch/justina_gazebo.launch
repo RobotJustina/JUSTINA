@@ -57,6 +57,13 @@
 		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
 		<arg name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
 	</include>
+	<group ns="manipulation">
+		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="speed_profiles" pkg="trajectory_gen" type="SpeedProfile_Server.py"/>
+		<node name="la_control" pkg="arms_control" type="la_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="ra_control" pkg="arms_control" type="ra_control_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+	</group>
 	<group ns="vision">
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
