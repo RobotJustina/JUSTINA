@@ -14,6 +14,10 @@ def callbackHeadPose(data):
     if tilt < 0.0 :
         tilt = -1*tilt
 
+def callbackTorsoPose(data):
+    global torso
+    torso = data.data[0] + 0.2
+
 def callbackLaPose(data):
     global la1, la2, la3, la4, la5, la5, la7
     la1 = data.data[0]
@@ -27,10 +31,12 @@ def callbackLaPose(data):
 #Define a RRBot joint positions publisher for joint controllers.
 def justina_joint_positions_publisher():
         global tilt, pan
+        global torso
         global la1, la2, la3, la4, la5, la5, la7
 
         pan = 0.0
         tilt = 0.0
+        torso = 0.0
         la1 = 0.0
         la2 = 0.0
         la3 = 0.0
@@ -46,6 +52,9 @@ def justina_joint_positions_publisher():
 	pubHeadPan = rospy.Publisher('/justina/joint6_position_controller/command', Float64, queue_size=10)
 	pubHeadTilt = rospy.Publisher('/justina/joint7_position_controller/command', Float64, queue_size=10)
         rospy.Subscriber("/hardware/head/goal_pose",Float32MultiArray, callbackHeadPose)
+        
+	pubTorso = rospy.Publisher('/justina/joint5_position_controller/command', Float64, queue_size=10)
+        rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackTorsoPose)
 
 
         pubLa1 = rospy.Publisher('/justina/la_1_controller/command', Float64, queue_size=10)
@@ -66,6 +75,8 @@ def justina_joint_positions_publisher():
 
 		pubHeadPan.publish(pan)
 		pubHeadTilt.publish(tilt)
+		
+                pubTorso.publish(torso)
 		
                 pubLa1.publish(la1)
                 pubLa2.publish(la2)
