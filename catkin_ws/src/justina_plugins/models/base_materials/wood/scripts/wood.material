@@ -1,0 +1,76 @@
+material base_materials/hardwood_floor
+{
+  technique
+  {
+    pass
+    {
+      diffuse 0.3 0.3 0.3 1.0
+      texture_unit
+      {
+        texture hardwood_floor.jpg
+        filtering anistropic
+        max_anisotropy 16
+        rotate 90
+        scale 0.1 0.1
+      }
+    }
+  }
+}
+
+material base_materials/wood
+{
+    technique
+    {   
+        pass
+        {   
+            ambient 1 1 1 1 
+            diffuse 0.5 0.5 0.5 1.0
+            specular 0 0 0 1.0 12.5
+            texture_unit
+            {   
+                texture wood.jpg
+                filtering anistropic
+                max_anisotropy 16
+            }   
+        }   
+    }   
+}
+
+material base_materials/dark_wood
+{
+    technique
+    {   
+        pass
+        {   
+            ambient 0.2 0.2 0.2 1 
+            diffuse 0.2 0.2 0.2 1.0 
+            specular 0 0 0 1.0 12.5
+            texture_unit
+            {   
+                texture wood.jpg
+                filtering anistropic
+                max_anisotropy 16
+            }   
+        }   
+    }   
+}
+
+material base_materials/light_wood
+{
+    technique
+    {   
+        pass
+        {   
+            ambient 1 1 1 1 
+            diffuse 0.5 0.5 0.5 1.0 
+            specular 0 0 0 1.0 12.5
+            texture_unit
+            {   
+                texture light_wood.png
+                filtering anistropic
+                max_anisotropy 16
+                scale 5.0 5.0
+            }   
+        }   
+    }   
+}

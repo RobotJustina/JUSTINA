@@ -2,12 +2,35 @@
 <sdf version='1.6'>
 <world name='laboratorio'>
   <include>
-      <uri>model://ground_plane</uri>
-    </include>
-
-    <include>
-      <uri>model://sun</uri>
-    </include>
+    <uri>model://ground_plane</uri>
+  </include>
+  <include>
+    <uri>model://sun</uri>
+  </include>
+  <include>
+    <static>1</static>
+    <pose>4.09 -1.25 0 0 0 0</pose>
+    <uri>model://office_desk</uri>
+    <name>office_desk01</name>
+  </include>
+  <include>
+    <static>0</static>
+    <pose>3.6 -0.35 0.85 0 0 0</pose>
+    <uri>model://hsr_pringles</uri>
+    <name>hsr_pringles_01</name>
+  </include>
+  <include>
+    <static>0</static>
+    <pose>3.6 -0.7 0.85 0 0 1</pose>
+    <uri>model://apple</uri>
+    <name>apple_01</name>
+  </include>
+  <include>
+    <static>0</static>
+    <pose>3.6 -1.0 0.85 0 0 0 1</pose>
+    <uri>model://hsr_coke</uri>
+    <name>hsr_coke_01</name>
+  </include>
   <model name='biorobotica'>
     <pose frame=''>1.98298 -0.56 0 0 -0 0</pose>
     <link name='Wall_0'>

@@ -1,0 +1,18 @@
+material wall/white_noise
+{
+    technique
+    {   
+        pass
+        {   
+            ambient 1 1 1 1 
+            diffuse 0.5 0.5 0.5 1.0
+            specular 0 0 0 1.0 12.5
+            texture_unit
+            {   
+                texture wall_white_noise.png
+                filtering anistropic
+                max_anisotropy 16
+            }   
+        }   
+    }   
+}

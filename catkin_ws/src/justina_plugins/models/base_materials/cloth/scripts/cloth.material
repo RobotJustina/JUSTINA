@@ -1,0 +1,15 @@
+material cloth/black
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture cloth_black.png
+        filtering anistropic
+        max_anisotropy 16
+      }
+    }
+  }
+}
