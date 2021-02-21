@@ -27,16 +27,28 @@ def callbackLaPose(data):
     la5 = data.data[4]
     la6 = data.data[5]
     la7 = data.data[6]
-    
+
+def callbackRaPose(data):
+    global ra1, ra2, ra3, ra4, ra5, ra6, ra7
+    ra1 = data.data[0]
+    ra2 = data.data[1]
+    ra3 = data.data[2]
+    ra4 = data.data[3]
+    ra5 = data.data[4]
+    ra6 = data.data[5]
+    ra7 = data.data[6]
+
 #Define a RRBot joint positions publisher for joint controllers.
 def justina_joint_positions_publisher():
         global tilt, pan
         global torso
         global la1, la2, la3, la4, la5, la5, la7
-
+        global ra1, ra2, ra3, ra4, ra5, ra6, ra7
+        
         pan = 0.0
         tilt = 0.0
         torso = 0.0
+        
         la1 = 0.0
         la2 = 0.0
         la3 = 0.0
@@ -44,6 +56,14 @@ def justina_joint_positions_publisher():
         la5 = 0.0
         la6 = 0.0
         la7 = 0.0
+        
+        ra1 = 0.0
+        ra2 = 0.0
+        ra3 = 0.0
+        ra4 = 0.0
+        ra5 = 0.0
+        ra6 = 0.0
+        ra7 = 0.0
 
 	#Initiate node for controlling joint1 and joint2 positions.
 	rospy.init_node('rrrbot_joint_positions_node', anonymous=True)
@@ -66,6 +86,15 @@ def justina_joint_positions_publisher():
         pubLa7 = rospy.Publisher('/justina/la_7_controller/command', Float64, queue_size=10)
         rospy.Subscriber("/manipulation/manip_pln/la_goto_angles",Float32MultiArray, callbackLaPose)
 
+        pubRa1 = rospy.Publisher('/justina/ra_1_controller/command', Float64, queue_size=10)
+        pubRa2 = rospy.Publisher('/justina/ra_2_controller/command', Float64, queue_size=10)
+        pubRa3 = rospy.Publisher('/justina/ra_3_controller/command', Float64, queue_size=10)
+        pubRa4 = rospy.Publisher('/justina/ra_4_controller/command', Float64, queue_size=10)
+        pubRa5 = rospy.Publisher('/justina/ra_5_controller/command', Float64, queue_size=10)
+        pubRa6 = rospy.Publisher('/justina/ra_6_controller/command', Float64, queue_size=10)
+        pubRa7 = rospy.Publisher('/justina/ra_7_controller/command', Float64, queue_size=10)
+        rospy.Subscriber("/manipulation/manip_pln/ra_goto_angles",Float32MultiArray, callbackLaPose)
+
 	rate = rospy.Rate(100) #100 Hz
 
 	#While loop to have joints follow a certain position, while rospy is not shutdown.
@@ -85,6 +114,14 @@ def justina_joint_positions_publisher():
                 pubLa5.publish(la5)
                 pubLa6.publish(la6)
                 pubLa7.publish(la7)
+
+                pubRa1.publish(ra1)
+                pubRa2.publish(ra2)
+                pubRa3.publish(ra3)
+                pubRa4.publish(ra4)
+                pubRa5.publish(ra5)
+                pubRa6.publish(ra6)
+                pubRa7.publish(ra7)
 
 		rate.sleep() #sleep for rest of rospy.Rate(100)
 

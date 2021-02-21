@@ -1,5 +1,5 @@
 justina:
-  joint_names: [head_pan_joint, head_tilt_joint, spine_connect, la_1_joint, la_2_joint, la_3_joint, la_4_joint, la_5_joint, la_6_joint, la_7_joint, la_grip_right, la_grip_left]
+  joint_names: [head_pan_joint, head_tilt_joint, spine_connect, la_1_joint, la_2_joint, la_3_joint, la_4_joint, la_5_joint, la_6_joint, la_7_joint, la_grip_right, la_grip_left, ra_1_joint, ra_2_joint, ra_3_joint, ra_4_joint, ra_5_joint, ra_6_joint, ra_7_joint, ra_grip_right, ra_grip_left]
   hardware_interface:
     joints:
        - head_pan_joint 
@@ -16,6 +16,15 @@ justina:
        - la_7_joint
        - la_grip_right
        - la_grip_left
+       - ra_1_joint
+       - ra_2_joint
+       - ra_3_joint
+       - ra_4_joint
+       - ra_5_joint
+       - ra_6_joint
+       - ra_7_joint
+       - ra_grip_right
+       - ra_grip_left
 
 
              # Publish all joint states ----------------------------------
@@ -68,7 +77,34 @@ justina:
   la_grip_right_controller:
     type: position_controllers/JointPositionController
     joint: la_grip_right
-    
+  ra_1_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_1_joint
+  ra_2_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_2_joint
+  ra_3_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_3_joint
+  ra_4_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_4_joint
+  ra_5_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_5_joint
+  ra_6_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_6_joint
+  ra_7_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_7_joint
+  ra_grip_left_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_grip_left
+  ra_grip_right_controller:
+    type: position_controllers/JointPositionController
+    joint: ra_grip_right    
+
 
   joint5_velocity_controller:
     type: effort_controllers/JointVelocityController
@@ -127,3 +163,39 @@ justina:
     joint: la_grip_right
     pid: {p: 10.0, i: 0.0, d: 0.0}
 
+  ra_1_velocity_controller:
+    joint: ra_1_joint
+    type: effort_controllers/JointPositionController
+    pid: {p: 10.0, i: 0.0, d: 5.0}
+  ra_2_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_2_joint
+    pid: {p: 10.0, i: 0.0, d: 5.0}
+  ra_3_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_3_joint
+    pid: {p: 10.0, i: 0.0, d: 3.0}
+  ra_4_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_4_joint
+    pid: {p: 10.0, i: 0.0, d: 5.0}
+  ra_5_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_5_joint
+    pid: {p: 10.0, i: 0.0, d: 0.0}
+  ra_6_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_6_joint
+    pid: {p: 10.0, i: 0.0, d: 4.0}
+  ra_7_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_7_joint
+    pid: {p: 10.0, i: 0.0, d: 0.0}
+  ra_grip_left_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_grip_left
+    pid: {p: 10.0, i: 0.0, d: 0.0}
+  ra_grip_right_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: ra_grip_right
+    pid: {p: 10.0, i: 0.0, d: 0.0}

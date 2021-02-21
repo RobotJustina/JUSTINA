@@ -712,7 +712,7 @@
 		<visual>
 			<origin xyz="0.035 -0.065 0" rpy = "0 0 0"/>
 			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
-			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+			<material name = "ra_material"><color rgba="1.0 0.5 0 1"/></material>
 		</visual>
 		<collision>
 		<origin xyz="0 0.01 0.02" rpy = "0 0 0"/>
@@ -1293,4 +1293,97 @@
       </actuator>
     </transmission>
 
+  <!-- Right Arm Transmissions  -->
+  <transmission name="ra_1_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_1_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_1_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_2_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_2_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_2_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_3_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_3_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_3_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_4_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_4_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_4_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_5_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_5_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_5_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_6_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_6_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_6_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_7_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_7_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_7_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="ra_grip_left_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_grip_left">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_grip_left_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    <transmission name="ra_grip_right_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="ra_grip_right">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="ra_grip_right_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 </robot>
