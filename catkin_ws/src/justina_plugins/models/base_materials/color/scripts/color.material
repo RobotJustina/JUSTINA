@@ -1,0 +1,87 @@
+material hsr_color/white
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1 1
+      diffuse 0.5 0.5 0.5 1
+      specular 0 0 0 1
+      emissive 0 0 0 1
+      shading gouraud
+    }
+  }
+}
+material hsr_color/grey
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 0.7 0.7 0.7 1
+      diffuse 0.3 0.3 0.3 1
+      specular 0 0 0 1
+      emissive 0 0 0 1
+      shading gouraud
+    }
+  }
+}
+material hsr_color/white_transparency1
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      scene_blend alpha_blend
+      depth_write off 
+
+      ambient 1 1 1 1
+      diffuse 0.8 0.8 0.8 1
+      specular 0.9 0.9 0.9 1
+
+      texture_unit
+      {
+        colour_op_ex source1 src_current src_current 1 1 1 1
+        alpha_op_ex source1 src_manual src_current 0.8
+      }
+    }
+  }
+}
+material hsr_color/cornflowerblue_transparency1
+{
+    technique
+    {
+    pass
+    {
+      scene_blend alpha_blend
+      depth_write off 
+
+      ambient 0.392 0.584 0.929 1
+      diffuse 0.196 0.292 0.4645 1
+
+      texture_unit
+      {
+        colour_op_ex source1 src_current src_current 0.392 0.584 0.929 1
+        alpha_op_ex source1 src_manual src_current 0.3 
+      }
+    }
+    }
+}
+material hsr_color/cornflowerblue
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 0.392 0.584 0.929 1
+      diffuse 0.196 0.292 0.4645 1
+      specular 0 0 0 1
+      emissive 0 0 0 1
+      shading gouraud
+    }
+  }
+}
