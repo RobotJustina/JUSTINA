@@ -5,8 +5,18 @@
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	  output="screen" ns="/justina" args="joint_state_controller
+	  				joint5_position_controller
 	  				joint6_position_controller
-	  				joint7_position_controller"/>
+	  				joint7_position_controller
+					la_1_controller
+					la_2_controller
+					la_3_controller
+					la_4_controller
+					la_5_controller
+					la_6_controller
+					la_7_controller
+					la_grip_left_controller
+					la_grip_right_controller"/>
 
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/justina/joint_states" />
