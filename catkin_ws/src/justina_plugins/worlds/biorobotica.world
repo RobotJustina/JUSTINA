@@ -1,6 +1,11 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
 <world name='laboratorio'>
+  <gui>
+    <camera name="user_camera">
+      <pose>5.315925 -1.285646 1.856583 0 0.307999 2.827192</pose>
+    </camera>
+  </gui>
   <include>
     <uri>model://ground_plane</uri>
   </include>
