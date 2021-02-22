@@ -93,7 +93,7 @@ def justina_joint_positions_publisher():
         pubRa5 = rospy.Publisher('/justina/ra_5_controller/command', Float64, queue_size=10)
         pubRa6 = rospy.Publisher('/justina/ra_6_controller/command', Float64, queue_size=10)
         pubRa7 = rospy.Publisher('/justina/ra_7_controller/command', Float64, queue_size=10)
-        rospy.Subscriber("/manipulation/manip_pln/ra_goto_angles",Float32MultiArray, callbackLaPose)
+        rospy.Subscriber("/manipulation/manip_pln/ra_goto_angles",Float32MultiArray, callbackRaPose)
 
 	rate = rospy.Rate(100) #100 Hz
 

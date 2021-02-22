@@ -15,8 +15,8 @@
 					la_5_controller
 					la_6_controller
 					la_7_controller
-					la_grip_left_velocity_controller
-					la_grip_right_velocity_controller
+					la_grip_left_controller
+					la_grip_right_controller
 					ra_1_controller
 					ra_2_controller
 					ra_3_controller
@@ -24,9 +24,10 @@
 					ra_5_controller
 					ra_6_controller
 					ra_7_controller
-					ra_grip_left_velocity_controller
-					ra_grip_right_velocity_controller
+					ra_grip_left_controller
+					ra_grip_right_controller
 					"/>
+
 
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/justina/joint_states" />

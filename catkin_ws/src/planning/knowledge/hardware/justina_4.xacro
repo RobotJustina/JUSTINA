@@ -1149,7 +1149,6 @@
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="spine_connect">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor5">
 		    <mechanicalReduction>37</mechanicalReduction>
@@ -1182,7 +1181,6 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="head_pan_joint">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="head_pan_joint_actuator">
       <mechanicalReduction>1</mechanicalReduction>
@@ -1203,7 +1201,6 @@
   <transmission name="la_1_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_1_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_1_motor">
@@ -1213,7 +1210,6 @@
     <transmission name="la_2_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_2_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_2_motor">
@@ -1223,7 +1219,6 @@
     <transmission name="la_3_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_3_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_3_motor">
@@ -1233,7 +1228,6 @@
     <transmission name="la_4_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_4_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_4_motor">
@@ -1243,7 +1237,6 @@
     <transmission name="la_5_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_5_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_5_motor">
@@ -1253,7 +1246,6 @@
     <transmission name="la_6_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_6_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_6_motor">
@@ -1263,7 +1255,6 @@
     <transmission name="la_7_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_7_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_7_motor">
@@ -1274,7 +1265,6 @@
     <transmission name="la_grip_left_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_grip_left">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_grip_left_motor">
@@ -1285,19 +1275,17 @@
     <transmission name="la_grip_right_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="la_grip_right">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="la_grip_right_motor">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission>
+    </transmission> -->
 
   <!-- Right Arm Transmissions  -->
   <transmission name="ra_1_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_1_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_1_motor">
@@ -1307,7 +1295,6 @@
     <transmission name="ra_2_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_2_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_2_motor">
@@ -1317,7 +1304,6 @@
     <transmission name="ra_3_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_3_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_3_motor">
@@ -1327,7 +1313,6 @@
     <transmission name="ra_4_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_4_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_4_motor">
@@ -1337,7 +1322,6 @@
     <transmission name="ra_5_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_5_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_5_motor">
@@ -1347,7 +1331,6 @@
     <transmission name="ra_6_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_6_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_6_motor">
@@ -1357,7 +1340,6 @@
     <transmission name="ra_7_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_7_joint">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_7_motor">
@@ -1368,22 +1350,19 @@
     <transmission name="ra_grip_left_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_grip_left">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_grip_left_motor">
-        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
     </transmission>
     <transmission name="ra_grip_right_transmission">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="ra_grip_right">
-      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       </joint>
       <actuator name="ra_grip_right_motor">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission>
+    </transmission> -->
 </robot>
