@@ -1104,8 +1104,8 @@
     <transmission name="tran1">
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="wheel_left_connect">
-		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-      		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		    <!-- <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor1">
 		    <mechanicalReduction>1</mechanicalReduction>
@@ -1115,8 +1115,8 @@
     <transmission name="tran2">
 	    <type>transmission_interface/SimpleTransmission</type>
 	    <joint name="wheel_right_connect">
-		    <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
-      		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		    <!--  <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface> -->
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 	    </joint>
 	    <actuator name="motor2">
 		    <mechanicalReduction>1</mechanicalReduction>
@@ -1190,7 +1190,6 @@
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="head_tilt_joint">
       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
-      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
     <actuator name="head_tilt_joint_actuator">
       <mechanicalReduction>1</mechanicalReduction>

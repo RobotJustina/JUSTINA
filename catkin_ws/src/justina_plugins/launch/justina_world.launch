@@ -9,6 +9,7 @@
 		<arg name="world_name" value="$(find justina_plugins)/worlds/biorobotica.world"/>
     		<!-- more default parameters can be changed here -->
   	</include>
+	<!-- <param name="robot_description"	command="$(find xacro)/xacro.py $(find justina_plugins)/robot_test/griper.xacro"/> -->
 	<param name="robot_description"	command="$(find xacro)/xacro.py $(find knowledge)/hardware/justina_4.xacro"/>
 	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
 		  args="-param robot_description -urdf -model justina -x 0.0 -y 0.0 -z 0.0 -Y 0.0">

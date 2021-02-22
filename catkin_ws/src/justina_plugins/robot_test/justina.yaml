@@ -1,5 +1,5 @@
 justina:
-  joint_names: [spine_connect, head_pan_joint, head_tilt_joint, la_1_joint, la_2_joint, la_3_joint, la_4_joint, la_5_joint, la_6_joint, la_7_joint, la_grip_left, la_grip_right, ra_1_joint, ra_2_joint, ra_3_joint, ra_4_joint, ra_5_joint, ra_6_joint, ra_7_joint, ra_grip_left, ra_grip_right]
+  joint_names: [spine_connect, head_pan_joint, head_tilt_joint, la_1_joint, la_2_joint, la_3_joint, la_4_joint, la_5_joint, la_6_joint, la_7_joint, la_grip_left, la_grip_right, ra_1_joint, ra_2_joint, ra_3_joint, ra_4_joint, ra_5_joint, ra_6_joint, ra_7_joint, ra_grip_left, ra_grip_right, wheel_left_connect, wheel_right_connect]
   hardware_interface:
     joints:
        - spine_connect
@@ -23,6 +23,8 @@ justina:
        - ra_7_joint
        - ra_grip_left
        - ra_grip_right
+       - wheel_left_connect
+       - wheel_right_connect
 
 
              # Publish all joint states ----------------------------------
@@ -33,15 +35,25 @@ justina:
   joint6_position_controller:
     type: position_controllers/JointPositionController
     joint: head_pan_joint
-    #pid: {p: 100.0, i: 0.01, d: 10.0}
+    pid: {p: 100.0, i: 0.01, d: 10.0}
   joint5_position_controller:
     type: position_controllers/JointPositionController
     joint: spine_connect
-    #pid: {p: 10.0, i: 0.0, d: 5.0}
+    pid: {p: 10.0, i: 0.0, d: 5.0}
   joint7_position_controller:
     type: position_controllers/JointPositionController
     joint: head_tilt_joint
-    #pid: {p: 10.0, i: 0.0, d: 5.0}
+    pid: {p: 10.0, i: 0.0, d: 5.0}
+
+  left_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: wheel_left_connect
+    pid: {p: 100.0, i: 0.01, d: 10.0}
+  
+  left_velocity_controller:
+    type: effort_controllers/JointPositionController
+    joint: wheel_right_connect
+    pid: {p: 100.0, i: 0.01, d: 10.0}
 
 
     # Left Arm Position Controllers ---------------------------------------
