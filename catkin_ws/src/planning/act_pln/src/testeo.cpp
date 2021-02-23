@@ -15,9 +15,9 @@
 
 enum SMState {
 	SM_INIT,
-    SM_WAIT_COMMAND_WORD,
-    SM_REPEAT_COMMAND_WORD,
-
+    	SM_WAIT_COMMAND_WORD,
+    	SM_REPEAT_COMMAND_WORD,
+	SM_SELECT_OBJECT_GRASP,
 	SM_NAVIGATE_TO_INSPECTION,
 	SM_ALIGN_TABLE,
 	SM_DETECT_OBJECT,
@@ -28,7 +28,7 @@ enum SMState {
 	SM_FINAL_STATE
 };
 
-SMState state = SM_NAVIGATE_TO_INSPECTION;
+SMState state = SM_SELECT_OBJECT_GRASP;
 /*
 #define SM_INIT 0
 //#define SM_WAIT_FOR_DOOR 10
@@ -122,6 +122,7 @@ int main(int argc, char** argv){
     std::vector<std::string> tokens1;
     std::stringstream ss;
     int cont = 0;
+    int countOp = 0;
     int contdrink = 0;
     int attemps = 0;
     int confirm = 0;
@@ -142,21 +143,48 @@ int main(int argc, char** argv){
 
     while(ros::ok() && !fail && !success){
         switch(state){
+
+		
+		case SM_SELECT_OBJECT_GRASP:
+        		//Select object to grasp
+        		std::cout << "State machine: SM_SELECT_OBJECT_GRASP" << std::endl;
+               		std::cout << "Select the object to grasp" << std::endl;
+			std::cout << "1.- coke" << std::endl;
+			std::cout << "2.- apple" << std::endl;
+			std::cout << "3.- banana" << std::endl;
+			std::cin >> countOp;
+			if (countOp==1){
+				drink = "coke";
+				std::cout << "You choose the" << drink << std::endl;		
+			}
+			else if (countOp==2){
+				drink = "apple";
+				std::cout << "You choose the" << drink << std::endl;		
+			}
+			if (countOp==3){
+				drink = "banana";
+				std::cout << "You choose the" << drink << std::endl;		
+			}
+	
+        		 
+        		state = SM_NAVIGATE_TO_INSPECTION;
+        		break;	
+
                 
         	case SM_NAVIGATE_TO_INSPECTION:
         		//Go to location
         		std::cout << "State machine: SM_NAVIGATE_TO_INSPECTION" << std::endl;
-                std::cout << "I am going to the location table" << std::endl;
+                	std::cout << "I am going to the kitchen table" << std::endl;
         		if(!JustinaNavigation::getClose("kitchen_table", 120000)){
         			std::cout << "Cannot move to location table" << std::endl;
         		}
-                std::cout << "I have arrived to the table location" << std::endl;
+                	std::cout << "I have arrived to the kitchen table" << std::endl;
         		state = SM_ALIGN_TABLE;
         		break;	
 
     		case SM_ALIGN_TABLE:
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
-                std::cout << "I aling with the table location" << std::endl;
+                	std::cout << "I aling with the kitchen table" << std::endl;
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
         		//objectDetected = true;
@@ -166,8 +194,8 @@ int main(int argc, char** argv){
 			case SM_DETECT_OBJECT:
     			std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
     			if(objectDetected){
-                    ss.str("");
-                    ss << "I am looking for the " << drink << " on the table";
+                    	ss.str("");
+                    	ss << "I am looking for the " << drink << " on the table";
 		            //Obtiene la lista de objetos a detectar
 		            //recoObj = std::vector<vision_msgs::VisionObject>();
 
@@ -192,7 +220,6 @@ int main(int argc, char** argv){
                 if(objectDetected && recoObj.size() > 0){
                     ss.str("");
                     ss << "I have found the " << drink;
-                    JustinaHRI::waitAfterSay(ss.str(), 5000);
                     //JustinaTasks::alignWithTable(0.35);
                     ss.str("");
                     ss << "I am going to take the " << drink;
@@ -255,7 +282,7 @@ int main(int argc, char** argv){
             		JustinaManip::laGoTo("take", 3000);
             		JustinaTasks::dropObject("", true, 10000);
             	}
-                ss.str("");
+     
                 JustinaManip::hdGoTo(0.0, 0.0, 6000);
                 ss << "Enjoy the " << drink;
                 ss.str("");
@@ -271,7 +298,7 @@ int main(int argc, char** argv){
         		//Final state
         		std::cout << "State machine: SM_FINAL_STATE" << std::endl;	
         		sleep(3);
-                JustinaHRI::say("I have finished test");
+			std::cout << "I have finished test" << std::endl;	
         		success = true;
         		fail = true;
                 break;
