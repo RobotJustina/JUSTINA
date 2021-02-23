@@ -179,8 +179,15 @@
 
 		</sensor>
 	</gazebo>
+
 <gazebo>
    <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+        <arm>
+           <arm_name>right-arm</arm_name>
+           <palm_link>right_arm_link7</palm_link>
+           <gripper_link>right_arm_grip_left </gripper_link>
+           <gripper_link>right_arm_grip_right</gripper_link>
+        </arm>
         <arm>
            <arm_name>left-arm</arm_name>
            <palm_link>left_arm_link7</palm_link>
@@ -196,5 +203,4 @@
        <contact_topic>__default_topic__</contact_topic>
     </plugin>
 </gazebo>
-
 </robot>

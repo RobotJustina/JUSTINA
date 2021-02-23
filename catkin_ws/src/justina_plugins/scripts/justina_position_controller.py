@@ -102,10 +102,6 @@ def justina_joint_positions_publisher():
         pubLaGripRight = rospy.Publisher('/justina/la_grip_right_controller/command', Float64, queue_size=10)
         rospy.Subscriber("/hardware/left_arm/goal_gripper", Float32, callbackLaGrip)
         
-        pubRaGripLeft = rospy.Publisher('/justina/ra_grip_left_controller/command', Float64, queue_size=10)
-        pubRaGripRight = rospy.Publisher('/justina/ra_grip_right_controller/command', Float64, queue_size=10)
-        rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackRaGrip)
-
         pubRa1 = rospy.Publisher('/justina/ra_1_controller/command', Float64, queue_size=10)
         pubRa2 = rospy.Publisher('/justina/ra_2_controller/command', Float64, queue_size=10)
         pubRa3 = rospy.Publisher('/justina/ra_3_controller/command', Float64, queue_size=10)
@@ -114,6 +110,11 @@ def justina_joint_positions_publisher():
         pubRa6 = rospy.Publisher('/justina/ra_6_controller/command', Float64, queue_size=10)
         pubRa7 = rospy.Publisher('/justina/ra_7_controller/command', Float64, queue_size=10)
         rospy.Subscriber("/manipulation/manip_pln/ra_goto_angles",Float32MultiArray, callbackRaPose)
+
+        pubRaGripLeft = rospy.Publisher('/justina/ra_grip_left_controller/command', Float64, queue_size=10)
+        pubRaGripRight = rospy.Publisher('/justina/ra_grip_right_controller/command', Float64, queue_size=10)
+        rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackRaGrip)
+
 
 	rate = rospy.Rate(100) #100 Hz
 

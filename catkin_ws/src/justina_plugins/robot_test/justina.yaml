@@ -88,11 +88,11 @@ justina:
   la_grip_left_controller:
     type: effort_controllers/JointPositionController
     joint: la_grip_left
-    pid: {p: 10.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.0, d: 0.5}
   la_grip_right_controller:
     type: effort_controllers/JointPositionController
     joint: la_grip_right
-    pid: {p: 10.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.0, d: 0.5}
 
     # Right Arm Position Controllers ---------------------------------------
   ra_1_controller:
@@ -126,9 +126,9 @@ justina:
   ra_grip_left_controller:
     type: effort_controllers/JointPositionController
     joint: ra_grip_left
-    pid: {p: 10.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.0, d: 0.5}
   ra_grip_right_controller:
     type: effort_controllers/JointPositionController
     joint: ra_grip_right
-    pid: {p: 10.0, i: 0.0, d: 0.0}
+    pid: {p: 1.0, i: 0.0, d: 0.5}
 
