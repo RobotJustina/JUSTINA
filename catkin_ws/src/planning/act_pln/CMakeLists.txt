@@ -337,6 +337,10 @@ add_executable(test_robot
 	src/test_robot.cpp
 )
 
+add_executable(testeo
+	src/testeo.cpp
+)
+
 add_executable(demo_alexa 
 	src/demo_alexa.cpp
 )
@@ -390,6 +394,7 @@ add_dependencies(serve_the_breakfast ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 add_dependencies(stickler_for_the_rules ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(final_robocup2019 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(test_robot ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(testeo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(demo_alexa ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(clean_up_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
@@ -579,6 +584,10 @@ target_link_libraries(final_robocup2019
 )
 
 target_link_libraries(test_robot
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(testeo
  ${catkin_LIBRARIES}
 )
 
