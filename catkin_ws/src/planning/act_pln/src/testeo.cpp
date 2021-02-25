@@ -161,6 +161,7 @@ int main(int argc, char** argv){
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::waitAfterSay("I am ready for the demo with gazebo test", 4000);
             	JustinaHRI::waitAfterSay("Please, tell me justina start to go to the kitchen table",4000);
+                std::cout << "Please, tell me justina start to go to the kitchen table" << std::endl; 
                 JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::loadGrammarSpeechRecognized("restaurant_commands.xml");
                 JustinaHRI::enableSpeechRecognized(true);
@@ -182,75 +183,91 @@ int main(int argc, char** argv){
     			break;
 
 		    case SM_PARSE_SPOKEN_COMMAND:
-            		//Parse the command
-            		std::cout << "State machine: SM_PARSE_SPOKEN_COMMAND" << std::endl;
-            		if (confirm == 0){
-		              if(lastRecoSpeech.find("justina start") != std::string::npos)
-		              {
-		                  state = SM_SELECT_OBJECT_GRASP;
-		              }
-		              else
-		              {
-		            	JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
-		                state = SM_REPEAT_COMMAND;
-		              }
+            	//Parse the command
+            	std::cout << "State machine: SM_PARSE_SPOKEN_COMMAND" << std::endl;
+            	if (confirm == 0){
+		            if(lastRecoSpeech.find("justina start") != std::string::npos){
+		                state = SM_SELECT_OBJECT_GRASP;
+		            }
+		            else{
+		              JustinaHRI::waitAfterSay("I can't recognize this command", 4000);
+		              state = SM_REPEAT_COMMAND;
+		            }
                 break;
 
 		
 		    case SM_SELECT_OBJECT_GRASP:
         		//Select object to grasp
         		std::cout << "State machine: SM_SELECT_OBJECT_GRASP" << std::endl;
+                JustinaHRI::waitAfterSay("Tell me do you want the object to grasp", 4000);
                	std::cout << "Tell me do you want the object to grasp" << std::endl;
+                std::cout << "The sentences is bring me a/bring me an" << std::endl;
 			    std::cout << "coke" << std::endl;
 			    std::cout << "apple" << std::endl;
 			    std::cout << "pringles" << std::endl;
 			    if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     		//attemptsRecogLoc++;
  
-				if(lastRecoSpeech.find("bring me a coke") != std::string::npos){
-					drink = "coke";
-					std::cout << "You choose the " << drink << std::endl;	
-                    state = SM_NAVIGATE_TO_INSPECTION;	
-				}
-				else if(lastRecoSpeech.find("bring me an apple") != std::string::npos){
-                    drink = "apple";
-					std::cout << "You choose the " << drink << std::endl;
-                    state = SM_NAVIGATE_TO_INSPECTION;		
-                }
-                else if(lastRecoSpeech.find("bring me a pringles") != std::string::npos){
-                    drink = "pringles";
-					std::cout << "You choose the " << drink << std::endl;
-                    state = SM_NAVIGATE_TO_INSPECTION;                    		}
-				}
-			} 
-        		
-        	break;	
+    				if(lastRecoSpeech.find("bring me a coke") != std::string::npos){
+    					drink = "coke";
+                        ss.str("");
+                        ss << "You choose the " << drink;
+                        JustinaHRI::waitAfterSay(ss.str(), 5000);
+                        state = SM_NAVIGATE_TO_INSPECTION;	
+    				}
+    				else if(lastRecoSpeech.find("bring me an apple") != std::string::npos){
+                        drink = "apple";
+    					ss.str("");
+                        ss << "You choose the " << drink;
+                        JustinaHRI::waitAfterSay(ss.str(), 5000);
+                        state = SM_NAVIGATE_TO_INSPECTION;		
+                    }
+                    else if(lastRecoSpeech.find("bring me a pringles") != std::string::npos){
+                        drink = "pringles";
+    					ss.str("");
+                        ss << "You choose the " << drink;
+                        JustinaHRI::waitAfterSay(ss.str(), 5000);
+                        state = SM_NAVIGATE_TO_INSPECTION;                    		
+                    }
+			    }
+
+        	    break;	
 
                 
         	case SM_NAVIGATE_TO_INSPECTION:
         		//Go to location
         		std::cout << "State machine: SM_NAVIGATE_TO_INSPECTION" << std::endl;
-			     if(change_loc==0){
-				std::cout << "I am going to the kitchen table" << std::endl;
+			    if(change_loc==0){
+                    ss.str("");
+                    ss << "I am going to the kitchen table";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
         			if(!JustinaNavigation::getClose("kitchen_table", 120000)){
         				std::cout << "Cannot move to kitchen_table" << std::endl;
         			}
-                		std::cout << "I have arrived to the kitchen table" << std::endl;
+                    ss.str("");
+                    ss << "I have arrived to the kitchen table";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
         			state = SM_ALIGN_TABLE;
-			}
-			if(change_loc==1){
-				std::cout << "I am going to the bed" << std::endl;
+			    }
+			    if(change_loc==1){
+                    ss.str("");
+                    ss << "I am going to the bed";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
         			if(!JustinaNavigation::getClose("bed", 120000)){
         				std::cout << "Cannot move to bed" << std::endl;
         			}
-                		std::cout << "I have arrived to the bed" << std::endl;
+                    ss.str("");
+                    ss << "I have arrived to the bed";
+                    JustinaHRI::waitAfterSay(ss.str(), 5000);
         			state = SM_DELIVER_OBJECT;
-			}
-        	break;	
+			    }
+        	    break;	
+
 
     		case SM_ALIGN_TABLE:
     			std::cout << "State machine: SM_ALIGN_TABLE" << std::endl;
-                	std::cout << "I aling with the kitchen table" << std::endl;
+                JustinaHRI::waitAfterSay("I aling with the kitchen table", 4000);
+                std::cout << "I aling with the kitchen table" << std::endl;
     			JustinaManip::torsoGoTo(0.0, 0.0, 0.0, 6000);
         		objectDetected = JustinaTasks::alignWithTable(0.35);
         		//objectDetected = true;
@@ -260,11 +277,10 @@ int main(int argc, char** argv){
 			case SM_DETECT_OBJECT:
     			std::cout << "State machine: SM_DETECT_OBJECT" << std::endl;
     			if(objectDetected){
-                    	ss.str("");
-                    	ss << "I am looking for the " << drink << " on the table";
+                    ss.str("");
+                    ss << "I am looking for the " << drink << " on the table";
 		            //Obtiene la lista de objetos a detectar
 		            //recoObj = std::vector<vision_msgs::VisionObject>();
-
 		            objectDetected = false;
 		            //Detecta los objetos en la mesa
 		            if(JustinaVision::detectAllObjectsVot(recoObj, image, 5)){
@@ -278,59 +294,41 @@ int main(int argc, char** argv){
 		            } 
 		        }   
 	        	state = (objectDetected) ? SM_GRASP_OBJECT : SM_FINAL_STATE;
-    		break;
+    		    break;
 
 
-		case SM_GRASP_OBJECT:
-			std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
-                	if(objectDetected && recoObj.size() > 0){
-                    		ss.str("");
-                    		ss << "I have found the " << drink;
+		    case SM_GRASP_OBJECT:
+			    std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
+                if(objectDetected && recoObj.size() > 0){
+                    ss.str("");
+                    ss << "I have found the " << drink;
                     		//JustinaTasks::alignWithTable(0.35);
-                    		ss.str("");
-                    		ss << "I am going to take the " << drink;
+                    ss.str("");
+                    ss << "I am going to take the " << drink;
                     		// This is for grasp with two frames //false for right true for left, "", true torso 
                     		//std::cout << "Index: " << index << std::endl;
                     		//std::cout << "recoObj: " << recoObj.size() << std::endl;
 
-                    		if(recoObj[index].pose.position.y > 0)
-                        		ra = false;
-                    		else
-                        		ra = true;
+                    if(recoObj[index].pose.position.y > 0)
+                        ra = false;
+                    else
+                        ra = true;
 
-                    		if (ra){
-                    			JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
-                    		drop = true;
-                		}
-                		else{
+                    if(ra){
+                    	JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, false, "", true);
+                    	drop = true;
+                	}
+                	else{
 						JustinaTasks::graspObject(recoObj[index].pose.position.x, recoObj[index].pose.position.y, recoObj[index].pose.position.z, true, "", true);
 						drop = false;                		
                 	}
 
                 }
-               			change_loc=1;
+               	change_loc=1;
 				state = SM_NAVIGATE_TO_INSPECTION;		        
-				break;
+			    break;
 
-		case SM_HANDLER:
-                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
-                JustinaNavigation::startMoveDist(-0.15);
-				std::cout << "State machine: SM_HANDLER" << std::endl;
-                ss.str("");
-                ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
-                JustinaHRI::waitAfterSay(ss.str(), 5000);
-                if(drop){
-                	JustinaManip::raGoTo("navigation", 3000);
-                	JustinaTasks::detectObjectInGripper(drink, false, 7000);
-                }
-                else{
-                	JustinaManip::laGoTo("navigation", 3000);
-                	JustinaTasks::detectObjectInGripper(drink, true, 7000);
-                }
-
-
-                state = SM_DELIVER_OBJECT;
-				break;
+		
 
 			case SM_DELIVER_OBJECT:
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
@@ -354,10 +352,27 @@ int main(int argc, char** argv){
                 JustinaManip::hdGoTo(0.0, 0.0, 6000);
                 ss << "Enjoy the " << drink;
                 ss.str("");
-                
                 contdrink++;
                 state = SM_FINAL_STATE;
-		break;
+		        break;
+
+            case SM_HANDLER:
+                JustinaManip::torsoGoTo(0.1, 0.0, 0.0, 5000);
+                JustinaNavigation::startMoveDist(-0.15);
+                std::cout << "State machine: SM_HANDLER" << std::endl;
+                ss.str("");
+                ss << "Sorry i could not grasp the " << drink << ", please put the " << drink << " in my gripper";
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
+                if(drop){
+                    JustinaManip::raGoTo("navigation", 3000);
+                    JustinaTasks::detectObjectInGripper(drink, false, 7000);
+                }
+                else{
+                    JustinaManip::laGoTo("navigation", 3000);
+                    JustinaTasks::detectObjectInGripper(drink, true, 7000);
+                }
+                state = SM_DELIVER_OBJECT;
+                break;
 
 
 
@@ -366,16 +381,15 @@ int main(int argc, char** argv){
         		//Final state
         		std::cout << "State machine: SM_FINAL_STATE" << std::endl;	
         		sleep(3);
-			std::cout << "I have finished test" << std::endl;	
+			    std::cout << "I have finished test" << std::endl;	
         		success = true;
         		fail = true;
                 break;
 
-
+            }
         }
         ros::spinOnce();
         loop.sleep();
     }
     return 0;
-
 }
