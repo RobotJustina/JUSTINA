@@ -124,7 +124,7 @@ int main(int argc, char** argv){
     JustinaManip::startTorsoGoTo(0.1, 0, 0);
 
     //Params to getOrder
-    JustinaRepresentation::initKDB("/cia_2019/cia.dat", false, 20000);
+    //JustinaRepresentation::initKDB("/cia_2019/cia.dat", false, 20000);
 
 
 
@@ -332,10 +332,12 @@ int main(int argc, char** argv){
 
 			case SM_DELIVER_OBJECT:
 				std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
-				JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
-                std::cout << "Guest, i try find you" << std::endl;
+				//JustinaNavigation::moveDistAngle(0, 3.141592, 5000);
+                //std::cout << "Guest, i try to find you" << std::endl;
 				
 				//face recognigtion
+                JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, "bedroom");
+
 
                 std::cout <<"Guest, i find you" << std::endl;
                 ss.str("");
