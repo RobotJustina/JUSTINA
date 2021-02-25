@@ -410,7 +410,23 @@
 		<limit upper="1.0" lower="0.0" effort="1000" velocity="1.2" />
 	</joint>
 	
-	<link name="head_link2"/>
+	<link name="head_link2">
+		<visual>
+			<origin xyz= "0 0.1 0" rpy="0 -1.5708 3.1416"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/careta_2.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="0.0001"/>
+			<origin xyz= "0 0.1 0" rpy="0 -1.5708 3.1416"/>
+		      <inertia
+			  ixx="1.0" ixy="0.0" ixz="0.0"
+			  iyy="1.0" iyz="0.0"
+			  izz="1.0"/>
+		  </inertial>
+	  </link>
 	
 	<joint name="kinect_connect" type="fixed">
 		<origin xyz="0.0618 -0.0758 0" rpy="0 1.5707 0"/>
