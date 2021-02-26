@@ -15,6 +15,22 @@
 			<param name="simul" value="true"/>
 			<param name="head_offset" value="$(arg head_offset)"/>
 		</node>
+		<node name="right_arm" pkg="arms" type="right_arm_real_simul_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaRightArm"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="sync_write_enable" value="false"/>
+			<param name="simul" value="true"/>
+			<param name="enable_torque" value="$(arg enable_torque)"/>
+		</node>
+		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="false">
+			<param name="port" value="/dev/justinaLeftArm"/>
+			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="sync_write_enable" value="false"/>
+			<param name="simul" value="true"/>
+			<param name="enable_torque" value="$(arg enable_torque)"/>
+		</node>
 		<!-- Nodes to the real justina robot -->
 		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2 --gazebo"/>
 		<node name="webcam_man" pkg="webcam_man" type="webcam_man_node" output="screen">

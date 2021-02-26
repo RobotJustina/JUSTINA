@@ -20,12 +20,12 @@ def callbackTorsoPose(data):
 
 def callbackLaPose(data):
     global la1, la2, la3, la4, la5, la6, la7
-    la1 = data.data[0]
+    la1 = data.data[0] + 0.05
     la2 = data.data[1]
     la3 = data.data[2]
-    la4 = data.data[3]
+    la4 = data.data[3] + 0.15
     la5 = data.data[4]
-    la6 = data.data[5]
+    la6 = data.data[5] + 0.15
     la7 = data.data[6]
 
 def callbackRaPose(data):
@@ -45,6 +45,14 @@ def callbackLaGrip(data):
 def callbackRaGrip(data):
     global rag
     rag = data.data
+
+def callbackLaGripClose(data):
+    global lag
+    lag = data.data - 0.6
+
+def callbackRaGripClose(data):
+    global rag
+    rag = data.data - 0.5
 
 #Define a RRBot joint positions publisher for joint controllers.
 def justina_joint_positions_publisher():
@@ -101,6 +109,8 @@ def justina_joint_positions_publisher():
         pubLaGripLeft = rospy.Publisher('/justina/la_grip_left_controller/command', Float64, queue_size=10)
         pubLaGripRight = rospy.Publisher('/justina/la_grip_right_controller/command', Float64, queue_size=10)
         rospy.Subscriber("/hardware/left_arm/goal_gripper", Float32, callbackLaGrip)
+        rospy.Subscriber("/hardware/left_arm/torque_gripper", Float32, callbackLaGripClose)
+        rospy.Subscriber("/hardware/right_arm/torque_gripper",Float32, callbackRaGripClose)
         
         pubRa1 = rospy.Publisher('/justina/ra_1_controller/command', Float64, queue_size=10)
         pubRa2 = rospy.Publisher('/justina/ra_2_controller/command', Float64, queue_size=10)
