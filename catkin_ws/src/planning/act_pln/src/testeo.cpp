@@ -116,7 +116,7 @@ int main(int argc, char** argv){
     std::vector<std::string> validCommandsTake;
     validCommandsTake.push_back("bring me a coke");
     validCommandsTake.push_back("bring me an apple");
-    validCommandsTake.push_back("bring me a pringles");
+    validCommandsTake.push_back("bring me the pringles");
 
     JustinaHRI::setInputDevice(JustinaHRI::USB);
     JustinaHRI::setOutputDevice(JustinaHRI::USB);
@@ -162,7 +162,7 @@ int main(int argc, char** argv){
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::waitAfterSay("I am ready for the gpsr test", 4000);
                 JustinaHRI::enableSpeechRecognized(false);
-                JustinaHRI::loadGrammarSpeechRecognized("restaurant_commands.xml");
+                JustinaHRI::loadGrammarSpeechRecognized("gazebo_test.xml");
                 JustinaHRI::enableSpeechRecognized(true);
         		state = SM_SELECT_OBJECT_GRASP;
         		break;
@@ -228,7 +228,7 @@ int main(int argc, char** argv){
                         drink = "apple";
                         state = SM_WAIT_FOR_COMMAND;		
                     }
-                    else if(lastRecoSpeech.find("bring me a pringles") != std::string::npos){
+                    else if(lastRecoSpeech.find("bring me the pringles") != std::string::npos){
                         drink = "pringles";
                         state = SM_WAIT_FOR_COMMAND;                    		
                     }
