@@ -159,15 +159,13 @@
 
 
 
-(item (type Room) (name bedroom) (pose -3.55 -3.0 0.0)(quantity 3) (quantitys 3))
+(item (type Room) (name bedroom) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
 
-(item (type Room) (name corridor) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1))
+(item (type Room) (name kitchen) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
 
-(item (type Room) (name dining_room) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1))
+(item (type Room) (name living_room) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
 
-(item (type Room) (name kitchen) (pose -3.55 -3.0 0.0)(quantity 5) (quantitys 5))
-
-(item (type Room) (name living_room) (pose -3.55 -3.0 0.0)(quantity 4) (quantitys 4))
+(item (type Room) (name office) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0))
 
 
 
@@ -175,33 +173,51 @@
 
 
 
-(item (type Furniture) (name bed) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom) (room bedroom) (attributes no_visited))
+(item (type Furniture) (name armchair) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
-(item (type Furniture) (name bookcase) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room) (room living_room) (attributes no_visited))
+(item (type Furniture) (name bed) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession bedroom) (room bedroom) (attributes no_visited))
 
-(item (type Furniture) (name couch) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room) (room living_room) (attributes no_visited))
+(item (type Furniture) (name bedroom_chest) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession bedroom) (room bedroom) (attributes no_visited))
 
-(item (type Furniture) (name counter) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name coat_hanger) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession office) (room office) (attributes no_visited))
 
-(item (type Furniture) (name cupboard) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name coffee_table) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
-(item (type Furniture) (name desk) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom) (room bedroom) (attributes no_visited))
+(item (type Furniture) (name couch) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
-(item (type Furniture) (name dining_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession dining_room) (room dining_room) (attributes no_visited))
+(item (type Furniture) (name desk) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession office) (room office) (attributes no_visited))
 
-(item (type Furniture) (name dishwasher) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name dishwasher) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name end_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room) (room living_room) (attributes no_visited))
+(item (type Furniture) (name display_cabinet) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
-(item (type Furniture) (name entrance) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession corridor) (room corridor) (attributes no_visited))
+(item (type Furniture) (name fridge) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name exit) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession living_room) (room living_room) (attributes no_visited))
+(item (type Furniture) (name island) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name side_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession bedroom) (room bedroom) (attributes no_visited))
+(item (type Furniture) (name kitchen_cabinet) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name sink) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name kitchen_table) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
 
-(item (type Furniture) (name storage_table) (pose -3.55 -3.0 0.0)(quantity 0) (quantitys 0) (possession kitchen) (room kitchen) (attributes no_visited))
+(item (type Furniture) (name safe) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession office) (room office) (attributes no_visited))
+
+(item (type Furniture) (name shelf) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession bedroom) (room bedroom) (attributes no_visited))
+
+(item (type Furniture) (name shoe_rack) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession office) (room office) (attributes no_visited))
+
+(item (type Furniture) (name sideboard) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
+
+(item (type Furniture) (name sidetable) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession bedroom) (room bedroom) (attributes no_visited))
+
+(item (type Furniture) (name sink) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
+
+(item (type Furniture) (name trash_bin) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
+
+(item (type Furniture) (name trash_bin_1) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession kitchen) (room kitchen) (attributes no_visited))
+
+(item (type Furniture) (name trash_bin_2) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
+
+(item (type Furniture) (name tv) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1) (possession living_room) (room living_room) (attributes no_visited))
 
 ) 
 ;;;;;;
