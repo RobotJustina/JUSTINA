@@ -323,7 +323,8 @@ void callbackCmdConfirmation(
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	bool success = ros::service::waitForService("spg_say", 5000);
+    //bool success = ros::service::waitForService("spg_say", 5000);
+    bool success = true;
 	success = success & ros::service::waitForService("/planning_clips/confirmation",5000);
 	if (success) {
 		std::string to_spech = responseMsg.params;
