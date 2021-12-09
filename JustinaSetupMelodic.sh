@@ -174,9 +174,8 @@ else
 		cd $SOURCE_DIR/ToInstall/CLIPS/instPy
 		sudo python setup.py config
 		sudo python setup.py install
-		cd $SOURCE_DIR/ToInstall/CLIPS/pyclips
-		sudo python setup.py config
-		sudo python setup.py install
+		cd $SOURCE_DIR/ToInstall/CLIPS/
+		sudo cp -r clips/ /usr/local/lib/python2.7/dist-packages/
 		echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
 
 		#TODO Validate that as necesary, because this is for test the kinect one installation
