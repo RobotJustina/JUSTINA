@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Workspace>
-    <Distribution name="indigo"/>
+    <Distribution name="kinetic"/>
     <DefaultBuildSystem value="0"/>
     <WatchDirectories>
         <Directory>src</Directory>

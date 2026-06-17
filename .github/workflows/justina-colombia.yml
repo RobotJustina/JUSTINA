@@ -1,0 +1,48 @@
+name: Validate JUSTINA Colombia proposal
+
+on:
+  pull_request:
+    paths:
+      - "catkin_ws/Justina.workspace"
+      - "dockers/justina-colombia/**"
+      - ".github/workflows/justina-colombia.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify ROS workspace distribution
+        shell: bash
+        run: grep -Fq '<Distribution name="kinetic"/>' catkin_ws/Justina.workspace
+
+      - name: Verify Colombia locale override
+        shell: bash
+        run: grep -Fq 'LC_ALL=es_CO.UTF-8' dockers/justina-colombia/Dockerfile
+
+      - name: Check shell scripts
+        shell: bash
+        run: |
+          bash -n dockers/justina-colombia/container-entrypoint.sh
+          bash -n dockers/justina-colombia/build-workspace.sh
+          shellcheck dockers/justina-colombia/container-entrypoint.sh
+          shellcheck dockers/justina-colombia/build-workspace.sh
+
+      - name: Reject unsafe legacy patterns
+        shell: bash
+        run: |
+          ! grep -RE -- '--privileged|apt-key|nvidia-docker|chown[[:space:]]+-R[[:space:]]+/home|rm[[:space:]]+-rf[[:space:]]+/opt/ros' \
+            dockers/justina-colombia/Dockerfile \
+            dockers/justina-colombia/compose.yaml \
+            dockers/justina-colombia/container-entrypoint.sh
+
+      - name: Validate Compose configuration
+        working-directory: dockers/justina-colombia
+        env:
+          JUSTINA_REPO_PATH: ${{ github.workspace }}
+        run: docker compose config

@@ -1,0 +1,23 @@
+services:
+  justina:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ROS_BASE_IMAGE: "${ROS_BASE_IMAGE:-ros:kinetic-ros-base-xenial}"
+        USER_UID: "${USER_UID:-1000}"
+        USER_GID: "${USER_GID:-1000}"
+    image: justina-colombia:kinetic
+    container_name: justina-colombia
+    environment:
+      DISPLAY: "${DISPLAY:-}"
+      ROS_MASTER_URI: "${ROS_MASTER_URI:-http://localhost:11311}"
+      TZ: America/Bogota
+    network_mode: host
+    stdin_open: true
+    tty: true
+    volumes:
+      - "${JUSTINA_REPO_PATH:?Defina JUSTINA_REPO_PATH}:/workspace/JUSTINA"
+      - "/tmp/.X11-unix:/tmp/.X11-unix:rw"
+    working_dir: /workspace/JUSTINA

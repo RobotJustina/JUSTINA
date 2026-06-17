@@ -12,6 +12,8 @@
 *.swn
 catkin_ws/devel/
 catkin_ws/build/
+catkin_ws/logs/
+catkin_ws/.catkin_tools/
 catkin_ws/src/CMakeLists.txt
 catkin_ws/src/hri/justina_gui/src/justina_gui-release/*
 !catkin_ws/src/hri/justina_gui/src/justina_gui-release/ui_MainWindow.h
@@ -81,3 +83,6 @@ catkin_ws/src/vision/obj_reco_plastic_tray/\.kdev4/
 catkin_ws/src/src\.kdev4
 
 catkin_ws/src/\.kdev4/
+
+# Local container configuration
+dockers/justina-colombia/.env
